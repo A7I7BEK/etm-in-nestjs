@@ -6,12 +6,11 @@ import { HashingService } from '../hashing/hashing.service';
 import { SignUpDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
 import { JwtService } from '@nestjs/jwt';
-import jwtConfig from '../config/jwt.config';
-import { ConfigType } from '@nestjs/config';
 import { ActiveUserData } from '../interfaces/active-user-data.interface';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { InvalidatedRefreshTokenError, RefreshTokenIdsStorage } from './refresh-token-ids.storage';
 import { randomUUID } from 'crypto';
+import appConfig from 'src/config/app.config';
 
 @Injectable()
 export class AuthenticationService
@@ -20,7 +19,6 @@ export class AuthenticationService
         @InjectRepository(User) private readonly usersRepository: Repository<User>,
         private readonly hashingService: HashingService,
         private readonly jwtService: JwtService,
-        @Inject(jwtConfig.KEY) private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
         private readonly refreshTokenIdsStorage: RefreshTokenIdsStorage,
     ) { }
 
@@ -68,7 +66,7 @@ export class AuthenticationService
         const [ accessToken, refreshToken ] = await Promise.all([
             this.signToken<Partial<ActiveUserData>>(
                 user.id,
-                this.jwtConfiguration.accessTokenTtl,
+                appConfig().jwt.accessTokenTtl,
                 {
                     email: user.email,
                     role: user.role,
@@ -76,7 +74,7 @@ export class AuthenticationService
             ),
             this.signToken(
                 user.id,
-                this.jwtConfiguration.refreshTokenTtl,
+                appConfig().jwt.refreshTokenTtl,
                 { refreshTokenId }
             ),
         ]);
@@ -97,9 +95,9 @@ export class AuthenticationService
                 ...payload
             },
             {
-                audience: this.jwtConfiguration.audience,
-                issuer: this.jwtConfiguration.issuer,
-                secret: this.jwtConfiguration.secret,
+                audience: appConfig().jwt.audience,
+                issuer: appConfig().jwt.issuer,
+                secret: appConfig().jwt.secret,
                 expiresIn,
             }
         );
@@ -116,9 +114,9 @@ export class AuthenticationService
                 (
                     refreshTokenDto.refreshToken,
                     {
-                        secret: this.jwtConfiguration.secret,
-                        audience: this.jwtConfiguration.audience,
-                        issuer: this.jwtConfiguration.issuer,
+                        secret: appConfig().jwt.secret,
+                        audience: appConfig().jwt.audience,
+                        issuer: appConfig().jwt.issuer,
                     }
                 );
 

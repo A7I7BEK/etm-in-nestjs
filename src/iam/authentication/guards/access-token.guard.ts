@@ -2,7 +2,7 @@ import { CanActivate, ExecutionContext, Inject, Injectable, UnauthorizedExceptio
 import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import jwtConfig from 'src/iam/config/jwt.config';
+import appConfig from 'src/config/app.config';
 import { REQUEST_USER_KEY } from 'src/iam/iam.constants';
 
 @Injectable()
@@ -10,7 +10,6 @@ export class AccessTokenGuard implements CanActivate
 {
     constructor (
         private readonly jwtService: JwtService,
-        @Inject(jwtConfig.KEY) private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
     ) { }
 
     async canActivate(context: ExecutionContext): Promise<boolean>
@@ -29,7 +28,7 @@ export class AccessTokenGuard implements CanActivate
              * Custom Note: right now, endpoints work with both access and refresh tokens.
              * I think the problem is in this line 👇. Specifically, in "this.jwtConfiguration"
              */
-            const payload = await this.jwtService.verifyAsync(token, this.jwtConfiguration);
+            const payload = await this.jwtService.verifyAsync(token, appConfig().jwt);
             request[ REQUEST_USER_KEY ] = payload; // bind current user to request (express)
         }
         catch (error)

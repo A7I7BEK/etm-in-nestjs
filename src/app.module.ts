@@ -1,19 +1,18 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CoffeesModule } from './coffees/coffees.module';
 import { IamModule } from './iam/iam.module';
 import { UsersModule } from './users/users.module';
+import appConfig from './config/app.config';
 
 @Module({
     imports: [
         ConfigModule.forRoot(),
         TypeOrmModule.forRootAsync({
-            imports: [ ConfigModule ],
-            inject: [ ConfigService ],
-            useFactory: async (configService: ConfigService) =>
+            useFactory: async () =>
             {
-                const isProduction = configService.get('NODE_ENV') === 'production';
+                const isProduction = appConfig().application.nodeEnv === 'production';
 
                 return {
                     ssl: isProduction,
@@ -23,11 +22,7 @@ import { UsersModule } from './users/users.module';
                     type: 'postgres',
                     autoLoadEntities: true,
                     synchronize: !isProduction,
-                    host: configService.get('DATABASE_HOST'),
-                    port: configService.get('DATABASE_PORT'),
-                    database: configService.get('DATABASE_NAME'),
-                    username: configService.get('DATABASE_USERNAME'),
-                    password: configService.get('DATABASE_PASSWORD'),
+                    ...appConfig().database
                 };
             },
         }),

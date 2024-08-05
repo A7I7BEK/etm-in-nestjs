@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import appConfig from './config/app.config';
 
 async function bootstrap()
 {
@@ -21,19 +22,19 @@ async function bootstrap()
 
     // Swagger setup
     const config = new DocumentBuilder()
-        .setTitle('ETM')
+        .setTitle(appConfig().application.name)
         .setDescription('Electron Task Management')
         .setVersion('1.0')
         .build();
     const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup(process.env.API_PREFIX, app, document);
+    SwaggerModule.setup(appConfig().application.prefix, app, document);
 
     // App run
-    const port = process.env.APP_PORT;
+    const port = appConfig().application.port;
     await app.listen(port);
 
     // App log
     const logger = new Logger();
-    logger.log(`App is running on port ${port}`);
+    logger.log(`App is running: http://localhost:${port}/`);
 }
 bootstrap();
