@@ -8,3 +8,8 @@ services:
       - "${DATABASE_PORT}:5432"
     environment:
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - "${REDIS_PORT}:6379"

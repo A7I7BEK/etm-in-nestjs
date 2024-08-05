@@ -14,12 +14,14 @@ import { AuthenticationGuard } from './authentication/guards/authentication.guar
 import { RefreshTokenIdsStorage } from './authentication/refresh-token-ids.storage';
 import { RolesGuard } from './authorization/guards/roles.guard';
 import { UserSerializer } from './authentication/serializers/user-serializer';
+import redisConfig from './config/redis.config';
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([ User ]),
         JwtModule.registerAsync(jwtConfig.asProvider()),
         ConfigModule.forFeature(jwtConfig),
+        ConfigModule.forFeature(redisConfig),
     ],
     providers: [
         {

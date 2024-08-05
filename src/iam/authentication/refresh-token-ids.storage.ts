@@ -1,5 +1,7 @@
-import { Injectable, OnApplicationBootstrap, OnApplicationShutdown } from '@nestjs/common';
+import { Inject, Injectable, OnApplicationBootstrap, OnApplicationShutdown } from '@nestjs/common';
 import { Redis } from 'ioredis';
+import redisConfig from '../config/redis.config';
+import { ConfigType } from '@nestjs/config';
 
 export class InvalidatedRefreshTokenError extends Error { }
 
@@ -7,6 +9,10 @@ export class InvalidatedRefreshTokenError extends Error { }
 export class RefreshTokenIdsStorage implements OnApplicationBootstrap, OnApplicationShutdown
 {
     private redisClient: Redis;
+
+    constructor (
+        @Inject(redisConfig.KEY) private readonly redisConfiguration: ConfigType<typeof redisConfig>,
+    ) { }
 
     onApplicationBootstrap()
     {
@@ -16,8 +22,8 @@ export class RefreshTokenIdsStorage implements OnApplicationBootstrap, OnApplica
          */
 
         this.redisClient = new Redis({
-            host: 'localhost', // NOTE: According to the best practices, we should use environment variables here
-            port: 6379,
+            host: this.redisConfiguration.host,
+            port: this.redisConfiguration.port,
         });
     }
 
