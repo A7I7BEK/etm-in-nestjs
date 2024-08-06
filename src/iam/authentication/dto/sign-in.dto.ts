@@ -7,7 +7,7 @@ export class SignInDto
     @IsEmail()
     userName: string;
 
-    @ApiProperty({ example: '123456789$a' })
+    @ApiProperty({ example: 'pass:123456789' })
     @MinLength(10)
     password: string;
 }

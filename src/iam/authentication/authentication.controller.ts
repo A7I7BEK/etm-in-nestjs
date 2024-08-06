@@ -5,39 +5,76 @@ import { SignInDto } from './dto/sign-in.dto';
 import { Auth } from './decorators/auth.decorator';
 import { AuthType } from './enums/auth-type.enum';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('auth')
 @Auth(AuthType.None)
-@Controller('authentication')
+@Controller('auth')
 export class AuthenticationController
 {
     constructor (
         private readonly authService: AuthenticationService,
     ) { }
 
-    @Post('sign-up')
-    signUp(@Body() signUpDto: SignUpDto)
+    @Post('organizations/create/user')
+    register(@Body() signUpDto: SignUpDto)
     {
         return this.authService.signUp(signUpDto);
     }
 
-    @HttpCode(HttpStatus.OK) // changed to 200 response code
-    @Post('sign-in') // default: 201 response code
-    signIn(@Body() signInDto: SignInDto)
+    @HttpCode(HttpStatus.OK)
+    @Post('organizations/create/user/resend')
+    registerResend(@Body() signInDto: SignInDto)
     {
         return this.authService.signIn(signInDto);
     }
 
     @HttpCode(HttpStatus.OK)
-    @Post('refresh-tokens')
-    refreshTokens(@Body() refreshTokenDto: RefreshTokenDto)
+    @Post('organizations/otp/confirm')
+    registerConfirm(@Body() signInDto: SignInDto)
+    {
+        return this.authService.signIn(signInDto);
+    }
+
+    @HttpCode(HttpStatus.OK)
+    @Post('login')
+    login(@Body() signInDto: SignInDto)
+    {
+        return this.authService.signIn(signInDto);
+    }
+
+    @HttpCode(HttpStatus.OK)
+    @Post('refresh-token')
+    refreshToken(@Body() refreshTokenDto: RefreshTokenDto)
     {
         return this.authService.refreshTokens(refreshTokenDto);
     }
 
+    @HttpCode(HttpStatus.OK)
+    @Post('forgot/password/send/otp')
+    forgotPasswordSend(@Body() signInDto: SignInDto)
+    {
+        return this.authService.signIn(signInDto);
+    }
 
-    /**
-     * -------------------------
-     * No Logout implemented
-     * -------------------------
-     */
+    @HttpCode(HttpStatus.OK)
+    @Post('forgot/password/resend/otp')
+    forgotPasswordResend(@Body() signInDto: SignInDto)
+    {
+        return this.authService.signIn(signInDto);
+    }
+
+    @HttpCode(HttpStatus.OK)
+    @Post('forgot/password/confirm/otp')
+    forgotPasswordConfirm(@Body() signInDto: SignInDto)
+    {
+        return this.authService.signIn(signInDto);
+    }
+
+    @HttpCode(HttpStatus.OK)
+    @Post('forgot/password/change/password')
+    forgotPasswordChange(@Body() signInDto: SignInDto)
+    {
+        return this.authService.signIn(signInDto);
+    }
 }

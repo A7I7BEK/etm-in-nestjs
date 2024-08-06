@@ -45,7 +45,7 @@ export class AuthenticationService
 
     async signIn(signInDto: SignInDto)
     {
-        const user = await this.usersRepository.findOneBy({ email: signInDto.email });
+        const user = await this.usersRepository.findOneBy({ userName: signInDto.userName });
         if (!user)
         {
             throw new UnauthorizedException('User does not exist');
