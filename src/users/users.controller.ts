@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { Body, Controller, Get, Patch } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
+import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UsersService } from './users.service';
 
 @ApiTags('users')
 @Controller('users')
@@ -10,33 +11,22 @@ export class UsersController
 {
     constructor (private readonly usersService: UsersService) { }
 
-    @Post()
-    create(@Body() createUserDto: CreateUserDto)
-    {
-        return this.usersService.create(createUserDto);
-    }
-
     @Get()
-    findAll()
+    create(@ActiveUser() user: ActiveUserData)
     {
-        return this.usersService.findAll();
+        return user;
     }
 
-    @Get(':id')
-    findOne(@Param('id') id: string)
+
+    @Get('users/me')
+    getCurrentUser(@ActiveUser() user: ActiveUserData)
     {
-        return this.usersService.findOne(+id);
+        return this.usersService.findOne(user.sub);
     }
 
-    @Patch(':id')
-    update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto)
+    @Patch('users/attachRole')
+    attachRole(@Body() updateUserDto: UpdateUserDto)
     {
-        return this.usersService.update(+id, updateUserDto);
-    }
-
-    @Delete(':id')
-    remove(@Param('id') id: string)
-    {
-        return this.usersService.remove(+id);
+        return this.usersService.create(updateUserDto);
     }
 }
