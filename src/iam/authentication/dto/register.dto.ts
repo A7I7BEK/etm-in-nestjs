@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, MinLength } from 'class-validator';
 
-export class SignUpDto
+export class RegisterDto
 {
     @ApiProperty({ example: 'Google' })
     organizationName: string;

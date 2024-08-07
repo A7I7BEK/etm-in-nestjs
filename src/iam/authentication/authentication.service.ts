@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { HashingService } from '../hashing/hashing.service';
-import { SignUpDto } from './dto/sign-up.dto';
-import { SignInDto } from './dto/sign-in.dto';
+import { RegisterDto } from './dto/register.dto';
+import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ActiveUserData } from '../interfaces/active-user-data.interface';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
@@ -22,13 +22,13 @@ export class AuthenticationService
         private readonly refreshTokenIdsStorage: RefreshTokenIdsStorage,
     ) { }
 
-    async signUp(signUpDto: SignUpDto)
+    async register(registerDto: RegisterDto)
     {
         try
         {
             const user = new User();
-            user.email = signUpDto.email;
-            user.password = await this.hashingService.hash(signUpDto.password);
+            user.email = registerDto.email;
+            user.password = await this.hashingService.hash(registerDto.password);
 
             await this.usersRepository.save(user);
         }
@@ -43,15 +43,15 @@ export class AuthenticationService
         }
     }
 
-    async signIn(signInDto: SignInDto)
+    async login(loginDto: LoginDto)
     {
-        const user = await this.usersRepository.findOneBy({ userName: signInDto.userName });
+        const user = await this.usersRepository.findOneBy({ userName: loginDto.userName });
         if (!user)
         {
             throw new UnauthorizedException('User does not exist');
         }
 
-        const isEqual = await this.hashingService.compare(signInDto.password, user.password);
+        const isEqual = await this.hashingService.compare(loginDto.password, user.password);
         if (!isEqual)
         {
             throw new UnauthorizedException('Password does not match');
@@ -103,7 +103,7 @@ export class AuthenticationService
         );
     }
 
-    async refreshTokens(refreshTokenDto: RefreshTokenDto)
+    async refreshToken(refreshTokenDto: RefreshTokenDto)
     {
         try
         {
