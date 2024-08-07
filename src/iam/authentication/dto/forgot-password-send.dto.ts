@@ -3,7 +3,7 @@ import { IsEmail, IsMobilePhone, IsPhoneNumber } from 'class-validator';
 
 export class ForgotPasswordSendDto
 {
-    @ApiProperty({ example: 'johnny' })
+    @ApiProperty({ example: 'aaa@aaa.aaa' })
     @IsEmail()
     // @IsMobilePhone('uz-UZ')
     @IsPhoneNumber('UZ')

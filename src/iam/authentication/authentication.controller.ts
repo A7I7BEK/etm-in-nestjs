@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, Put } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Param, Post, Put } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthenticationService } from './authentication.service';
 import { Auth } from './decorators/auth.decorator';
@@ -27,9 +27,9 @@ export class AuthenticationController
     }
 
     @Put('organizations/create/user/resend/:id')
-    registerResend()
+    registerResend(@Param('id') id: string)
     {
-        return 'aaaaa';
+        return 'aaaaa' + id;
     }
 
     @Post('organizations/otp/confirm')
@@ -61,9 +61,9 @@ export class AuthenticationController
     }
 
     @Put('forgot/password/resend/otp/:id')
-    forgotPasswordResend()
+    forgotPasswordResend(@Param('id') id: string)
     {
-        return 'aaaaa';
+        return 'aaaaa' + id;
     }
 
     @Post('forgot/password/confirm/otp')
