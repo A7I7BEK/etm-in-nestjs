@@ -1,14 +1,14 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, Res } from '@nestjs/common';
-import { AuthenticationService } from './authentication.service';
-import { SignUpDto } from './dto/sign-up.dto';
-import { SignInDto } from './dto/sign-in.dto';
-import { Auth } from './decorators/auth.decorator';
-import { AuthType } from './enums/auth-type.enum';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { Body, Controller, HttpCode, HttpStatus, Post, Put } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { AuthenticationService } from './authentication.service';
+import { Auth } from './decorators/auth.decorator';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { SignInDto } from './dto/sign-in.dto';
+import { SignUpDto } from './dto/sign-up.dto';
+import { AuthType } from './enums/auth-type.enum';
 
-@ApiTags('auth')
 @Auth(AuthType.None)
+@ApiTags('auth')
 @Controller('auth')
 export class AuthenticationController
 {
@@ -23,7 +23,7 @@ export class AuthenticationController
     }
 
     @HttpCode(HttpStatus.OK)
-    @Post('organizations/create/user/resend')
+    @Put('organizations/create/user/resend')
     registerResend(@Body() signInDto: SignInDto)
     {
         return this.authService.signIn(signInDto);
@@ -58,7 +58,7 @@ export class AuthenticationController
     }
 
     @HttpCode(HttpStatus.OK)
-    @Post('forgot/password/resend/otp')
+    @Put('forgot/password/resend/otp')
     forgotPasswordResend(@Body() signInDto: SignInDto)
     {
         return this.authService.signIn(signInDto);

@@ -1,8 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { ResourceService } from './resource.service';
+import { Body, Controller, Delete, Param, Post, Put } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { CreateResourceDto } from './dto/create-resource.dto';
 import { UpdateResourceDto } from './dto/update-resource.dto';
+import { ResourceService } from './resource.service';
 
+@ApiTags('resource')
 @Controller('resource')
 export class ResourceController
 {
@@ -14,7 +16,7 @@ export class ResourceController
         return this.resourceService.create(createResourceDto);
     }
 
-    @Patch('update/:id')
+    @Put('update')
     update(@Param('id') id: string, @Body() updateResourceDto: UpdateResourceDto)
     {
         return this.resourceService.update(+id, updateResourceDto);

@@ -1,8 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { OrganizationsService } from './organizations.service';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { UpdateOrganizationDto } from './dto/update-organization.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { OrganizationsService } from './organizations.service';
 
 @ApiTags('organizations')
 @Controller('organizations')
@@ -28,7 +28,7 @@ export class OrganizationsController
         return this.organizationsService.findOne(+id);
     }
 
-    @Patch(':id')
+    @Put(':id')
     update(@Param('id') id: string, @Body() updateOrganizationDto: UpdateOrganizationDto)
     {
         return this.organizationsService.update(+id, updateOrganizationDto);
