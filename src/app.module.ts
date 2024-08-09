@@ -5,6 +5,7 @@ import { IamModule } from './iam/iam.module';
 import { UsersModule } from './users/users.module';
 import { OrganizationsModule } from './organizations/organizations.module';
 import { ResourceModule } from './resource/resource.module';
+import { EmployeesModule } from './employees/employees.module';
 import appConfig from './config/app.config';
 
 @Module({
@@ -31,6 +32,7 @@ import appConfig from './config/app.config';
         UsersModule,
         OrganizationsModule,
         ResourceModule,
+        EmployeesModule,
     ],
 })
 export class AppModule { }
