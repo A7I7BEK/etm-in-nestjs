@@ -27,7 +27,7 @@ export class AuthenticationService
         try
         {
             const user = new User();
-            user.email = registerDto.email;
+            user.userName = registerDto.userName;
             user.password = await this.hashingService.hash(registerDto.password);
 
             await this.usersRepository.save(user);
