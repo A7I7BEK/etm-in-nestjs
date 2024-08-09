@@ -12,23 +12,20 @@ export class User
     userName: string;
 
     @Column()
-    firstName: string;
-
-    @Column()
-    lastName: string;
+    password: string;
 
     @Column({ unique: true })
     email: string;
 
-    @Column()
+    @Column({ unique: true })
     phoneNumber: string;
-
-    @Column()
-    password: string;
 
     @Column({ enum: Role, default: Role.Regular })
     role: Role;
 
     @ManyToOne(type => Organization, organization => organization.user)
     organization: Organization;
+
+    @Column({ default: false })
+    systemAdmin: boolean;
 }
