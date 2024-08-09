@@ -19,16 +19,13 @@ export class CreateEmployeeDto
     @IsOptional()
     middleName: string;
 
-    @ApiProperty({ type: Date })
     @IsDate()
     @IsOptional()
     birthDate: Date;
 
-    @ApiProperty({ type: ResourceFileDto })
     @IsInstance(ResourceFileDto)
     resourceFile: ResourceFileDto;
 
-    @ApiProperty({ type: CreateUserDto })
     @IsInstance(CreateUserDto)
     user: CreateUserDto;
 }

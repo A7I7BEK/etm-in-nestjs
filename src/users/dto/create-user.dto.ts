@@ -1,10 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsNumber, IsPhoneNumber, IsString, MinLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsPhoneNumber, IsPositive, IsString, MinLength } from 'class-validator';
 
 export class CreateUserDto
 {
-    @ApiProperty({ example: 123 })
-    @IsNumber()
+    @IsPositive()
     organizationId: number;
 
     @ApiProperty({ example: 'johnny' })
