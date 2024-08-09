@@ -9,6 +9,6 @@ export class ForgotPasswordConfirmDto
 
     @ApiProperty({ example: '123456' })
     @MinLength(6)
-    @IsNumberString()
+    @IsNumberString({ no_symbols: true })
     otpCode: string;
 }
