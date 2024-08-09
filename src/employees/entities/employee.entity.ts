@@ -1,4 +1,5 @@
-import { Column, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from 'src/users/entities/user.entity';
+import { Column, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 export class Employee
 {
@@ -19,4 +20,7 @@ export class Employee
 
     @Column({ nullable: true })
     photoUrl: string;
+
+    @OneToOne(type => User, user => user.employee)
+    user: User;
 }

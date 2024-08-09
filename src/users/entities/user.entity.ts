@@ -1,6 +1,7 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Role } from '../enums/role.enum';
+import { Employee } from 'src/employees/entities/employee.entity';
 import { Organization } from 'src/organizations/entities/organization.entity';
+import { Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Role } from '../enums/role.enum';
 
 @Entity()
 export class User
@@ -25,6 +26,9 @@ export class User
 
     @ManyToOne(type => Organization, organization => organization.user)
     organization: Organization;
+
+    @OneToOne(type => Employee, employee => employee.user)
+    employee: Employee;
 
     @Column({ default: false })
     systemAdmin: boolean;
