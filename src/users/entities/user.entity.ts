@@ -27,7 +27,7 @@ export class User
     @ManyToOne(type => Organization, organization => organization.user)
     organization: Organization;
 
-    @OneToOne(type => Employee, employee => employee.user)
+    @OneToOne(type => Employee, employee => employee.user, { cascade: true })
     employee: Relation<Employee>;
 
     @Column({ default: false })
