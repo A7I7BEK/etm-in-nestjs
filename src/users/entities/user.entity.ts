@@ -24,7 +24,7 @@ export class User
     @Column({ enum: Role, default: Role.Regular })
     role: Role;
 
-    @ManyToOne(type => Organization, organization => organization.user)
+    @ManyToOne(type => Organization, organization => organization.users)
     organization: Organization;
 
     @OneToOne(type => Employee, employee => employee.user, { cascade: true })
