@@ -1,5 +1,5 @@
 import { User } from 'src/users/entities/user.entity';
-import { Column, Entity, JoinTable, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Organization
@@ -13,7 +13,6 @@ export class Organization
     @Column({ unique: true })
     email: string;
 
-    @JoinTable()
     @OneToMany(type => User, user => user.organization)
     user: User[];
 }
