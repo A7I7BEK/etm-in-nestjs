@@ -1,5 +1,5 @@
 import { User } from 'src/users/entities/user.entity';
-import { Column, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, JoinColumn, OneToOne, PrimaryGeneratedColumn, Relation } from 'typeorm';
 
 export class Employee
 {
@@ -22,5 +22,6 @@ export class Employee
     photoUrl: string;
 
     @OneToOne(type => User, user => user.employee)
-    user: User;
+    @JoinColumn()
+    user: Relation<User>;
 }
