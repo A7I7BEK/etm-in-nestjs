@@ -1,6 +1,7 @@
 import { User } from 'src/users/entities/user.entity';
-import { Column, JoinColumn, OneToOne, PrimaryGeneratedColumn, Relation } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, Relation } from 'typeorm';
 
+@Entity()
 export class Employee
 {
     @PrimaryGeneratedColumn()
