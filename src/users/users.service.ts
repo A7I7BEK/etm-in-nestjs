@@ -10,25 +10,25 @@ export class UsersService
 {
     constructor (
         @InjectRepository(User)
-        private readonly userRepository: Repository<User>,
+        private readonly usersRepository: Repository<User>,
     ) { }
 
     create(createUserDto: CreateUserDto)
     {
-        const entity = this.userRepository.create({
+        const entity = this.usersRepository.create({
             ...createUserDto
         });
-        return this.userRepository.save(entity);
+        return this.usersRepository.save(entity);
     }
 
     findAll()
     {
-        return this.userRepository.find();
+        return this.usersRepository.find();
     }
 
     async findOne(id: number)
     {
-        const entity = await this.userRepository.findOneBy({ id });
+        const entity = await this.usersRepository.findOneBy({ id });
 
         if (!entity)
         {
@@ -44,12 +44,12 @@ export class UsersService
 
         Object.assign(entity, updateUserDto);
 
-        return this.userRepository.save(entity);
+        return this.usersRepository.save(entity);
     }
 
     async remove(id: number)
     {
         const entity = await this.findOne(id);
-        return this.userRepository.remove(entity);
+        return this.usersRepository.remove(entity);
     }
 }
