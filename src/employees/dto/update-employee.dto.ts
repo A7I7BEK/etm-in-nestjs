@@ -19,6 +19,7 @@ export class UpdateEmployeeDto
     lastName: string;
 
     @ApiProperty({ example: 'Tom' })
+    @IsString()
     @IsOptional()
     middleName: string;
 

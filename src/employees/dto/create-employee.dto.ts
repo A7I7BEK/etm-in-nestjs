@@ -16,6 +16,7 @@ export class CreateEmployeeDto
     lastName: string;
 
     @ApiProperty({ example: 'Tom' })
+    @IsString()
     @IsOptional()
     middleName: string;
 
