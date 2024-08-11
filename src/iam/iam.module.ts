@@ -1,22 +1,24 @@
 import { Module } from '@nestjs/common';
-import { HashingService } from './hashing/hashing.service';
-import { BcryptService } from './hashing/bcrypt.service';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtModule } from '@nestjs/jwt';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import appConfig from 'src/config/app.config';
+import { Employee } from 'src/employees/entities/employee.entity';
+import { Organization } from 'src/organizations/entities/organization.entity';
+import { User } from 'src/users/entities/user.entity';
 import { AuthenticationController } from './authentication/authentication.controller';
 import { AuthenticationService } from './authentication/authentication.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from 'src/users/entities/user.entity';
-import { JwtModule } from '@nestjs/jwt';
-import { APP_GUARD } from '@nestjs/core';
 import { AccessTokenGuard } from './authentication/guards/access-token.guard';
 import { AuthenticationGuard } from './authentication/guards/authentication.guard';
 import { RefreshTokenIdsStorage } from './authentication/refresh-token-ids.storage';
-import { RolesGuard } from './authorization/guards/roles.guard';
 import { UserSerializer } from './authentication/serializers/user-serializer';
-import appConfig from 'src/config/app.config';
+import { RolesGuard } from './authorization/guards/roles.guard';
+import { BcryptService } from './hashing/bcrypt.service';
+import { HashingService } from './hashing/hashing.service';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([ User ]),
+        TypeOrmModule.forFeature([ Organization, User, Employee ]),
         JwtModule.registerAsync({
             useFactory: async () => ({
                 secret: appConfig().jwt.secret,
