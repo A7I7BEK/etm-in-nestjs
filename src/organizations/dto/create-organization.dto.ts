@@ -11,5 +11,5 @@ export class CreateOrganizationDto
     @ApiProperty({ example: 'aaa@aaa.aaa' })
     @IsEmail()
     @IsOptional()
-    email: string;
+    email?: string;
 }
