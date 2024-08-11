@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateOrganizationDto
 {
@@ -10,5 +10,6 @@ export class CreateOrganizationDto
 
     @ApiProperty({ example: 'aaa@aaa.aaa' })
     @IsEmail()
+    @IsOptional()
     email: string;
 }
