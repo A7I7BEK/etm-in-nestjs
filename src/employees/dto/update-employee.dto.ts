@@ -21,11 +21,11 @@ export class UpdateEmployeeDto
     @ApiProperty({ example: 'Tom' })
     @IsString()
     @IsOptional()
-    middleName: string;
+    middleName?: string;
 
     @IsDate()
     @IsOptional()
-    birthDate: Date;
+    birthDate?: Date;
 
     @IsInstance(ResourceFileDto)
     resourceFile: ResourceFileDto;
