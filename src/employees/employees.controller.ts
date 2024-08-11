@@ -1,8 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { EmployeesService } from './employees.service';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { EmployeesService } from './employees.service';
 
 @ApiTags('employees')
 @Controller('employees')
@@ -28,7 +28,7 @@ export class EmployeesController
         return this.employeesService.findOne(+id);
     }
 
-    @Patch(':id')
+    @Put(':id')
     update(@Param('id') id: string, @Body() updateEmployeeDto: UpdateEmployeeDto)
     {
         return this.employeesService.update(+id, updateEmployeeDto);
