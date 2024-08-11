@@ -6,9 +6,6 @@ export class UpdateUserDto
     @IsPositive()
     organizationId: number;
 
-    @IsPositive()
-    id: number;
-
     @ApiProperty({ example: 'johnny' })
     @IsString()
     @IsNotEmpty()
