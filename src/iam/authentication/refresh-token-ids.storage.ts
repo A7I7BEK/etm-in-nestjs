@@ -1,6 +1,6 @@
 import { Injectable, OnApplicationBootstrap, OnApplicationShutdown } from '@nestjs/common';
 import { Redis } from 'ioredis';
-import appConfig from 'src/config/app.config';
+import appConfig from 'src/common/config/app.config';
 
 export class InvalidatedRefreshTokenError extends Error { }
 

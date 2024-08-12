@@ -1,7 +1,7 @@
-import { CanActivate, ExecutionContext, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import appConfig from 'src/config/app.config';
+import appConfig from 'src/common/config/app.config';
 import { REQUEST_USER_KEY } from 'src/iam/iam.constants';
 
 @Injectable()

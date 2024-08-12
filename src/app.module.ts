@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import appConfig from './common/config/app.config';
+import { EmployeesModule } from './employees/employees.module';
 import { IamModule } from './iam/iam.module';
-import { UsersModule } from './users/users.module';
 import { OrganizationsModule } from './organizations/organizations.module';
 import { ResourceModule } from './resource/resource.module';
-import { EmployeesModule } from './employees/employees.module';
-import appConfig from './config/app.config';
+import { UsersModule } from './users/users.module';
 
 @Module({
     imports: [

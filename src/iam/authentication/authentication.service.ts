@@ -2,7 +2,7 @@ import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/co
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { randomUUID } from 'crypto';
-import appConfig from 'src/config/app.config';
+import appConfig from 'src/common/config/app.config';
 import { Employee } from 'src/employees/entities/employee.entity';
 import { Organization } from 'src/organizations/entities/organization.entity';
 import { User } from 'src/users/entities/user.entity';
@@ -76,7 +76,7 @@ export class AuthenticationService
         await this.otpsRepository.save({
             otpId: randomUUID(),
             otpCode: 123456, // email implementation
-            expireTime: Date.now().toString(),
+            expireTime: (Date.now() + 10 * 60 * 1000).toString(), // +10 min
             user,
         });
     }
