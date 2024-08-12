@@ -1,22 +1,29 @@
-import { ConflictException, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
+import { randomUUID } from 'crypto';
+import appConfig from 'src/config/app.config';
+import { Employee } from 'src/employees/entities/employee.entity';
+import { Organization } from 'src/organizations/entities/organization.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { HashingService } from '../hashing/hashing.service';
-import { RegisterDto } from './dto/register.dto';
-import { LoginDto } from './dto/login.dto';
-import { JwtService } from '@nestjs/jwt';
 import { ActiveUserData } from '../interfaces/active-user-data.interface';
+import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { RegisterDto } from './dto/register.dto';
 import { InvalidatedRefreshTokenError, RefreshTokenIdsStorage } from './refresh-token-ids.storage';
-import { randomUUID } from 'crypto';
-import appConfig from 'src/config/app.config';
 
 @Injectable()
 export class AuthenticationService
 {
     constructor (
-        @InjectRepository(User) private readonly usersRepository: Repository<User>,
+        @InjectRepository(Organization)
+        private readonly organizationsRepository: Repository<Organization>,
+        @InjectRepository(User)
+        private readonly usersRepository: Repository<User>,
+        @InjectRepository(Employee)
+        private readonly employeesRepository: Repository<Employee>,
         private readonly hashingService: HashingService,
         private readonly jwtService: JwtService,
         private readonly refreshTokenIdsStorage: RefreshTokenIdsStorage,
@@ -24,23 +31,44 @@ export class AuthenticationService
 
     async register(registerDto: RegisterDto)
     {
-        try
+        const organizationExists = await this.organizationsRepository.existsBy({ name: registerDto.organizationName });
+        if (organizationExists)
         {
-            const user = new User();
-            user.userName = registerDto.userName;
-            user.password = await this.hashingService.hash(registerDto.password);
+            throw new ConflictException('Organization already exists');
+        }
 
-            await this.usersRepository.save(user);
-        }
-        catch (error)
+        const usernameExists = await this.usersRepository.existsBy({ userName: registerDto.userName });
+        if (usernameExists)
         {
-            const pgUniqueViolationErrorCode = '23505'; // should be in separate file
-            if (error.code === pgUniqueViolationErrorCode)
-            {
-                throw new ConflictException();
-            }
-            throw error;
+            throw new ConflictException('Username already exists');
         }
+
+        const emailExists = await this.usersRepository.existsBy({ email: registerDto.email });
+        if (emailExists)
+        {
+            throw new ConflictException('Email already exists');
+        }
+
+        const phoneNumberExists = await this.usersRepository.existsBy({ phoneNumber: registerDto.phoneNumber });
+        if (phoneNumberExists)
+        {
+            throw new ConflictException('Phone number already exists');
+        }
+
+
+        await this.usersRepository.save({
+            userName: registerDto.userName,
+            password: await this.hashingService.hash(registerDto.password),
+            email: registerDto.email,
+            phoneNumber: registerDto.phoneNumber,
+            employee: await this.employeesRepository.save({
+                firstName: registerDto.firstName,
+                lastName: registerDto.lastName,
+            }),
+            organization: await this.organizationsRepository.save({
+                name: registerDto.organizationName,
+            }),
+        });
     }
 
     async login(loginDto: LoginDto)
@@ -68,7 +96,7 @@ export class AuthenticationService
                 user.id,
                 appConfig().jwt.accessTokenTtl,
                 {
-                    email: user.email,
+                    email: user.userName,
                     role: user.role,
                 }
             ),

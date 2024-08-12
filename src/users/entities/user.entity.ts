@@ -21,6 +21,12 @@ export class User
     @Column({ unique: true })
     phoneNumber: string;
 
+    @Column({ default: false })
+    active: boolean;
+
+    @Column({ default: false })
+    systemAdmin: boolean;
+
     @Column({ enum: Role, default: Role.Regular })
     role: Role;
 
@@ -29,7 +35,4 @@ export class User
 
     @OneToOne(type => Employee, employee => employee.user)
     employee: Relation<Employee>;
-
-    @Column({ default: false })
-    systemAdmin: boolean;
 }

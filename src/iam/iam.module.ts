@@ -8,6 +8,8 @@ import { Organization } from 'src/organizations/entities/organization.entity';
 import { User } from 'src/users/entities/user.entity';
 import { AuthenticationController } from './authentication/authentication.controller';
 import { AuthenticationService } from './authentication/authentication.service';
+import { ForgotPassword } from './authentication/entities/forgot-password.entity';
+import { OneTimePassword } from './authentication/entities/one-time-password.entity';
 import { AccessTokenGuard } from './authentication/guards/access-token.guard';
 import { AuthenticationGuard } from './authentication/guards/authentication.guard';
 import { RefreshTokenIdsStorage } from './authentication/refresh-token-ids.storage';
@@ -18,7 +20,13 @@ import { HashingService } from './hashing/hashing.service';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([ Organization, User, Employee ]),
+        TypeOrmModule.forFeature([
+            Organization,
+            User,
+            Employee,
+            OneTimePassword,
+            ForgotPassword,
+        ]),
         JwtModule.registerAsync({
             useFactory: async () => ({
                 secret: appConfig().jwt.secret,
