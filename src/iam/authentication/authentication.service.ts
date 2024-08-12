@@ -12,6 +12,7 @@ import { ActiveUserData } from '../interfaces/active-user-data.interface';
 import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { RegisterDto } from './dto/register.dto';
+import { OneTimePassword } from './entities/one-time-password.entity';
 import { InvalidatedRefreshTokenError, RefreshTokenIdsStorage } from './refresh-token-ids.storage';
 
 @Injectable()
@@ -24,6 +25,8 @@ export class AuthenticationService
         private readonly usersRepository: Repository<User>,
         @InjectRepository(Employee)
         private readonly employeesRepository: Repository<Employee>,
+        @InjectRepository(OneTimePassword)
+        private readonly otpsRepository: Repository<OneTimePassword>,
         private readonly hashingService: HashingService,
         private readonly jwtService: JwtService,
         private readonly refreshTokenIdsStorage: RefreshTokenIdsStorage,
@@ -56,7 +59,7 @@ export class AuthenticationService
         }
 
 
-        await this.usersRepository.save({
+        const user = await this.usersRepository.save({
             userName: registerDto.userName,
             password: await this.hashingService.hash(registerDto.password),
             email: registerDto.email,
@@ -68,6 +71,13 @@ export class AuthenticationService
             organization: await this.organizationsRepository.save({
                 name: registerDto.organizationName,
             }),
+        });
+
+        await this.otpsRepository.save({
+            otpId: randomUUID(),
+            otpCode: 123456, // email implementation
+            expireTime: Date.now().toString(),
+            user,
         });
     }
 
