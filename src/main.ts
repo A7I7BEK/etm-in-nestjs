@@ -1,7 +1,8 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { AppModule } from './app.module';
+import { WrapResponseInterceptor } from './common/interceptors/wrap-response.interceptor';
 import appConfig from './config/app.config';
 
 async function bootstrap()
@@ -16,6 +17,10 @@ async function bootstrap()
         whitelist: true,
         transform: true,
     }));
+
+    app.useGlobalInterceptors(
+        new WrapResponseInterceptor(),
+    );
 
     // Swagger setup
     const config = new DocumentBuilder()
