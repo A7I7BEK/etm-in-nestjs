@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumberString, IsUUID, MinLength } from 'class-validator';
+import { IsUUID, MinLength } from 'class-validator';
 
 export class ForgotPasswordChangeDto
 {
