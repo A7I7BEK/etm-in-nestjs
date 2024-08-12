@@ -11,7 +11,7 @@ export class ForgotPassword
     uniqueKey: string;
 
     @Column()
-    expireTime: Date;
+    expireTime: string;
 
     @Column({ default: false })
     used: boolean;

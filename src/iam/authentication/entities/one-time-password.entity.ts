@@ -14,7 +14,7 @@ export class OneTimePassword
     otpCode: number;
 
     @Column()
-    expireTime: Date;
+    expireTime: string;
 
     @Column({ default: false })
     used: boolean;
