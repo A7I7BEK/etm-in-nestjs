@@ -96,7 +96,7 @@ export class AuthenticationService
                 user.id,
                 appConfig().jwt.accessTokenTtl,
                 {
-                    email: user.userName,
+                    email: user.email,
                     role: user.role,
                 }
             ),
