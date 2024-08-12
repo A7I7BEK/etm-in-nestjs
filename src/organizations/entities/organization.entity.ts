@@ -10,7 +10,7 @@ export class Organization
     @Column({ unique: true })
     name: string;
 
-    @Column({ unique: true })
+    @Column({ unique: true, nullable: true })
     email: string;
 
     @OneToMany(type => User, user => user.organization)
