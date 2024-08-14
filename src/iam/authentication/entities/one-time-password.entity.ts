@@ -11,7 +11,7 @@ export class OneTimePassword
     otpId: string;
 
     @Column()
-    otpCode: number;
+    otpCode: string;
 
     @Column()
     expireTime: string;
