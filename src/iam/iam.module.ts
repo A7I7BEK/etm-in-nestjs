@@ -4,6 +4,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import appConfig from 'src/common/config/app.config';
 import { Employee } from 'src/employees/entities/employee.entity';
+import { MailModule } from 'src/mail/mail.module';
 import { Organization } from 'src/organizations/entities/organization.entity';
 import { User } from 'src/users/entities/user.entity';
 import { AuthenticationController } from './authentication/authentication.controller';
@@ -35,6 +36,7 @@ import { HashingService } from './hashing/hashing.service';
                 }
             }),
         }),
+        MailModule,
     ],
     providers: [
         {
