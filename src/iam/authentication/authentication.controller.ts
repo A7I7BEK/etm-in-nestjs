@@ -2,14 +2,14 @@ import { Body, Controller, HttpCode, HttpStatus, Param, Post, Put } from '@nestj
 import { ApiTags } from '@nestjs/swagger';
 import { AuthenticationService } from './authentication.service';
 import { Auth } from './decorators/auth.decorator';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { ForgotPasswordChangeDto } from './dto/forgot-password-change.dto';
+import { ForgotPasswordConfirmDto } from './dto/forgot-password-confirm.dto';
+import { ForgotPasswordSendDto } from './dto/forgot-password-send.dto';
 import { LoginDto } from './dto/login.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { RegisterConfirmDto } from './dto/register-confirm.dto';
 import { RegisterDto } from './dto/register.dto';
 import { AuthType } from './enums/auth-type.enum';
-import { RegisterConfirmDto } from './dto/register-confirm.dto';
-import { ForgotPasswordSendDto } from './dto/forgot-password-send.dto';
-import { ForgotPasswordConfirmDto } from './dto/forgot-password-confirm.dto';
-import { ForgotPasswordChangeDto } from './dto/forgot-password-change.dto';
 
 @Auth(AuthType.None)
 @ApiTags('auth')
@@ -29,14 +29,14 @@ export class AuthenticationController
     @Put('organizations/create/user/resend/:id')
     registerResend(@Param('id') id: string)
     {
-        return 'aaaaa' + id;
+        return this.authService.registerResend(id);
     }
 
     @Post('organizations/otp/confirm')
     @HttpCode(HttpStatus.OK)
     registerConfirm(@Body() registerConfirmDto: RegisterConfirmDto)
     {
-        return 'aaaaa';
+        return this.authService.registerConfirm(registerConfirmDto);
     }
 
     @Post('login')
