@@ -7,6 +7,7 @@ import { IamModule } from './iam/iam.module';
 import { OrganizationsModule } from './organizations/organizations.module';
 import { ResourceModule } from './resource/resource.module';
 import { UsersModule } from './users/users.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
     imports: [
@@ -14,7 +15,7 @@ import { UsersModule } from './users/users.module';
         TypeOrmModule.forRootAsync({
             useFactory: async () =>
             {
-                const isProduction = appConfig().application.nodeEnv === 'production';
+                const isProduction = appConfig().application.nodeEnv === appConfig().production;
 
                 return {
                     ssl: isProduction,
@@ -33,6 +34,7 @@ import { UsersModule } from './users/users.module';
         OrganizationsModule,
         ResourceModule,
         EmployeesModule,
+        MailModule,
     ],
 })
 export class AppModule { }
