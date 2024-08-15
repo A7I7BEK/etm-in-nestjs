@@ -33,7 +33,7 @@ export class RefreshTokenIdsStorage implements OnApplicationBootstrap, OnApplica
         await this.redisClient.set(this.getKey(userId), tokenId);
     }
 
-    async validate(userId: number, tokenId: string): Promise<boolean>
+    async validate(userId: number, tokenId: string): Promise<void>
     {
         const storedId = await this.redisClient.get(this.getKey(userId));
 
@@ -41,11 +41,9 @@ export class RefreshTokenIdsStorage implements OnApplicationBootstrap, OnApplica
         {
             throw new InvalidatedRefreshTokenError();
         }
-
-        return storedId === tokenId;
     }
 
-    async invalidate(userId: number): Promise<void>
+    async remove(userId: number): Promise<void>
     {
         await this.redisClient.del(this.getKey(userId));
     }
