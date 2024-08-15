@@ -12,10 +12,10 @@ import { HashingService } from '../hashing/hashing.service';
 import { ActiveUserData } from '../interfaces/active-user-data.interface';
 import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { RegisterDto } from './dto/register.dto';
-import { OneTimePassword } from './entities/one-time-password.entity';
-import { InvalidatedRefreshTokenError, RefreshTokenIdsStorage } from './refresh-token-ids.storage';
 import { RegisterConfirmDto } from './dto/register-confirm.dto';
+import { RegisterDto } from './dto/register.dto';
+import { OneTimePasswordService } from './one-time-password.service';
+import { InvalidatedRefreshTokenError, RefreshTokenIdsStorage } from './refresh-token-ids.storage';
 
 @Injectable()
 export class AuthenticationService
@@ -27,11 +27,10 @@ export class AuthenticationService
         private readonly usersRepository: Repository<User>,
         @InjectRepository(Employee)
         private readonly employeesRepository: Repository<Employee>,
-        @InjectRepository(OneTimePassword)
-        private readonly otpsRepository: Repository<OneTimePassword>,
         private readonly hashingService: HashingService,
         private readonly jwtService: JwtService,
         private readonly refreshTokenIdsStorage: RefreshTokenIdsStorage,
+        private readonly otpService: OneTimePasswordService,
         private readonly mailService: MailService,
     ) { }
 
@@ -76,35 +75,29 @@ export class AuthenticationService
             }),
         });
 
-        const otpId = randomUUID();
-        const otpCode = Math.random().toString().slice(-6);
 
-        this.otpsRepository.save({
-            otpId,
-            otpCode,
-            expireTime: (Date.now() + 10 * 60 * 1000).toString(), // +10 min
-            user,
-        });
+        const { id, code } = await this.otpService.send(user);
+        this.mailService.sendOtpCode(user, code);
 
-        this.mailService.sendOtpCode(user, otpCode);
-
-        return { id: otpId };
+        return { id };
     }
 
     async registerResend(id: string)
     {
-        const otpCode = Math.random().toString().slice(-6);
+        const parent = await this.otpService.findOne(id);
 
-        // check for existance or surround by try-catch
-        const otpEntity = await this.otpsRepository.findOneBy({ otpId: id });
-        console.log('aaaaaaaaaaaa', otpEntity, otpEntity.user);
-
-        this.mailService.sendOtpCode(otpEntity.user, otpCode);
+        const { code } = await this.otpService.resend(parent);
+        this.mailService.sendOtpCode(parent.user, code);
     }
 
     async registerConfirm(registerConfirmDto: RegisterConfirmDto)
     {
-        // check for otpId, expireTime, used, otpCode
+        await this.otpService.confirmWithPassword(
+            registerConfirmDto.createTryId,
+            registerConfirmDto.otpCode,
+            registerConfirmDto.password
+        );
+
 
         // return sessionToken, refreshToken, expiresIn
 

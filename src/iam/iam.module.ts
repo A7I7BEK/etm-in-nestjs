@@ -18,6 +18,7 @@ import { UserSerializer } from './authentication/serializers/user-serializer';
 import { RolesGuard } from './authorization/guards/roles.guard';
 import { BcryptService } from './hashing/bcrypt.service';
 import { HashingService } from './hashing/hashing.service';
+import { OneTimePasswordService } from './authentication/one-time-password.service';
 
 @Module({
     imports: [
@@ -55,6 +56,7 @@ import { HashingService } from './hashing/hashing.service';
         RefreshTokenIdsStorage,
         AuthenticationService,
         UserSerializer,
+        OneTimePasswordService,
     ],
     controllers: [ AuthenticationController ]
 })
