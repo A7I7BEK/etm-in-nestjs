@@ -98,25 +98,24 @@ export class AuthenticationService
             registerConfirmDto.password,
         );
 
-
-        // return sessionToken, refreshToken, expiresIn
-
         return this.generateTokens(user);
     }
 
 
     async login(loginDto: LoginDto)
     {
+        const error = new UnauthorizedException('Please, check your login credentials');
+
         const user = await this.usersRepository.findOneBy({ userName: loginDto.userName });
         if (!user)
         {
-            throw new UnauthorizedException('User does not exist');
+            throw error;
         }
 
         const isEqual = await this.hashingService.compare(loginDto.password, user.password);
         if (!isEqual)
         {
-            throw new UnauthorizedException('Password does not match');
+            throw error;
         }
 
         return this.generateTokens(user);
