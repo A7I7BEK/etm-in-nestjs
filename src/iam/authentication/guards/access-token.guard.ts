@@ -23,11 +23,14 @@ export class AccessTokenGuard implements CanActivate
 
         try
         {
-            /**
-             * Custom Note: right now, endpoints work with both access and refresh tokens.
-             * I think the problem is in this line 👇. Specifically, in "this.jwtConfiguration"
-             */
-            const payload = await this.jwtService.verifyAsync(token, appConfig().jwt);
+            const payload = await this.jwtService.verifyAsync(
+                token,
+                {
+                    secret: appConfig().jwt.accessTokenSecret,
+                    audience: appConfig().jwt.audience,
+                    issuer: appConfig().jwt.issuer,
+                }
+            );
             request[ REQUEST_USER_KEY ] = payload; // bind current user to request (express)
         }
         catch (error)

@@ -92,16 +92,16 @@ export class AuthenticationService
 
     async registerConfirm(registerConfirmDto: RegisterConfirmDto)
     {
-        await this.otpService.confirmWithPassword(
+        const user = await this.otpService.confirmWithPassword(
             registerConfirmDto.createTryId,
             registerConfirmDto.otpCode,
-            registerConfirmDto.password
+            registerConfirmDto.password,
         );
 
 
         // return sessionToken, refreshToken, expiresIn
 
-        return '';
+        return this.generateTokens(user);
     }
 
 
@@ -125,9 +125,10 @@ export class AuthenticationService
     async generateTokens(user: User)
     {
         const refreshTokenId = randomUUID();
-        const [ accessToken, refreshToken ] = await Promise.all([
+        const [ sessionToken, refreshToken ] = await Promise.all([
             this.signToken<Partial<ActiveUserData>>(
                 user.id,
+                appConfig().jwt.accessTokenSecret,
                 appConfig().jwt.accessTokenTtl,
                 {
                     email: user.email,
@@ -136,6 +137,7 @@ export class AuthenticationService
             ),
             this.signToken(
                 user.id,
+                appConfig().jwt.refreshTokenSecret,
                 appConfig().jwt.refreshTokenTtl,
                 { refreshTokenId }
             ),
@@ -144,12 +146,13 @@ export class AuthenticationService
         await this.refreshTokenIdsStorage.insert(user.id, refreshTokenId);
 
         return {
-            accessToken,
+            sessionToken,
             refreshToken,
+            expiresIn: appConfig().jwt.accessTokenTtl,
         };
     }
 
-    private signToken<T>(userId: number, expiresIn: number, payload?: T)
+    private signToken<T>(userId: number, secret: string, expiresIn: number, payload?: T)
     {
         return this.jwtService.signAsync(
             {
@@ -157,10 +160,10 @@ export class AuthenticationService
                 ...payload
             },
             {
+                secret,
+                expiresIn,
                 audience: appConfig().jwt.audience,
                 issuer: appConfig().jwt.issuer,
-                secret: appConfig().jwt.secret,
-                expiresIn,
             }
         );
     }
@@ -176,28 +179,15 @@ export class AuthenticationService
                 (
                     refreshTokenDto.refreshToken,
                     {
-                        secret: appConfig().jwt.secret,
+                        secret: appConfig().jwt.refreshTokenSecret,
                         audience: appConfig().jwt.audience,
                         issuer: appConfig().jwt.issuer,
                     }
                 );
 
             const user = await this.usersRepository.findOneByOrFail({ id: sub });
-            const isValid = await this.refreshTokenIdsStorage.validate(user.id, refreshTokenId);
-
-            /**
-             * Custom Note: if clause may not be needed as this.refreshTokenIdsStorage.validate
-             * throws error if something is wrong
-             * We can easily call this.refreshTokenIdsStorage.invalidate after that
-             */
-            if (isValid)
-            {
-                await this.refreshTokenIdsStorage.invalidate(user.id);
-            }
-            else
-            {
-                throw new Error('Refresh token is invalid');
-            }
+            await this.refreshTokenIdsStorage.validate(user.id, refreshTokenId);
+            await this.refreshTokenIdsStorage.remove(user.id);
 
             return this.generateTokens(user);
         }
