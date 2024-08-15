@@ -94,6 +94,8 @@ export class OneTimePasswordService
         {
             throw new BadRequestException();
         }
+
+        return parent.user;
     }
 
     async findOne(id: string)
