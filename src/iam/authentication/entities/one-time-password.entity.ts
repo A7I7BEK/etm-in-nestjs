@@ -1,5 +1,5 @@
-import { User } from 'src/users/entities/user.entity';
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, Relation } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { OneTimePasswordParent } from './one-time-password-parent.entity';
 
 @Entity()
 export class OneTimePassword
@@ -7,11 +7,8 @@ export class OneTimePassword
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column('uuid')
-    otpId: string;
-
     @Column()
-    otpCode: string;
+    code: string;
 
     @Column()
     expireTime: string;
@@ -19,7 +16,6 @@ export class OneTimePassword
     @Column({ default: false })
     used: boolean;
 
-    @OneToOne(type => User)
-    @JoinColumn()
-    user: Relation<User>;
+    @ManyToOne(type => OneTimePasswordParent, parent => parent.children)
+    parent: OneTimePasswordParent;
 }
