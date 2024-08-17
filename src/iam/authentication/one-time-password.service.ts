@@ -75,10 +75,13 @@ export class OneTimePasswordService
             code,
         });
 
-        if (!otpEntity && otpEntity.used && Number(otpEntity.expireTime) < Date.now())
+        if (!otpEntity || otpEntity.used || Number(otpEntity.expireTime) < Date.now())
         {
             throw new BadRequestException();
         }
+
+        otpEntity.used = true;
+        await this.otpRepository.save(otpEntity);
     }
 
     async confirmWithPassword(id: string, code: string, password: string)
