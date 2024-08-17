@@ -77,17 +77,17 @@ export class AuthenticationService
 
 
         const { id, code } = await this.otpService.send(user);
-        this.mailService.sendOtpCode(user, code);
+        // this.mailService.sendOtpCode(user, code);
 
         return { id };
     }
 
     async registerResend(id: string)
     {
-        const parent = await this.otpService.findOneParent(id);
+        const otpParent = await this.otpService.findOneParent(id);
 
-        const { code } = await this.otpService.resend(parent);
-        this.mailService.sendOtpCode(parent.user, code);
+        const { code } = await this.otpService.resend(otpParent);
+        // this.mailService.sendOtpCode(otpParent.user, code);
     }
 
     async registerConfirm(registerConfirmDto: RegisterConfirmDto)
