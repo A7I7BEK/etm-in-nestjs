@@ -39,13 +39,13 @@ export class OneTimePasswordService
         const otpParent = new OneTimePasswordParent();
         otpParent.uniqueId = otpId;
         otpParent.user = user;
-        this.otpParentRepository.save(otpParent);
+        await this.otpParentRepository.save(otpParent);
 
         const otpEntity = new OneTimePassword();
         otpEntity.code = otpCode;
         otpEntity.expireTime = this.generateTime();
         otpEntity.parent = otpParent;
-        this.otpRepository.save(otpEntity);
+        await this.otpRepository.save(otpEntity);
 
         return {
             id: otpId,
@@ -61,7 +61,7 @@ export class OneTimePasswordService
         otpEntity.code = otpCode;
         otpEntity.expireTime = this.generateTime();
         otpEntity.parent = otpParent;
-        this.otpRepository.save(otpEntity);
+        await this.otpRepository.save(otpEntity);
 
         return {
             code: otpCode,
