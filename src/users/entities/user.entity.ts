@@ -1,7 +1,8 @@
 import { Employee } from 'src/employees/entities/employee.entity';
 import { Organization } from 'src/organizations/entities/organization.entity';
-import { Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn, Relation } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, Relation } from 'typeorm';
 import { Role } from '../enums/role.enum';
+import { LANGUAGE_LIST } from '../language/language.constant';
 
 @Entity()
 export class User
@@ -26,6 +27,9 @@ export class User
 
     @Column({ default: false })
     systemAdmin: boolean;
+
+    @Column({ default: LANGUAGE_LIST[ 0 ].code })
+    language: string;
 
     @Column({ enum: Role, default: Role.Regular })
     role: Role;
