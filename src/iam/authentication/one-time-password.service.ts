@@ -36,17 +36,16 @@ export class OneTimePasswordService
         const otpId = randomUUID();
         const otpCode = this.generateCode();
 
-        this.otpParentRepository.save({
-            uniqueId: otpId,
-            user,
-            otp: [
-                await this.otpRepository.save({
-                    code: otpCode,
-                    expireTime: this.generateTime(),
-                }),
-            ],
-        });
+        const otpParent = new OneTimePasswordParent();
+        otpParent.uniqueId = otpId;
+        otpParent.user = user;
+        this.otpParentRepository.save(otpParent);
 
+        const otpEntity = new OneTimePassword();
+        otpEntity.code = otpCode;
+        otpEntity.expireTime = this.generateTime();
+        otpEntity.parent = otpParent;
+        this.otpRepository.save(otpEntity);
 
         return {
             id: otpId,
@@ -58,12 +57,11 @@ export class OneTimePasswordService
     {
         const otpCode = this.generateCode();
 
-        this.otpRepository.save({
-            code: otpCode,
-            expireTime: this.generateTime(),
-            parent: otpParent,
-        });
-
+        const otpEntity = new OneTimePassword();
+        otpEntity.code = otpCode;
+        otpEntity.expireTime = this.generateTime();
+        otpEntity.parent = otpParent;
+        this.otpRepository.save(otpEntity);
 
         return {
             code: otpCode,
@@ -87,15 +85,15 @@ export class OneTimePasswordService
     {
         await this.confirm(id, code);
 
-        const parent = await this.findOneParent(id);
-        const isEqual = await this.hashingService.compare(password, parent.user.password);
+        const otpParent = await this.findOneParent(id);
+        const isEqual = await this.hashingService.compare(password, otpParent.user.password);
 
         if (!isEqual)
         {
             throw new BadRequestException();
         }
 
-        return parent.user;
+        return otpParent.user;
     }
 
     async findOneParent(id: string)
