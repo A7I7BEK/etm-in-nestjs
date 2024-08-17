@@ -98,6 +98,9 @@ export class AuthenticationService
             registerConfirmDto.password,
         );
 
+        user.active = true;
+        await this.usersRepository.save(user);
+
         return this.generateTokens(user);
     }
 
