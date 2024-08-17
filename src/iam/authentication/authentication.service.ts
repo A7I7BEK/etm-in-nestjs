@@ -84,7 +84,7 @@ export class AuthenticationService
 
     async registerResend(id: string)
     {
-        const parent = await this.otpService.findOne(id);
+        const parent = await this.otpService.findOneParent(id);
 
         const { code } = await this.otpService.resend(parent);
         this.mailService.sendOtpCode(parent.user, code);

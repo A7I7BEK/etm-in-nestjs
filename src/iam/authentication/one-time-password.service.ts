@@ -87,7 +87,7 @@ export class OneTimePasswordService
     {
         await this.confirm(id, code);
 
-        const parent = await this.findOne(id);
+        const parent = await this.findOneParent(id);
         const isEqual = await this.hashingService.compare(password, parent.user.password);
 
         if (!isEqual)
@@ -98,7 +98,7 @@ export class OneTimePasswordService
         return parent.user;
     }
 
-    async findOne(id: string)
+    async findOneParent(id: string)
     {
         const entity = await this.otpParentRepository.findOneBy({ uniqueId: id });
 
