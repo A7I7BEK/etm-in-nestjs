@@ -121,6 +121,11 @@ export class AuthenticationService
             throw error;
         }
 
+        if (!user.active)
+        {
+            throw error;
+        }
+
         return this.generateTokens(user);
     }
 
