@@ -1,19 +1,20 @@
+import { Language } from './language.enum';
 import { ILanguage } from './language.interface';
 
 export const LANGUAGE_LIST: ILanguage[] = [
     {
-        code: 'en',
+        code: Language.English,
         name: 'English',
     },
     {
-        code: 'uz',
+        code: Language.Uzbek,
         name: 'Uzbek',
     },
     {
-        code: 'ru',
+        code: Language.Russian,
         name: 'Russian',
     },
 ];
 
 
-export const LANGUAGE_DEFAULT: ILanguage = LANGUAGE_LIST.find(lang => lang.code = 'en');
+export const LANGUAGE_DEFAULT: ILanguage = LANGUAGE_LIST.find(lang => lang.code = Language.English);
