@@ -1,12 +1,14 @@
+import { Language } from './language.enum';
+
 export interface ILanguage
 {
     /**
      * The code of Language
      */
-    code: string;
+    code: Language;
 
     /**
      * The name of Language
      */
-    name: string;
+    name: keyof typeof Language;
 }
