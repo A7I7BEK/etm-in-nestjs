@@ -14,3 +14,6 @@ export const LANGUAGE_LIST: ILanguage[] = [
         name: 'Russian',
     },
 ];
+
+
+export const LANGUAGE_DEFAULT: ILanguage = LANGUAGE_LIST.find(lang => lang.code = 'en');
