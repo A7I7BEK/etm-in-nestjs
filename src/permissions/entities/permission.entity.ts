@@ -1,3 +1,4 @@
+import { PermissionType } from 'src/iam/authorization/permission.type';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
@@ -10,5 +11,5 @@ export class Permission
     name: string;
 
     @Column({ unique: true })
-    codeName: string;
+    codeName: PermissionType;
 }
