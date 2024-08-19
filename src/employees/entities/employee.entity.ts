@@ -22,7 +22,7 @@ export class Employee
     @Column({ nullable: true })
     photoUrl: string;
 
-    @OneToOne(type => User, user => user.employee)
     @JoinColumn()
+    @OneToOne(type => User, user => user.employee)
     user: Relation<User>;
 }

@@ -1,5 +1,5 @@
 import { User } from 'src/users/entities/user.entity';
-import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, Relation } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { OneTimePassword } from './one-time-password.entity';
 
 @Entity()
@@ -14,7 +14,6 @@ export class OneTimePasswordParent
     @OneToMany(type => OneTimePassword, children => children.parent)
     children: OneTimePassword[];
 
-    @OneToOne(type => User, { eager: true })
-    @JoinColumn()
-    user: Relation<User>;
+    @ManyToOne(type => User, { eager: true })
+    user: User;
 }

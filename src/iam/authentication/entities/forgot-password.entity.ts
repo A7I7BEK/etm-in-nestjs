@@ -1,5 +1,5 @@
 import { User } from 'src/users/entities/user.entity';
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, Relation } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class ForgotPassword
@@ -16,7 +16,6 @@ export class ForgotPassword
     @Column({ default: false })
     used: boolean;
 
-    @OneToOne(type => User)
-    @JoinColumn()
-    user: Relation<User>;
+    @ManyToOne(type => User, { eager: true })
+    user: User;
 }
