@@ -7,7 +7,7 @@ export class Permission
     id: number;
 
     @Column()
-    roleName: string;
+    name: string;
 
     @Column({ unique: true })
     codeName: string;
