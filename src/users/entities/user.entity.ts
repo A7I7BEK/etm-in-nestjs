@@ -1,7 +1,7 @@
 import { Employee } from 'src/employees/entities/employee.entity';
 import { Organization } from 'src/organizations/entities/organization.entity';
-import { Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn, Relation } from 'typeorm';
-import { Role } from '../enums/role.enum';
+import { Role } from 'src/roles/entities/role.entity';
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToOne, PrimaryGeneratedColumn, Relation } from 'typeorm';
 import { LANGUAGE_DEFAULT } from '../language/language.constants';
 import { ILanguage } from '../language/language.interface';
 
@@ -32,8 +32,9 @@ export class User
     @Column({ default: LANGUAGE_DEFAULT, type: 'json' })
     language: ILanguage;
 
-    @Column({ enum: Role, default: Role.Regular })
-    role: Role;
+    @JoinTable()
+    @ManyToMany(type => Role, role => role.users)
+    roles: Role[];
 
     @ManyToOne(type => Organization, organization => organization.users)
     organization: Organization;

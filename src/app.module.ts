@@ -9,6 +9,7 @@ import { ResourceModule } from './resource/resource.module';
 import { UsersModule } from './users/users.module';
 import { MailModule } from './mail/mail.module';
 import { RolesModule } from './roles/roles.module';
+import { PermissionsModule } from './permissions/permissions.module';
 
 @Module({
     imports: [
@@ -37,6 +38,7 @@ import { RolesModule } from './roles/roles.module';
         EmployeesModule,
         MailModule,
         RolesModule,
+        PermissionsModule,
     ],
 })
 export class AppModule { }
