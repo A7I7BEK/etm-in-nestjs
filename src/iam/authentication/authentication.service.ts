@@ -75,6 +75,8 @@ export class AuthenticationService
             }),
         });
 
+        // TODO: create admin role and attach into user
+
 
         const { id, code } = await this.otpService.send(user);
         // this.mailService.sendOtpCode(user, code);
@@ -121,6 +123,7 @@ export class AuthenticationService
             throw error;
         }
 
+        // TODO: check for role existance
         if (!user.active)
         {
             throw error;
@@ -139,7 +142,7 @@ export class AuthenticationService
                 appConfig().jwt.accessTokenTtl,
                 {
                     email: user.email,
-                    role: user.role,
+                    roles: user.roles,
                 }
             ),
             this.signToken(

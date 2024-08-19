@@ -17,7 +17,7 @@ import { AuthenticationGuard } from './authentication/guards/authentication.guar
 import { OneTimePasswordService } from './authentication/one-time-password.service';
 import { RefreshTokenIdsStorage } from './authentication/refresh-token-ids.storage';
 import { UserSerializer } from './authentication/serializers/user-serializer';
-import { RolesGuard } from './authorization/guards/roles.guard';
+import { PermissionsGuard } from './authorization/guards/permissions.guard';
 import { BcryptService } from './hashing/bcrypt.service';
 import { HashingService } from './hashing/hashing.service';
 
@@ -52,7 +52,7 @@ import { HashingService } from './hashing/hashing.service';
         },
         {
             provide: APP_GUARD,
-            useClass: RolesGuard,
+            useClass: PermissionsGuard,
         },
         AccessTokenGuard,
         RefreshTokenIdsStorage,

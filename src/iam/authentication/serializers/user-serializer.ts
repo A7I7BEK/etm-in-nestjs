@@ -9,7 +9,7 @@ export class UserSerializer extends PassportSerializer
         done(null, {
             sub: user.id,
             email: user.email,
-            role: user.role,
+            roles: user.roles,
         });
     }
 

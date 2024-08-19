@@ -1,4 +1,4 @@
-import { Role } from 'src/users/enums/role.enum';
+import { Role } from 'src/roles/entities/role.entity';
 
 export interface ActiveUserData
 {
@@ -14,7 +14,7 @@ export interface ActiveUserData
     email: string;
 
     /**
-     * The subject's (user) role.
+     * The subject's (user) roles.
      */
-    role: Role;
+    roles: Role[];
 }
