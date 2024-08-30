@@ -15,6 +15,7 @@ import { MailService } from './mail.service';
                 return {
                     transport: {
                         host: appConfig().mail.host,
+                        port: appConfig().mail.port,
                         secure: isProduction,
                         auth: {
                             user: appConfig().mail.user,
