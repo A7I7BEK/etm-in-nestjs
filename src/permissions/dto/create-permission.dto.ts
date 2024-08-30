@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
+import { PermissionType } from 'src/iam/authorization/permission.type';
 
 export class CreatePermissionDto
 {
@@ -11,5 +12,5 @@ export class CreatePermissionDto
     @ApiProperty({ example: 'TASK_UPDATE' })
     @IsString()
     @IsNotEmpty()
-    codeName: string;
+    codeName: PermissionType;
 }
