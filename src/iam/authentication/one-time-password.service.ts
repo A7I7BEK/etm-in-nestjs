@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { randomUUID } from 'crypto';
+import { MailService } from 'src/mail/mail.service';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { HashingService } from '../hashing/hashing.service';
@@ -16,6 +17,7 @@ export class OneTimePasswordService
         @InjectRepository(OneTimePassword)
         private readonly otpRepository: Repository<OneTimePassword>,
         private readonly hashingService: HashingService,
+        private readonly mailService: MailService,
     ) { }
 
     private generateCode()
@@ -47,14 +49,15 @@ export class OneTimePasswordService
         otpEntity.parent = otpParent;
         await this.otpRepository.save(otpEntity);
 
-        return {
-            id: otpId,
-            code: otpCode,
-        };
+        await this.mailService.sendOtpCode(user, otpCode);
+
+        return { id: otpId };
     }
 
-    async resend(otpParent: OneTimePasswordParent)
+    async resend(id: string)
     {
+        const otpParent = await this.findOneParent(id);
+
         const otpCode = this.generateCode();
 
         const otpEntity = new OneTimePassword();
@@ -63,9 +66,7 @@ export class OneTimePasswordService
         otpEntity.parent = otpParent;
         await this.otpRepository.save(otpEntity);
 
-        return {
-            code: otpCode,
-        };
+        await this.mailService.sendOtpCode(otpParent.user, otpCode);
     }
 
     async confirm(id: string, code: string)

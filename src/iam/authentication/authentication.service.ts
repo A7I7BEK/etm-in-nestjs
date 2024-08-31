@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { randomUUID } from 'crypto';
 import appConfig from 'src/common/config/app.config';
 import { Employee } from 'src/employees/entities/employee.entity';
-import { MailService } from 'src/mail/mail.service';
 import { Organization } from 'src/organizations/entities/organization.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
@@ -31,7 +30,6 @@ export class AuthenticationService
         private readonly jwtService: JwtService,
         private readonly refreshTokenIdsStorage: RefreshTokenIdsStorage,
         private readonly otpService: OneTimePasswordService,
-        private readonly mailService: MailService,
     ) { }
 
     async register(registerDto: RegisterDto)
@@ -78,18 +76,13 @@ export class AuthenticationService
         // TODO: create admin role and attach into user
 
 
-        const { id, code } = await this.otpService.send(user);
-        // this.mailService.sendOtpCode(user, code);
 
-        return { id };
+        return this.otpService.send(user);
     }
 
     async registerResend(id: string)
     {
-        const otpParent = await this.otpService.findOneParent(id);
-
-        const { code } = await this.otpService.resend(otpParent);
-        // this.mailService.sendOtpCode(otpParent.user, code);
+        await this.otpService.resend(id);
     }
 
     async registerConfirm(registerConfirmDto: RegisterConfirmDto)
