@@ -13,35 +13,35 @@ export class OrganizationsController
     constructor (private readonly organizationsService: OrganizationsService) { }
 
     @Post()
-    @Permissions(OrganizationsPermission.OrganizationCreate)
+    @Permissions(OrganizationsPermission.Create)
     create(@Body() createOrganizationDto: CreateOrganizationDto)
     {
         return this.organizationsService.create(createOrganizationDto);
     }
 
     @Get()
-    @Permissions(OrganizationsPermission.OrganizationRead)
+    @Permissions(OrganizationsPermission.Read)
     findAll()
     {
         return this.organizationsService.findAll();
     }
 
     @Get(':id')
-    @Permissions(OrganizationsPermission.OrganizationRead)
+    @Permissions(OrganizationsPermission.Read)
     findOne(@Param('id') id: string)
     {
         return this.organizationsService.findOne(+id);
     }
 
     @Put(':id')
-    @Permissions(OrganizationsPermission.OrganizationUpdate)
+    @Permissions(OrganizationsPermission.Update)
     update(@Param('id') id: string, @Body() updateOrganizationDto: UpdateOrganizationDto)
     {
         return this.organizationsService.update(+id, updateOrganizationDto);
     }
 
     @Delete(':id')
-    @Permissions(OrganizationsPermission.OrganizationDelete)
+    @Permissions(OrganizationsPermission.Delete)
     remove(@Param('id') id: string)
     {
         return this.organizationsService.remove(+id);
