@@ -1,8 +1,8 @@
 export enum EmployeesPermission
 {
-    EmployeeCreate = 'EMPLOYEE_CREATE',
-    EmployeeRead = 'EMPLOYEE_READ',
-    EmployeeUpdate = 'EMPLOYEE_UPDATE',
-    EmployeeDelete = 'EMPLOYEE_DELETE',
-    EmployeePasswordChange = 'EMPLOYEE_PASSWORD_CHANGE',
+    Create = 'EMPLOYEE_CREATE',
+    Read = 'EMPLOYEE_READ',
+    Update = 'EMPLOYEE_UPDATE',
+    Delete = 'EMPLOYEE_DELETE',
+    PasswordChange = 'EMPLOYEE_PASSWORD_CHANGE',
 }

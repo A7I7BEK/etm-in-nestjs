@@ -13,35 +13,35 @@ export class EmployeesController
     constructor (private readonly employeesService: EmployeesService) { }
 
     @Post()
-    @Permissions(EmployeesPermission.EmployeeCreate)
+    @Permissions(EmployeesPermission.Create)
     create(@Body() createEmployeeDto: CreateEmployeeDto)
     {
         return this.employeesService.create(createEmployeeDto);
     }
 
     @Get()
-    @Permissions(EmployeesPermission.EmployeeRead)
+    @Permissions(EmployeesPermission.Read)
     findAll()
     {
         return this.employeesService.findAll();
     }
 
     @Get(':id')
-    @Permissions(EmployeesPermission.EmployeeRead)
+    @Permissions(EmployeesPermission.Read)
     findOne(@Param('id') id: string)
     {
         return this.employeesService.findOne(+id);
     }
 
     @Put(':id')
-    @Permissions(EmployeesPermission.EmployeeUpdate)
+    @Permissions(EmployeesPermission.Update)
     update(@Param('id') id: string, @Body() updateEmployeeDto: UpdateEmployeeDto)
     {
         return this.employeesService.update(+id, updateEmployeeDto);
     }
 
     @Delete(':id')
-    @Permissions(EmployeesPermission.EmployeeDelete)
+    @Permissions(EmployeesPermission.Delete)
     remove(@Param('id') id: string)
     {
         return this.employeesService.remove(+id);
