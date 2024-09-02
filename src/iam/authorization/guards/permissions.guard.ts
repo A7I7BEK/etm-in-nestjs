@@ -3,9 +3,8 @@ import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
 import { REQUEST_USER_KEY } from 'src/iam/iam.constants';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { PERMISSIONS_KEY } from '../decorators/permissions.decorator';
-import { PermissionType } from '../permission.type';
 import { Permission } from 'src/permissions/entities/permission.entity';
+import { PERMISSION_TYPE_KEY, PermissionType } from '../permission.constants';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate
@@ -16,7 +15,7 @@ export class PermissionsGuard implements CanActivate
 
     canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean>
     {
-        const contextPermissions = this.reflector.getAllAndOverride<PermissionType[]>(PERMISSIONS_KEY, [
+        const contextPermissions = this.reflector.getAllAndOverride<PermissionType[]>(PERMISSION_TYPE_KEY, [
             context.getHandler(),
             context.getClass(),
         ]);
