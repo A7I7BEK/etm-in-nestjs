@@ -1,4 +1,4 @@
-import { PermissionType } from 'src/iam/authorization/permission.type';
+import { PermissionType } from 'src/iam/authorization/permission.constants';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
