@@ -16,7 +16,7 @@ export class Role
     codeName: string;
 
     @JoinTable()
-    @ManyToMany(type => Permission)
+    @ManyToMany(type => Permission, { eager: true })
     permissions: Permission[];
 
     @ManyToMany(type => User, user => user.roles)
