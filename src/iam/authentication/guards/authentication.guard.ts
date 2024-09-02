@@ -1,8 +1,8 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { AccessTokenGuard } from './access-token.guard';
-import { AuthType } from '../enums/auth-type.enum';
 import { AUTH_TYPE_KEY } from '../decorators/auth.decorator';
+import { AuthType } from '../enums/auth-type.enum';
+import { AccessTokenGuard } from './access-token.guard';
 
 @Injectable()
 export class AuthenticationGuard implements CanActivate
@@ -21,10 +21,10 @@ export class AuthenticationGuard implements CanActivate
     async canActivate(context: ExecutionContext): Promise<boolean>
     {
         const authTypes = this.reflector.
-            getAllAndOverride<AuthType[]>(
-                AUTH_TYPE_KEY,
-                [ context.getHandler(), context.getClass() ],
-            )
+            getAllAndOverride<AuthType[]>(AUTH_TYPE_KEY, [
+                context.getHandler(),
+                context.getClass()
+            ])
             ??
             [ AuthenticationGuard.defaultAuthType ];
 
