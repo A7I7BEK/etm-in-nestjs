@@ -7,7 +7,7 @@ import { Permission } from 'src/permissions/entities/permission.entity';
 import { PERMISSION_TYPE_KEY, PermissionType } from '../permission.constants';
 
 @Injectable()
-export class PermissionsGuard implements CanActivate
+export class PermissionGuard implements CanActivate
 {
     constructor (
         private readonly reflector: Reflector,

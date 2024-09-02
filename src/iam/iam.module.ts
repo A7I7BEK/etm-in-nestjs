@@ -17,7 +17,7 @@ import { AuthenticationGuard } from './authentication/guards/authentication.guar
 import { OneTimePasswordService } from './authentication/one-time-password.service';
 import { RefreshTokenIdsStorage } from './authentication/refresh-token-ids.storage';
 import { UserSerializer } from './authentication/serializers/user-serializer';
-import { PermissionsGuard } from './authorization/guards/permissions.guard';
+import { PermissionGuard } from './authorization/guards/permission.guard';
 import { BcryptService } from './hashing/bcrypt.service';
 import { HashingService } from './hashing/hashing.service';
 
@@ -52,7 +52,7 @@ import { HashingService } from './hashing/hashing.service';
         },
         {
             provide: APP_GUARD,
-            useClass: PermissionsGuard,
+            useClass: PermissionGuard,
         },
         AccessTokenGuard,
         RefreshTokenIdsStorage,
@@ -62,6 +62,4 @@ import { HashingService } from './hashing/hashing.service';
     ],
     controllers: [ AuthenticationController ]
 })
-
-// Identity and Access Management (IAM)
 export class IamModule { }
