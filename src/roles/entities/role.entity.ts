@@ -12,7 +12,7 @@ export class Role
     @Column()
     roleName: string;
 
-    @Column({ unique: true })
+    @Column()
     codeName: string;
 
     @JoinTable()
