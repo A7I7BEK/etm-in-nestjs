@@ -5,10 +5,12 @@ import { randomUUID } from 'crypto';
 import appConfig from 'src/common/config/app.config';
 import { Employee } from 'src/employees/entities/employee.entity';
 import { Organization } from 'src/organizations/entities/organization.entity';
+import { OrganizationsPermission } from 'src/organizations/enums/organizations-permission.enum';
 import { Permission } from 'src/permissions/entities/permission.entity';
+import { PermissionsPermission } from 'src/permissions/enums/permissions-permission.enum';
 import { Role } from 'src/roles/entities/role.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Repository } from 'typeorm';
+import { And, Equal, ILike, Not, Repository } from 'typeorm';
 import { HashingService } from '../hashing/hashing.service';
 import { ActiveUserData } from '../interfaces/active-user-data.interface';
 import { LoginDto } from './dto/login.dto';
@@ -65,16 +67,27 @@ export class AuthenticationService
         }
 
 
-        const orgEntity = new Organization();
-        orgEntity.name = registerDto.organizationName;
-        await this.organizationsRepository.save(orgEntity);
-
         const ROLE_ADMIN = 'ADMIN';
+        const [ organizationWord ] = OrganizationsPermission.Create.split('_');
+        const adminPermissions = await this.permissionsRepository.findBy({
+            name: Not(ILike(`${organizationWord}%`)),
+            codeName: And(
+                Not(Equal(PermissionsPermission.Create)),
+                Not(Equal(PermissionsPermission.Update)),
+                Not(Equal(PermissionsPermission.Delete)),
+            ),
+        });
+
+
+        const organizationEntity = new Organization();
+        organizationEntity.name = registerDto.organizationName;
+        await this.organizationsRepository.save(organizationEntity);
+
         const roleEntity = new Role();
         roleEntity.roleName = ROLE_ADMIN.toLocaleLowerCase();
         roleEntity.codeName = ROLE_ADMIN;
-        roleEntity.permissions = await this.permissionsRepository.find();
-        roleEntity.organization = orgEntity;
+        roleEntity.permissions = adminPermissions;
+        roleEntity.organization = organizationEntity;
         await this.rolesRepository.save(roleEntity);
 
         const user = await this.usersRepository.save({
@@ -86,12 +99,12 @@ export class AuthenticationService
                 firstName: registerDto.firstName,
                 lastName: registerDto.lastName,
             }),
-            organization: orgEntity,
+            organization: organizationEntity,
             roles: [ roleEntity ],
         });
 
 
-        return this.otpService.send(user);
+        return this.otpService.send(user);//
     }
 
     async registerResend(id: string)
