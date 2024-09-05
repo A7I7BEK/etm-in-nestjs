@@ -104,7 +104,7 @@ export class AuthenticationService
         });
 
 
-        return this.otpService.send(user);//
+        return this.otpService.send(user);
     }
 
     async registerResend(id: string)

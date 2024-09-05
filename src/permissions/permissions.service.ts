@@ -1,42 +1,17 @@
-import { Injectable, NotFoundException, OnApplicationBootstrap } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { permissionList } from 'src/iam/authorization/permission.constants';
 import { Repository } from 'typeorm';
 import { CreatePermissionDto } from './dto/create-permission.dto';
 import { UpdatePermissionDto } from './dto/update-permission.dto';
 import { Permission } from './entities/permission.entity';
 
 @Injectable()
-export class PermissionsService implements OnApplicationBootstrap
+export class PermissionsService
 {
     constructor (
         @InjectRepository(Permission)
         private readonly permissionsRepository: Repository<Permission>,
-    )
-    { }
-
-    async onApplicationBootstrap()
-    {
-        const permissions = permissionList.map(perm => ({
-            name: perm,
-            codeName: perm
-        }));
-
-        try
-        {
-            await this.permissionsRepository.delete({});
-            await this.permissionsRepository
-                .createQueryBuilder()
-                .insert()
-                .values(permissions)
-                .orIgnore()
-                .execute();
-        }
-        catch (error)
-        {
-            console.log('PERMISSION_INSERT', error);
-        }
-    }
+    ) { }
 
     create(createPermissionDto: CreatePermissionDto)
     {
