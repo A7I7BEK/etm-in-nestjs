@@ -130,7 +130,6 @@ export class AuthenticationService
             throw error;
         }
 
-        // TODO: check for role existance
         if (!user.active)
         {
             throw error;
@@ -142,6 +141,7 @@ export class AuthenticationService
     async generateTokens(user: User)
     {
         const refreshTokenId = randomUUID();
+
         const [ sessionToken, refreshToken ] = await Promise.all([
             this.signToken<Partial<ActiveUserData>>(
                 user.id,
