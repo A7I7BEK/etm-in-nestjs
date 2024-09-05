@@ -5,4 +5,5 @@ export enum EmployeesPermission
     Update = 'EMPLOYEE_UPDATE',
     Delete = 'EMPLOYEE_DELETE',
     PasswordChange = 'EMPLOYEE_PASSWORD_CHANGE',
+    ProfileUpdate = 'EMPLOYEE_PROFILE_UPDATE',
 }
