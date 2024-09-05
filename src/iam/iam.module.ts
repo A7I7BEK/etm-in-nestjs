@@ -6,6 +6,7 @@ import appConfig from 'src/common/config/app.config';
 import { Employee } from 'src/employees/entities/employee.entity';
 import { MailModule } from 'src/mail/mail.module';
 import { Organization } from 'src/organizations/entities/organization.entity';
+import { Permission } from 'src/permissions/entities/permission.entity';
 import { Role } from 'src/roles/entities/role.entity';
 import { User } from 'src/users/entities/user.entity';
 import { AuthenticationController } from './authentication/authentication.controller';
@@ -29,6 +30,7 @@ import { HashingService } from './hashing/hashing.service';
             User,
             Employee,
             Role,
+            Permission,
             OneTimePasswordParent,
             OneTimePassword,
             ForgotPassword,

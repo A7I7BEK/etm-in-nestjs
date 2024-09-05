@@ -5,6 +5,8 @@ import { randomUUID } from 'crypto';
 import appConfig from 'src/common/config/app.config';
 import { Employee } from 'src/employees/entities/employee.entity';
 import { Organization } from 'src/organizations/entities/organization.entity';
+import { Permission } from 'src/permissions/entities/permission.entity';
+import { Role } from 'src/roles/entities/role.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { HashingService } from '../hashing/hashing.service';
@@ -26,6 +28,10 @@ export class AuthenticationService
         private readonly usersRepository: Repository<User>,
         @InjectRepository(Employee)
         private readonly employeesRepository: Repository<Employee>,
+        @InjectRepository(Role)
+        private readonly rolesRepository: Repository<Role>,
+        @InjectRepository(Permission)
+        private readonly permissionsRepository: Repository<Permission>,
         private readonly hashingService: HashingService,
         private readonly jwtService: JwtService,
         private readonly refreshTokenIdsStorage: RefreshTokenIdsStorage,
@@ -59,6 +65,18 @@ export class AuthenticationService
         }
 
 
+        const orgEntity = new Organization();
+        orgEntity.name = registerDto.organizationName;
+        await this.organizationsRepository.save(orgEntity);
+
+        const ROLE_ADMIN = 'ADMIN';
+        const roleEntity = new Role();
+        roleEntity.roleName = ROLE_ADMIN.toLocaleLowerCase();
+        roleEntity.codeName = ROLE_ADMIN;
+        roleEntity.permissions = await this.permissionsRepository.find();
+        roleEntity.organization = orgEntity;
+        await this.rolesRepository.save(roleEntity);
+
         const user = await this.usersRepository.save({
             userName: registerDto.userName,
             password: await this.hashingService.hash(registerDto.password),
@@ -68,13 +86,9 @@ export class AuthenticationService
                 firstName: registerDto.firstName,
                 lastName: registerDto.lastName,
             }),
-            organization: await this.organizationsRepository.save({
-                name: registerDto.organizationName,
-            }),
+            organization: orgEntity,
+            roles: [ roleEntity ],
         });
-
-        // TODO: create admin role and attach into user
-
 
 
         return this.otpService.send(user);
