@@ -9,6 +9,7 @@ export default () =>
             name: process.env.APP_NAME,
             prefix: process.env.API_PREFIX,
             lang: process.env.APP_DEFAULT_LANGUAGE,
+            role: process.env.APP_DEFAULT_ROLE,
         },
         admin: {
             orgName: process.env.ADMIN_ORG_NAME,

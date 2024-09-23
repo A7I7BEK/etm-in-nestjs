@@ -67,7 +67,6 @@ export class AuthenticationService
         }
 
 
-        const ROLE_ADMIN = 'ADMIN';
         const [ organizationWord ] = OrganizationsPermission.Create.split('_');
         const adminPermissions = await this.permissionsRepository.findBy({
             name: Not(ILike(`${organizationWord}%`)),
@@ -84,8 +83,8 @@ export class AuthenticationService
         await this.organizationsRepository.save(organizationEntity);
 
         const roleEntity = new Role();
-        roleEntity.roleName = ROLE_ADMIN.toLocaleLowerCase();
-        roleEntity.codeName = ROLE_ADMIN;
+        roleEntity.roleName = appConfig().application.role.toLocaleLowerCase();
+        roleEntity.codeName = appConfig().application.role;
         roleEntity.permissions = adminPermissions;
         roleEntity.organization = organizationEntity;
         await this.rolesRepository.save(roleEntity);
