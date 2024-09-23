@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { CheckListGroupsService } from './check-list-groups.service';
 import { CreateCheckListGroupDto } from './dto/create-check-list-group.dto';
 import { UpdateCheckListGroupDto } from './dto/update-check-list-group.dto';
@@ -26,7 +26,7 @@ export class CheckListGroupsController
         return this.checkListGroupsService.findOne(+id);
     }
 
-    @Patch(':id')
+    @Put(':id')
     update(@Param('id') id: string, @Body() updateCheckListGroupDto: UpdateCheckListGroupDto)
     {
         return this.checkListGroupsService.update(+id, updateCheckListGroupDto);

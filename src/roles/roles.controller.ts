@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
 import { CreateRoleDto } from './dto/create-role.dto';
@@ -33,7 +33,7 @@ export class RolesController
         return this.rolesService.findOne(+id);
     }
 
-    @Patch(':id')
+    @Put(':id')
     @Permission(RolesPermission.Update)
     update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto)
     {
