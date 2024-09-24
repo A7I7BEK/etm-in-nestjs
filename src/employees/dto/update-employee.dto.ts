@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDate, IsInstance, IsNotEmpty, IsOptional, IsPositive, IsString } from 'class-validator';
+import { IsDate, IsNotEmpty, IsOptional, IsPositive, IsString, ValidateNested } from 'class-validator';
+import { ObjectIdDto } from 'src/common/dto/object-id.dto';
 import { UpdateUserDto } from 'src/users/dto/update-user.dto';
-import { ResourceFileDto } from './resource-file.dto';
 
 export class UpdateEmployeeDto
 {
@@ -27,9 +27,9 @@ export class UpdateEmployeeDto
     @IsOptional()
     birthDate?: Date;
 
-    @IsInstance(ResourceFileDto)
-    resourceFile: ResourceFileDto;
+    @ValidateNested()
+    resourceFile: ObjectIdDto;
 
-    @IsInstance(UpdateUserDto)
+    @ValidateNested()
     user: UpdateUserDto;
 }
