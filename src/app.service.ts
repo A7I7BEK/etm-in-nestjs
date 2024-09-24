@@ -35,18 +35,25 @@ export class AppService implements OnApplicationBootstrap
 
     async clearAndInsertPermissions()
     {
-        const permissions = permissionList.map(perm => ({
-            name: perm,
-            codeName: perm,
-        }));
+        try
+        {
+            const permissions = permissionList.map(perm => ({
+                name: perm,
+                codeName: perm,
+            }));
 
-        // await this.permissionsRepository.delete({});
-        await this.permissionsRepository
-            .createQueryBuilder()
-            .insert()
-            .values(permissions)
-            .orIgnore()
-            .execute();
+            // await this.permissionsRepository.delete({}); // if deleted, roles crash
+            await this.permissionsRepository
+                .createQueryBuilder()
+                .insert()
+                .values(permissions)
+                .orIgnore()
+                .execute();
+        }
+        catch (error)
+        {
+            console.log('PERMISSION_CREATION', error.response.message);
+        }
     }
 
     async createSystemAdmin()
@@ -89,7 +96,7 @@ export class AppService implements OnApplicationBootstrap
         }
         catch (error)
         {
-            console.log('SYSTEM_ADMIN_CREATION', error);
+            console.log('SYSTEM_ADMIN_CREATION', error.response.message);
         }
     }
 }
