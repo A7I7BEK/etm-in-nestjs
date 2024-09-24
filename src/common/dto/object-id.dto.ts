@@ -1,6 +1,6 @@
 import { IsPositive } from 'class-validator';
 
-export class ResourceFileDto
+export class ObjectIdDto
 {
     @IsPositive()
     id: number;
