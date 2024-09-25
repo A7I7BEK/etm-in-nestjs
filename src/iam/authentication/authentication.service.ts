@@ -130,7 +130,14 @@ export class AuthenticationService
     {
         const error = new UnauthorizedException('Please, check your login credentials');
 
-        const user = await this.usersRepository.findOneBy({ userName: loginDto.userName });
+        const user = await this.usersRepository.findOne({
+            where: {
+                userName: loginDto.userName
+            },
+            relations: {
+                roles: true
+            },
+        });
         if (!user)
         {
             throw error;
@@ -142,7 +149,7 @@ export class AuthenticationService
             throw error;
         }
 
-        if (!user.active)
+        if (!user.active || !user.roles.length)
         {
             throw error;
         }
