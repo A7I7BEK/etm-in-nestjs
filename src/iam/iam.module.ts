@@ -18,7 +18,6 @@ import { AccessTokenGuard } from './authentication/guards/access-token.guard';
 import { AuthenticationGuard } from './authentication/guards/authentication.guard';
 import { OneTimePasswordService } from './authentication/one-time-password.service';
 import { RefreshTokenIdsStorage } from './authentication/refresh-token-ids.storage';
-import { UserSerializer } from './authentication/serializers/user-serializer';
 import { PermissionGuard } from './authorization/guards/permission.guard';
 import { BcryptService } from './hashing/bcrypt.service';
 import { HashingService } from './hashing/hashing.service';
@@ -61,7 +60,6 @@ import { HashingService } from './hashing/hashing.service';
         AccessTokenGuard,
         RefreshTokenIdsStorage,
         AuthenticationService,
-        UserSerializer,
         OneTimePasswordService,
     ],
     controllers: [ AuthenticationController ]
