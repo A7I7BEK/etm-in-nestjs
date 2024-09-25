@@ -1,4 +1,4 @@
-import { Role } from 'src/roles/entities/role.entity';
+import { PermissionType } from '../authorization/permission.constants';
 
 export interface ActiveUserData
 {
@@ -14,7 +14,7 @@ export interface ActiveUserData
     email: string;
 
     /**
-     * The subject's (user) roles.
+     * The code names of permissions that are extracted from subject's (user) roles
      */
-    roles: Role[];
+    permissionCodeNames: PermissionType[];
 }

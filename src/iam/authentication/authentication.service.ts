@@ -11,6 +11,7 @@ import { PermissionsPermission } from 'src/permissions/enums/permissions-permiss
 import { Role } from 'src/roles/entities/role.entity';
 import { User } from 'src/users/entities/user.entity';
 import { And, Equal, ILike, Not, Repository } from 'typeorm';
+import { PermissionType } from '../authorization/permission.constants';
 import { HashingService } from '../hashing/hashing.service';
 import { ActiveUserData } from '../interfaces/active-user-data.interface';
 import { LoginDto } from './dto/login.dto';
@@ -159,6 +160,14 @@ export class AuthenticationService
 
     async generateTokens(user: User)
     {
+        const permissionCodeNames = [ ...new Set(user.roles.flatMap(role => role.permissions).map(perm => perm.codeName as PermissionType)) ];
+
+        /**
+         * Old Method
+         */
+        // const permissions = [ ...new Set(user.roles.reduce<Permission[]>((total, current) => [ ...total, ...current.permissions ], [])) ];
+        // const permissionCodeNames = permissions.map(perm => perm.codeName);
+
         const refreshTokenId = randomUUID();
 
         const [ sessionToken, refreshToken ] = await Promise.all([
@@ -168,7 +177,7 @@ export class AuthenticationService
                 appConfig().jwt.accessTokenTtl,
                 {
                     email: user.email,
-                    roles: user.roles,
+                    permissionCodeNames,
                 }
             ),
             this.signToken(
@@ -221,7 +230,14 @@ export class AuthenticationService
                     }
                 );
 
-            const user = await this.usersRepository.findOneByOrFail({ id: sub });
+            const user = await this.usersRepository.findOneOrFail({
+                where: {
+                    id: sub
+                },
+                relations: {
+                    roles: true
+                },
+            });
             await this.refreshTokenIdsStorage.validate(user.id, refreshTokenId);
             await this.refreshTokenIdsStorage.remove(user.id);
 

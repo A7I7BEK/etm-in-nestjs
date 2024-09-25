@@ -3,7 +3,6 @@ import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
 import { REQUEST_USER_KEY } from 'src/iam/iam.constants';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { Permission } from 'src/permissions/entities/permission.entity';
 import { PERMISSION_TYPE_KEY, PermissionType } from '../permission.constants';
 
 @Injectable()
@@ -26,9 +25,7 @@ export class PermissionGuard implements CanActivate
         }
 
         const user: ActiveUserData = context.switchToHttp().getRequest()[ REQUEST_USER_KEY ];
-        const permissions = [ ...new Set(user.roles.reduce<Permission[]>((total, current) => [ ...total, ...current.permissions ], [])) ];
-        const permissionCodeNames = permissions.map(item => item.codeName);
 
-        return contextPermissions.every(permission => permissionCodeNames.includes(permission));
+        return contextPermissions.every(permission => user.permissionCodeNames.includes(permission));
     }
 }
