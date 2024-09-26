@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import { IsDate, IsNotEmpty, IsOptional, IsPositive, IsString, ValidateNested } from 'class-validator';
 import { ObjectIdDto } from 'src/common/dto/object-id.dto';
 import { UpdateUserDto } from 'src/users/dto/update-user.dto';
@@ -28,8 +29,10 @@ export class UpdateEmployeeDto
     birthDate?: Date;
 
     @ValidateNested()
+    @Type(() => ObjectIdDto)
     resourceFile: ObjectIdDto;
 
     @ValidateNested()
+    @Type(() => UpdateUserDto)
     user: UpdateUserDto;
 }
