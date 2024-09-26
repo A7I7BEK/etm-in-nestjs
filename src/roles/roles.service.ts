@@ -19,20 +19,30 @@ export class RolesService
         private readonly organizationsRepository: Repository<Organization>,
     ) { }
 
-    async create(createRoleDto: CreateRoleDto)
-    {
-        const organizationFound = await this.organizationsRepository.findOneByOrFail({ id: createRoleDto.organizationId });
 
-        const permissionIds = createRoleDto.permissions.map(x => x.id);
+    private async manageEntity(dto: CreateRoleDto | UpdateRoleDto, entity: Role = new Role())
+    {
+        const organizationFound = await this.organizationsRepository.findOneBy({ id: dto.organizationId });
+
+        if (!organizationFound)
+        {
+            throw new NotFoundException('Organization not found');
+        }
+
+        const permissionIds = dto.permissions.map(x => x.id);
         const permissionsFound = await this.permissionsRepository.findBy({ id: In(permissionIds) });
 
-        const entity = new Role();
-        entity.roleName = createRoleDto.roleName;
-        entity.codeName = createRoleDto.codeName;
+        entity.roleName = dto.roleName;
+        entity.codeName = dto.codeName;
         entity.organization = organizationFound;
         entity.permissions = permissionsFound;
 
         return this.rolesRepository.save(entity);
+    }
+
+    async create(createRoleDto: CreateRoleDto)
+    {
+        return this.manageEntity(createRoleDto);
     }
 
     findAll()
@@ -56,9 +66,7 @@ export class RolesService
     {
         const entity = await this.findOne(id);
 
-        Object.assign(entity, updateRoleDto);
-
-        return this.rolesRepository.save(entity);
+        return this.manageEntity(updateRoleDto, entity);
     }
 
     async remove(id: number)
