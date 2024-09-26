@@ -52,7 +52,7 @@ export class AppService implements OnApplicationBootstrap
         }
         catch (error)
         {
-            console.log('PERMISSION_CREATION', error.response.message);
+            console.log('PERMISSION_CREATION --->', error);
         }
     }
 
@@ -60,10 +60,18 @@ export class AppService implements OnApplicationBootstrap
     {
         try
         {
-            const organizationExists = await this.organizationsRepository.existsBy({ name: appConfig().admin.orgName });
-            if (organizationExists)
+            const organizationFound = await this.organizationsRepository.findOneBy({ name: appConfig().admin.orgName });
+            if (organizationFound)
             {
-                throw new ConflictException('Organization already exists');
+                const roleFound = await this.rolesRepository.findOneBy({
+                    organization: {
+                        id: organizationFound.id
+                    }
+                });
+                roleFound.permissions = await this.permissionsRepository.find();
+                await this.rolesRepository.save(roleFound);
+
+                throw new ConflictException('System Admin already exists');
             }
 
             const organizationEntity = new Organization();
@@ -96,7 +104,7 @@ export class AppService implements OnApplicationBootstrap
         }
         catch (error)
         {
-            console.log('SYSTEM_ADMIN_CREATION', error.response.message);
+            console.log('SYSTEM_ADMIN_CREATION --->', error.response.message);
         }
     }
 }
