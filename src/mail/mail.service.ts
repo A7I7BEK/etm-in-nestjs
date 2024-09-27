@@ -8,6 +8,25 @@ export class MailService
 {
     constructor (private readonly mailerService: MailerService) { }
 
+    async sendOtpCodeEmail(email: string, code: string)
+    {
+        try
+        {
+            await this.mailerService.sendMail({
+                to: email,
+                subject: `${code} is your ${appConfig().application.name} verification code`,
+                template: './confirmation-email',
+                context: {
+                    code,
+                },
+            });
+        }
+        catch (error)
+        {
+            throw new HttpException(error.response, error.responseCode);
+        }
+    }
+
     async sendOtpCodeUser(user: User, code: string)
     {
         try
@@ -15,7 +34,7 @@ export class MailService
             await this.mailerService.sendMail({
                 to: user.email,
                 subject: `${code} is your ${appConfig().application.name} verification code`,
-                template: './confirmation',
+                template: './confirmation-user',
                 context: {
                     name: user.userName,
                     code,
