@@ -49,7 +49,7 @@ export class OneTimePasswordService
         otpEntity.parent = otpParent;
         await this.otpRepository.save(otpEntity);
 
-        await this.mailService.sendOtpCode(user, otpCode);
+        await this.mailService.sendOtpCodeUser(user, otpCode);
 
         return { id: otpId };
     }
@@ -66,7 +66,7 @@ export class OneTimePasswordService
         otpEntity.parent = otpParent;
         await this.otpRepository.save(otpEntity);
 
-        await this.mailService.sendOtpCode(otpParent.user, otpCode);
+        await this.mailService.sendOtpCodeUser(otpParent.user, otpCode);
     }
 
     async confirm(id: string, code: string)

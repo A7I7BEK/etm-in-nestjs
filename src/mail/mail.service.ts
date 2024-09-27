@@ -8,7 +8,7 @@ export class MailService
 {
     constructor (private readonly mailerService: MailerService) { }
 
-    async sendOtpCode(user: User, code: string)
+    async sendOtpCodeUser(user: User, code: string)
     {
         try
         {
