@@ -52,7 +52,10 @@ export class RolesService
 
     async findOne(id: number)
     {
-        const entity = await this.rolesRepository.findOneBy({ id });
+        const entity = await this.rolesRepository.findOne({
+            where: { id },
+            relations: { organization: true },
+        });
 
         if (!entity)
         {
@@ -65,7 +68,6 @@ export class RolesService
     async update(id: number, updateRoleDto: UpdateRoleDto)
     {
         const entity = await this.findOne(id);
-
         return this.manageEntity(updateRoleDto, entity);
     }
 
