@@ -4,9 +4,9 @@ import { randomUUID } from 'crypto';
 import { MailService } from 'src/mail/mail.service';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
-import { HashingService } from '../hashing/hashing.service';
 import { OneTimePasswordParent } from './entities/one-time-password-parent.entity';
 import { OneTimePassword } from './entities/one-time-password.entity';
+import { OtpSendingOptions } from './interfaces/otp-sending-options.interface';
 
 @Injectable()
 export class OneTimePasswordService
@@ -16,7 +16,6 @@ export class OneTimePasswordService
         private readonly otpParentRepository: Repository<OneTimePasswordParent>,
         @InjectRepository(OneTimePassword)
         private readonly otpRepository: Repository<OneTimePassword>,
-        private readonly hashingService: HashingService,
         private readonly mailService: MailService,
     ) { }
 
@@ -32,14 +31,28 @@ export class OneTimePasswordService
         return (Date.now() + 10 * 60 * 1000).toString();
     }
 
+    private async decideSendChannel(otpCode: string, user: User, options: Partial<OtpSendingOptions>)
+    {
+        if (options.email)
+        {
+            await this.mailService.sendOtpCodeUser(user, otpCode);
+        }
 
-    async send(user: User)
+        if (options.phone)
+        {
+            // TODO: implement SMS (phone number) service
+        }
+    }
+
+
+    async send(user: User, options: Partial<OtpSendingOptions>)
     {
         const otpId = randomUUID();
         const otpCode = this.generateCode();
 
         const otpParent = new OneTimePasswordParent();
         otpParent.uniqueId = otpId;
+        otpParent.options = options;
         otpParent.user = user;
         await this.otpParentRepository.save(otpParent);
 
@@ -49,9 +62,9 @@ export class OneTimePasswordService
         otpEntity.parent = otpParent;
         await this.otpRepository.save(otpEntity);
 
-        await this.mailService.sendOtpCodeUser(user, otpCode);
+        await this.decideSendChannel(otpCode, user, options);
 
-        return { id: otpId };
+        return { otpId };
     }
 
     async resend(id: string)
@@ -66,7 +79,7 @@ export class OneTimePasswordService
         otpEntity.parent = otpParent;
         await this.otpRepository.save(otpEntity);
 
-        await this.mailService.sendOtpCodeUser(otpParent.user, otpCode);
+        await this.decideSendChannel(otpCode, otpParent.user, otpParent.options);
     }
 
     async confirm(id: string, code: string)
@@ -83,19 +96,8 @@ export class OneTimePasswordService
 
         otpEntity.used = true;
         await this.otpRepository.save(otpEntity);
-    }
-
-    async confirmWithPassword(id: string, code: string, password: string)
-    {
-        await this.confirm(id, code);
 
         const otpParent = await this.findOneParent(id);
-        const isEqual = await this.hashingService.compare(password, otpParent.user.password);
-
-        if (!isEqual)
-        {
-            throw new BadRequestException();
-        }
 
         return otpParent.user;
     }

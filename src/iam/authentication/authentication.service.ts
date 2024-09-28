@@ -1,9 +1,10 @@
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { randomUUID } from 'crypto';
 import appConfig from 'src/common/config/app.config';
 import { Employee } from 'src/employees/entities/employee.entity';
+import { OneTimePasswordService } from 'src/one-time-password/one-time-password.service';
 import { Organization } from 'src/organizations/entities/organization.entity';
 import { OrganizationsPermission } from 'src/organizations/enums/organizations-permission.enum';
 import { Permission } from 'src/permissions/entities/permission.entity';
@@ -18,7 +19,6 @@ import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { RegisterConfirmDto } from './dto/register-confirm.dto';
 import { RegisterDto } from './dto/register.dto';
-import { OneTimePasswordService } from './one-time-password.service';
 import { InvalidatedRefreshTokenError, RefreshTokenIdsStorage } from './refresh-token-ids.storage';
 
 @Injectable()
@@ -38,7 +38,7 @@ export class AuthenticationService
         private readonly hashingService: HashingService,
         private readonly jwtService: JwtService,
         private readonly refreshTokenIdsStorage: RefreshTokenIdsStorage,
-        private readonly otpService: OneTimePasswordService,
+        private readonly oneTimePasswordService: OneTimePasswordService,
     ) { }
 
     async register(registerDto: RegisterDto)
@@ -103,22 +103,29 @@ export class AuthenticationService
             roles: [ roleEntity ],
         });
 
+        const { otpId: id } = await this.oneTimePasswordService.send(user, { email: true, phone: true });
 
-        return this.otpService.send(user);
+        return { id };
     }
 
     async registerResend(id: string)
     {
-        await this.otpService.resend(id);
+        await this.oneTimePasswordService.resend(id);
     }
 
     async registerConfirm(registerConfirmDto: RegisterConfirmDto)
     {
-        const user = await this.otpService.confirmWithPassword(
+        const user = await this.oneTimePasswordService.confirm(
             registerConfirmDto.createTryId,
             registerConfirmDto.otpCode,
-            registerConfirmDto.password,
         );
+
+        const isEqual = await this.hashingService.compare(registerConfirmDto.password, user.password);
+
+        if (!isEqual)
+        {
+            throw new BadRequestException();
+        }
 
         user.active = true;
         await this.usersRepository.save(user);

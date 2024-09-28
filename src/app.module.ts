@@ -11,6 +11,7 @@ import { BcryptService } from './iam/hashing/bcrypt.service';
 import { HashingService } from './iam/hashing/hashing.service';
 import { IamModule } from './iam/iam.module';
 import { MailModule } from './mail/mail.module';
+import { OneTimePasswordModule } from './one-time-password/one-time-password.module';
 import { Organization } from './organizations/entities/organization.entity';
 import { OrganizationsModule } from './organizations/organizations.module';
 import { Permission } from './permissions/entities/permission.entity';
@@ -64,6 +65,7 @@ import { UsersModule } from './users/users.module';
         TasksModule,
         CheckListGroupsModule,
         ReportsModule,
+        OneTimePasswordModule,
     ],
     providers: [
         AppService,
