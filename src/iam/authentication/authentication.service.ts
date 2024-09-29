@@ -7,12 +7,14 @@ import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { RegisterConfirmDto } from './dto/register-confirm.dto';
 import { RegisterDto } from './dto/register.dto';
 import { AccessTokenManager } from './managers/access-token.manager';
+import { ForgotPasswordManager } from './managers/forgot-password.manager';
 
 @Injectable()
 export class AuthenticationService
 {
     constructor (
         private readonly accessTokenManager: AccessTokenManager,
+        private readonly forgotPasswordManager: ForgotPasswordManager,
     ) { }
 
     register(registerDto: RegisterDto)
@@ -42,21 +44,21 @@ export class AuthenticationService
 
     forgotPasswordSend(forgotPasswordSendDto: ForgotPasswordSendDto)
     {
-        return 'aaaaa';
+        return this.forgotPasswordManager.forgotPasswordSend(forgotPasswordSendDto);
     }
 
     forgotPasswordResend(id: string)
     {
-        return 'aaaaa';
+        return this.forgotPasswordManager.forgotPasswordResend(id);
     }
 
     forgotPasswordConfirm(forgotPasswordConfirmDto: ForgotPasswordConfirmDto)
     {
-        return 'aaaaa';
+        return this.forgotPasswordManager.forgotPasswordConfirm(forgotPasswordConfirmDto);
     }
 
     forgotPasswordChange(forgotPasswordChangeDto: ForgotPasswordChangeDto)
     {
-        return 'aaaaa';
+        return this.forgotPasswordManager.forgotPasswordChange(forgotPasswordChangeDto);
     }
 }
