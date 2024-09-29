@@ -9,6 +9,7 @@ import { Organization } from 'src/organizations/entities/organization.entity';
 import { Permission } from 'src/permissions/entities/permission.entity';
 import { Role } from 'src/roles/entities/role.entity';
 import { User } from 'src/users/entities/user.entity';
+import { AccessTokenManager } from './authentication/access-token.manager';
 import { AuthenticationController } from './authentication/authentication.controller';
 import { AuthenticationService } from './authentication/authentication.service';
 import { ForgotPassword } from './authentication/entities/forgot-password.entity';
@@ -53,8 +54,9 @@ import { HashingService } from './hashing/hashing.service';
             useClass: PermissionGuard,
         },
         AccessTokenGuard,
-        RefreshTokenIdsStorage,
         AuthenticationService,
+        AccessTokenManager,
+        RefreshTokenIdsStorage,
     ],
     controllers: [ AuthenticationController ]
 })
