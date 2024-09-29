@@ -57,26 +57,26 @@ export class AuthenticationController
     @HttpCode(HttpStatus.OK)
     forgotPasswordSend(@Body() forgotPasswordSendDto: ForgotPasswordSendDto)
     {
-        return 'aaaaa';
+        return this.authService.forgotPasswordSend(forgotPasswordSendDto);
     }
 
     @Put('forgot/password/resend/otp/:id')
     forgotPasswordResend(@Param('id') id: string)
     {
-        return 'aaaaa' + id;
+        return this.authService.forgotPasswordResend(id);
     }
 
     @Post('forgot/password/confirm/otp')
     @HttpCode(HttpStatus.OK)
     forgotPasswordConfirm(@Body() forgotPasswordConfirmDto: ForgotPasswordConfirmDto)
     {
-        return 'aaaaa';
+        return this.authService.forgotPasswordConfirm(forgotPasswordConfirmDto);
     }
 
     @Post('forgot/password/change/password')
     @HttpCode(HttpStatus.OK)
     forgotPasswordChange(@Body() forgotPasswordChangeDto: ForgotPasswordChangeDto)
     {
-        return 'aaaaa';
+        return this.authService.forgotPasswordChange(forgotPasswordChangeDto);
     }
 }
