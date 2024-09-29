@@ -8,14 +8,14 @@ export class ForgotPassword
     id: number;
 
     @Column('uuid')
-    uniqueKey: string;
-
-    @Column()
-    expireTime: string;
-
-    @Column({ default: false })
-    used: boolean;
+    uniqueId: string;
 
     @ManyToOne(type => User, { eager: true })
     user: User;
+
+    @Column()
+    createdAt: string;
+
+    @Column({ default: false })
+    completed: boolean;
 }
