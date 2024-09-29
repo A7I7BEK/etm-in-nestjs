@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { AccessTokenManager } from './access-token.manager';
 import { ForgotPasswordChangeDto } from './dto/forgot-password-change.dto';
 import { ForgotPasswordConfirmDto } from './dto/forgot-password-confirm.dto';
 import { ForgotPasswordSendDto } from './dto/forgot-password-send.dto';
@@ -7,6 +6,7 @@ import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { RegisterConfirmDto } from './dto/register-confirm.dto';
 import { RegisterDto } from './dto/register.dto';
+import { AccessTokenManager } from './managers/access-token.manager';
 
 @Injectable()
 export class AuthenticationService

@@ -12,17 +12,17 @@ import { PermissionsPermission } from 'src/permissions/enums/permissions-permiss
 import { Role } from 'src/roles/entities/role.entity';
 import { User } from 'src/users/entities/user.entity';
 import { And, Equal, ILike, Not, Repository } from 'typeorm';
-import { PermissionType } from '../authorization/permission.constants';
-import { HashingService } from '../hashing/hashing.service';
-import { ActiveUserData } from '../interfaces/active-user-data.interface';
-import { LoginDto } from './dto/login.dto';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { RegisterConfirmDto } from './dto/register-confirm.dto';
-import { RegisterDto } from './dto/register.dto';
+import { PermissionType } from '../../authorization/permission.constants';
+import { HashingService } from '../../hashing/hashing.service';
+import { ActiveUserData } from '../../interfaces/active-user-data.interface';
+import { LoginDto } from '../dto/login.dto';
+import { RefreshTokenDto } from '../dto/refresh-token.dto';
+import { RegisterConfirmDto } from '../dto/register-confirm.dto';
+import { RegisterDto } from '../dto/register.dto';
 import { InvalidatedRefreshTokenError, RefreshTokenIdsStorage } from './refresh-token-ids.storage';
 
 @Injectable()
-export class AccessTokenManager
+export class ForgotPasswordManager
 {
     constructor (
         @InjectRepository(Organization)
