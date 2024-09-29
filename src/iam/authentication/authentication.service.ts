@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { randomUUID } from 'crypto';
@@ -120,17 +120,10 @@ export class AuthenticationService
             registerConfirmDto.otpCode,
         );
 
-        const isEqual = await this.hashingService.compare(registerConfirmDto.password, user.password);
-
-        if (!isEqual)
-        {
-            throw new BadRequestException();
-        }
-
         user.active = true;
         await this.usersRepository.save(user);
 
-        return this.generateTokens(user);
+        return this.login({ userName: user.userName, password: registerConfirmDto.password });
     }
 
 
