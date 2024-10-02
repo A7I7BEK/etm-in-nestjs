@@ -34,7 +34,7 @@ export class ForgotPasswordManager
             options.phone = true;
             userFindOptions.phoneNumber = contact;
         }
-        else
+        else if (contact.includes('@'))
         {
             options.email = true;
             userFindOptions.email = contact;
