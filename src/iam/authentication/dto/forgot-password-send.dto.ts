@@ -1,11 +1,8 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsMobilePhone, IsPhoneNumber } from 'class-validator';
+import { Validate } from 'class-validator';
+import { EmailOrPhoneConstraint } from 'src/common/custom-class-validator/email-or-phone.constraint';
 
 export class ForgotPasswordSendDto
 {
-    @ApiProperty({ examples: [ 'aaa@aaa.aaa', '901234567' ] })
-    @IsEmail()
-    // @IsMobilePhone('uz-UZ')
-    @IsPhoneNumber('UZ')
+    @Validate(EmailOrPhoneConstraint)
     paramForSendingOtp: string;
 }
