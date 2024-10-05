@@ -1,7 +1,6 @@
-import { Body, Controller, Delete, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Param, Post, Put, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
-import { CreateResourceDto } from './dto/create-resource.dto';
-import { UpdateResourceDto } from './dto/update-resource.dto';
 import { ResourceService } from './resource.service';
 
 @ApiTags('resource')
@@ -11,15 +10,23 @@ export class ResourceController
     constructor (private readonly resourceService: ResourceService) { }
 
     @Post('upload/file')
-    create(@Body() createResourceDto: CreateResourceDto)
+    @UseInterceptors(FileInterceptor('file'))
+    createOne(@UploadedFile() file: Express.Multer.File)
     {
-        return this.resourceService.create(createResourceDto);
+        return this.resourceService.uploadFile(file);
+    }
+
+    @Post('upload-multiple')
+    @UseInterceptors(FilesInterceptor('files'))
+    createMany(@UploadedFiles() files: Express.Multer.File[])
+    {
+        return this.resourceService.uploadMultipleFiles(files);
     }
 
     @Put('update')
-    update(@Param('id') id: string, @Body() updateResourceDto: UpdateResourceDto)
+    update(@Param('id') id: string, @Body('name') name: string)
     {
-        return this.resourceService.update(+id, updateResourceDto);
+        return this.resourceService.update(+id, name);
     }
 
     @Delete('delete/:id')

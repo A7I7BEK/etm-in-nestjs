@@ -1,26 +1,27 @@
 import { Injectable } from '@nestjs/common';
-import { CreateResourceDto } from './dto/create-resource.dto';
-import { UpdateResourceDto } from './dto/update-resource.dto';
 
 @Injectable()
-export class ResourceService {
-  create(createResourceDto: CreateResourceDto) {
-    return 'This action adds a new resource';
-  }
+export class ResourceService
+{
+    uploadFile(file: Express.Multer.File)
+    {
+        console.log(file);
+        return { message: 'File uploaded successfully' };
+    }
 
-  findAll() {
-    return `This action returns all resource`;
-  }
+    uploadMultipleFiles(files: Express.Multer.File[])
+    {
+        console.log(files);
+        return { message: 'File uploaded successfully' };
+    }
 
-  findOne(id: number) {
-    return `This action returns a #${id} resource`;
-  }
+    update(id: number, name: string)
+    {
+        return `This action updates a #${id} resource`;
+    }
 
-  update(id: number, updateResourceDto: UpdateResourceDto) {
-    return `This action updates a #${id} resource`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} resource`;
-  }
+    remove(id: number)
+    {
+        return `This action removes a #${id} resource`;
+    }
 }
