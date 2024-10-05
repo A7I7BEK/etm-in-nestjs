@@ -3,6 +3,8 @@ export const DESTINATION = './uploads';
 
 export const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 
+export const MAX_FILE_COUNT = 10;
+
 
 export const MIME_TYPE_IMAGES = [ 'image/jpeg', 'image/png', 'image/gif', 'image/svg+xml', 'image/webp' ];
 

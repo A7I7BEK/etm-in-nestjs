@@ -30,7 +30,8 @@ import { ALLOWED_MIME_TYPES, DESTINATION, MAX_FILE_SIZE } from './utils/resource
                     }
                 },
                 limits: {
-                    fileSize: MAX_FILE_SIZE
+                    fileSize: MAX_FILE_SIZE,
+                    files: MAX_FILE_COUNT,
                 }
             }),
         }),
