@@ -31,7 +31,7 @@ import { UsersModule } from './users/users.module';
         TypeOrmModule.forRootAsync({
             useFactory: async () =>
             {
-                const isProduction = appConfig().application.nodeEnv === appConfig().production;
+                const isProduction = appConfig().application.nodeEnv === appConfig().application.nodeEnvProd;
 
                 return {
                     ssl: isProduction,

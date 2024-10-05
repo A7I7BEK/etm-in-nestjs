@@ -10,7 +10,7 @@ import { MailService } from './mail.service';
         MailerModule.forRootAsync({
             useFactory: async () =>
             {
-                const isProduction = appConfig().application.nodeEnv === appConfig().production;
+                const isProduction = appConfig().application.nodeEnv === appConfig().application.nodeEnvProd;
 
                 return {
                     transport: {

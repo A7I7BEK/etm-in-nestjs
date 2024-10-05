@@ -1,10 +1,10 @@
 export default () =>
 {
     return {
-        production: 'production',
-        development: 'development',
         application: {
             nodeEnv: process.env.NODE_ENV,
+            nodeEnvProd: process.env.NODE_ENV_PRODUCTION,
+            nodeEnvDev: process.env.NODE_ENV_DEVELOPMENT,
             port: +process.env.APP_PORT,
             name: process.env.APP_NAME,
             prefix: process.env.API_PREFIX,
