@@ -3,7 +3,7 @@ import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { ResourceController } from './resource.controller';
 import { ResourceService } from './resource.service';
-import { FilenameGenerator } from './utils/filename-generator';
+import { filenameGenerator } from './utils/filename-generator';
 import { ALLOWED_MIME_TYPES, DESTINATION, MAX_FILE_COUNT, MAX_FILE_SIZE } from './utils/resource.constants';
 
 @Module({
@@ -14,7 +14,7 @@ import { ALLOWED_MIME_TYPES, DESTINATION, MAX_FILE_COUNT, MAX_FILE_SIZE } from '
                     destination: DESTINATION,
                     filename(req, file, callback)
                     {
-                        const filename = FilenameGenerator(file);
+                        const filename = filenameGenerator(file);
                         callback(null, filename);
                     },
                 }),
