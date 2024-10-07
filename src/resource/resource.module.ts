@@ -1,4 +1,4 @@
-import { BadRequestException, Module } from '@nestjs/common';
+import { Module, UnsupportedMediaTypeException } from '@nestjs/common';
 import { MulterModule } from '@nestjs/platform-express';
 import { ResourceController } from './resource.controller';
 import { ResourceService } from './resource.service';
@@ -16,7 +16,7 @@ import { ALLOWED_MIME_TYPES, MAX_FILE_COUNT, MAX_FILE_SIZE } from './utils/resou
                     }
                     else
                     {
-                        callback(new BadRequestException('Invalid file type'), false);
+                        callback(new UnsupportedMediaTypeException(), false);
                     }
                 },
                 limits: {
