@@ -3,6 +3,7 @@ import
 {
     DESTINATION_ARCHIVE,
     DESTINATION_AUDIO,
+    DESTINATION_BASE,
     DESTINATION_IMAGE,
     DESTINATION_MICROSOFT_DOC,
     DESTINATION_OTHER_DOC,
@@ -52,5 +53,9 @@ export function getDestination(file: Express.Multer.File)
     else if (MIME_TYPE_ARCHIVES.includes(file.mimetype))
     {
         return DESTINATION_ARCHIVE;
+    }
+    else
+    {
+        return DESTINATION_BASE;
     }
 }
