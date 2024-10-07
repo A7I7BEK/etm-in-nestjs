@@ -1,6 +1,7 @@
-import { Body, Controller, Delete, NotAcceptableException, Param, Post, Put, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, NotAcceptableException, Param, Post, Put, Query, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
+import { MinDimensionDto } from './dto/min-dimension.dto';
 import { ResourceService } from './resource.service';
 
 @ApiTags('resource')
@@ -11,14 +12,14 @@ export class ResourceController
 
     @Post('upload/file')
     @UseInterceptors(FileInterceptor('file'))
-    createOne(@UploadedFile() file: Express.Multer.File)
+    createOne(@UploadedFile() file: Express.Multer.File, @Query() minDimensionDto: MinDimensionDto)
     {
         if (!file)
         {
             throw new NotAcceptableException();
         }
 
-        return this.resourceService.uploadFile(file);
+        return this.resourceService.uploadFile(file, minDimensionDto);
     }
 
     @Post('upload-multiple')
