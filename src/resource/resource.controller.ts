@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Param, Post, Put, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, NotAcceptableException, Param, Post, Put, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
 import { ResourceService } from './resource.service';
@@ -13,6 +13,11 @@ export class ResourceController
     @UseInterceptors(FileInterceptor('file'))
     createOne(@UploadedFile() file: Express.Multer.File)
     {
+        if (!file)
+        {
+            throw new NotAcceptableException();
+        }
+
         return this.resourceService.uploadFile(file);
     }
 
@@ -20,6 +25,11 @@ export class ResourceController
     @UseInterceptors(FilesInterceptor('files'))
     createMany(@UploadedFiles() files: Express.Multer.File[])
     {
+        if (!files || files.length === 0)
+        {
+            throw new NotAcceptableException();
+        }
+
         return this.resourceService.uploadMultipleFiles(files);
     }
 
