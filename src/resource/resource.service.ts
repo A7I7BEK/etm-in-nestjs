@@ -16,11 +16,10 @@ export class ResourceService
 
         if (MIME_TYPE_IMAGES.includes(file.mimetype) && minDimensionDto.minWidth && minDimensionDto.minHeight)
         {
-            const resizedImageBuffer = await this.resizeImage(file);
-            return this.saveFile(filePath, resizedImageBuffer);
+            file.buffer = await this.resizeImage(file, minDimensionDto);
         }
 
-        return this.saveFile(filePath, file.buffer);
+        return this.saveFile(file, filePath);
     }
 
     uploadMultipleFiles(files: Express.Multer.File[])
@@ -55,10 +54,10 @@ export class ResourceService
         return filePath;
     }
 
-    private async resizeImage(file: Express.Multer.File)
+    private async resizeImage(file: Express.Multer.File, minDimensionDto: MinDimensionDto)
     {
         return await sharp(file.buffer)
-            .resize(800, 800, {
+            .resize(minDimensionDto.minWidth, minDimensionDto.minHeight, {
                 fit: sharp.fit.cover,
                 position: sharp.strategy.entropy
             })
@@ -68,17 +67,13 @@ export class ResourceService
         //     .resize(200, 200) // Adjust the desired dimensions
         //     .crop(sharp.gravity.center)
         //     .toBuffer();
-
-        // const resizedImage = await sharp(file.buffer)
-        //     .resize(800, 600) // Set your desired dimensions
-        //     .toBuffer();
     }
 
-    private async saveFile(filePath: string, fileBuffer: Buffer)
+    private async saveFile(file: Express.Multer.File, filePath: string)
     {
         try
         {
-            await fs.promises.writeFile(filePath, fileBuffer);
+            await fs.promises.writeFile(filePath, file.buffer);
 
             return {
                 message: 'File uploaded successfully',
