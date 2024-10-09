@@ -49,7 +49,7 @@ export class ResourceService
         }
 
         const filename = generateFilename(file);
-        const filePath = path.join(destination, filename);
+        const filePath = path.posix.join(destination, filename);
 
         return filePath;
     }
