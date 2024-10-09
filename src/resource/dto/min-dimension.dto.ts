@@ -4,9 +4,9 @@ export class MinDimensionDto
 {
     @IsNumberString({ no_symbols: true })
     @IsOptional()
-    minWidth: number;
+    minWidth: string;
 
     @IsNumberString({ no_symbols: true })
     @IsOptional()
-    minHeight: number;
+    minHeight: string;
 }
