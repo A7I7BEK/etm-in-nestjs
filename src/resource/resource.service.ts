@@ -19,23 +19,43 @@ export class ResourceService
 
     async uploadFile(file: Express.Multer.File, minDimensionDto: MinDimensionDto)
     {
+        if (MIME_TYPE_IMAGES.includes(file.mimetype) && +minDimensionDto.minWidth && +minDimensionDto.minHeight)
+        {
+            return this.uploadFileResizedImage(file, +minDimensionDto.minWidth, +minDimensionDto.minHeight);
+        }
+        else
+        {
+            return this.uploadFileSimple(file);
+        }
+    }
+
+    async uploadFileResizedImage(file: Express.Multer.File, width: number, height: number)
+    {
         const { filePath, filename } = generateFilePath(file);
         file.path = filePath;
         file.filename = filename;
 
-        if (MIME_TYPE_IMAGES.includes(file.mimetype) && +minDimensionDto.minWidth && +minDimensionDto.minHeight)
-        {
-            file.buffer = await this.resizeImage(file, +minDimensionDto.minWidth, +minDimensionDto.minHeight);
-        }
+        file.buffer = await sharp(file.buffer).resize({ width, height, fit: sharp.fit.outside }).toBuffer();
 
         const resource = this.createResource(file);
         return this.saveFile(file, resource);
     }
 
-    uploadMultipleFiles(files: Express.Multer.File[])
+    async uploadFileSimple(file: Express.Multer.File)
     {
-        console.log(files);
-        return { message: 'File uploaded successfully' };
+        const { filePath, filename } = generateFilePath(file);
+        file.path = filePath;
+        file.filename = filename;
+
+        const resource = this.createResource(file);
+        return this.saveFile(file, resource);
+    }
+
+    async uploadMultipleFiles(files: Express.Multer.File[])
+    {
+        return Promise.all(
+            files.map(file => this.uploadFileSimple(file))
+        );
     }
 
     async findOne(id: number)
@@ -60,16 +80,6 @@ export class ResourceService
         return this.findOne(id);
     }
 
-    private resizeImage(file: Express.Multer.File, width: number, height: number)
-    {
-        return sharp(file.buffer)
-            .resize({
-                width,
-                height,
-                fit: sharp.fit.outside,
-            })
-            .toBuffer();
-    }
 
     private createResource(file: Express.Multer.File)
     {
