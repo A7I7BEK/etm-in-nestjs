@@ -86,13 +86,13 @@ export class ResourceService
         return entity;
     }
 
-    private async saveFile(file: Express.Multer.File, resource: Resource | Resource[])
+    private async saveFile(file: Express.Multer.File, resource: Resource)
     {
         try
         {
             await fs.promises.writeFile(file.path, file.buffer);
 
-            return this.resourceRepository.insert(resource);
+            return this.resourceRepository.save(resource);
         }
         catch (error)
         {
