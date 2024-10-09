@@ -34,7 +34,7 @@ export class ResourceController
         return this.resourceService.uploadMultipleFiles(files);
     }
 
-    @Put('update')
+    @Put('update/:id')
     update(@Param('id') id: string, @Body('name') name: string)
     {
         return this.resourceService.update(+id, name);
