@@ -14,9 +14,9 @@ export class ResourceService
 
         const filePath = this.generateFilePath(file);
 
-        if (MIME_TYPE_IMAGES.includes(file.mimetype) && minDimensionDto.minWidth && minDimensionDto.minHeight)
+        if (MIME_TYPE_IMAGES.includes(file.mimetype) && +minDimensionDto.minWidth && +minDimensionDto.minHeight)
         {
-            file.buffer = await this.resizeImage(file, minDimensionDto);
+            file.buffer = await this.resizeImage(file, +minDimensionDto.minWidth, +minDimensionDto.minHeight);
         }
 
         return this.saveFile(file, filePath);
@@ -54,19 +54,15 @@ export class ResourceService
         return filePath;
     }
 
-    private async resizeImage(file: Express.Multer.File, minDimensionDto: MinDimensionDto)
+    private resizeImage(file: Express.Multer.File, width: number, height: number)
     {
-        return await sharp(file.buffer)
-            .resize(minDimensionDto.minWidth, minDimensionDto.minHeight, {
-                fit: sharp.fit.cover,
-                position: sharp.strategy.entropy
+        return sharp(file.buffer)
+            .resize({
+                width,
+                height,
+                fit: sharp.fit.outside,
             })
             .toBuffer();
-
-        // const croppedImage = await sharp(file.buffer)
-        //     .resize(200, 200) // Adjust the desired dimensions
-        //     .crop(sharp.gravity.center)
-        //     .toBuffer();
     }
 
     private async saveFile(file: Express.Multer.File, filePath: string)
