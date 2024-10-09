@@ -1,12 +1,12 @@
-import { IsOptional, IsPositive } from 'class-validator';
+import { IsNumberString, IsOptional } from 'class-validator';
 
 export class MinDimensionDto
 {
-    @IsPositive()
+    @IsNumberString({ no_symbols: true })
     @IsOptional()
     minWidth: number;
 
-    @IsPositive()
+    @IsNumberString({ no_symbols: true })
     @IsOptional()
     minHeight: number;
 }
