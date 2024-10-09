@@ -1,4 +1,7 @@
-import { extname } from 'path';
+import * as fs from 'fs';
+import * as path from 'path';
+
+
 import
 {
     DESTINATION_ARCHIVE,
@@ -21,7 +24,7 @@ export function generateFilename(file: Express.Multer.File)
 {
     const dateTimeSuffix = new Date().toISOString().replace(/[-:.Z]/g, '').replace('T', '_');
     const randomSuffix = Math.round(Math.random() * 1E9);
-    const ext = extname(file.originalname);
+    const ext = path.extname(file.originalname);
     const filename = file.fieldname + '_' + dateTimeSuffix + '_' + randomSuffix + ext;
 
     return filename;
@@ -58,4 +61,20 @@ export function getDestination(file: Express.Multer.File)
     {
         return DESTINATION_BASE;
     }
+}
+
+
+export function generateFilePath(file: Express.Multer.File)
+{
+    const destination = getDestination(file);
+
+    if (!fs.existsSync(destination))
+    {
+        fs.mkdirSync(destination, { recursive: true });
+    }
+
+    const filename = generateFilename(file);
+    const filePath = path.posix.join(destination, filename);
+
+    return { filePath, filename };
 }
