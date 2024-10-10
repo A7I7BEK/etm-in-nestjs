@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 import { MinDimensionDto } from './dto/min-dimension.dto';
 import { Resource } from './entities/resource.entity';
 import { MIME_TYPE_IMAGES } from './utils/resource.constants';
-import { generateFilePath } from './utils/resource.utils';
+import { calculateFileSize, generateFilePath } from './utils/resource.utils';
 
 @Injectable()
 export class ResourceService
@@ -17,7 +17,7 @@ export class ResourceService
     ) { }
 
 
-    async uploadFile(file: Express.Multer.File, minDimensionDto: MinDimensionDto)
+    uploadFile(file: Express.Multer.File, minDimensionDto: MinDimensionDto)
     {
         if (MIME_TYPE_IMAGES.includes(file.mimetype) && +minDimensionDto.minWidth && +minDimensionDto.minHeight)
         {
@@ -41,7 +41,7 @@ export class ResourceService
         return this.saveFile(file, resource);
     }
 
-    async uploadFileSimple(file: Express.Multer.File)
+    uploadFileSimple(file: Express.Multer.File)
     {
         const { filePath, filename } = generateFilePath(file);
         file.path = filePath;
@@ -51,11 +51,9 @@ export class ResourceService
         return this.saveFile(file, resource);
     }
 
-    async uploadMultipleFiles(files: Express.Multer.File[])
+    uploadMultipleFiles(files: Express.Multer.File[])
     {
-        return Promise.all(
-            files.map(file => this.uploadFileSimple(file))
-        );
+        return Promise.all(files.map(file => this.uploadFileSimple(file)));
     }
 
     async findOne(id: number)
@@ -89,7 +87,7 @@ export class ResourceService
         entity.filename = file.filename;
         entity.mimetype = file.mimetype;
         entity.size = file.buffer.length;
-        entity.sizeCalculated = file.buffer.length.toString();
+        entity.sizeCalculated = calculateFileSize(file.buffer.length);
         entity.createdAt = new Date();
         entity.now = new Date();
 
