@@ -1,6 +1,7 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as fs from 'fs';
+import * as path from 'path';
 import * as sharp from 'sharp';
 import { Repository } from 'typeorm';
 import { MinDimensionDto } from './dto/min-dimension.dto';
@@ -68,14 +69,19 @@ export class ResourceService
         return entity;
     }
 
-    update(id: number, name: string)
+    async update(id: number, name: string)
     {
-        return this.findOne(id);
+        const entity = await this.findOne(id);
+        entity.name = name + path.extname(entity.filename);
+        entity.now = new Date();
+
+        return this.resourceRepository.save(entity);
     }
 
-    remove(id: number)
+    async remove(id: number)
     {
-        return this.findOne(id);
+        const entity = await this.findOne(id);
+        return this.resourceRepository.remove(entity);
     }
 
 

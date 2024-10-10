@@ -28,5 +28,5 @@ export class Resource
     createdAt: Date;
 
     @Column()
-    now: Date;
+    now: Date; // Updated at
 }
