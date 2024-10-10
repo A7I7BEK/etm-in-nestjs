@@ -84,8 +84,8 @@ export class AccessTokenManager
         await this.organizationsRepository.save(organizationEntity);
 
         const roleEntity = new Role();
-        roleEntity.roleName = appConfig().application.role.toLocaleLowerCase();
-        roleEntity.codeName = appConfig().application.role;
+        roleEntity.roleName = appConfig().default.role.toLocaleLowerCase();
+        roleEntity.codeName = appConfig().default.role;
         roleEntity.permissions = adminPermissions;
         roleEntity.organization = organizationEntity;
         await this.rolesRepository.save(roleEntity);
