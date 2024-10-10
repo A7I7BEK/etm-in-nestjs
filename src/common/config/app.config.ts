@@ -8,8 +8,14 @@ export default () =>
             port: +process.env.APP_PORT,
             name: process.env.APP_NAME,
             prefix: process.env.API_PREFIX,
+        },
+        default: {
             lang: process.env.APP_DEFAULT_LANGUAGE,
             role: process.env.APP_DEFAULT_ROLE,
+        },
+        file: {
+            maxSize: +process.env.MAX_FILE_SIZE,
+            maxCount: +process.env.MAX_FILE_COUNT,
         },
         admin: {
             orgName: process.env.ADMIN_ORG_NAME,
