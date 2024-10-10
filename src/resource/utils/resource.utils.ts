@@ -1,7 +1,5 @@
 import * as fs from 'fs';
 import * as path from 'path';
-
-
 import
 {
     DESTINATION_ARCHIVE,
@@ -77,4 +75,28 @@ export function generateFilePath(file: Express.Multer.File)
     const filePath = path.posix.join(destination, filename);
 
     return { filePath, filename };
+}
+
+
+export function calculateFileSize(size: number)
+{
+    const units = [ 'B', 'KB', 'MB', 'GB', 'TB' ];
+    let i = 0;
+
+    while (size >= 1024)
+    {
+        size /= 1024;
+        i++;
+    }
+
+    return size.toFixed(2) + ' ' + units[ i ];
+}
+
+
+export function calculateFileSizeAlternative(size: number)
+{
+    const units = [ 'Bytes', 'KB', 'MB', 'GB', 'TB' ];
+    const i = size >= 1 ? Math.floor(Math.log(size) / Math.log(1024)) : 0;
+
+    return `${(size / Math.pow(1024, i)).toFixed(2)} ${units[ i ]}`;
 }
