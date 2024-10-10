@@ -81,6 +81,16 @@ export class ResourceService
     async remove(id: number)
     {
         const entity = await this.findOne(id);
+
+        try
+        {
+            await fs.promises.rm(entity.url);
+        }
+        catch (error)
+        {
+            console.log(`Failed to remove file with id: ${id}`, error);
+        }
+
         return this.resourceRepository.remove(entity);
     }
 
