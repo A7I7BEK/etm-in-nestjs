@@ -1,10 +1,11 @@
 import { Module, UnsupportedMediaTypeException } from '@nestjs/common';
 import { MulterModule } from '@nestjs/platform-express';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import appConfig from 'src/common/config/app.config';
 import { Resource } from './entities/resource.entity';
 import { ResourceController } from './resource.controller';
 import { ResourceService } from './resource.service';
-import { ALLOWED_MIME_TYPES, MAX_FILE_COUNT, MAX_FILE_SIZE } from './utils/resource.constants';
+import { ALLOWED_MIME_TYPES } from './utils/resource.constants';
 
 @Module({
     imports: [
@@ -22,8 +23,8 @@ import { ALLOWED_MIME_TYPES, MAX_FILE_COUNT, MAX_FILE_SIZE } from './utils/resou
                     }
                 },
                 limits: {
-                    fileSize: MAX_FILE_SIZE,
-                    files: MAX_FILE_COUNT,
+                    fileSize: appConfig().file.maxSize,
+                    files: appConfig().file.maxCount,
                 }
             }),
         }),

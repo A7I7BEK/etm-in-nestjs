@@ -9,9 +9,6 @@ export const DESTINATION_OTHER_DOC = DESTINATION_BASE + '/other-doc';
 export const DESTINATION_ARCHIVE = DESTINATION_BASE + '/archive';
 
 
-export const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
-export const MAX_FILE_COUNT = 10;
-
 
 export const MIME_TYPE_IMAGES = [ 'image/jpeg', 'image/png', 'image/gif', 'image/svg+xml', 'image/webp' ];
 export const MIME_TYPE_AUDIOS = [ 'audio/aac', 'audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/webm' ];
