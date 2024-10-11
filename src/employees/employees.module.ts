@@ -1,14 +1,28 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { BcryptService } from 'src/iam/hashing/bcrypt.service';
+import { HashingService } from 'src/iam/hashing/hashing.service';
+import { ResourceModule } from 'src/resource/resource.module';
+import { User } from 'src/users/entities/user.entity';
 import { EmployeesController } from './employees.controller';
 import { EmployeesService } from './employees.service';
 import { Employee } from './entities/employee.entity';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([ Employee ]),
+        TypeOrmModule.forFeature([
+            User,
+            Employee,
+        ]),
+        ResourceModule,
     ],
     controllers: [ EmployeesController ],
-    providers: [ EmployeesService ],
+    providers: [
+        {
+            provide: HashingService,
+            useClass: BcryptService,
+        },
+        EmployeesService,
+    ],
 })
 export class EmployeesModule { }
