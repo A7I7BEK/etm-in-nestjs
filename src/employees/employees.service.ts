@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { HashingService } from 'src/iam/hashing/hashing.service';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { Organization } from 'src/organizations/entities/organization.entity';
+import { OrganizationsService } from 'src/organizations/organizations.service';
 import { ResourceService } from 'src/resource/resource.service';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
@@ -18,8 +19,9 @@ export class EmployeesService
         private readonly usersRepository: Repository<User>,
         @InjectRepository(Employee)
         private readonly employeesRepository: Repository<Employee>,
-        private readonly hashingService: HashingService,
+        private readonly organizationsService: OrganizationsService,
         private readonly resourceService: ResourceService,
+        private readonly hashingService: HashingService,
     ) { }
 
     async create(createEmployeeDto: CreateEmployeeDto, activeUser: ActiveUserData)
@@ -43,7 +45,12 @@ export class EmployeesService
         }
 
 
-        if (createEmployeeDto.user.organizationId === 0)
+        let organizationEntity: Organization;
+        if (createEmployeeDto.user.organizationId)
+        {
+            organizationEntity = await this.organizationsService.findOne(createEmployeeDto.user.organizationId);
+        }
+        else
         {
             const activeUserEntity = await this.usersRepository.findOne({
                 where: {
@@ -59,7 +66,7 @@ export class EmployeesService
                 throw new NotFoundException();
             }
 
-            createEmployeeDto.user.organizationId = activeUserEntity.organization.id;
+            organizationEntity = activeUserEntity.organization;
         }
 
         const userEntity = new User();
@@ -68,8 +75,7 @@ export class EmployeesService
         userEntity.email = createEmployeeDto.user.email;
         userEntity.phoneNumber = createEmployeeDto.user.phoneNumber;
         userEntity.active = true;
-        userEntity.organization = new Organization();
-        userEntity.organization.id = createEmployeeDto.user.organizationId;
+        userEntity.organization = organizationEntity;
         await this.usersRepository.save(userEntity);
 
         const employeeEntity = new Employee();
