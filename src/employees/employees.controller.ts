@@ -46,4 +46,18 @@ export class EmployeesController
     {
         return this.employeesService.remove(+id);
     }
+
+    @Put('password/change/:id')
+    @Permission(EmployeesPermission.PasswordChange)
+    passwordChange(@Param('id') id: string, @Body() updateEmployeeDto: UpdateEmployeeDto)
+    {
+        return this.employeesService.update(+id, updateEmployeeDto);
+    }
+
+    @Put('profile/update/:id')
+    @Permission(EmployeesPermission.ProfileUpdate)
+    profileUpdate(@Param('id') id: string, @Body() updateEmployeeDto: UpdateEmployeeDto)
+    {
+        return this.employeesService.update(+id, updateEmployeeDto);
+    }
 }
