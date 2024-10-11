@@ -6,6 +6,7 @@ import { Organization } from 'src/organizations/entities/organization.entity';
 import { OrganizationsService } from 'src/organizations/organizations.service';
 import { ResourceService } from 'src/resource/resource.service';
 import { User } from 'src/users/entities/user.entity';
+import { USER_MARK_EMPLOYEE_NEW } from 'src/users/marks/user-mark.constants';
 import { Repository } from 'typeorm';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
@@ -74,7 +75,7 @@ export class EmployeesService
         userEntity.password = await this.hashingService.hash(createEmployeeDto.user.password);
         userEntity.email = createEmployeeDto.user.email;
         userEntity.phoneNumber = createEmployeeDto.user.phoneNumber;
-        userEntity.active = true;
+        userEntity.marks = USER_MARK_EMPLOYEE_NEW;
         userEntity.organization = organizationEntity;
         await this.usersRepository.save(userEntity);
 

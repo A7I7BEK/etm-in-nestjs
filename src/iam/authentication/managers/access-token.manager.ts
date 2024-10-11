@@ -11,6 +11,7 @@ import { Permission } from 'src/permissions/entities/permission.entity';
 import { PermissionsPermission } from 'src/permissions/enums/permissions-permission.enum';
 import { Role } from 'src/roles/entities/role.entity';
 import { User } from 'src/users/entities/user.entity';
+import { USER_MARK_REGISTER_CONFIRMED, USER_MARK_REGISTER_NEW } from 'src/users/marks/user-mark.constants';
 import { And, Equal, ILike, Not, Repository } from 'typeorm';
 import { PermissionType } from '../../authorization/permission.constants';
 import { HashingService } from '../../hashing/hashing.service';
@@ -95,6 +96,7 @@ export class AccessTokenManager
             password: await this.hashingService.hash(registerDto.password),
             email: registerDto.email,
             phoneNumber: registerDto.phoneNumber,
+            marks: USER_MARK_REGISTER_NEW,
             employee: await this.employeesRepository.save({
                 firstName: registerDto.firstName,
                 lastName: registerDto.lastName,
@@ -120,7 +122,7 @@ export class AccessTokenManager
             registerConfirmDto.otpCode,
         );
 
-        user.active = true;
+        user.marks = USER_MARK_REGISTER_CONFIRMED;
         await this.usersRepository.save(user);
 
         return this.login({ userName: user.userName, password: registerConfirmDto.password });
@@ -150,7 +152,7 @@ export class AccessTokenManager
             throw error;
         }
 
-        if (!user.active || !user.roles.length)
+        if (!user.marks.active || !user.roles.length)
         {
             throw error;
         }

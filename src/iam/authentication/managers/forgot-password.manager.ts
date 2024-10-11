@@ -4,6 +4,7 @@ import { randomUUID } from 'crypto';
 import { OtpSendingOptions } from 'src/one-time-password/interfaces/otp-sending-options.interface';
 import { OneTimePasswordService } from 'src/one-time-password/one-time-password.service';
 import { User } from 'src/users/entities/user.entity';
+import { USER_MARK_REGISTER_CONFIRMED } from 'src/users/marks/user-mark.constants';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { HashingService } from '../../hashing/hashing.service';
 import { ForgotPasswordChangeDto } from '../dto/forgot-password-change.dto';
@@ -83,7 +84,7 @@ export class ForgotPasswordManager
         }
 
         entity.user.password = await this.hashingService.hash(forgotPasswordChangeDto.password);
-        entity.user.active = true;
+        entity.user.marks = USER_MARK_REGISTER_CONFIRMED;
         await this.usersRepository.save(entity.user);
 
         entity.completed = true;

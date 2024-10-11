@@ -9,6 +9,7 @@ import { Organization } from './organizations/entities/organization.entity';
 import { Permission } from './permissions/entities/permission.entity';
 import { Role } from './roles/entities/role.entity';
 import { User } from './users/entities/user.entity';
+import { USER_MARK_SYSTEM_ADMIN } from './users/marks/user-mark.constants';
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap
@@ -88,8 +89,7 @@ export class AppService implements OnApplicationBootstrap
             await this.rolesRepository.save(roleEntity);
 
             const userEntity = new User();
-            userEntity.systemAdmin = true;
-            userEntity.active = true;
+            userEntity.marks = USER_MARK_SYSTEM_ADMIN;
             userEntity.userName = appConfig().admin.username;
             userEntity.password = await this.hashingService.hash(appConfig().admin.password);
             userEntity.email = appConfig().admin.email;

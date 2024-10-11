@@ -4,6 +4,7 @@ import { Role } from 'src/roles/entities/role.entity';
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToOne, PrimaryGeneratedColumn, Relation } from 'typeorm';
 import { LANGUAGE_DEFAULT } from '../language/language.constants';
 import { ILanguage } from '../language/language.interface';
+import { UserMark } from '../marks/user-mark.interface';
 
 @Entity()
 export class User
@@ -23,11 +24,8 @@ export class User
     @Column({ unique: true })
     phoneNumber: string;
 
-    @Column({ default: false })
-    active: boolean;
-
-    @Column({ default: false })
-    systemAdmin: boolean;
+    @Column('json')
+    marks: UserMark;
 
     @Column({ default: LANGUAGE_DEFAULT, type: 'json' })
     language: ILanguage;
