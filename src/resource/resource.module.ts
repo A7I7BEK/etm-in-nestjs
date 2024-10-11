@@ -30,6 +30,7 @@ import { ALLOWED_MIME_TYPES } from './utils/resource.constants';
         }),
         TypeOrmModule.forFeature([ Resource ]),
     ],
+    exports: [ ResourceService ],
     controllers: [ ResourceController ],
     providers: [ ResourceService ],
 })
