@@ -1,6 +1,8 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
+import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
+import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { EmployeesService } from './employees.service';
@@ -14,9 +16,9 @@ export class EmployeesController
 
     @Post()
     @Permission(EmployeesPermission.Create)
-    create(@Body() createEmployeeDto: CreateEmployeeDto)
+    create(@Body() createEmployeeDto: CreateEmployeeDto, @ActiveUser() activeUser: ActiveUserData)
     {
-        return this.employeesService.create(createEmployeeDto);
+        return this.employeesService.create(createEmployeeDto, activeUser);
     }
 
     @Get()
