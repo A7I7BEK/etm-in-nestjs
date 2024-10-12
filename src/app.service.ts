@@ -50,7 +50,7 @@ export class AppService implements OnApplicationBootstrap
                 .createQueryBuilder()
                 .insert()
                 .values(permissions)
-                .orIgnore()
+                .orIgnore() // BINGO
                 .execute();
         }
         catch (error)

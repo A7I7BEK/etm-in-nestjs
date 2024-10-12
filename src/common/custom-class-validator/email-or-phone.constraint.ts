@@ -1,5 +1,6 @@
 import { ValidationArguments, ValidatorConstraint, ValidatorConstraintInterface, isEmail, isNumberString, isPhoneNumber } from 'class-validator';
 
+// BINGO
 @ValidatorConstraint({ name: 'EmailOrPhone', async: false })
 export class EmailOrPhoneConstraint implements ValidatorConstraintInterface
 {

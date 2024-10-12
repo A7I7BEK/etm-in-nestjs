@@ -10,7 +10,7 @@ export interface ILanguage
     /**
      * The name of Language
      */
-    name: keyof typeof Language;
+    name: keyof typeof Language; // BINGO
 }
 
 /**

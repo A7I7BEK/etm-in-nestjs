@@ -31,7 +31,7 @@ export class OneTimePasswordService
         return (Date.now() + 10 * 60 * 1000).toString();
     }
 
-    private async decideSendChannel(otpCode: string, user: User, options: Partial<OtpSendingOptions>)
+    private async decideSendChannel(otpCode: string, user: User, options: Partial<OtpSendingOptions>) // BINGO
     {
         if (options.email)
         {
@@ -85,7 +85,7 @@ export class OneTimePasswordService
     async confirm(id: string, code: string)
     {
         const otpEntity = await this.otpRepository.findOneBy({
-            parent: { uniqueId: id },
+            parent: { uniqueId: id }, // BINGO
             code,
         });
 

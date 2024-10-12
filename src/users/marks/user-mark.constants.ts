@@ -1,5 +1,6 @@
 import { UserMark } from './user-mark.interface';
 
+// BINGO
 
 export const USER_MARK_REGISTER_NEW: UserMark = {
     registered: true,

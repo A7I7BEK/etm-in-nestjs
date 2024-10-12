@@ -26,7 +26,7 @@ export class EmployeesService
         private readonly hashingService: HashingService,
     ) { }
 
-
+    // BINGO
     private async manageEntity(
         dto: CreateEmployeeDto | UpdateEmployeeDto,
         activeUser: ActiveUserData,

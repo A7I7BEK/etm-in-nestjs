@@ -26,9 +26,9 @@ export class CreateEmployeeDto
     @IsOptional()
     birthDate?: Date;
 
-    @ValidateNested()
-    @Type(() => ObjectIdDto)
-    resourceFile?: ObjectIdDto;
+    @ValidateNested() // BINGO
+    @Type(() => ObjectIdDto) // BINGO
+    resourceFile?: ObjectIdDto; // BINGO
 
     @ValidateNested()
     @Type(() => CreateUserDto)

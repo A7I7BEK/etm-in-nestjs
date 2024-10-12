@@ -34,11 +34,12 @@ export class EmployeesController
     {
         const { user, ...employee } = await this.employeesService.findOne(+id, {
             user: {
-                organization: true,
-                roles: true,
+                organization: true, // BINGO
+                roles: true, // BINGO
             }
-        }); // BINGO
+        });
 
+        // BINGO
         const entity = {
             ...employee,
             ...{

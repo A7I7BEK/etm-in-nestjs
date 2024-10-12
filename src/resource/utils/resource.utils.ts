@@ -18,6 +18,7 @@ import
 } from './resource.constants';
 
 
+// BINGO
 export function generateFilename(file: Express.Multer.File)
 {
     const dateTimeSuffix = new Date().toISOString().replace(/[-:.Z]/g, '').replace('T', '_');
@@ -62,6 +63,7 @@ export function getDestination(file: Express.Multer.File)
 }
 
 
+// BINGO
 export function generateFilePath(file: Express.Multer.File)
 {
     const destination = getDestination(file);
@@ -72,12 +74,13 @@ export function generateFilePath(file: Express.Multer.File)
     }
 
     const filename = generateFilename(file);
-    const filePath = path.posix.join(destination, filename);
+    const filePath = path.posix.join(destination, filename); // BINGO
 
     return { filePath, filename };
 }
 
 
+// BINGO
 export function calculateFileSize(size: number)
 {
     const units = [ 'B', 'KB', 'MB', 'GB', 'TB' ];

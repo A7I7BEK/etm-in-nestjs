@@ -25,9 +25,9 @@ export class User
     phoneNumber: string;
 
     @Column('json')
-    marks: UserMark;
+    marks: UserMark; // BINGO
 
-    @Column({ default: LANGUAGE_DEFAULT, type: 'json' })
+    @Column({ default: LANGUAGE_DEFAULT, type: 'json' }) // BINGO
     language: ILanguage;
 
     @JoinTable()

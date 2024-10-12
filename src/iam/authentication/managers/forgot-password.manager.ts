@@ -27,8 +27,8 @@ export class ForgotPasswordManager
     async forgotPasswordSend(forgotPasswordSendDto: ForgotPasswordSendDto)
     {
         const { paramForSendingOtp: contact } = forgotPasswordSendDto;
-        const options: Partial<OtpSendingOptions> = {};
-        const userFindOptions: FindOptionsWhere<User> = {};
+        const options: Partial<OtpSendingOptions> = {}; // BINGO
+        const userFindOptions: FindOptionsWhere<User> = {}; // BINGO
 
         if (Number(contact))
         {

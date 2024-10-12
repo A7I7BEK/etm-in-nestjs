@@ -42,7 +42,7 @@ export class ResourceService
         return this.saveFile(file, resource);
     }
 
-    uploadFileSimple(file: Express.Multer.File)
+    uploadFileSimple(file: Express.Multer.File) // BINGO
     {
         const { filePath, filename } = generateFilePath(file);
         file.path = filePath;
@@ -54,7 +54,7 @@ export class ResourceService
 
     uploadMultipleFiles(files: Express.Multer.File[])
     {
-        return Promise.all(files.map(file => this.uploadFileSimple(file)));
+        return Promise.all(files.map(file => this.uploadFileSimple(file))); // BINGO
     }
 
     async findOne(id: number)
@@ -102,7 +102,7 @@ export class ResourceService
         entity.name = file.filename;
         entity.filename = file.filename;
         entity.mimetype = file.mimetype;
-        entity.size = file.buffer.length;
+        entity.size = file.buffer.length; // BINGO
         entity.sizeCalculated = calculateFileSize(file.buffer.length);
         entity.createdAt = new Date();
         entity.now = new Date();

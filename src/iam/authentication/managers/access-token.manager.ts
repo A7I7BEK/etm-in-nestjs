@@ -162,6 +162,7 @@ export class AccessTokenManager
 
     async generateTokens(user: User)
     {
+        // BINGO
         const permissionCodeNames = [ ...new Set(user.roles.flatMap(role => role.permissions).map(perm => perm.codeName as PermissionType)) ];
 
         /**
