@@ -30,16 +30,36 @@ export class EmployeesController
 
     @Get(':id')
     @Permission(EmployeesPermission.Read)
-    findOne(@Param('id') id: string)
+    async findOne(@Param('id') id: string)
     {
-        return this.employeesService.findOne(+id);
+        const { user, ...employee } = await this.employeesService.findOne(+id, {
+            user: {
+                organization: true,
+                roles: true,
+            }
+        }); // BINGO
+
+        const entity = {
+            ...employee,
+            ...{
+                userId: user.id,
+                userName: user.userName,
+                email: user.email,
+                phoneNumber: user.phoneNumber,
+                organizationId: user.organization.id,
+                systemAdmin: user.marks.systemAdmin,
+                roles: user.roles,
+            }
+        };
+
+        return entity;
     }
 
     @Put(':id')
     @Permission(EmployeesPermission.Update)
-    update(@Param('id') id: string, @Body() updateEmployeeDto: UpdateEmployeeDto)
+    update(@Param('id') id: string, @Body() updateEmployeeDto: UpdateEmployeeDto, @ActiveUser() activeUser: ActiveUserData)
     {
-        return this.employeesService.update(+id, updateEmployeeDto);
+        return this.employeesService.update(+id, updateEmployeeDto, activeUser);
     }
 
     @Delete(':id')
@@ -53,13 +73,15 @@ export class EmployeesController
     @Permission(EmployeesPermission.PasswordChange)
     passwordChange(@Param('id') id: string, @Body() updateEmployeeDto: UpdateEmployeeDto)
     {
-        return this.employeesService.update(+id, updateEmployeeDto);
+        return '';
+        // return this.employeesService.update(+id, updateEmployeeDto);
     }
 
     @Put('profile/update/:id')
     @Permission(EmployeesPermission.ProfileUpdate)
     profileUpdate(@Param('id') id: string, @Body() updateEmployeeDto: UpdateEmployeeDto)
     {
-        return this.employeesService.update(+id, updateEmployeeDto);
+        return '';
+        // return this.employeesService.update(+id, updateEmployeeDto);
     }
 }

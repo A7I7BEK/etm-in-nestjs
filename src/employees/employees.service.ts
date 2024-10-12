@@ -8,7 +8,7 @@ import { Resource } from 'src/resource/entities/resource.entity';
 import { ResourceService } from 'src/resource/resource.service';
 import { User } from 'src/users/entities/user.entity';
 import { USER_MARK_EMPLOYEE_NEW } from 'src/users/marks/user-mark.constants';
-import { Repository } from 'typeorm';
+import { FindOptionsRelations, Repository } from 'typeorm';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { Employee } from './entities/employee.entity';
@@ -113,11 +113,11 @@ export class EmployeesService
         return this.employeesRepository.find();
     }
 
-    async findOne(id: number, user = false)
+    async findOne(id: number, relations?: FindOptionsRelations<Employee>) // BINGO
     {
         const entity = await this.employeesRepository.findOne({
             where: { id },
-            relations: { user },
+            relations,
         });
 
         if (!entity)
@@ -130,7 +130,7 @@ export class EmployeesService
 
     async update(id: number, updateEmployeeDto: UpdateEmployeeDto, activeUser: ActiveUserData)
     {
-        const entity = await this.findOne(id, true);
+        const entity = await this.findOne(id, { user: true });
         return this.manageEntity(updateEmployeeDto, activeUser, entity.user, entity);
     }
 
