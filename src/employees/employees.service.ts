@@ -54,12 +54,8 @@ export class EmployeesService
         else
         {
             const activeUserEntity = await this.usersRepository.findOne({
-                where: {
-                    id: activeUser.sub
-                },
-                relations: {
-                    organization: true
-                },
+                where: { id: activeUser.sub },
+                relations: { organization: true },
             });
 
             if (!activeUserEntity)

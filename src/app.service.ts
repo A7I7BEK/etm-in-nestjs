@@ -63,14 +63,13 @@ export class AppService implements OnApplicationBootstrap
     {
         try
         {
-            const organizationFound = await this.organizationsRepository.findOneBy({ name: appConfig().admin.orgName });
-            if (organizationFound)
+            const userFound = await this.usersRepository.findOne({
+                where: { userName: appConfig().admin.username },
+                relations: { roles: true },
+            });
+            if (userFound)
             {
-                const roleFound = await this.rolesRepository.findOneBy({
-                    organization: {
-                        id: organizationFound.id
-                    }
-                });
+                const roleFound = userFound.roles[ 0 ];
                 roleFound.permissions = await this.permissionsRepository.find();
                 await this.rolesRepository.save(roleFound);
 
@@ -82,7 +81,7 @@ export class AppService implements OnApplicationBootstrap
             await this.organizationsRepository.save(organizationEntity);
 
             const roleEntity = new Role();
-            roleEntity.roleName = appConfig().admin.roleName.toLocaleLowerCase();
+            roleEntity.roleName = appConfig().admin.roleName.toLowerCase();
             roleEntity.codeName = appConfig().admin.roleName;
             roleEntity.permissions = await this.permissionsRepository.find();
             roleEntity.organization = organizationEntity;
