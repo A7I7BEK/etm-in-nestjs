@@ -18,6 +18,7 @@ export class CreateEmployeeDto
 
     @ApiProperty({ example: 'Tom' })
     @IsString()
+    @IsNotEmpty()
     @IsOptional()
     middleName?: string;
 
@@ -27,7 +28,7 @@ export class CreateEmployeeDto
 
     @ValidateNested()
     @Type(() => ObjectIdDto)
-    resourceFile: ObjectIdDto;
+    resourceFile?: ObjectIdDto;
 
     @ValidateNested()
     @Type(() => CreateUserDto)

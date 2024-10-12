@@ -4,6 +4,7 @@ import { HashingService } from 'src/iam/hashing/hashing.service';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { Organization } from 'src/organizations/entities/organization.entity';
 import { OrganizationsService } from 'src/organizations/organizations.service';
+import { Resource } from 'src/resource/entities/resource.entity';
 import { ResourceService } from 'src/resource/resource.service';
 import { User } from 'src/users/entities/user.entity';
 import { USER_MARK_EMPLOYEE_NEW } from 'src/users/marks/user-mark.constants';
@@ -25,21 +26,27 @@ export class EmployeesService
         private readonly hashingService: HashingService,
     ) { }
 
-    async create(createEmployeeDto: CreateEmployeeDto, activeUser: ActiveUserData)
+
+    private async manageEntity(
+        dto: CreateEmployeeDto | UpdateEmployeeDto,
+        activeUser: ActiveUserData,
+        userEntity = new User(),
+        employeeEntity = new Employee(),
+    )
     {
-        const usernameExists = await this.usersRepository.existsBy({ userName: createEmployeeDto.user.userName });
+        const usernameExists = await this.usersRepository.existsBy({ userName: dto.user.userName });
         if (usernameExists)
         {
             throw new ConflictException('Username already exists');
         }
 
-        const emailExists = await this.usersRepository.existsBy({ email: createEmployeeDto.user.email });
+        const emailExists = await this.usersRepository.existsBy({ email: dto.user.email });
         if (emailExists)
         {
             throw new ConflictException('Email already exists');
         }
 
-        const phoneNumberExists = await this.usersRepository.existsBy({ phoneNumber: createEmployeeDto.user.phoneNumber });
+        const phoneNumberExists = await this.usersRepository.existsBy({ phoneNumber: dto.user.phoneNumber });
         if (phoneNumberExists)
         {
             throw new ConflictException('Phone number already exists');
@@ -47,9 +54,9 @@ export class EmployeesService
 
 
         let organizationEntity: Organization;
-        if (createEmployeeDto.user.organizationId)
+        if (dto.user.organizationId)
         {
-            organizationEntity = await this.organizationsService.findOne(createEmployeeDto.user.organizationId);
+            organizationEntity = await this.organizationsService.findOne(dto.user.organizationId);
         }
         else
         {
@@ -66,23 +73,39 @@ export class EmployeesService
             organizationEntity = activeUserEntity.organization;
         }
 
-        const userEntity = new User();
-        userEntity.userName = createEmployeeDto.user.userName;
-        userEntity.password = await this.hashingService.hash(createEmployeeDto.user.password);
-        userEntity.email = createEmployeeDto.user.email;
-        userEntity.phoneNumber = createEmployeeDto.user.phoneNumber;
+        let passwordHash: string;
+        if (dto instanceof CreateEmployeeDto && dto.user.password)
+        {
+            passwordHash = await this.hashingService.hash(dto.user.password);
+        }
+
+        let resourceEntity: Resource;
+        if (dto.resourceFile?.id)
+        {
+            resourceEntity = await this.resourceService.findOne(dto.resourceFile.id);
+        }
+
+
+        userEntity.userName = dto.user.userName;
+        userEntity.password = passwordHash ? passwordHash : undefined;
+        userEntity.email = dto.user.email;
+        userEntity.phoneNumber = dto.user.phoneNumber;
         userEntity.marks = USER_MARK_EMPLOYEE_NEW;
         userEntity.organization = organizationEntity;
         await this.usersRepository.save(userEntity);
 
-        const employeeEntity = new Employee();
-        employeeEntity.firstName = createEmployeeDto.firstName;
-        employeeEntity.lastName = createEmployeeDto.lastName;
-        employeeEntity.middleName = createEmployeeDto.middleName;
-        employeeEntity.birthDate = createEmployeeDto.birthDate;
-        employeeEntity.photoUrl = (await this.resourceService.findOne(createEmployeeDto.resourceFile.id)).url;
+        employeeEntity.firstName = dto.firstName;
+        employeeEntity.lastName = dto.lastName;
+        employeeEntity.middleName = dto.middleName;
+        employeeEntity.birthDate = dto.birthDate;
+        employeeEntity.photoUrl = resourceEntity ? resourceEntity.url : undefined;
         employeeEntity.user = userEntity;
         return this.employeesRepository.save(employeeEntity);
+    }
+
+    create(createEmployeeDto: CreateEmployeeDto, activeUser: ActiveUserData)
+    {
+        return this.manageEntity(createEmployeeDto, activeUser);
     }
 
     findAll()
@@ -90,9 +113,12 @@ export class EmployeesService
         return this.employeesRepository.find();
     }
 
-    async findOne(id: number)
+    async findOne(id: number, user = false)
     {
-        const entity = await this.employeesRepository.findOneBy({ id });
+        const entity = await this.employeesRepository.findOne({
+            where: { id },
+            relations: { user },
+        });
 
         if (!entity)
         {
@@ -102,13 +128,10 @@ export class EmployeesService
         return entity;
     }
 
-    async update(id: number, updateEmployeeDto: UpdateEmployeeDto)
+    async update(id: number, updateEmployeeDto: UpdateEmployeeDto, activeUser: ActiveUserData)
     {
-        const entity = await this.findOne(id);
-
-        Object.assign(entity, updateEmployeeDto);
-
-        return this.employeesRepository.save(entity);
+        const entity = await this.findOne(id, true);
+        return this.manageEntity(updateEmployeeDto, activeUser, entity.user, entity);
     }
 
     async remove(id: number)
