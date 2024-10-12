@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import appConfig from 'src/common/config/app.config';
 import { HashingService } from 'src/iam/hashing/hashing.service';
@@ -129,9 +129,18 @@ export class EmployeesService
         return this.manageEntity(updateEmployeeDto, activeUser, entity.user, entity);
     }
 
-    async remove(id: number)
+    async remove(id: number, activeUser: ActiveUserData)
     {
-        const entity = await this.findOne({ id });
-        return this.employeesRepository.remove(entity);
+        const entity = await this.findOne({ id }, { user: true });
+
+        if (entity.user.id === activeUser.sub)
+        {
+            throw new ForbiddenException('Cannot delete yourself');
+        }
+
+        const { user, ...entityRemoved } = await this.employeesRepository.remove(entity);
+        await this.usersService.remove(entity.user.id);
+
+        return entityRemoved;
     }
 }

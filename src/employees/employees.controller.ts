@@ -68,9 +68,9 @@ export class EmployeesController
 
     @Delete(':id')
     @Permission(EmployeesPermission.Delete)
-    remove(@Param('id') id: string)
+    remove(@Param('id') id: string, @ActiveUser() activeUser: ActiveUserData)
     {
-        return this.employeesService.remove(+id);
+        return this.employeesService.remove(+id, activeUser);
     }
 
     @Put('password/change/:id')
