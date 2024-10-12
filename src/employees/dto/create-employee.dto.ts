@@ -28,6 +28,7 @@ export class CreateEmployeeDto
 
     @ValidateNested() // BINGO
     @Type(() => ObjectIdDto) // BINGO
+    @IsOptional()
     resourceFile?: ObjectIdDto; // BINGO
 
     @ValidateNested()
