@@ -30,7 +30,7 @@ export class RolesController
     @Permission(RolesPermission.Read)
     findOne(@Param('id') id: string)
     {
-        return this.rolesService.findOne(+id);
+        return this.rolesService.findOne({ id: +id });
     }
 
     @Put(':id')

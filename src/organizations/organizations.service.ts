@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import appConfig from 'src/common/config/app.config';
+import { FindOptionsRelations, FindOptionsWhere, Repository } from 'typeorm';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { UpdateOrganizationDto } from './dto/update-organization.dto';
 import { Organization } from './entities/organization.entity';
@@ -26,13 +27,13 @@ export class OrganizationsService
         return this.organizationsRepository.find();
     }
 
-    async findOne(id: number)
+    async findOne(where: FindOptionsWhere<Organization>, relations?: FindOptionsRelations<Organization>)
     {
-        const entity = await this.organizationsRepository.findOneBy({ id });
+        const entity = await this.organizationsRepository.findOne({ where, relations });
 
-        if (!entity)
+        if (!entity || entity.name === appConfig().admin.orgName) // Don't show system organization
         {
-            throw new NotFoundException();
+            throw new NotFoundException(`${Organization.name} not found`);
         }
 
         return entity;
@@ -40,7 +41,7 @@ export class OrganizationsService
 
     async update(id: number, updateOrganizationDto: UpdateOrganizationDto)
     {
-        const entity = await this.findOne(id);
+        const entity = await this.findOne({ id });
 
         Object.assign(entity, updateOrganizationDto);
 
@@ -49,7 +50,7 @@ export class OrganizationsService
 
     async remove(id: number)
     {
-        const entity = await this.findOne(id);
+        const entity = await this.findOne({ id });
         return this.organizationsRepository.remove(entity);
     }
 }

@@ -32,12 +32,15 @@ export class EmployeesController
     @Permission(EmployeesPermission.Read)
     async findOne(@Param('id') id: string)
     {
-        const { user, ...employee } = await this.employeesService.findOne(+id, {
-            user: {
-                organization: true, // BINGO
-                roles: true, // BINGO
+        const { user, ...employee } = await this.employeesService.findOne(
+            { id: +id },
+            {
+                user: {
+                    organization: true, // BINGO
+                    roles: true, // BINGO
+                }
             }
-        });
+        );
 
         // BINGO
         const entity = {

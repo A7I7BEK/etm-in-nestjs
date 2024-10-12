@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as sharp from 'sharp';
-import { Repository } from 'typeorm';
+import { FindOptionsRelations, FindOptionsWhere, Repository } from 'typeorm';
 import { MinDimensionDto } from './dto/min-dimension.dto';
 import { Resource } from './entities/resource.entity';
 import { MIME_TYPE_IMAGES } from './utils/resource.constants';
@@ -57,13 +57,13 @@ export class ResourceService
         return Promise.all(files.map(file => this.uploadFileSimple(file))); // BINGO
     }
 
-    async findOne(id: number)
+    async findOne(where: FindOptionsWhere<Resource>, relations?: FindOptionsRelations<Resource>)
     {
-        const entity = await this.resourceRepository.findOneBy({ id });
+        const entity = await this.resourceRepository.findOne({ where, relations });
 
         if (!entity)
         {
-            throw new NotFoundException();
+            throw new NotFoundException(`${Resource.name} not found`);
         }
 
         return entity;
@@ -71,7 +71,7 @@ export class ResourceService
 
     async update(id: number, name: string)
     {
-        const entity = await this.findOne(id);
+        const entity = await this.findOne({ id });
         entity.name = name + path.extname(entity.filename);
         entity.now = new Date();
 
@@ -80,7 +80,7 @@ export class ResourceService
 
     async remove(id: number)
     {
-        const entity = await this.findOne(id);
+        const entity = await this.findOne({ id });
 
         try
         {

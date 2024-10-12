@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import appConfig from 'src/common/config/app.config';
+import { FindOptionsRelations, FindOptionsWhere, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -26,13 +27,13 @@ export class UsersService
         return this.usersRepository.find();
     }
 
-    async findOne(id: number)
+    async findOne(where: FindOptionsWhere<User>, relations?: FindOptionsRelations<User>)
     {
-        const entity = await this.usersRepository.findOneBy({ id });
+        const entity = await this.usersRepository.findOne({ where, relations });
 
-        if (!entity)
+        if (!entity || entity.userName === appConfig().admin.username) // Don't show system admin
         {
-            throw new NotFoundException();
+            throw new NotFoundException(`${User.name} not found`);
         }
 
         return entity;
@@ -40,7 +41,7 @@ export class UsersService
 
     async update(id: number, updateUserDto: UpdateUserDto)
     {
-        const entity = await this.findOne(id);
+        const entity = await this.findOne({ id });
 
         Object.assign(entity, updateUserDto);
 
@@ -49,7 +50,7 @@ export class UsersService
 
     async remove(id: number)
     {
-        const entity = await this.findOne(id);
+        const entity = await this.findOne({ id });
         return this.usersRepository.remove(entity);
     }
 }

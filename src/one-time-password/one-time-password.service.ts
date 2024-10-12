@@ -22,13 +22,13 @@ export class OneTimePasswordService
     private generateCode()
     {
         // 6 digit string
-        return Math.random().toString().slice(-6);
+        return Math.random().toString().slice(-6); //TODO
     }
 
     private generateTime()
     {
         // +10 min
-        return (Date.now() + 10 * 60 * 1000).toString();
+        return (Date.now() + 10 * 60 * 1000).toString(); //TODO
     }
 
     private async decideSendChannel(otpCode: string, user: User, options: Partial<OtpSendingOptions>) // BINGO
@@ -108,7 +108,7 @@ export class OneTimePasswordService
 
         if (!entity)
         {
-            throw new NotFoundException();
+            throw new NotFoundException(`${OneTimePasswordParent.name} not found`);
         }
 
         return entity;

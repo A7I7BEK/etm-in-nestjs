@@ -5,6 +5,7 @@ import { OtpSendingOptions } from 'src/one-time-password/interfaces/otp-sending-
 import { OneTimePasswordService } from 'src/one-time-password/one-time-password.service';
 import { User } from 'src/users/entities/user.entity';
 import { USER_MARK_REGISTER_CONFIRMED } from 'src/users/marks/user-mark.constants';
+import { UsersService } from 'src/users/users.service';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { HashingService } from '../../hashing/hashing.service';
 import { ForgotPasswordChangeDto } from '../dto/forgot-password-change.dto';
@@ -22,6 +23,7 @@ export class ForgotPasswordManager
         private readonly forgotPasswordRepository: Repository<ForgotPassword>,
         private readonly hashingService: HashingService,
         private readonly oneTimePasswordService: OneTimePasswordService,
+        private readonly usersService: UsersService,
     ) { }
 
     async forgotPasswordSend(forgotPasswordSendDto: ForgotPasswordSendDto)
@@ -41,12 +43,7 @@ export class ForgotPasswordManager
             userFindOptions.email = contact;
         }
 
-        const user = await this.usersRepository.findOneBy(userFindOptions);
-        if (!user)
-        {
-            throw new NotFoundException();
-        }
-
+        const user = await this.usersService.findOne(userFindOptions);
         const { otpId: id } = await this.oneTimePasswordService.send(user, options);
 
         return { id };
@@ -80,7 +77,7 @@ export class ForgotPasswordManager
         const entity = await this.forgotPasswordRepository.findOneBy({ uniqueId: forgotPasswordChangeDto.uniqueKey });
         if (!entity)
         {
-            throw new NotFoundException();
+            throw new NotFoundException(`${ForgotPassword.name} not found`);
         }
 
         entity.user.password = await this.hashingService.hash(forgotPasswordChangeDto.password);

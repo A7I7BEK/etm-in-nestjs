@@ -8,6 +8,7 @@ import { PermissionsService } from './permissions.service';
     imports: [
         TypeOrmModule.forFeature([ Permission ]),
     ],
+    exports: [ PermissionsService ],
     controllers: [ PermissionsController ],
     providers: [ PermissionsService ],
 })

@@ -12,7 +12,7 @@ export class CreateRoleDto
     @IsNotEmpty()
     codeName: string;
 
-    @ValidateNested({ each: true })
+    @ValidateNested({ each: true }) // BINGO
     @ArrayMinSize(1)
     @Type(() => ObjectIdDto)
     permissions: ObjectIdDto[];

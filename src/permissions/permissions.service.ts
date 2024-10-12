@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindManyOptions, FindOptionsRelations, FindOptionsWhere, Repository } from 'typeorm';
 import { CreatePermissionDto } from './dto/create-permission.dto';
 import { UpdatePermissionDto } from './dto/update-permission.dto';
 import { Permission } from './entities/permission.entity';
@@ -21,18 +21,18 @@ export class PermissionsService
         return this.permissionsRepository.save(entity);
     }
 
-    findAll()
+    findAll(options?: FindManyOptions<Permission>)
     {
-        return this.permissionsRepository.find();
+        return this.permissionsRepository.find(options);
     }
 
-    async findOne(id: number)
+    async findOne(where: FindOptionsWhere<Permission>, relations?: FindOptionsRelations<Permission>)
     {
-        const entity = await this.permissionsRepository.findOneBy({ id });
+        const entity = await this.permissionsRepository.findOne({ where, relations });
 
         if (!entity)
         {
-            throw new NotFoundException();
+            throw new NotFoundException(`${Permission.name} not found`);
         }
 
         return entity;
@@ -40,7 +40,7 @@ export class PermissionsService
 
     async update(id: number, updatePermissionDto: UpdatePermissionDto)
     {
-        const entity = await this.findOne(id);
+        const entity = await this.findOne({ id });
 
         Object.assign(entity, updatePermissionDto);
 
@@ -49,7 +49,7 @@ export class PermissionsService
 
     async remove(id: number)
     {
-        const entity = await this.findOne(id);
+        const entity = await this.findOne({ id });
         return this.permissionsRepository.remove(entity);
     }
 }

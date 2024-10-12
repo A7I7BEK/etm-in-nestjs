@@ -30,7 +30,7 @@ export class OrganizationsController
     @Permission(OrganizationsPermission.Read)
     findOne(@Param('id') id: string)
     {
-        return this.organizationsService.findOne(+id);
+        return this.organizationsService.findOne({ id: +id });
     }
 
     @Put(':id')

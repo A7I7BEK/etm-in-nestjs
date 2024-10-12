@@ -16,7 +16,7 @@ export class UsersController
     {
         return {
             user,
-            dbUser: this.usersService.findOne(user.sub)
+            dbUser: this.usersService.findOne({ id: user.sub })
         };
     }
 
