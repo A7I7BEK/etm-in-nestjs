@@ -138,7 +138,7 @@ export class EmployeesService
             throw new ForbiddenException('Cannot delete yourself');
         }
 
-        const { user, ...entityRemoved } = await this.employeesRepository.remove(entity);
+        const entityRemoved = await this.employeesRepository.remove(entity);
         await this.usersService.remove(entity.user.id);
 
         return entityRemoved;

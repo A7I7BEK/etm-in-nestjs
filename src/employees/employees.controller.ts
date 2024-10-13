@@ -6,6 +6,7 @@ import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { EmployeesService } from './employees.service';
+import { Employee } from './entities/employee.entity';
 import { EmployeesPermission } from './enums/employees-permission.enum';
 
 @ApiTags('employees')
@@ -16,9 +17,10 @@ export class EmployeesController
 
     @Post()
     @Permission(EmployeesPermission.Create)
-    create(@Body() createEmployeeDto: CreateEmployeeDto, @ActiveUser() activeUser: ActiveUserData)
+    async create(@Body() createEmployeeDto: CreateEmployeeDto, @ActiveUser() activeUser: ActiveUserData)
     {
-        return this.employeesService.create(createEmployeeDto, activeUser);
+        const employee = await this.employeesService.create(createEmployeeDto, activeUser);
+        return this.returnModifiedEmployee(employee, true, true);
     }
 
     @Get()
@@ -32,7 +34,7 @@ export class EmployeesController
     @Permission(EmployeesPermission.Read)
     async findOne(@Param('id') id: string)
     {
-        const { user, ...employee } = await this.employeesService.findOne(
+        const employee = await this.employeesService.findOne(
             { id: +id },
             {
                 user: {
@@ -42,35 +44,23 @@ export class EmployeesController
             }
         );
 
-        // BINGO
-        const entity = {
-            ...employee,
-            ...{
-                userId: user.id,
-                userName: user.userName,
-                email: user.email,
-                phoneNumber: user.phoneNumber,
-                organizationId: user.organization.id,
-                systemAdmin: user.marks.systemAdmin,
-                roles: user.roles,
-            }
-        };
-
-        return entity;
+        return this.returnModifiedEmployee(employee, true, true, true);
     }
 
     @Put(':id')
     @Permission(EmployeesPermission.Update)
-    update(@Param('id') id: string, @Body() updateEmployeeDto: UpdateEmployeeDto, @ActiveUser() activeUser: ActiveUserData)
+    async update(@Param('id') id: string, @Body() updateEmployeeDto: UpdateEmployeeDto, @ActiveUser() activeUser: ActiveUserData)
     {
-        return this.employeesService.update(+id, updateEmployeeDto, activeUser);
+        const employee = await this.employeesService.update(+id, updateEmployeeDto, activeUser);
+        return this.returnModifiedEmployee(employee, true, true);
     }
 
     @Delete(':id')
     @Permission(EmployeesPermission.Delete)
-    remove(@Param('id') id: string, @ActiveUser() activeUser: ActiveUserData)
+    async remove(@Param('id') id: string, @ActiveUser() activeUser: ActiveUserData)
     {
-        return this.employeesService.remove(+id, activeUser);
+        const employee = await this.employeesService.remove(+id, activeUser);
+        return this.returnModifiedEmployee(employee, true);
     }
 
     @Put('password/change/:id')
@@ -83,9 +73,43 @@ export class EmployeesController
 
     @Put('profile/update/:id')
     @Permission(EmployeesPermission.ProfileUpdate)
-    profileUpdate(@Param('id') id: string, @Body() updateEmployeeDto: UpdateEmployeeDto)
+    async profileUpdate(@Param('id') id: string, @Body() updateEmployeeDto: UpdateEmployeeDto, @ActiveUser() activeUser: ActiveUserData)
     {
-        return '';
-        // return this.employeesService.update(+id, updateEmployeeDto);
+        const employee = await this.employeesService.update(+id, updateEmployeeDto, activeUser);
+        return this.returnModifiedEmployee(employee, true, true);
+    }
+
+
+    private returnModifiedEmployee(employee: Employee, user?: boolean, organization?: boolean, roles?: boolean) // BINGO
+    {
+        const { user: employeeUser, ...employeeRest } = employee;
+        const entity = { ...employeeRest };
+
+        if (user)
+        {
+            Object.assign(entity, {
+                userId: employeeUser.id,
+                userName: employeeUser.userName,
+                email: employeeUser.email,
+                phoneNumber: employeeUser.phoneNumber,
+                systemAdmin: employeeUser.marks.systemAdmin,
+            });
+        }
+
+        if (organization)
+        {
+            Object.assign(entity, {
+                organizationId: employeeUser.organization.id,
+            });
+        }
+
+        if (roles)
+        {
+            Object.assign(entity, {
+                roles: employeeUser.roles,
+            });
+        }
+
+        return entity;
     }
 }
