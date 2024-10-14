@@ -37,29 +37,39 @@ export class EmployeesService
         employeeEntity = new Employee(),
     )
     {
-        const usernameExists = await this.usersRepository.existsBy({ userName: dto.user.userName });
-        if (usernameExists)
+        let usersFound: User[];
+        if (dto.user?.userName || dto.user?.email || dto.user?.phoneNumber)
+        {
+            usersFound = await this.usersRepository.find({
+                where: [ // BINGO
+                    { userName: dto.user?.userName },
+                    { email: dto.user?.email },
+                    { phoneNumber: dto.user?.phoneNumber },
+                ]
+            });
+        }
+
+
+        if (usersFound && usersFound.find(x => x.userName === dto.user?.userName))
         {
             throw new ConflictException('Username already exists');
         }
 
-        const emailExists = await this.usersRepository.existsBy({ email: dto.user.email });
-        if (emailExists)
+        if (usersFound && usersFound.find(x => x.email === dto.user?.email))
         {
             throw new ConflictException('Email already exists');
         }
 
-        const phoneNumberExists = await this.usersRepository.existsBy({ phoneNumber: dto.user.phoneNumber });
-        if (phoneNumberExists)
+        if (usersFound && usersFound.find(x => x.phoneNumber === dto.user?.phoneNumber))
         {
             throw new ConflictException('Phone number already exists');
         }
 
 
         let organizationEntity: Organization;
-        if (dto.user.organizationId)
+        if (dto.user?.organizationId)
         {
-            organizationEntity = await this.organizationsService.findOne({ id: dto.user.organizationId });
+            organizationEntity = await this.organizationsService.findOne({ id: dto.user?.organizationId });
         }
         else
         {
@@ -72,22 +82,22 @@ export class EmployeesService
         }
 
         let passwordHash: string;
-        if (dto instanceof CreateEmployeeDto && dto.user.password)
+        if (dto instanceof CreateEmployeeDto && dto.user?.password)
         {
-            passwordHash = await this.hashingService.hash(dto.user.password);
+            passwordHash = await this.hashingService.hash(dto.user?.password);
         }
 
         let resourceEntity: Resource;
         if (dto.resourceFile?.id)
         {
-            resourceEntity = await this.resourceService.findOne({ id: dto.resourceFile.id });
+            resourceEntity = await this.resourceService.findOne({ id: dto.resourceFile?.id });
         }
 
 
-        userEntity.userName = dto.user.userName;
+        userEntity.userName = dto.user?.userName;
         userEntity.password = passwordHash ? passwordHash : undefined;
-        userEntity.email = dto.user.email;
-        userEntity.phoneNumber = dto.user.phoneNumber;
+        userEntity.email = dto.user?.email;
+        userEntity.phoneNumber = dto.user?.phoneNumber;
         userEntity.marks = USER_MARK_EMPLOYEE_NEW;
         userEntity.organization = organizationEntity;
         await this.usersRepository.save(userEntity);
