@@ -1,6 +1,6 @@
 import { OmitType, PartialType } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { ValidateNested } from 'class-validator';
+import { IsOptional, ValidateNested } from 'class-validator';
 import { UpdateUserDto } from 'src/users/dto/update-user.dto';
 import { CreateEmployeeDto } from './create-employee.dto';
 
@@ -9,5 +9,6 @@ export class UpdateEmployeeDto extends PartialType(OmitType(CreateEmployeeDto, [
 {
     @ValidateNested()
     @Type(() => UpdateUserDto)
-    user: UpdateUserDto;
+    @IsOptional()
+    user?: UpdateUserDto;
 }
