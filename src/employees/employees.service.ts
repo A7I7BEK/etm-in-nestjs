@@ -11,8 +11,8 @@ import { User } from 'src/users/entities/user.entity';
 import { USER_MARK_EMPLOYEE_NEW } from 'src/users/marks/user-mark.constants';
 import { UsersService } from 'src/users/users.service';
 import { FindOptionsRelations, FindOptionsWhere, Repository } from 'typeorm';
+import { ChangePasswordDto } from './dto/change-password.dto';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
-import { PasswordChangeDto } from './dto/password-change.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { Employee } from './entities/employee.entity';
 
@@ -155,11 +155,11 @@ export class EmployeesService
         return entityRemoved;
     }
 
-    async changePassword(id: number, passwordChangeDto: PasswordChangeDto)
+    async changePassword(id: number, changePasswordDto: ChangePasswordDto)
     {
         const entity = await this.findOne({ id }, { user: true });
 
-        entity.user.password = await this.hashingService.hash(passwordChangeDto.newPassword);
+        entity.user.password = await this.hashingService.hash(changePasswordDto.newPassword);
         await this.usersRepository.save(entity.user);
     }
 }

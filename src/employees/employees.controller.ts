@@ -3,8 +3,8 @@ import { ApiTags } from '@nestjs/swagger';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
+import { ChangePasswordDto } from './dto/change-password.dto';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
-import { PasswordChangeDto } from './dto/password-change.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { EmployeesService } from './employees.service';
 import { Employee } from './entities/employee.entity';
@@ -66,9 +66,9 @@ export class EmployeesController
 
     @Put('password/change/:id')
     @Permission(EmployeesPermission.PasswordChange)
-    passwordChange(@Param('id') id: string, @Body() passwordChangeDto: PasswordChangeDto)
+    passwordChange(@Param('id') id: string, @Body() changePasswordDto: ChangePasswordDto)
     {
-        return this.employeesService.changePassword(+id, passwordChangeDto);
+        return this.employeesService.changePassword(+id, changePasswordDto);
     }
 
     @Put('profile/update/:id')
