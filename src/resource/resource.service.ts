@@ -5,6 +5,7 @@ import * as path from 'path';
 import * as sharp from 'sharp';
 import { FindOptionsRelations, FindOptionsWhere, Repository } from 'typeorm';
 import { MinDimensionDto } from './dto/min-dimension.dto';
+import { UpdateResourceDto } from './dto/update-resource.dto';
 import { Resource } from './entities/resource.entity';
 import { MIME_TYPE_IMAGES } from './utils/resource.constants';
 import { calculateFileSize, generateFilePath } from './utils/resource.utils';
@@ -69,10 +70,10 @@ export class ResourceService
         return entity;
     }
 
-    async update(id: number, name: string)
+    async update(id: number, updateResourceDto: UpdateResourceDto)
     {
         const entity = await this.findOne({ id });
-        entity.name = name + path.extname(entity.filename);
+        entity.name = updateResourceDto.name + path.extname(entity.filename);
         entity.now = new Date();
 
         return this.resourceRepository.save(entity);

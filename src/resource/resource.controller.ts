@@ -2,6 +2,7 @@ import { Body, Controller, Delete, NotAcceptableException, Param, Post, Put, Que
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
 import { MinDimensionDto } from './dto/min-dimension.dto';
+import { UpdateResourceDto } from './dto/update-resource.dto';
 import { ResourceService } from './resource.service';
 
 @ApiTags('resource')
@@ -35,9 +36,9 @@ export class ResourceController
     }
 
     @Put('update/:id')
-    update(@Param('id') id: string, @Body('name') name: string)
+    update(@Param('id') id: string, @Body() updateResourceDto: UpdateResourceDto)
     {
-        return this.resourceService.update(+id, name);
+        return this.resourceService.update(+id, updateResourceDto);
     }
 
     @Delete('delete/:id')
