@@ -4,6 +4,7 @@ import { Permission } from 'src/iam/authorization/decorators/permission.decorato
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
+import { PasswordChangeDto } from './dto/password-change.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { EmployeesService } from './employees.service';
 import { Employee } from './entities/employee.entity';
@@ -65,10 +66,9 @@ export class EmployeesController
 
     @Put('password/change/:id')
     @Permission(EmployeesPermission.PasswordChange)
-    passwordChange(@Param('id') id: string, @Body() updateEmployeeDto: UpdateEmployeeDto)
+    passwordChange(@Param('id') id: string, @Body() passwordChangeDto: PasswordChangeDto)
     {
-        return '';
-        // return this.employeesService.update(+id, updateEmployeeDto);
+        return this.employeesService.changePassword(+id, passwordChangeDto);
     }
 
     @Put('profile/update/:id')

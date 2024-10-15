@@ -12,6 +12,7 @@ import { USER_MARK_EMPLOYEE_NEW } from 'src/users/marks/user-mark.constants';
 import { UsersService } from 'src/users/users.service';
 import { FindOptionsRelations, FindOptionsWhere, Repository } from 'typeorm';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
+import { PasswordChangeDto } from './dto/password-change.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { Employee } from './entities/employee.entity';
 
@@ -152,5 +153,13 @@ export class EmployeesService
         await this.usersService.remove(entity.user.id);
 
         return entityRemoved;
+    }
+
+    async changePassword(id: number, passwordChangeDto: PasswordChangeDto)
+    {
+        const entity = await this.findOne({ id }, { user: true });
+
+        entity.user.password = await this.hashingService.hash(passwordChangeDto.newPassword);
+        await this.usersRepository.save(entity.user);
     }
 }
