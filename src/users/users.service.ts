@@ -1,10 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import appConfig from 'src/common/config/app.config';
+import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { FindOptionsRelations, FindOptionsWhere, Repository } from 'typeorm';
+import { ChangeLanguageDto } from './dto/change-language.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import { Language } from './language/language.enum';
 
 @Injectable()
 export class UsersService
@@ -52,5 +55,17 @@ export class UsersService
     {
         const entity = await this.findOne({ id });
         return this.usersRepository.remove(entity);
+    }
+
+    async changeLanguage(changeLanguageDto: ChangeLanguageDto, activeUser: ActiveUserData)
+    {
+        const entity = await this.findOne({ id: activeUser.sub });
+
+        const languageName = Object.keys(Language).find(key => Language[ key ] === changeLanguageDto.langCode) as (keyof typeof Language);
+
+        entity.language.code = changeLanguageDto.langCode;
+        entity.language.name = languageName;
+
+        return this.usersRepository.save(entity);
     }
 }
