@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { ArrayMinSize, IsNotEmpty, IsPositive, IsString, ValidateNested } from 'class-validator';
+import { ArrayMinSize, IsInt, IsNotEmpty, IsString, Min, ValidateNested } from 'class-validator';
 import { ObjectIdDto } from 'src/common/dto/object-id.dto';
 
 export class CreateRoleDto
@@ -17,6 +17,7 @@ export class CreateRoleDto
     @Type(() => ObjectIdDto)
     permissions: ObjectIdDto[];
 
-    @IsPositive()
+    @IsInt()
+    @Min(0)
     organizationId: number;
 }
