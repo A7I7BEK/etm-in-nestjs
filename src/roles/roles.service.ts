@@ -1,9 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import appConfig from 'src/common/config/app.config';
+import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
+import { Organization } from 'src/organizations/entities/organization.entity';
 import { OrganizationsService } from 'src/organizations/organizations.service';
 import { PermissionsService } from 'src/permissions/permissions.service';
-import { FindOptionsRelations, FindOptionsWhere, In, Repository } from 'typeorm';
+import { UsersService } from 'src/users/users.service';
+import { FindManyOptions, FindOptionsRelations, FindOptionsWhere, In, Repository } from 'typeorm';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { Role } from './entities/role.entity';
@@ -16,6 +19,8 @@ export class RolesService
         private readonly rolesRepository: Repository<Role>,
         private readonly organizationsService: OrganizationsService,
         private readonly permissionsService: PermissionsService,
+        @Inject(forwardRef(() => UsersService)) // BINGO
+        private readonly usersService: UsersService,
     ) { }
 
 
@@ -56,9 +61,9 @@ export class RolesService
         return this.manageEntity(createRoleDto, activeUser);
     }
 
-    findAll()
+    findAll(options?: FindManyOptions<Role>)
     {
-        return this.rolesRepository.find();
+        return this.rolesRepository.find(options);
     }
 
     async findOne(where: FindOptionsWhere<Role>, relations?: FindOptionsRelations<Role>)
