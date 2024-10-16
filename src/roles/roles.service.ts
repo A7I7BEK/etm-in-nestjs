@@ -46,7 +46,7 @@ export class RolesService
         }
 
         const permissionIds = dto.permissions.map(x => x.id);
-        const permissionsFound = await this.permissionsService.findAll({ where: { id: In(permissionIds) } });
+        const permissionsFound = await this.permissionsService.findAll({ where: { id: In(permissionIds) } }); // BINGO
 
         entity.roleName = dto.roleName;
         entity.codeName = dto.codeName;

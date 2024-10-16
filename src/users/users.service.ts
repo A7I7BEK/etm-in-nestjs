@@ -76,6 +76,7 @@ export class UsersService
     {
         const entity = await this.findOne({ id: activeUser.sub });
 
+        // BINGO
         const languageName = Object.keys(Language).find(key => Language[ key ] === changeLanguageDto.langCode) as (keyof typeof Language);
 
         entity.language.code = changeLanguageDto.langCode;
