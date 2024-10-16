@@ -19,23 +19,41 @@ export class RolesService
     ) { }
 
 
-    private async manageEntity(dto: CreateRoleDto | UpdateRoleDto, entity: Role = new Role())
+    private async manageEntity(
+        dto: CreateRoleDto | UpdateRoleDto,
+        activeUser: ActiveUserData,
+        entity = new Role(),
+    )
     {
-        const organizationFound = await this.organizationsService.findOne({ id: dto.organizationId });
+        let organizationEntity: Organization;
+        if (dto.organizationId)
+        {
+            organizationEntity = await this.organizationsService.findOne({ id: dto.organizationId });
+        }
+        else
+        {
+            const activeUserEntity = await this.usersService.findOne(
+                { id: activeUser.sub },
+                { organization: true },
+            );
+
+            organizationEntity = activeUserEntity.organization;
+        }
+
         const permissionIds = dto.permissions.map(x => x.id);
         const permissionsFound = await this.permissionsService.findAll({ where: { id: In(permissionIds) } });
 
         entity.roleName = dto.roleName;
         entity.codeName = dto.codeName;
-        entity.organization = organizationFound;
+        entity.organization = organizationEntity;
         entity.permissions = permissionsFound;
 
         return this.rolesRepository.save(entity);
     }
 
-    async create(createRoleDto: CreateRoleDto)
+    async create(createRoleDto: CreateRoleDto, activeUser: ActiveUserData)
     {
-        return this.manageEntity(createRoleDto);
+        return this.manageEntity(createRoleDto, activeUser);
     }
 
     findAll()
@@ -55,10 +73,10 @@ export class RolesService
         return entity;
     }
 
-    async update(id: number, updateRoleDto: UpdateRoleDto)
+    async update(id: number, updateRoleDto: UpdateRoleDto, activeUser: ActiveUserData)
     {
         const entity = await this.findOne({ id });
-        return this.manageEntity(updateRoleDto, entity);
+        return this.manageEntity(updateRoleDto, activeUser, entity);
     }
 
     async remove(id: number)
