@@ -57,6 +57,17 @@ export class UsersService
         return this.usersRepository.remove(entity);
     }
 
+    async attachRole(attachRoleDto: AttachRoleDto)
+    {
+        const entity = await this.findOne({ id: attachRoleDto.userId });
+
+        const roleIds = attachRoleDto.roles.map(x => x.id);
+        const rolesFound = await this.rolesService.findAll({ where: { id: In(roleIds) } });
+        entity.roles = rolesFound;
+
+        return this.usersRepository.save(entity);
+    }
+
     async changeLanguage(changeLanguageDto: ChangeLanguageDto, activeUser: ActiveUserData)
     {
         const entity = await this.findOne({ id: activeUser.sub });
