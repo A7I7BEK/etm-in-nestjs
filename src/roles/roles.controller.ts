@@ -5,6 +5,7 @@ import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
+import { Role } from './entities/role.entity';
 import { RolesPermission } from './enums/roles-permission.enum';
 import { RolesService } from './roles.service';
 
@@ -16,9 +17,10 @@ export class RolesController
 
     @Post()
     @Permission(RolesPermission.Create)
-    create(@Body() createRoleDto: CreateRoleDto, @ActiveUser() activeUser: ActiveUserData)
+    async create(@Body() createRoleDto: CreateRoleDto, @ActiveUser() activeUser: ActiveUserData)
     {
-        return this.rolesService.create(createRoleDto, activeUser);
+        const entity = await this.rolesService.create(createRoleDto, activeUser);
+        return this.returnModifiedEntity(entity, true);
     }
 
     @Get()
@@ -30,22 +32,42 @@ export class RolesController
 
     @Get(':id')
     @Permission(RolesPermission.Read)
-    findOne(@Param('id') id: string)
+    async findOne(@Param('id') id: string)
     {
-        return this.rolesService.findOne({ id: +id });
+        const entity = await this.rolesService.findOne({ id: +id });
+        return this.returnModifiedEntity(entity);
     }
 
     @Put(':id')
     @Permission(RolesPermission.Update)
-    update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto, @ActiveUser() activeUser: ActiveUserData)
+    async update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto, @ActiveUser() activeUser: ActiveUserData)
     {
-        return this.rolesService.update(+id, updateRoleDto, activeUser);
+        const entity = await this.rolesService.update(+id, updateRoleDto, activeUser);
+        return this.returnModifiedEntity(entity, true);
     }
 
     @Delete(':id')
     @Permission(RolesPermission.Delete)
-    remove(@Param('id') id: string)
+    async remove(@Param('id') id: string)
     {
-        return this.rolesService.remove(+id);
+        const entity = await this.rolesService.remove(+id);
+        return this.returnModifiedEntity(entity);
+    }
+
+
+    private returnModifiedEntity(entity: Role, organization?: boolean)
+    {
+        const { organization: org, ...entityRest } = entity;
+        const entityNew = { ...entityRest };
+
+        if (organization)
+        {
+            Object.assign(entityNew, {
+                organizationId: org.id,
+                organizationName: org.name,
+            });
+        }
+
+        return entityNew;
     }
 }
