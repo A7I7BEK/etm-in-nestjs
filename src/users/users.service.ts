@@ -1,8 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import appConfig from 'src/common/config/app.config';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { FindOptionsRelations, FindOptionsWhere, Repository } from 'typeorm';
+import { RolesService } from 'src/roles/roles.service';
+import { FindOptionsRelations, FindOptionsWhere, In, Repository } from 'typeorm';
+import { AttachRoleDto } from './dto/attach-role.dto';
 import { ChangeLanguageDto } from './dto/change-language.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -15,6 +17,8 @@ export class UsersService
     constructor (
         @InjectRepository(User)
         private readonly usersRepository: Repository<User>,
+        @Inject(forwardRef(() => RolesService)) // BINGO
+        private readonly rolesService: RolesService,
     ) { }
 
     create(createUserDto: CreateUserDto)
