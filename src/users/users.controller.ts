@@ -28,36 +28,33 @@ export class UsersController
     @Permission(UsersPermission.AttachRole)
     async attachRole(@Body() attachRoleDto: AttachRoleDto)
     {
-        const user = await this.usersService.attachRole(attachRoleDto);
-        return this.returnModifiedUser(user, false, true);
+        const entity = await this.usersService.attachRole(attachRoleDto);
+        return this.returnModifiedEntity(entity);
     }
 
     @Post('change/language')
     async changeLanguage(@Body() changeLanguageDto: ChangeLanguageDto, @ActiveUser() activeUser: ActiveUserData)
     {
-        const user = await this.usersService.changeLanguage(changeLanguageDto, activeUser);
-        return this.returnModifiedUser(user);
+        const entity = await this.usersService.changeLanguage(changeLanguageDto, activeUser);
+        return this.returnModifiedEntity(entity);
     }
 
 
-    private returnModifiedUser(user: User, organization?: boolean, roles?: boolean) // BINGO
+    private returnModifiedEntity(entity: User, organization?: boolean)
     {
-        delete user.password;
+        delete entity.password;
+
+        const { organization: org, ...entityRest } = entity;
+        const entityNew = { ...entityRest };
 
         if (organization)
         {
-            Object.assign(user, {
-                organizationId: user.organization.id,
+            Object.assign(entityNew, {
+                organizationId: org.id,
+                organizationName: org.name,
             });
         }
 
-        if (roles)
-        {
-            Object.assign(user, {
-                roles: user.roles,
-            });
-        }
-
-        return user;
+        return entityNew;
     }
 }

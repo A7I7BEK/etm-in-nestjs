@@ -20,8 +20,8 @@ export class EmployeesController
     @Permission(EmployeesPermission.Create)
     async create(@Body() createEmployeeDto: CreateEmployeeDto, @ActiveUser() activeUser: ActiveUserData)
     {
-        const employee = await this.employeesService.create(createEmployeeDto, activeUser);
-        return this.returnModifiedEmployee(employee, true, true);
+        const entity = await this.employeesService.create(createEmployeeDto, activeUser);
+        return this.returnModifiedEntity(entity, true, true);
     }
 
     @Get()
@@ -35,7 +35,7 @@ export class EmployeesController
     @Permission(EmployeesPermission.Read)
     async findOne(@Param('id') id: string)
     {
-        const employee = await this.employeesService.findOne(
+        const entity = await this.employeesService.findOne(
             { id: +id },
             {
                 user: {
@@ -45,23 +45,23 @@ export class EmployeesController
             }
         );
 
-        return this.returnModifiedEmployee(employee, true, true, true);
+        return this.returnModifiedEntity(entity, true, true, true);
     }
 
     @Put(':id')
     @Permission(EmployeesPermission.Update)
     async update(@Param('id') id: string, @Body() updateEmployeeDto: UpdateEmployeeDto, @ActiveUser() activeUser: ActiveUserData)
     {
-        const employee = await this.employeesService.update(+id, updateEmployeeDto, activeUser);
-        return this.returnModifiedEmployee(employee, true, true);
+        const entity = await this.employeesService.update(+id, updateEmployeeDto, activeUser);
+        return this.returnModifiedEntity(entity, true, true);
     }
 
     @Delete(':id')
     @Permission(EmployeesPermission.Delete)
     async remove(@Param('id') id: string, @ActiveUser() activeUser: ActiveUserData)
     {
-        const employee = await this.employeesService.remove(+id, activeUser);
-        return this.returnModifiedEmployee(employee, true);
+        const entity = await this.employeesService.remove(+id, activeUser);
+        return this.returnModifiedEntity(entity, true);
     }
 
     @Put('password/change/:id')
@@ -75,19 +75,19 @@ export class EmployeesController
     @Permission(EmployeesPermission.ProfileUpdate)
     async profileUpdate(@Param('id') id: string, @Body() updateEmployeeDto: UpdateEmployeeDto, @ActiveUser() activeUser: ActiveUserData)
     {
-        const employee = await this.employeesService.update(+id, updateEmployeeDto, activeUser);
-        return this.returnModifiedEmployee(employee, true, true);
+        const entity = await this.employeesService.update(+id, updateEmployeeDto, activeUser);
+        return this.returnModifiedEntity(entity, true, true);
     }
 
 
-    private returnModifiedEmployee(employee: Employee, user?: boolean, organization?: boolean, roles?: boolean) // BINGO
+    private returnModifiedEntity(entity: Employee, user?: boolean, organization?: boolean, roles?: boolean) // BINGO
     {
-        const { user: employeeUser, ...employeeRest } = employee;
-        const entity = { ...employeeRest };
+        const { user: employeeUser, ...entityRest } = entity;
+        const entityNew = { ...entityRest };
 
         if (user)
         {
-            Object.assign(entity, {
+            Object.assign(entityNew, {
                 userId: employeeUser.id,
                 userName: employeeUser.userName,
                 email: employeeUser.email,
@@ -98,18 +98,19 @@ export class EmployeesController
 
         if (organization)
         {
-            Object.assign(entity, {
+            Object.assign(entityNew, {
                 organizationId: employeeUser.organization.id,
+                organizationName: employeeUser.organization.name,
             });
         }
 
         if (roles)
         {
-            Object.assign(entity, {
+            Object.assign(entityNew, {
                 roles: employeeUser.roles,
             });
         }
 
-        return entity;
+        return entityNew;
     }
 }
