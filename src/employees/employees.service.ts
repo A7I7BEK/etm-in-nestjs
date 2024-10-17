@@ -10,7 +10,7 @@ import { ResourceService } from 'src/resource/resource.service';
 import { User } from 'src/users/entities/user.entity';
 import { USER_MARK_EMPLOYEE_NEW } from 'src/users/marks/user-mark.constants';
 import { UsersService } from 'src/users/users.service';
-import { FindOptionsRelations, FindOptionsWhere, Repository } from 'typeorm';
+import { FindManyOptions, FindOptionsRelations, FindOptionsWhere, Repository } from 'typeorm';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
@@ -117,9 +117,9 @@ export class EmployeesService
         return this.manageEntity(createEmployeeDto, activeUser);
     }
 
-    findAll()
+    findAll(options?: FindManyOptions<Employee>)
     {
-        return this.employeesRepository.find();
+        return this.employeesRepository.find(options);
     }
 
     async findOne(where: FindOptionsWhere<Employee>, relations?: FindOptionsRelations<Employee>) // BINGO
