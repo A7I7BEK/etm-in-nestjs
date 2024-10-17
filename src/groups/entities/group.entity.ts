@@ -1,7 +1,8 @@
 import { Employee } from 'src/employees/entities/employee.entity';
 import { Organization } from 'src/organizations/entities/organization.entity';
-import { Column, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
+@Entity()
 export class Group
 {
     @PrimaryGeneratedColumn()
