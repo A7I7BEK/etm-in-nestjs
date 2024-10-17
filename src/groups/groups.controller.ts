@@ -5,6 +5,7 @@ import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
+import { Group } from './entities/group.entity';
 import { GroupsPermission } from './enums/groups-permission.enum';
 import { GroupsService } from './groups.service';
 
@@ -16,9 +17,10 @@ export class GroupsController
 
     @Post()
     @Permission(GroupsPermission.Create)
-    create(@Body() createGroupDto: CreateGroupDto, @ActiveUser() activeUser: ActiveUserData)
+    async create(@Body() createGroupDto: CreateGroupDto, @ActiveUser() activeUser: ActiveUserData)
     {
-        return this.groupsService.create(createGroupDto);
+        const entity = await this.groupsService.create(createGroupDto, activeUser);
+        return this.returnModifiedEntity(entity);
     }
 
     @Get()
@@ -30,22 +32,57 @@ export class GroupsController
 
     @Get(':id')
     @Permission(GroupsPermission.Read)
-    findOne(@Param('id') id: string)
+    async findOne(@Param('id') id: string)
     {
-        return this.groupsService.findOne(+id);
+        const entity = await this.groupsService.findOne({ id: +id });
+        return this.returnModifiedEntity(entity);
     }
 
     @Put(':id')
     @Permission(GroupsPermission.Update)
-    update(@Param('id') id: string, @Body() updateGroupDto: UpdateGroupDto, @ActiveUser() activeUser: ActiveUserData)
+    async update(@Param('id') id: string, @Body() updateGroupDto: UpdateGroupDto, @ActiveUser() activeUser: ActiveUserData)
     {
-        return this.groupsService.update(+id, updateGroupDto);
+        const entity = await this.groupsService.update(+id, updateGroupDto, activeUser);
+        return this.returnModifiedEntity(entity);
     }
 
     @Delete(':id')
     @Permission(GroupsPermission.Delete)
-    remove(@Param('id') id: string)
+    async remove(@Param('id') id: string)
     {
-        return this.groupsService.remove(+id);
+        const entity = await this.groupsService.remove(+id);
+        return this.returnModifiedEntity(entity);
+    }
+
+
+    private returnModifiedEntity(entity: Group)
+    {
+        const { organization, leader, employees, ...entityRest } = entity;
+
+        const employeeGroups = [ ...employees, leader ].map(item =>
+        {
+            return {
+                employeeId: item.id,
+                employeeInfo: {
+                    firstName: item.firstName,
+                    lastName: item.lastName,
+                    middleName: item.lastName,
+                    birthDate: item.birthDate,
+                    photoUrl: item.photoUrl,
+                },
+                leader: item.id === leader.id,
+            };
+        });
+
+        const entityNew = {
+            ...entityRest,
+            ...{
+                organizationId: organization.id,
+                organizationName: organization.name,
+                employeeGroups,
+            },
+        };
+
+        return entityNew;
     }
 }
