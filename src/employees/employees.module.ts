@@ -20,6 +20,7 @@ import { Employee } from './entities/employee.entity';
         ResourceModule,
         UsersModule,
     ],
+    exports: [ EmployeesService ],
     controllers: [ EmployeesController ],
     providers: [
         {
