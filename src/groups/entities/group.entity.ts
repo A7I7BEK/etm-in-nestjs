@@ -17,6 +17,6 @@ export class Group
     @ManyToOne(type => Employee, { eager: true })
     leader: Employee;
 
-    @ManyToOne(type => Organization)
+    @ManyToOne(type => Organization, { eager: true })
     organization: Organization;
 }
