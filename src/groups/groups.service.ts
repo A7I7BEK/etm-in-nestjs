@@ -50,8 +50,13 @@ export class GroupsService
             leaderEmployee = await this.employeesService.findOne({ id: dto.leaderId });
         }
 
-        const employeeIds = dto.userIds.map(x => x.id);
-        const employeesFound = await this.employeesService.findAll({ where: { id: In(employeeIds) } });
+        let employeesFound: Employee[];
+        if (dto.userIds)
+        {
+            const employeeIds = dto.userIds.map(x => x.id);
+            employeesFound = await this.employeesService.findAll({ where: { id: In(employeeIds) } });
+        }
+
 
         entity.name = dto.name;
         entity.employees = employeesFound;

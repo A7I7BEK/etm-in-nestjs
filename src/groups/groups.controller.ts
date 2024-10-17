@@ -59,20 +59,24 @@ export class GroupsController
     {
         const { organization, leader, employees, ...entityRest } = entity;
 
-        const employeeGroups = employees.map(item =>
+        let employeeGroups;
+        if (employees)
         {
-            return {
-                employeeId: item.id,
-                employeeInfo: {
-                    firstName: item.firstName,
-                    lastName: item.lastName,
-                    middleName: item.lastName,
-                    birthDate: item.birthDate,
-                    photoUrl: item.photoUrl,
-                },
-                leader: item.id === leader.id,
-            };
-        });
+            employeeGroups = employees.map(item =>
+            {
+                return {
+                    employeeId: item.id,
+                    employeeInfo: {
+                        firstName: item.firstName,
+                        lastName: item.lastName,
+                        middleName: item.lastName,
+                        birthDate: item.birthDate,
+                        photoUrl: item.photoUrl,
+                    },
+                    leader: item.id === leader.id,
+                };
+            });
+        }
 
         const entityNew = {
             ...entityRest,
