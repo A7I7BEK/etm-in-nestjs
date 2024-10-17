@@ -59,7 +59,7 @@ export class GroupsController
     {
         const { organization, leader, employees, ...entityRest } = entity;
 
-        const employeeGroups = [ ...employees, leader ].map(item =>
+        const employeeGroups = employees.map(item =>
         {
             return {
                 employeeId: item.id,
