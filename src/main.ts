@@ -18,6 +18,7 @@ async function bootstrap()
         transform: true,
     }));
 
+    // Wrap Response
     app.useGlobalInterceptors(
         new WrapResponseInterceptor(),
     );
