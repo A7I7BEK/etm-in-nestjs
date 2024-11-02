@@ -3,7 +3,7 @@ import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
 import { Order } from '../pagination/order.enum';
 
 // BINGO
-export class PageFilterDto<T extends { id: number; }>
+export abstract class PageFilterDto<T>
 {
     // BINGO
     @IsOptional()
@@ -19,9 +19,7 @@ export class PageFilterDto<T extends { id: number; }>
     @Type(() => Number) // BINGO
     perPage?: number = 10;
 
-    @IsOptional()
-    @IsString()
-    sortBy?: keyof T = 'id';
+    abstract sortBy?: T; // BINGO
 
     @IsOptional()
     @IsEnum(Order)
