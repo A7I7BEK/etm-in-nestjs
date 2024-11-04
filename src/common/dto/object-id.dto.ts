@@ -1,7 +1,8 @@
-import { IsPositive } from 'class-validator';
+import { IsInt, Min } from 'class-validator';
 
 export class ObjectIdDto
 {
-    @IsPositive()
+    @Min(1)
+    @IsInt()
     id: number;
 }

@@ -1,10 +1,11 @@
 import { Type } from 'class-transformer';
-import { ArrayMinSize, IsPositive, ValidateNested } from 'class-validator';
+import { ArrayMinSize, IsInt, Min, ValidateNested } from 'class-validator';
 import { ObjectIdDto } from 'src/common/dto/object-id.dto';
 
 export class AttachRoleDto
 {
-    @IsPositive()
+    @Min(1)
+    @IsInt()
     userId: number;
 
     @ValidateNested({ each: true })

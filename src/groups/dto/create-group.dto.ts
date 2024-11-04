@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { ArrayMinSize, IsInt, IsNotEmpty, IsPositive, IsString, Min, ValidateNested } from 'class-validator';
+import { ArrayMinSize, IsInt, IsNotEmpty, IsString, Min, ValidateNested } from 'class-validator';
 import { ObjectIdDto } from 'src/common/dto/object-id.dto';
 
 export class CreateGroupDto
@@ -13,10 +13,11 @@ export class CreateGroupDto
     @Type(() => ObjectIdDto)
     userIds: ObjectIdDto[];
 
-    @IsPositive()
+    @Min(1)
+    @IsInt()
     leaderId: number;
 
-    @IsInt()
     @Min(0)
+    @IsInt()
     organizationId: number;
 }
