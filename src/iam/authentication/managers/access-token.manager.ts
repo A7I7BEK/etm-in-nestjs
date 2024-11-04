@@ -138,7 +138,8 @@ export class AccessTokenManager
                 userName: loginDto.userName
             },
             relations: {
-                roles: true
+                roles: true,
+                organization: true,
             },
         });
         if (!user)
@@ -152,9 +153,15 @@ export class AccessTokenManager
             throw error;
         }
 
-        if (!user.marks.active || !user.roles.length)
+
+        if (!user.marks.active)
         {
-            throw error;
+            throw new UnauthorizedException('User is not active');
+        }
+
+        if (!user.roles.length)
+        {
+            throw new UnauthorizedException('User does not have a role');
         }
 
         return this.generateTokens(user);
@@ -172,26 +179,28 @@ export class AccessTokenManager
         // const permissionCodeNames = permissions.map(perm => perm.codeName);
 
         const refreshTokenId = randomUUID();
+        await this.refreshTokenIdsStorage.insert(user.id, refreshTokenId);
 
         const [ sessionToken, refreshToken ] = await Promise.all([
-            this.signToken<Partial<ActiveUserData>>(
-                user.id,
+            this.signToken(
                 appConfig().jwt.accessTokenSecret,
                 appConfig().jwt.accessTokenTtl,
                 {
-                    email: user.email,
-                    permissionCodeNames,
+                    sub: user.id,
+                    orgId: user.organization.id,
+                    permissionCodeNames, // TODO: save into Redis
                 }
             ),
             this.signToken(
-                user.id,
                 appConfig().jwt.refreshTokenSecret,
                 appConfig().jwt.refreshTokenTtl,
-                { refreshTokenId }
+                {
+                    sub: user.id,
+                    refreshTokenId,
+                }
             ),
         ]);
 
-        await this.refreshTokenIdsStorage.insert(user.id, refreshTokenId);
 
         return {
             sessionToken,
@@ -200,13 +209,10 @@ export class AccessTokenManager
         };
     }
 
-    private signToken<T>(userId: number, secret: string, expiresIn: number, payload?: T)
+    private signToken<T extends Partial<ActiveUserData>>(secret: string, expiresIn: number, payload?: T)
     {
         return this.jwtService.signAsync(
-            {
-                sub: userId,
-                ...payload
-            },
+            payload,
             {
                 secret,
                 expiresIn,
