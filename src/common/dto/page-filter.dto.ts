@@ -10,20 +10,20 @@ export abstract class PageFilterDto<T>
     @Min(0)
     @IsInt()
     @Type(() => Number) // BINGO
-    page?: number = 0;
+    page?: number; // default for project: 0
 
     @IsOptional()
     @Max(100)
     @Min(1)
     @IsInt()
     @Type(() => Number) // BINGO
-    perPage?: number = 10;
+    perPage?: number;
 
     abstract sortBy?: T; // BINGO
 
     @IsOptional()
     @IsEnum(Order)
-    sortDirection?: Order = Order.DESC;
+    sortDirection?: Order = Order.ASC;
 
     @IsOptional()
     @IsString()
@@ -32,6 +32,11 @@ export abstract class PageFilterDto<T>
 
     get skip(): number // BINGO
     {
-        return this.page * this.perPage;
+        if (typeof this.page === 'number' && typeof this.perPage === 'number')
+        {
+            return this.page * this.perPage;
+        }
+
+        return 0;
     }
 }
