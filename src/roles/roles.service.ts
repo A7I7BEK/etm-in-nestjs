@@ -1,13 +1,15 @@
 import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import appConfig from 'src/common/config/app.config';
+import { OrderReverse } from 'src/common/pagination/order.enum';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { Organization } from 'src/organizations/entities/organization.entity';
 import { OrganizationsService } from 'src/organizations/organizations.service';
 import { PermissionsService } from 'src/permissions/permissions.service';
 import { UsersService } from 'src/users/users.service';
-import { FindManyOptions, FindOptionsRelations, FindOptionsWhere, In, Repository } from 'typeorm';
+import { Brackets, FindManyOptions, FindOptionsRelations, FindOptionsWhere, In, Repository } from 'typeorm';
 import { CreateRoleDto } from './dto/create-role.dto';
+import { RolePageFilterDto } from './dto/role-page-filter.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { Role } from './entities/role.entity';
 
@@ -64,6 +66,37 @@ export class RolesService
     findAll(options?: FindManyOptions<Role>)
     {
         return this.rolesRepository.find(options);
+    }
+
+    findAllWithFilters(pageFilterDto: RolePageFilterDto, activeUser: ActiveUserData)
+    {
+        const queryBuilder = this.rolesRepository.createQueryBuilder('role');
+        queryBuilder.leftJoinAndSelect('role.organization', 'organization');
+        queryBuilder.skip(pageFilterDto.skip);
+        queryBuilder.take(pageFilterDto.perPage);
+        queryBuilder.orderBy('role.' + pageFilterDto.sortBy, OrderReverse[ pageFilterDto.sortDirection ]);
+
+        if (pageFilterDto.organizationId)
+        {
+            queryBuilder.andWhere('role.organization = :orgId', { orgId: pageFilterDto.organizationId });
+        }
+        else
+        {
+            queryBuilder.andWhere('role.organization = :orgId', { orgId: activeUser.orgId });
+        }
+
+        if (pageFilterDto.allSearch)
+        {
+            queryBuilder.andWhere(
+                new Brackets((qb) =>
+                {
+                    qb.orWhere('role.codeName ILIKE :search', { search: `%${pageFilterDto.allSearch}%` });
+                    qb.orWhere('role.roleName ILIKE :search', { search: `%${pageFilterDto.allSearch}%` });
+                }),
+            );
+        }
+
+        return queryBuilder.getManyAndCount();
     }
 
     async findOne(where: FindOptionsWhere<Role>, relations?: FindOptionsRelations<Role>)
