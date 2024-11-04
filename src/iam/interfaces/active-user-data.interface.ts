@@ -9,9 +9,9 @@ export interface ActiveUserData
     sub: number;
 
     /**
-     * The subject's (user) email.
+     * The subject's (user) organization.
      */
-    email: string;
+    orgId: number;
 
     /**
      * The code names of permissions that are extracted from subject's (user) roles
