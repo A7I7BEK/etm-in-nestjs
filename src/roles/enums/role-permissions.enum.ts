@@ -1,4 +1,4 @@
-export enum RolesPermission
+export enum RolePermissions
 {
     Create = 'ROLE_CREATE',
     Read = 'ROLE_READ',

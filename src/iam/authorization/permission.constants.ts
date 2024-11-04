@@ -5,15 +5,15 @@ import { OrganizationsPermission } from 'src/organizations/enums/organizations-p
 import { PermissionsPermission } from 'src/permissions/enums/permissions-permission.enum';
 import { ProjectsPermission } from 'src/projects/enums/projects-permission.enum';
 import { ReportsPermission } from 'src/reports/enums/reports-permission.enum';
-import { RolesPermission } from 'src/roles/enums/roles-permission.enum';
+import { RolePermissions } from 'src/roles/enums/role-permissions.enum';
 import { TasksPermission } from 'src/tasks/enums/tasks-permission.enum';
 import { UsersPermission } from 'src/users/enums/users-permission.enum';
 
 
 export type PermissionType = (
-    OrganizationsPermission
+    | OrganizationsPermission
     | PermissionsPermission
-    | RolesPermission
+    | RolePermissions
     | UsersPermission
     | EmployeesPermission
     | GroupsPermission
@@ -28,7 +28,7 @@ export const PERMISSION_TYPE_KEY = 'PERMISSION_TYPE_KEY';
 export const permissionList = [
     ...Object.values(OrganizationsPermission),
     ...Object.values(PermissionsPermission),
-    ...Object.values(RolesPermission),
+    ...Object.values(RolePermissions),
     ...Object.values(UsersPermission),
     ...Object.values(EmployeesPermission),
     ...Object.values(GroupsPermission),
