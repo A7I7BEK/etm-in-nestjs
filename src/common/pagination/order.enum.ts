@@ -6,7 +6,7 @@ export enum Order
 
 
 /**
- * temporary for this project
+ * temporary for this project - BINGO
  */
 export const OrderReverse = {
     [ Order.ASC ]: 'ASC',
