@@ -87,6 +87,8 @@ export class EmployeesController
 
         if (user)
         {
+            delete entity.user.password;
+
             Object.assign(entity, {
                 userId: user.id,
                 userName: user.userName,

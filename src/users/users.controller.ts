@@ -29,7 +29,7 @@ export class UsersController
             relations: { employee: true, organization: true, roles: true },
         });
 
-        return this.returnModifiedEntity(entity, true, true);
+        return this.returnModifiedEntity(entity);
     }
 
     @Post('attachRole')
@@ -48,35 +48,35 @@ export class UsersController
     }
 
 
-    private returnModifiedEntity(entity: User, organization?: boolean, employee?: boolean)
+    private returnModifiedEntity(entity: User)
     {
-        const { organization: org, employee: emp, ...entityRest } = entity;
-        const entityNew = { ...entityRest, ...{ userId: entity.id, systemAdmin: entity.marks.systemAdmin } };
+        const { employee, organization } = entity;
+        entity[ 'userId' ] = entity.id;
+        entity[ 'systemAdmin' ] = entity.marks.systemAdmin;
 
-        delete entityNew.password;
-        delete entityNew.id;
-        delete entityNew.marks;
-
-        if (organization)
-        {
-            Object.assign(entityNew, {
-                organizationId: org.id,
-                organizationName: org.name,
-            });
-        }
+        delete entity.password;
+        delete entity.id;
 
         if (employee)
         {
-            Object.assign(entityNew, {
-                id: emp.id,
-                firstName: emp.firstName,
-                lastName: emp.lastName,
-                middleName: emp.middleName,
-                birthDate: emp.birthDate,
-                photoUrl: emp.photoUrl,
+            Object.assign(entity, {
+                id: employee.id,
+                firstName: employee.firstName,
+                lastName: employee.lastName,
+                middleName: employee.middleName,
+                birthDate: employee.birthDate,
+                photoUrl: employee.photoUrl,
             });
         }
 
-        return entityNew;
+        if (organization)
+        {
+            Object.assign(entity, {
+                organizationId: organization.id,
+                organizationName: organization.name,
+            });
+        }
+
+        return entity;
     }
 }
