@@ -7,7 +7,7 @@ export abstract class PageFilterDto<T>
 {
     // BINGO
     @IsOptional()
-    @Min(0)
+    @Min(0) // temporary for this project, must be 1
     @IsInt()
     @Type(() => Number) // BINGO
     page?: number; // default for project: 0
@@ -32,8 +32,12 @@ export abstract class PageFilterDto<T>
 
     get skip(): number // BINGO
     {
-        if (typeof this.page === 'number' && typeof this.perPage === 'number')
+        if (this.page > 0 && this.perPage > 0)
         {
+            /**
+             * temporary for this project, must be
+             * return (this.page - 1) * this.perPage;
+             */
             return this.page * this.perPage;
         }
 
