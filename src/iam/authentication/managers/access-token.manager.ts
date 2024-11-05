@@ -6,9 +6,9 @@ import appConfig from 'src/common/config/app.config';
 import { Employee } from 'src/employees/entities/employee.entity';
 import { OneTimePasswordService } from 'src/one-time-password/one-time-password.service';
 import { Organization } from 'src/organizations/entities/organization.entity';
-import { OrganizationsPermission } from 'src/organizations/enums/organizations-permission.enum';
+import { OrganizationPermissions } from 'src/organizations/enums/organization-permissions.enum';
 import { Permission } from 'src/permissions/entities/permission.entity';
-import { PermissionsPermission } from 'src/permissions/enums/permissions-permission.enum';
+import { PermissionPermissions } from 'src/permissions/enums/permission-permissions.enum';
 import { Role } from 'src/roles/entities/role.entity';
 import { User } from 'src/users/entities/user.entity';
 import { USER_MARK_REGISTER_CONFIRMED, USER_MARK_REGISTER_NEW } from 'src/users/marks/user-mark.constants';
@@ -69,13 +69,13 @@ export class AccessTokenManager
         }
 
 
-        const [ organizationWord ] = OrganizationsPermission.Create.split('_');
+        const [ organizationWord ] = OrganizationPermissions.Create.split('_');
         const adminPermissions = await this.permissionsRepository.findBy({
             name: Not(ILike(`${organizationWord}%`)),
             codeName: And(
-                Not(Equal(PermissionsPermission.Create)),
-                Not(Equal(PermissionsPermission.Update)),
-                Not(Equal(PermissionsPermission.Delete)),
+                Not(Equal(PermissionPermissions.Create)),
+                Not(Equal(PermissionPermissions.Update)),
+                Not(Equal(PermissionPermissions.Delete)),
             ),
         });
 

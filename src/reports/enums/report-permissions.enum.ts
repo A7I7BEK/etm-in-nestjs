@@ -1,4 +1,4 @@
-export enum ReportsPermission
+export enum ReportPermissions
 {
     ManagersMembersKanban = 'REPORT_KANBAN_PROJECT_MANAGER_AND_MEMBER',
     ManagersMembersTrello = 'REPORT_TRELLO_PROJECT_MANAGER_AND_MEMBER',

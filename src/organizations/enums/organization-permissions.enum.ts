@@ -1,4 +1,4 @@
-export enum OrganizationsPermission
+export enum OrganizationPermissions
 {
     Create = 'ORGANIZATION_CREATE',
     Read = 'ORGANIZATION_READ',

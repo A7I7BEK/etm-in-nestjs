@@ -8,7 +8,7 @@ import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { EmployeesService } from './employees.service';
 import { Employee } from './entities/employee.entity';
-import { EmployeesPermission } from './enums/employees-permission.enum';
+import { EmployeePermissions } from './enums/employee-permissions.enum';
 
 @ApiTags('employees')
 @Controller('employees')
@@ -17,7 +17,7 @@ export class EmployeesController
     constructor (private readonly employeesService: EmployeesService) { }
 
     @Post()
-    @Permission(EmployeesPermission.Create)
+    @Permission(EmployeePermissions.Create)
     async create(@Body() createEmployeeDto: CreateEmployeeDto, @ActiveUser() activeUser: ActiveUserData)
     {
         const entity = await this.employeesService.create(createEmployeeDto, activeUser);
@@ -25,14 +25,14 @@ export class EmployeesController
     }
 
     @Get()
-    @Permission(EmployeesPermission.Read)
+    @Permission(EmployeePermissions.Read)
     findAll()
     {
         return this.employeesService.findAll();
     }
 
     @Get(':id')
-    @Permission(EmployeesPermission.Read)
+    @Permission(EmployeePermissions.Read)
     async findOne(@Param('id') id: string)
     {
         const entity = await this.employeesService.findOne(
@@ -49,7 +49,7 @@ export class EmployeesController
     }
 
     @Put(':id')
-    @Permission(EmployeesPermission.Update)
+    @Permission(EmployeePermissions.Update)
     async update(@Param('id') id: string, @Body() updateEmployeeDto: UpdateEmployeeDto, @ActiveUser() activeUser: ActiveUserData)
     {
         const entity = await this.employeesService.update(+id, updateEmployeeDto, activeUser);
@@ -57,7 +57,7 @@ export class EmployeesController
     }
 
     @Delete(':id')
-    @Permission(EmployeesPermission.Delete)
+    @Permission(EmployeePermissions.Delete)
     async remove(@Param('id') id: string, @ActiveUser() activeUser: ActiveUserData)
     {
         const entity = await this.employeesService.remove(+id, activeUser);
@@ -65,14 +65,14 @@ export class EmployeesController
     }
 
     @Put('password/change/:id')
-    @Permission(EmployeesPermission.PasswordChange)
+    @Permission(EmployeePermissions.PasswordChange)
     passwordChange(@Param('id') id: string, @Body() changePasswordDto: ChangePasswordDto)
     {
         return this.employeesService.changePassword(+id, changePasswordDto);
     }
 
     @Put('profile/update/:id')
-    @Permission(EmployeesPermission.ProfileUpdate)
+    @Permission(EmployeePermissions.ProfileUpdate)
     async profileUpdate(@Param('id') id: string, @Body() updateEmployeeDto: UpdateEmployeeDto, @ActiveUser() activeUser: ActiveUserData)
     {
         const entity = await this.employeesService.update(+id, updateEmployeeDto, activeUser);

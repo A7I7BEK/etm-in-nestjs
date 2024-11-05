@@ -1,4 +1,4 @@
-export enum TasksPermission
+export enum TaskPermissions
 {
     Create = 'TASK_CREATE',
     Read = 'TASK_READ',

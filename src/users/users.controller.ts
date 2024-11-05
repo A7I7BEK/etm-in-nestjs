@@ -8,7 +8,7 @@ import { Repository } from 'typeorm';
 import { AttachRoleDto } from './dto/attach-role.dto';
 import { ChangeLanguageDto } from './dto/change-language.dto';
 import { User } from './entities/user.entity';
-import { UsersPermission } from './enums/users-permission.enum';
+import { UserPermissions } from './enums/user-permissions.enum';
 import { UsersService } from './users.service';
 
 @ApiTags('users')
@@ -33,7 +33,7 @@ export class UsersController
     }
 
     @Post('attachRole')
-    @Permission(UsersPermission.AttachRole)
+    @Permission(UserPermissions.AttachRole)
     async attachRole(@Body() attachRoleDto: AttachRoleDto)
     {
         const entity = await this.usersService.attachRole(attachRoleDto);

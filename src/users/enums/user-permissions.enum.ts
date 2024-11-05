@@ -1,4 +1,4 @@
-export enum UsersPermission
+export enum UserPermissions
 {
     AttachRole = 'USER_ATTACH_ROLE',
 }

@@ -1,4 +1,4 @@
-export enum EmployeesPermission
+export enum EmployeePermissions
 {
     Create = 'EMPLOYEE_CREATE',
     Read = 'EMPLOYEE_READ',

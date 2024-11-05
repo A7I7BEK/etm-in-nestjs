@@ -6,7 +6,7 @@ import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
 import { Group } from './entities/group.entity';
-import { GroupsPermission } from './enums/groups-permission.enum';
+import { GroupPermissions } from './enums/group-permissions.enum';
 import { GroupsService } from './groups.service';
 
 @ApiTags('groups')
@@ -16,7 +16,7 @@ export class GroupsController
     constructor (private readonly groupsService: GroupsService) { }
 
     @Post()
-    @Permission(GroupsPermission.Create)
+    @Permission(GroupPermissions.Create)
     async create(@Body() createGroupDto: CreateGroupDto, @ActiveUser() activeUser: ActiveUserData)
     {
         const entity = await this.groupsService.create(createGroupDto, activeUser);
@@ -24,14 +24,14 @@ export class GroupsController
     }
 
     @Get()
-    @Permission(GroupsPermission.Read)
+    @Permission(GroupPermissions.Read)
     findAll()
     {
         return this.groupsService.findAll();
     }
 
     @Get(':id')
-    @Permission(GroupsPermission.Read)
+    @Permission(GroupPermissions.Read)
     async findOne(@Param('id') id: string)
     {
         const entity = await this.groupsService.findOne({ id: +id });
@@ -39,7 +39,7 @@ export class GroupsController
     }
 
     @Put(':id')
-    @Permission(GroupsPermission.Update)
+    @Permission(GroupPermissions.Update)
     async update(@Param('id') id: string, @Body() updateGroupDto: UpdateGroupDto, @ActiveUser() activeUser: ActiveUserData)
     {
         const entity = await this.groupsService.update(+id, updateGroupDto, activeUser);
@@ -47,7 +47,7 @@ export class GroupsController
     }
 
     @Delete(':id')
-    @Permission(GroupsPermission.Delete)
+    @Permission(GroupPermissions.Delete)
     async remove(@Param('id') id: string)
     {
         const entity = await this.groupsService.remove(+id);

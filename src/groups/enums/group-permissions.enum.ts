@@ -1,4 +1,4 @@
-export enum GroupsPermission
+export enum GroupPermissions
 {
     Create = 'GROUP_CREATE',
     Read = 'GROUP_READ',

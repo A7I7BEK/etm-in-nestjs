@@ -1,4 +1,4 @@
-export enum PermissionsPermission
+export enum PermissionPermissions
 {
     Create = 'PERMISSION_CREATE',
     Read = 'PERMISSION_READ',

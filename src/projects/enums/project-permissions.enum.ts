@@ -1,4 +1,4 @@
-export enum ProjectsPermission
+export enum ProjectPermissions
 {
     Create = 'PROJECT_CREATE',
     Read = 'PROJECT_READ',
