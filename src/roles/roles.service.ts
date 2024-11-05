@@ -39,12 +39,7 @@ export class RolesService
         }
         else
         {
-            const activeUserEntity = await this.usersService.findOne(
-                { id: activeUser.sub },
-                { organization: true },
-            );
-
-            organizationEntity = activeUserEntity.organization;
+            organizationEntity = await this.organizationsService.findOne({ id: activeUser.orgId });
         }
 
         const permissionIds = dto.permissions.map(x => x.id);

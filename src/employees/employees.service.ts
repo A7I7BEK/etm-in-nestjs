@@ -74,12 +74,7 @@ export class EmployeesService
         }
         else
         {
-            const activeUserEntity = await this.usersService.findOne(
-                { id: activeUser.sub },
-                { organization: true },
-            );
-
-            organizationEntity = activeUserEntity.organization;
+            organizationEntity = await this.organizationsService.findOne({ id: activeUser.orgId });
         }
 
         let passwordHash: string;
