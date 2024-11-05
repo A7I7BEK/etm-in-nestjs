@@ -7,7 +7,7 @@ export class Pagination<T>
     meta: PaginationMeta;
 
     /**
-     * temporary for this project
+     * temporary for this project, must not exist
      */
     totalCount: number;
 
@@ -16,6 +16,6 @@ export class Pagination<T>
         this.data = data;
         this.meta = meta;
 
-        this.totalCount = meta.totalItems; // temporary for this project
+        this.totalCount = meta.totalItems; // temporary for this project, must not exist
     }
 }
