@@ -22,13 +22,13 @@ export class OneTimePasswordService
     private generateCode()
     {
         // 6 digit string
-        return Math.random().toString().slice(-6); //TODO
+        return Math.random().toString().slice(-6);
     }
 
     private generateTime()
     {
         // +10 min
-        return (Date.now() + 10 * 60 * 1000).toString(); //TODO
+        return (Date.now() + 10 * 60 * 1000).toString();
     }
 
     private async decideSendChannel(otpCode: string, user: User, options: Partial<OtpSendingOptions>) // BINGO
