@@ -2,6 +2,8 @@ import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/commo
 import { InjectRepository } from '@nestjs/typeorm';
 import appConfig from 'src/common/config/app.config';
 import { OrderReverse } from 'src/common/pagination/order.enum';
+import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
+import { Pagination } from 'src/common/pagination/pagination.class';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { Organization } from 'src/organizations/entities/organization.entity';
 import { OrganizationsService } from 'src/organizations/organizations.service';
@@ -63,7 +65,7 @@ export class RolesService
         return this.rolesRepository.find(options);
     }
 
-    findAllWithFilters(pageFilterDto: RolePageFilterDto, activeUser: ActiveUserData)
+    async findAllWithFilters(pageFilterDto: RolePageFilterDto, activeUser: ActiveUserData)
     {
         const queryBuilder = this.rolesRepository.createQueryBuilder('role');
         queryBuilder.leftJoinAndSelect('role.organization', 'organization');
@@ -91,7 +93,11 @@ export class RolesService
             );
         }
 
-        return queryBuilder.getManyAndCount();
+        const [ data, total ] = await queryBuilder.getManyAndCount();
+
+        const paginationMeta = new PaginationMeta(pageFilterDto.page, pageFilterDto.perPage, total);
+
+        return new Pagination<Role>(data, paginationMeta);
     }
 
     async findOne(where: FindOptionsWhere<Role>, relations?: FindOptionsRelations<Role>)
