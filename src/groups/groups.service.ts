@@ -5,7 +5,6 @@ import { Employee } from 'src/employees/entities/employee.entity';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { Organization } from 'src/organizations/entities/organization.entity';
 import { OrganizationsService } from 'src/organizations/organizations.service';
-import { UsersService } from 'src/users/users.service';
 import { FindManyOptions, FindOptionsRelations, FindOptionsWhere, In, Repository } from 'typeorm';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
@@ -19,7 +18,6 @@ export class GroupsService
         private readonly groupsRepository: Repository<Group>,
         private readonly organizationsService: OrganizationsService,
         private readonly employeesService: EmployeesService,
-        private readonly usersService: UsersService,
     ) { }
 
 

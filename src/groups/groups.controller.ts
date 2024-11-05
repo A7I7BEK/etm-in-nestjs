@@ -57,36 +57,32 @@ export class GroupsController
 
     private returnModifiedEntity(entity: Group)
     {
-        const { organization, leader, employees, ...entityRest } = entity;
+        const { employees, leader, organization } = entity;
+        entity[ 'employeeGroups' ] = [];
 
-        let employeeGroups;
         if (employees)
         {
-            employeeGroups = employees.map(item =>
-            {
-                return {
-                    employeeId: item.id,
-                    employeeInfo: {
-                        firstName: item.firstName,
-                        lastName: item.lastName,
-                        middleName: item.lastName,
-                        birthDate: item.birthDate,
-                        photoUrl: item.photoUrl,
-                    },
-                    leader: item.id === leader.id,
-                };
+            entity[ 'employeeGroups' ] = employees.map(item => ({
+                employeeId: item.id,
+                employeeInfo: {
+                    firstName: item.firstName,
+                    lastName: item.lastName,
+                    middleName: item.lastName,
+                    birthDate: item.birthDate,
+                    photoUrl: item.photoUrl,
+                },
+                leader: item.id === leader.id,
+            }));
+        }
+
+        if (organization)
+        {
+            Object.assign(entity, {
+                organizationId: organization.id,
+                organizationName: organization.name,
             });
         }
 
-        const entityNew = {
-            ...entityRest,
-            ...{
-                organizationId: organization.id,
-                organizationName: organization.name,
-                employeeGroups,
-            },
-        };
-
-        return entityNew;
+        return entity;
     }
 }
