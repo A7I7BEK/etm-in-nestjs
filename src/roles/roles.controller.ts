@@ -29,7 +29,7 @@ export class RolesController
     async findAll(@Query() pageFilterDto: RolePageFilterDto, @ActiveUser() activeUser: ActiveUserData)
     {
         const paginationWithEntity = await this.rolesService.findAllWithFilters(pageFilterDto, activeUser);
-        paginationWithEntity.data.forEach(entity => this.returnModifiedEntity(entity));
+        paginationWithEntity.data = paginationWithEntity.data.map(entity => this.returnModifiedEntity(entity));
 
         return paginationWithEntity;
     }
