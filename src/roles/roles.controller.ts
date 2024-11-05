@@ -1,12 +1,13 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { CreateRoleDto } from './dto/create-role.dto';
+import { RolePageFilterDto } from './dto/role-page-filter.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { Role } from './entities/role.entity';
-import { RolesPermission } from './enums/roles-permission.enum';
+import { RolePermissions } from './enums/role-permissions.enum';
 import { RolesService } from './roles.service';
 
 @ApiTags('roles')
@@ -16,38 +17,41 @@ export class RolesController
     constructor (private readonly rolesService: RolesService) { }
 
     @Post()
-    @Permission(RolesPermission.Create)
+    @Permission(RolePermissions.Create)
     async create(@Body() createRoleDto: CreateRoleDto, @ActiveUser() activeUser: ActiveUserData)
     {
         const entity = await this.rolesService.create(createRoleDto, activeUser);
-        return this.returnModifiedEntity(entity, true);
+        return this.returnModifiedEntity(entity);
     }
 
     @Get()
-    @Permission(RolesPermission.Read)
-    findAll()
+    @Permission(RolePermissions.Read)
+    findAll(@Query() pageFilterDto: RolePageFilterDto, @ActiveUser() activeUser: ActiveUserData)
     {
-        return this.rolesService.findAll();
+        console.log('aaaaaaaaaaa', pageFilterDto);
+        console.log('bbbbbbbbbb', pageFilterDto.skip);
+
+        return this.rolesService.findAllWithFilters(pageFilterDto, activeUser);
     }
 
     @Get(':id')
-    @Permission(RolesPermission.Read)
+    @Permission(RolePermissions.Read)
     async findOne(@Param('id') id: string)
     {
-        const entity = await this.rolesService.findOne({ id: +id });
+        const entity = await this.rolesService.findOne({ id: +id }, { organization: true });
         return this.returnModifiedEntity(entity);
     }
 
     @Put(':id')
-    @Permission(RolesPermission.Update)
+    @Permission(RolePermissions.Update)
     async update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto, @ActiveUser() activeUser: ActiveUserData)
     {
         const entity = await this.rolesService.update(+id, updateRoleDto, activeUser);
-        return this.returnModifiedEntity(entity, true);
+        return this.returnModifiedEntity(entity);
     }
 
     @Delete(':id')
-    @Permission(RolesPermission.Delete)
+    @Permission(RolePermissions.Delete)
     async remove(@Param('id') id: string)
     {
         const entity = await this.rolesService.remove(+id);
@@ -55,19 +59,18 @@ export class RolesController
     }
 
 
-    private returnModifiedEntity(entity: Role, organization?: boolean)
+    private returnModifiedEntity(entity: Role)
     {
-        const { organization: org, ...entityRest } = entity;
-        const entityNew = { ...entityRest };
+        const { organization } = entity;
 
         if (organization)
         {
-            Object.assign(entityNew, {
-                organizationId: org.id,
-                organizationName: org.name,
+            Object.assign(entity, {
+                organizationId: organization.id,
+                organizationName: organization.name,
             });
         }
 
-        return entityNew;
+        return entity;
     }
 }
