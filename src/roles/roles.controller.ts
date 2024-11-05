@@ -26,12 +26,12 @@ export class RolesController
 
     @Get()
     @Permission(RolePermissions.Read)
-    findAll(@Query() pageFilterDto: RolePageFilterDto, @ActiveUser() activeUser: ActiveUserData)
+    async findAll(@Query() pageFilterDto: RolePageFilterDto, @ActiveUser() activeUser: ActiveUserData)
     {
-        console.log('aaaaaaaaaaa', pageFilterDto);
-        console.log('bbbbbbbbbb', pageFilterDto.skip);
+        const paginationWithEntity = await this.rolesService.findAllWithFilters(pageFilterDto, activeUser);
+        paginationWithEntity.data.forEach(entity => this.returnModifiedEntity(entity));
 
-        return this.rolesService.findAllWithFilters(pageFilterDto, activeUser);
+        return paginationWithEntity;
     }
 
     @Get(':id')
