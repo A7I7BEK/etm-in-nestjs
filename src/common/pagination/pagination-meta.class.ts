@@ -14,11 +14,19 @@ export class PaginationMeta
 
     constructor (page: number, pageSize: number, totalItems: number)
     {
-        this.page = page;
-        this.pageSize = pageSize;
-        this.totalItems = totalItems;
-        this.totalPages = Math.ceil(this.totalItems / this.pageSize);
-        this.hasPreviousPage = this.page > 1;
-        this.hasNextPage = this.page < this.totalPages;
+        this.page = page ? (page + 1) : 1; // temporary for this project, must be: page || 1
+        this.pageSize = pageSize || 0;
+        this.totalItems = totalItems || 0;
+        this.totalPages = 0;
+        this.hasPreviousPage = false;
+        this.hasNextPage = false;
+
+
+        if (this.pageSize > 0)
+        {
+            this.totalPages = Math.ceil(this.totalItems / this.pageSize);
+            this.hasPreviousPage = this.page > 1;
+            this.hasNextPage = this.page < this.totalPages;
+        }
     }
 }
