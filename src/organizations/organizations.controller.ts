@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
+import { OrganizationPageFilterDto } from './dto/organization-page-filter.dto';
 import { UpdateOrganizationDto } from './dto/update-organization.dto';
 import { OrganizationPermissions } from './enums/organization-permissions.enum';
 import { OrganizationsService } from './organizations.service';
@@ -21,9 +22,9 @@ export class OrganizationsController
 
     @Get()
     @Permission(OrganizationPermissions.Read)
-    findAll()
+    findAll(@Query() pageFilterDto: OrganizationPageFilterDto)
     {
-        return this.organizationsService.findAll();
+        return this.organizationsService.findAllWithFilters(pageFilterDto);
     }
 
     @Get(':id')
