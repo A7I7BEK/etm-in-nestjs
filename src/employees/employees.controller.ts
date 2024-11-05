@@ -21,7 +21,7 @@ export class EmployeesController
     async create(@Body() createEmployeeDto: CreateEmployeeDto, @ActiveUser() activeUser: ActiveUserData)
     {
         const entity = await this.employeesService.create(createEmployeeDto, activeUser);
-        return this.returnModifiedEntity(entity, true, true);
+        return this.returnModifiedEntity(entity);
     }
 
     @Get()
@@ -45,7 +45,7 @@ export class EmployeesController
             }
         );
 
-        return this.returnModifiedEntity(entity, true, true, true);
+        return this.returnModifiedEntity(entity);
     }
 
     @Put(':id')
@@ -53,7 +53,7 @@ export class EmployeesController
     async update(@Param('id') id: string, @Body() updateEmployeeDto: UpdateEmployeeDto, @ActiveUser() activeUser: ActiveUserData)
     {
         const entity = await this.employeesService.update(+id, updateEmployeeDto, activeUser);
-        return this.returnModifiedEntity(entity, true, true);
+        return this.returnModifiedEntity(entity);
     }
 
     @Delete(':id')
@@ -61,7 +61,7 @@ export class EmployeesController
     async remove(@Param('id') id: string, @ActiveUser() activeUser: ActiveUserData)
     {
         const entity = await this.employeesService.remove(+id, activeUser);
-        return this.returnModifiedEntity(entity, true);
+        return this.returnModifiedEntity(entity);
     }
 
     @Put('password/change/:id')
@@ -76,41 +76,41 @@ export class EmployeesController
     async profileUpdate(@Param('id') id: string, @Body() updateEmployeeDto: UpdateEmployeeDto, @ActiveUser() activeUser: ActiveUserData)
     {
         const entity = await this.employeesService.update(+id, updateEmployeeDto, activeUser);
-        return this.returnModifiedEntity(entity, true, true);
+        return this.returnModifiedEntity(entity);
     }
 
 
-    private returnModifiedEntity(entity: Employee, user?: boolean, organization?: boolean, roles?: boolean) // BINGO
+    private returnModifiedEntity(entity: Employee) // BINGO
     {
-        const { user: employeeUser, ...entityRest } = entity;
-        const entityNew = { ...entityRest };
+        const { user } = entity;
+        const { organization, roles } = user || {};
 
         if (user)
         {
-            Object.assign(entityNew, {
-                userId: employeeUser.id,
-                userName: employeeUser.userName,
-                email: employeeUser.email,
-                phoneNumber: employeeUser.phoneNumber,
-                systemAdmin: employeeUser.marks.systemAdmin,
+            Object.assign(entity, {
+                userId: user.id,
+                userName: user.userName,
+                email: user.email,
+                phoneNumber: user.phoneNumber,
+                systemAdmin: user.marks.systemAdmin,
             });
         }
 
         if (organization)
         {
-            Object.assign(entityNew, {
-                organizationId: employeeUser.organization.id,
-                organizationName: employeeUser.organization.name,
+            Object.assign(entity, {
+                organizationId: organization.id,
+                organizationName: organization.name,
             });
         }
 
         if (roles)
         {
-            Object.assign(entityNew, {
-                roles: employeeUser.roles,
+            Object.assign(entity, {
+                roles,
             });
         }
 
-        return entityNew;
+        return entity;
     }
 }
