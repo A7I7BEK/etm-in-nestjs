@@ -1,6 +1,9 @@
 import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import appConfig from 'src/common/config/app.config';
+import { OrderReverse } from 'src/common/pagination/order.enum';
+import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
+import { Pagination } from 'src/common/pagination/pagination.class';
 import { HashingService } from 'src/iam/hashing/hashing.service';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { Organization } from 'src/organizations/entities/organization.entity';
@@ -10,11 +13,13 @@ import { ResourceService } from 'src/resource/resource.service';
 import { User } from 'src/users/entities/user.entity';
 import { USER_MARK_EMPLOYEE_NEW } from 'src/users/marks/user-mark.constants';
 import { UsersService } from 'src/users/users.service';
-import { FindManyOptions, FindOptionsRelations, FindOptionsWhere, Repository } from 'typeorm';
+import { Brackets, FindManyOptions, FindOptionsRelations, FindOptionsWhere, Repository } from 'typeorm';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
+import { EmployeePageFilterDto } from './dto/employee-page-filter.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { Employee } from './entities/employee.entity';
+import { EmployeeProperties } from './enums/employee-properties.enum';
 
 @Injectable()
 export class EmployeesService
@@ -115,6 +120,57 @@ export class EmployeesService
     findAll(options?: FindManyOptions<Employee>)
     {
         return this.employeesRepository.find(options);
+    }
+
+    async findAllWithFilters(pageFilterDto: EmployeePageFilterDto, activeUser: ActiveUserData)
+    {
+        const [ empl, user, org, role ] = [ 'employee', 'user', 'organization', 'role' ];
+        // BINGO
+        const sortBy = (<any>Object)
+            .values(EmployeeProperties)
+            .includes(pageFilterDto.sortBy)
+            ? empl + '.' + pageFilterDto.sortBy
+            : user + '.' + pageFilterDto.sortBy;
+
+
+        const queryBuilder = this.employeesRepository.createQueryBuilder(empl);
+        queryBuilder.leftJoinAndSelect(`${empl}.user`, user);
+        queryBuilder.leftJoinAndSelect(`${user}.organization`, org);
+        queryBuilder.leftJoinAndSelect(`${user}.roles`, role);
+        queryBuilder.skip(pageFilterDto.skip);
+        queryBuilder.take(pageFilterDto.perPage);
+        queryBuilder.orderBy(sortBy, OrderReverse[ pageFilterDto.sortDirection ]);
+
+        if (pageFilterDto.organizationId)
+        {
+            queryBuilder.andWhere(`${user}.organization = :orgId`, { orgId: pageFilterDto.organizationId });
+        }
+        else
+        {
+            queryBuilder.andWhere(`${user}.organization = :orgId`, { orgId: activeUser.orgId });
+        }
+
+        if (pageFilterDto.allSearch)
+        {
+            queryBuilder.andWhere(
+                new Brackets((qb) =>
+                {
+                    qb.orWhere(`${empl}.firstName ILIKE :search`, { search: `%${pageFilterDto.allSearch}%` });
+                    qb.orWhere(`${empl}.lastName ILIKE :search`, { search: `%${pageFilterDto.allSearch}%` });
+                    qb.orWhere(`${empl}.middleName ILIKE :search`, { search: `%${pageFilterDto.allSearch}%` });
+                    qb.orWhere(`${user}.userName ILIKE :search`, { search: `%${pageFilterDto.allSearch}%` });
+                    qb.orWhere(`${user}.email ILIKE :search`, { search: `%${pageFilterDto.allSearch}%` });
+                    qb.orWhere(`${role}.roleName ILIKE :search`, { search: `%${pageFilterDto.allSearch}%` });
+                    qb.orWhere(`${role}.codeName ILIKE :search`, { search: `%${pageFilterDto.allSearch}%` });
+                }),
+            );
+        }
+
+        const [ data, total ] = await queryBuilder.getManyAndCount();
+
+        const paginationMeta = new PaginationMeta(pageFilterDto.page, pageFilterDto.perPage, total);
+
+        return new Pagination<Employee>(data, paginationMeta);
     }
 
     async findOne(where: FindOptionsWhere<Employee>, relations?: FindOptionsRelations<Employee>) // BINGO
