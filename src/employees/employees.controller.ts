@@ -1,10 +1,11 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
+import { EmployeePageFilterDto } from './dto/employee-page-filter.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { EmployeesService } from './employees.service';
 import { Employee } from './entities/employee.entity';
@@ -26,9 +27,12 @@ export class EmployeesController
 
     @Get()
     @Permission(EmployeePermissions.Read)
-    findAll()
+    async findAll(@Query() pageFilterDto: EmployeePageFilterDto, @ActiveUser() activeUser: ActiveUserData)
     {
-        return this.employeesService.findAll();
+        const paginationWithEntity = await this.employeesService.findAllWithFilters(pageFilterDto, activeUser);
+        paginationWithEntity.data = paginationWithEntity.data.map(entity => this.returnModifiedEntity(entity));
+
+        return paginationWithEntity;
     }
 
     @Get(':id')
