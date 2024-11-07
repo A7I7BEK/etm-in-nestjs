@@ -1,12 +1,16 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { OrderReverse } from 'src/common/pagination/order.enum';
+import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
+import { Pagination } from 'src/common/pagination/pagination.class';
 import { EmployeesService } from 'src/employees/employees.service';
 import { Employee } from 'src/employees/entities/employee.entity';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { Organization } from 'src/organizations/entities/organization.entity';
 import { OrganizationsService } from 'src/organizations/organizations.service';
-import { FindManyOptions, FindOptionsRelations, FindOptionsWhere, In, Repository } from 'typeorm';
+import { Brackets, FindManyOptions, FindOptionsRelations, FindOptionsWhere, In, Repository } from 'typeorm';
 import { CreateGroupDto } from './dto/create-group.dto';
+import { GroupPageFilterDto } from './dto/group-page-filter.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
 import { Group } from './entities/group.entity';
 
@@ -67,6 +71,47 @@ export class GroupsService
     findAll(options?: FindManyOptions<Group>)
     {
         return this.groupsRepository.find(options);
+    }
+
+    async findAllWithFilters(pageFilterDto: GroupPageFilterDto, activeUser: ActiveUserData)
+    {
+        const [ group, empl, leader, org, ] = [ 'group', 'employee', 'leader', 'organization' ];
+
+        const queryBuilder = this.groupsRepository.createQueryBuilder(group);
+        queryBuilder.leftJoinAndSelect(`${group}.employees`, empl);
+        queryBuilder.leftJoinAndSelect(`${group}.leader`, leader);
+        queryBuilder.leftJoinAndSelect(`${group}.organization`, org);
+        queryBuilder.skip(pageFilterDto.skip);
+        queryBuilder.take(pageFilterDto.perPage);
+        queryBuilder.orderBy(group + '.' + pageFilterDto.sortBy, OrderReverse[ pageFilterDto.sortDirection ]);
+
+        if (pageFilterDto.organizationId)
+        {
+            queryBuilder.andWhere(`${group}.organization = :orgId`, { orgId: pageFilterDto.organizationId });
+        }
+        else
+        {
+            queryBuilder.andWhere(`${group}.organization = :orgId`, { orgId: activeUser.orgId });
+        }
+
+        if (pageFilterDto.allSearch)
+        {
+            queryBuilder.andWhere(
+                new Brackets((qb) =>
+                {
+                    qb.orWhere(`${group}.name ILIKE :search`, { search: `%${pageFilterDto.allSearch}%` });
+                }),
+            );
+        }
+
+        console.log('aaaaaaaaaa', queryBuilder.getSql());
+
+
+        const [ data, total ] = await queryBuilder.getManyAndCount();
+
+        const paginationMeta = new PaginationMeta(pageFilterDto.page, pageFilterDto.perPage, total);
+
+        return new Pagination<Group>(data, paginationMeta);
     }
 
     async findOne(where: FindOptionsWhere<Group>, relations?: FindOptionsRelations<Group>)
