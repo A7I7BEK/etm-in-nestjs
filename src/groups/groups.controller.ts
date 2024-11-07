@@ -1,9 +1,10 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { CreateGroupDto } from './dto/create-group.dto';
+import { GroupPageFilterDto } from './dto/group-page-filter.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
 import { Group } from './entities/group.entity';
 import { GroupPermissions } from './enums/group-permissions.enum';
@@ -25,9 +26,12 @@ export class GroupsController
 
     @Get()
     @Permission(GroupPermissions.Read)
-    findAll()
+    async findAll(@Query() pageFilterDto: GroupPageFilterDto, @ActiveUser() activeUser: ActiveUserData)
     {
-        return this.groupsService.findAll();
+        const paginationWithEntity = await this.groupsService.findAllWithFilters(pageFilterDto, activeUser);
+        paginationWithEntity.data = paginationWithEntity.data.map(entity => this.returnModifiedEntity(entity));
+
+        return paginationWithEntity;
     }
 
     @Get(':id')
