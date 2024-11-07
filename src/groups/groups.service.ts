@@ -104,9 +104,6 @@ export class GroupsService
             );
         }
 
-        console.log('aaaaaaaaaa', queryBuilder.getSql());
-
-
         const [ data, total ] = await queryBuilder.getManyAndCount();
 
         const paginationMeta = new PaginationMeta(pageFilterDto.page, pageFilterDto.perPage, total);
