@@ -11,6 +11,10 @@ export class ProjectPageFilterDto extends PageFilterDto<ProjectProperties>
     sortBy?: ProjectProperties = ProjectProperties.ID;
 
     @IsOptional()
+    @IsEnum(ProjectType)
+    projectType?: ProjectType;
+
+    @IsOptional()
     @Min(1)
     @IsInt()
     @Type(() => Number)
@@ -27,8 +31,4 @@ export class ProjectPageFilterDto extends PageFilterDto<ProjectProperties>
     @IsInt()
     @Type(() => Number)
     organizationId?: number;
-
-    @IsOptional()
-    @IsEnum(ProjectType)
-    projectType?: ProjectType;
 }
