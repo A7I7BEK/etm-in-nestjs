@@ -12,6 +12,7 @@ import { GroupsService } from './groups.service';
         OrganizationsModule,
         EmployeesModule,
     ],
+    exports: [ GroupsService ],
     controllers: [ GroupsController ],
     providers: [ GroupsService ],
 })
