@@ -42,13 +42,17 @@ export class ProjectsService
             organizationEntity = await this.organizationsService.findOne({ id: activeUser.orgId });
         }
 
+        if (dto instanceof CreateProjectDto)
+        {
+            entity.projectType = dto.projectType;
+        }
+
         const groupEntity = await this.groupsService.findOne({ id: dto.group.id });
         const employeeEntity = await this.employeesService.findOne({ id: dto.manager.id });
 
 
         entity.name = dto.name;
         entity.codeName = dto.codeName;
-        entity.projectType = dto.projectType;
         entity.group = groupEntity;
         entity.manager = employeeEntity;
         entity.organization = organizationEntity;
