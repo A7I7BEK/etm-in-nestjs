@@ -12,12 +12,12 @@ export class Group
     name: string;
 
     @JoinTable()
-    @ManyToMany(type => Employee, { eager: true })
+    @ManyToMany(type => Employee)
     employees: Employee[];
 
-    @ManyToOne(type => Employee, { eager: true })
+    @ManyToOne(type => Employee)
     leader: Employee;
 
-    @ManyToOne(type => Organization, { eager: true })
+    @ManyToOne(type => Organization)
     organization: Organization;
 }
