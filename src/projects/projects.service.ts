@@ -72,19 +72,40 @@ export class ProjectsService
 
     async findAllWithFilters(pageFilterDto: ProjectPageFilterDto, activeUser: ActiveUserData)
     {
-        const queryBuilder = this.projectsRepository.createQueryBuilder('role');
-        queryBuilder.leftJoinAndSelect('role.organization', 'organization');
+        const [ project, group, manager, org ] = [ 'project', 'group', 'manager', 'organization' ];
+
+        const queryBuilder = this.projectsRepository.createQueryBuilder(project);
+        queryBuilder.leftJoinAndSelect(`${project}.group`, group);
+        queryBuilder.leftJoinAndSelect(`${group}.employees`, 'employees');
+        queryBuilder.leftJoinAndSelect(`${group}.leader`, 'leader');
+        queryBuilder.leftJoinAndSelect(`${project}.manager`, manager);
+        queryBuilder.leftJoinAndSelect(`${project}.organization`, org);
         queryBuilder.skip(pageFilterDto.skip);
         queryBuilder.take(pageFilterDto.perPage);
-        queryBuilder.orderBy('role.' + pageFilterDto.sortBy, OrderReverse[ pageFilterDto.sortDirection ]);
+        queryBuilder.orderBy(project + '.' + pageFilterDto.sortBy, OrderReverse[ pageFilterDto.sortDirection ]);
+
+        if (pageFilterDto.projectType)
+        {
+            queryBuilder.andWhere(`${project}.projectType = :prType`, { prType: pageFilterDto.projectType });
+        }
+
+        if (pageFilterDto.groupId)
+        {
+            queryBuilder.andWhere(`${project}.group = :grId`, { grId: pageFilterDto.groupId });
+        }
+
+        if (pageFilterDto.managerId)
+        {
+            queryBuilder.andWhere(`${project}.manager = :manId`, { manId: pageFilterDto.managerId });
+        }
 
         if (pageFilterDto.organizationId)
         {
-            queryBuilder.andWhere('role.organization = :orgId', { orgId: pageFilterDto.organizationId });
+            queryBuilder.andWhere(`${project}.organization = :orgId`, { orgId: pageFilterDto.organizationId });
         }
         else
         {
-            queryBuilder.andWhere('role.organization = :orgId', { orgId: activeUser.orgId });
+            queryBuilder.andWhere(`${project}.organization = :orgId`, { orgId: activeUser.orgId });
         }
 
         if (pageFilterDto.allSearch)
@@ -92,8 +113,12 @@ export class ProjectsService
             queryBuilder.andWhere(
                 new Brackets((qb) =>
                 {
-                    qb.orWhere('role.codeName ILIKE :search', { search: `%${pageFilterDto.allSearch}%` });
-                    qb.orWhere('role.roleName ILIKE :search', { search: `%${pageFilterDto.allSearch}%` });
+                    qb.orWhere(`${project}.name ILIKE :search`, { search: `%${pageFilterDto.allSearch}%` });
+                    qb.orWhere(`${project}.codeName ILIKE :search`, { search: `%${pageFilterDto.allSearch}%` });
+                    qb.orWhere(`${group}.name ILIKE :search`, { search: `%${pageFilterDto.allSearch}%` });
+                    qb.orWhere(`${manager}.firstName ILIKE :search`, { search: `%${pageFilterDto.allSearch}%` });
+                    qb.orWhere(`${manager}.lastName ILIKE :search`, { search: `%${pageFilterDto.allSearch}%` });
+                    qb.orWhere(`${manager}.middleName ILIKE :search`, { search: `%${pageFilterDto.allSearch}%` });
                 }),
             );
         }
