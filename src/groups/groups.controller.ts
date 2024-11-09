@@ -38,7 +38,11 @@ export class GroupsController
     @Permission(GroupPermissions.Read)
     async findOne(@Param('id') id: string)
     {
-        const entity = await this.groupsService.findOne({ id: +id });
+        const entity = await this.groupsService.findOne({ id: +id }, {
+            employees: true,
+            leader: true,
+            organization: true,
+        });
         return this.returnModifiedEntity(entity);
     }
 
@@ -64,7 +68,7 @@ export class GroupsController
         const { employees, leader, organization } = entity;
         entity[ 'employeeGroups' ] = [];
 
-        if (employees)
+        if (employees && leader)
         {
             entity[ 'employeeGroups' ] = employees.map(item => ({
                 employeeId: item.id,
