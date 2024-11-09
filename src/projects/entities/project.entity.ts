@@ -23,12 +23,12 @@ export class Project
     })
     projectType: ProjectType;
 
-    @ManyToOne(type => Group, { eager: true })
+    @ManyToOne(type => Group)
     group: Group;
 
-    @ManyToOne(type => Employee, { eager: true })
+    @ManyToOne(type => Employee)
     manager: Employee;
 
-    @ManyToOne(type => Organization, { eager: true })
+    @ManyToOne(type => Organization)
     organization: Organization;
 }
