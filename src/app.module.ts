@@ -16,6 +16,7 @@ import { Organization } from './organizations/entities/organization.entity';
 import { OrganizationsModule } from './organizations/organizations.module';
 import { Permission } from './permissions/entities/permission.entity';
 import { PermissionsModule } from './permissions/permissions.module';
+import { ProjectMembersModule } from './project-members/project-members.module';
 import { ProjectsModule } from './projects/projects.module';
 import { ReportsModule } from './reports/reports.module';
 import { ResourceModule } from './resource/resource.module';
@@ -66,6 +67,7 @@ import { UsersModule } from './users/users.module';
         CheckListGroupsModule,
         ReportsModule,
         OneTimePasswordModule,
+        ProjectMembersModule,
     ],
     providers: [
         AppService,
