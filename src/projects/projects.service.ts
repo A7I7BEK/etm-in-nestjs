@@ -19,7 +19,7 @@ export class ProjectsService
 {
     constructor (
         @InjectRepository(Project)
-        private readonly rolesRepository: Repository<Project>,
+        private readonly projectsRepository: Repository<Project>,
         private readonly organizationsService: OrganizationsService,
         private readonly groupsService: GroupsService,
         private readonly employeesService: EmployeesService,
@@ -57,7 +57,7 @@ export class ProjectsService
         entity.manager = employeeEntity;
         entity.organization = organizationEntity;
 
-        return this.rolesRepository.save(entity);
+        return this.projectsRepository.save(entity);
     }
 
     async create(createProjectDto: CreateProjectDto, activeUser: ActiveUserData)
@@ -67,12 +67,12 @@ export class ProjectsService
 
     findAll(options?: FindManyOptions<Project>)
     {
-        return this.rolesRepository.find(options);
+        return this.projectsRepository.find(options);
     }
 
     async findAllWithFilters(pageFilterDto: ProjectPageFilterDto, activeUser: ActiveUserData)
     {
-        const queryBuilder = this.rolesRepository.createQueryBuilder('role');
+        const queryBuilder = this.projectsRepository.createQueryBuilder('role');
         queryBuilder.leftJoinAndSelect('role.organization', 'organization');
         queryBuilder.skip(pageFilterDto.skip);
         queryBuilder.take(pageFilterDto.perPage);
@@ -107,7 +107,7 @@ export class ProjectsService
 
     async findOne(where: FindOptionsWhere<Project>, relations?: FindOptionsRelations<Project>)
     {
-        const entity = await this.rolesRepository.findOne({ where, relations });
+        const entity = await this.projectsRepository.findOne({ where, relations });
 
         if (!entity)
         {
@@ -126,6 +126,6 @@ export class ProjectsService
     async remove(id: number)
     {
         const entity = await this.findOne({ id });
-        return this.rolesRepository.remove(entity);
+        return this.projectsRepository.remove(entity);
     }
 }
