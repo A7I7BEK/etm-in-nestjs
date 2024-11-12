@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
@@ -13,40 +13,70 @@ import { ProjectsService } from './projects.service';
 @Controller('projects')
 export class ProjectsController
 {
-    constructor (private readonly projectsService: ProjectsService) { }
+    constructor (private readonly _service: ProjectsService) { }
+
 
     @Post()
     @Permission(ProjectPermissions.Create)
-    create(@Body() createProjectDto: CreateProjectDto, @ActiveUser() activeUser: ActiveUserData)
+    create(
+        @Body() createDto: CreateProjectDto,
+        @ActiveUser() activeUser: ActiveUserData,
+    )
     {
-        return this.projectsService.create(createProjectDto, activeUser);
+        return this._service.create(createDto, activeUser);
     }
+
 
     @Get()
     @Permission(ProjectPermissions.Read)
-    findAll(@Query() pageFilterDto: ProjectPageFilterDto, @ActiveUser() activeUser: ActiveUserData)
+    findAll(
+        @Query() pageFilterDto: ProjectPageFilterDto,
+        @ActiveUser() activeUser: ActiveUserData,
+    )
     {
-        return this.projectsService.findAllWithFilters(pageFilterDto, activeUser);
+        return this._service.findAllWithFilters(pageFilterDto, activeUser);
     }
+
 
     @Get(':id')
     @Permission(ProjectPermissions.Read)
-    findOne(@Param('id') id: string)
+    findOne(
+        @Param('id', ParseIntPipe) id: number,
+        @ActiveUser() activeUser: ActiveUserData,
+    )
     {
-        return this.projectsService.findOne({ id: +id });
+        return this._service.findOne(
+            activeUser,
+            { id },
+            {
+                group: true,
+                members: true,
+                manager: true,
+                organization: true,
+            }
+        );
     }
+
 
     @Put(':id')
     @Permission(ProjectPermissions.Update)
-    update(@Param('id') id: string, @Body() updateProjectDto: UpdateProjectDto, @ActiveUser() activeUser: ActiveUserData)
+    update(
+        @Param('id', ParseIntPipe) id: number,
+        @Body() updateDto: UpdateProjectDto,
+        @ActiveUser() activeUser: ActiveUserData,
+    )
     {
-        return this.projectsService.update(+id, updateProjectDto, activeUser);
+        return this._service.update(id, updateDto, activeUser);
     }
+
 
     @Delete(':id')
     @Permission(ProjectPermissions.Delete)
-    remove(@Param('id') id: string)
+    remove(
+        @Param('id', ParseIntPipe) id: number,
+        @ActiveUser() activeUser: ActiveUserData,
+    )
     {
-        return this.projectsService.remove(+id);
+        return this._service.remove(id, activeUser);
     }
 }
