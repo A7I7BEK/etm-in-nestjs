@@ -16,6 +16,7 @@ export class RolesController
 {
     constructor (private readonly _service: RolesService) { }
 
+
     @Post()
     @Permission(RolePermissions.Create)
     async create(
@@ -26,6 +27,7 @@ export class RolesController
         const entity = await this._service.create(createDto, activeUser);
         return returnModifiedEntity(entity);
     }
+
 
     @Get()
     @Permission(RolePermissions.Read)
@@ -40,6 +42,7 @@ export class RolesController
         return paginationWithEntity;
     }
 
+
     @Get(':id')
     @Permission(RolePermissions.Read)
     async findOne(
@@ -50,6 +53,7 @@ export class RolesController
         const entity = await this._service.findOne(activeUser, { id }, { organization: true });
         return returnModifiedEntity(entity);
     }
+
 
     @Put(':id')
     @Permission(RolePermissions.Update)
@@ -62,6 +66,7 @@ export class RolesController
         const entity = await this._service.update(id, updateDto, activeUser);
         return returnModifiedEntity(entity);
     }
+
 
     @Delete(':id')
     @Permission(RolePermissions.Delete)

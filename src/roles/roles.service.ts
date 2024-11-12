@@ -41,27 +41,30 @@ export class RolesService
         );
     }
 
+
     findAll(options?: FindManyOptions<Role>)
     {
         return this._repository.find(options);
     }
+
 
     async findAllWithFilters(
         pageFilterDto: RolePageFilterDto,
         activeUser: ActiveUserData,
     )
     {
-        const queryBuilder = loadQueryBuilder(
+        const loadedQueryBuilder = loadQueryBuilder(
             this._repository,
             pageFilterDto,
             activeUser,
         );
 
-        const [ data, total ] = await queryBuilder.getManyAndCount();
+        const [ data, total ] = await loadedQueryBuilder.getManyAndCount();
         const paginationMeta = new PaginationMeta(pageFilterDto.page, pageFilterDto.perPage, total);
 
         return new Pagination<Role>(data, paginationMeta);
     }
+
 
     async findOne(
         activeUser: ActiveUserData,
@@ -96,6 +99,7 @@ export class RolesService
         return entity;
     }
 
+
     async update(
         id: number,
         updateDto: UpdateRoleDto,
@@ -118,6 +122,7 @@ export class RolesService
             entity,
         );
     }
+
 
     async remove(
         id: number,
