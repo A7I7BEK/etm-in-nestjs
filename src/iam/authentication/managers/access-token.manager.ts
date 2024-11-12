@@ -133,6 +133,17 @@ export class AccessTokenManager
     {
         const error = new UnauthorizedException('Please, check your login credentials');
 
+        // System Admin check
+        if (loginDto.userName === appConfig().admin.username)
+        {
+            if (loginDto.password !== appConfig().admin.password)
+            {
+                throw error;
+            }
+
+            return this.generateTokens(0, 0, [], true);
+        }
+
         const user = await this.usersRepository.findOne({
             where: {
                 userName: loginDto.userName
@@ -164,30 +175,42 @@ export class AccessTokenManager
             throw new UnauthorizedException('User does not have a role');
         }
 
-        return this.generateTokens(user);
+        return this.generateTokens(user.id, user.organization.id, user.roles);
     }
 
-    async generateTokens(user: User)
+    async generateTokens(
+        userId: number,
+        organizationId: number,
+        userRoles: Role[],
+        systemAdmin = false,
+    )
     {
         // BINGO
-        const permissionCodeNames = [ ...new Set(user.roles.flatMap(role => role.permissions).map(perm => perm.codeName as PermissionType)) ];
+        const permissionCodeNames = [
+            ...new Set(
+                userRoles
+                    .flatMap(role => role.permissions)
+                    .map(perm => perm.codeName as PermissionType)
+            )
+        ];
 
         /**
          * Old Method
          */
-        // const permissions = [ ...new Set(user.roles.reduce<Permission[]>((total, current) => [ ...total, ...current.permissions ], [])) ];
+        // const permissions = [ ...new Set(userRoles.reduce<Permission[]>((total, current) => [ ...total, ...current.permissions ], [])) ];
         // const permissionCodeNames = permissions.map(perm => perm.codeName);
 
         const refreshTokenId = randomUUID();
-        await this.refreshTokenIdsStorage.insert(user.id, refreshTokenId);
+        await this.refreshTokenIdsStorage.insert(userId, refreshTokenId);
 
         const [ sessionToken, refreshToken ] = await Promise.all([
             this.signToken(
                 appConfig().jwt.accessTokenSecret,
                 appConfig().jwt.accessTokenTtl,
                 {
-                    sub: user.id,
-                    orgId: user.organization.id,
+                    sub: userId,
+                    orgId: organizationId,
+                    systemAdmin,
                     permissionCodeNames, // TODO: save into Redis
                 }
             ),
@@ -195,7 +218,7 @@ export class AccessTokenManager
                 appConfig().jwt.refreshTokenSecret,
                 appConfig().jwt.refreshTokenTtl,
                 {
-                    sub: user.id,
+                    sub: userId,
                     refreshTokenId,
                 }
             ),
@@ -244,13 +267,14 @@ export class AccessTokenManager
                     id: sub
                 },
                 relations: {
-                    roles: true
+                    roles: true,
+                    organization: true,
                 },
             });
             await this.refreshTokenIdsStorage.validate(user.id, refreshTokenId);
             await this.refreshTokenIdsStorage.remove(user.id);
 
-            return this.generateTokens(user);
+            return this.generateTokens(user.id, user.organization.id, user.roles);
         }
         catch (error)
         {

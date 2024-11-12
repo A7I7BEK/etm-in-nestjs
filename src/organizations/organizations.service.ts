@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import appConfig from 'src/common/config/app.config';
 import { OrderReverse } from 'src/common/pagination/order.enum';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
@@ -60,7 +59,7 @@ export class OrganizationsService
     {
         const entity = await this.organizationsRepository.findOne({ where, relations });
 
-        if (!entity || entity.name === appConfig().admin.orgName) // Don't show system organization
+        if (!entity)
         {
             throw new NotFoundException(`${Organization.name} not found`);
         }

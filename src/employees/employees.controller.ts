@@ -95,7 +95,7 @@ export class EmployeesController
                 userName: user.userName,
                 email: user.email,
                 phoneNumber: user.phoneNumber,
-                systemAdmin: user.marks.systemAdmin,
+                systemAdmin: false, // TODO: systemAdmin
             });
         }
 

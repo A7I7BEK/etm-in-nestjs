@@ -14,7 +14,12 @@ export interface ActiveUserData
     orgId: number;
 
     /**
+     * The user is system admin
+     */
+    systemAdmin: boolean;
+
+    /**
      * The code names of permissions that are extracted from subject's (user) roles
      */
-    permissionCodeNames: PermissionType[];
+    permissionCodeNames: PermissionType[]; // TODO: save into Redis
 }

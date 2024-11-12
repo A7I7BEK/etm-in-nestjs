@@ -1,6 +1,5 @@
 import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import appConfig from 'src/common/config/app.config';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { RolesService } from 'src/roles/roles.service';
 import { FindOptionsRelations, FindOptionsWhere, In, Repository } from 'typeorm';
@@ -38,7 +37,7 @@ export class UsersService
     {
         const entity = await this.usersRepository.findOne({ where, relations });
 
-        if (!entity || entity.userName === appConfig().admin.username) // Don't show system admin
+        if (!entity)
         {
             throw new NotFoundException(`${User.name} not found`);
         }

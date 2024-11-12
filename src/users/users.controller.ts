@@ -52,7 +52,7 @@ export class UsersController
     {
         const { employee, organization } = entity;
         entity[ 'userId' ] = entity.id;
-        entity[ 'systemAdmin' ] = entity.marks.systemAdmin;
+        entity[ 'systemAdmin' ] = false; // TODO: systemAdmin
 
         delete entity.password;
         delete entity.id;

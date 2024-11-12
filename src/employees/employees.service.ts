@@ -1,6 +1,5 @@
 import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import appConfig from 'src/common/config/app.config';
 import { OrderReverse } from 'src/common/pagination/order.enum';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
@@ -177,7 +176,7 @@ export class EmployeesService
     {
         const entity = await this.employeesRepository.findOne({ where, relations });
 
-        if (!entity || entity.firstName === appConfig().admin.firstName) // Don't show system admin
+        if (!entity)
         {
             throw new NotFoundException(`${Employee.name} not found`); // BINGO
         }

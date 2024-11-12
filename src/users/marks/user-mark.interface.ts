@@ -9,9 +9,4 @@ export interface UserMark
      * The user is active
      */
     active: boolean;
-
-    /**
-     * The user is system admin
-     */
-    systemAdmin: boolean;
 }

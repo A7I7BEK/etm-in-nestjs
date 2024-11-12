@@ -13,19 +13,13 @@ export default () =>
             lang: process.env.APP_DEFAULT_LANGUAGE,
             role: process.env.APP_DEFAULT_ROLE,
         },
+        admin: {
+            username: process.env.ADMIN_USERNAME,
+            password: process.env.ADMIN_PASSWORD,
+        },
         file: {
             maxSize: +process.env.MAX_FILE_SIZE,
             maxCount: +process.env.MAX_FILE_COUNT,
-        },
-        admin: {
-            orgName: process.env.ADMIN_ORG_NAME,
-            roleName: process.env.ADMIN_ROLE_NAME,
-            username: process.env.ADMIN_USERNAME,
-            password: process.env.ADMIN_PASSWORD,
-            email: process.env.ADMIN_EMAIL,
-            phoneNumber: process.env.ADMIN_PHONE_NUMBER,
-            firstName: process.env.ADMIN_FIRST_NAME,
-            lastName: process.env.ADMIN_LAST_NAME,
         },
         jwt: {
             accessTokenSecret: process.env.JWT_ACCESS_SECRET,
