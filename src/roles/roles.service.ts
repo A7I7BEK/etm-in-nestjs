@@ -1,110 +1,94 @@
-import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import appConfig from 'src/common/config/app.config';
-import { OrderReverse } from 'src/common/pagination/order.enum';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { Organization } from 'src/organizations/entities/organization.entity';
 import { OrganizationsService } from 'src/organizations/organizations.service';
 import { PermissionsService } from 'src/permissions/permissions.service';
 import { UsersService } from 'src/users/users.service';
-import { Brackets, FindManyOptions, FindOptionsRelations, FindOptionsWhere, In, Repository } from 'typeorm';
+import { FindManyOptions, FindOptionsRelations, FindOptionsWhere, Repository } from 'typeorm';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { RolePageFilterDto } from './dto/role-page-filter.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { Role } from './entities/role.entity';
+import { createUpdateEntity } from './utils/create-update-entity.util';
+import { loadQueryBuilder } from './utils/load-query-builder.util';
 
 @Injectable()
 export class RolesService
 {
     constructor (
         @InjectRepository(Role)
-        private readonly rolesRepository: Repository<Role>,
-        private readonly organizationsService: OrganizationsService,
-        private readonly permissionsService: PermissionsService,
+        private readonly _repository: Repository<Role>,
+        private readonly _organizationsService: OrganizationsService,
+        private readonly _permissionsService: PermissionsService,
         @Inject(forwardRef(() => UsersService)) // BINGO
-        private readonly usersService: UsersService,
+        private readonly _usersService: UsersService,
     ) { }
 
 
-    private async manageEntity(
-        dto: CreateRoleDto | UpdateRoleDto,
+    async create(
+        createDto: CreateRoleDto,
         activeUser: ActiveUserData,
-        entity = new Role(),
     )
     {
-        let organizationEntity: Organization;
-        if (dto.organizationId)
-        {
-            organizationEntity = await this.organizationsService.findOne({ id: dto.organizationId });
-        }
-        else
-        {
-            organizationEntity = await this.organizationsService.findOne({ id: activeUser.orgId });
-        }
-
-        const permissionIds = dto.permissions.map(x => x.id);
-        const permissionsFound = await this.permissionsService.findAll({ where: { id: In(permissionIds) } }); // BINGO
-
-        entity.roleName = dto.roleName;
-        entity.codeName = dto.codeName;
-        entity.organization = organizationEntity;
-        entity.permissions = permissionsFound;
-
-        return this.rolesRepository.save(entity);
-    }
-
-    async create(createRoleDto: CreateRoleDto, activeUser: ActiveUserData)
-    {
-        return this.manageEntity(createRoleDto, activeUser);
+        return createUpdateEntity(
+            this._organizationsService,
+            this._permissionsService,
+            this._repository,
+            createDto,
+            activeUser,
+        );
     }
 
     findAll(options?: FindManyOptions<Role>)
     {
-        return this.rolesRepository.find(options);
+        return this._repository.find(options);
     }
 
-    async findAllWithFilters(pageFilterDto: RolePageFilterDto, activeUser: ActiveUserData)
+    async findAllWithFilters(
+        pageFilterDto: RolePageFilterDto,
+        activeUser: ActiveUserData,
+    )
     {
-        const queryBuilder = this.rolesRepository.createQueryBuilder('role');
-        queryBuilder.leftJoinAndSelect('role.organization', 'organization');
-        queryBuilder.skip(pageFilterDto.skip);
-        queryBuilder.take(pageFilterDto.perPage);
-        queryBuilder.orderBy('role.' + pageFilterDto.sortBy, OrderReverse[ pageFilterDto.sortDirection ]);
-
-        if (pageFilterDto.organizationId)
-        {
-            queryBuilder.andWhere('role.organization = :orgId', { orgId: pageFilterDto.organizationId });
-        }
-        else
-        {
-            queryBuilder.andWhere('role.organization = :orgId', { orgId: activeUser.orgId });
-        }
-
-        if (pageFilterDto.allSearch)
-        {
-            queryBuilder.andWhere(
-                new Brackets((qb) =>
-                {
-                    qb.orWhere('role.codeName ILIKE :search', { search: `%${pageFilterDto.allSearch}%` });
-                    qb.orWhere('role.roleName ILIKE :search', { search: `%${pageFilterDto.allSearch}%` });
-                }),
-            );
-        }
+        const queryBuilder = loadQueryBuilder(
+            this._repository,
+            pageFilterDto,
+            activeUser,
+        );
 
         const [ data, total ] = await queryBuilder.getManyAndCount();
-
         const paginationMeta = new PaginationMeta(pageFilterDto.page, pageFilterDto.perPage, total);
 
         return new Pagination<Role>(data, paginationMeta);
     }
 
-    async findOne(where: FindOptionsWhere<Role>, relations?: FindOptionsRelations<Role>)
+    async findOne(
+        activeUser: ActiveUserData,
+        where: FindOptionsWhere<Role>,
+        relations?: FindOptionsRelations<Role>,
+    )
     {
-        const entity = await this.rolesRepository.findOne({ where, relations });
+        let entity: Role;
+        if (activeUser.systemAdmin)
+        {
+            entity = await this._repository.findOne({ where, relations });
+        }
+        else
+        {
+            entity = await this._repository.findOne({
+                where: {
+                    ...where,
+                    organization: {
+                        id: activeUser.orgId
+                    }
+                },
+                relations,
+            });
+        }
 
-        if (!entity || entity.codeName === appConfig().admin.roleName) // Don't show system role
+
+        if (!entity)
         {
             throw new NotFoundException(`${Role.name} not found`);
         }
@@ -112,15 +96,41 @@ export class RolesService
         return entity;
     }
 
-    async update(id: number, updateRoleDto: UpdateRoleDto, activeUser: ActiveUserData)
+    async update(
+        id: number,
+        updateDto: UpdateRoleDto,
+        activeUser: ActiveUserData,
+    )
     {
-        const entity = await this.findOne({ id });
-        return this.manageEntity(updateRoleDto, activeUser, entity);
+        const entity = await this.findOne(activeUser, { id });
+
+        if (entity.systemCreated)
+        {
+            throw new ForbiddenException('System created Role cannot be edited');
+        }
+
+        return createUpdateEntity(
+            this._organizationsService,
+            this._permissionsService,
+            this._repository,
+            updateDto,
+            activeUser,
+            entity,
+        );
     }
 
-    async remove(id: number)
+    async remove(
+        id: number,
+        activeUser: ActiveUserData,
+    )
     {
-        const entity = await this.findOne({ id });
-        return this.rolesRepository.remove(entity);
+        const entity = await this.findOne(activeUser, { id });
+
+        if (entity.systemCreated)
+        {
+            throw new ForbiddenException('System created Role cannot be deleted');
+        }
+
+        return this._repository.remove(entity);
     }
 }

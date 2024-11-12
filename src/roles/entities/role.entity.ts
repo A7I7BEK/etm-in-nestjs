@@ -15,6 +15,9 @@ export class Role
     @Column()
     codeName: string;
 
+    @Column()
+    systemCreated: boolean = false;
+
     @JoinTable()
     @ManyToMany(type => Permission, { eager: true })
     permissions: Permission[];

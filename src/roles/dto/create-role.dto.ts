@@ -4,12 +4,12 @@ import { ObjectIdDto } from 'src/common/dto/object-id.dto';
 
 export class CreateRoleDto
 {
-    @IsString()
     @IsNotEmpty()
+    @IsString()
     roleName: string;
 
-    @IsString()
     @IsNotEmpty()
+    @IsString()
     codeName: string;
 
     @ValidateNested({ each: true }) // BINGO
@@ -17,7 +17,7 @@ export class CreateRoleDto
     @Type(() => ObjectIdDto)
     permissions: ObjectIdDto[];
 
-    @IsInt()
     @Min(0)
+    @IsInt()
     organizationId: number;
 }
