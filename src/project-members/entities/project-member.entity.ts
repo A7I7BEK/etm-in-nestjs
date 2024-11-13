@@ -18,7 +18,7 @@ export class ProjectMember
     employee: Employee;
 
     @Column()
-    isTeamLeader: boolean;
+    isTeamLeader: boolean = false;
 
     @ManyToOne(type => Project, p => p.members)
     project: Project;

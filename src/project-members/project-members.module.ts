@@ -1,9 +1,20 @@
 import { Module } from '@nestjs/common';
-import { ProjectMembersService } from './project-members.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { EmployeesModule } from 'src/employees/employees.module';
+import { ProjectsModule } from 'src/projects/projects.module';
+import { ProjectMember } from './entities/project-member.entity';
 import { ProjectMembersController } from './project-members.controller';
+import { ProjectMembersService } from './project-members.service';
 
 @Module({
-  controllers: [ProjectMembersController],
-  providers: [ProjectMembersService],
+    imports: [
+        TypeOrmModule.forFeature([ ProjectMember ]),
+        ProjectsModule,
+        EmployeesModule,
+
+    ],
+    exports: [ ProjectMembersService ],
+    controllers: [ ProjectMembersController ],
+    providers: [ ProjectMembersService ],
 })
-export class ProjectMembersModule {}
+export class ProjectMembersModule { }
