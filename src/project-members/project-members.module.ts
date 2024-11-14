@@ -11,7 +11,6 @@ import { ProjectMembersService } from './project-members.service';
         TypeOrmModule.forFeature([ ProjectMember ]),
         ProjectsModule,
         EmployeesModule,
-
     ],
     exports: [ ProjectMembersService ],
     controllers: [ ProjectMembersController ],

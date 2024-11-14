@@ -5,10 +5,11 @@ import { Pagination } from 'src/common/pagination/pagination.class';
 import { EmployeesService } from 'src/employees/employees.service';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { ProjectsService } from 'src/projects/projects.service';
-import { FindManyOptions, FindOptionsRelations, FindOptionsWhere, In, Repository } from 'typeorm';
+import { FindManyOptions, FindOptionsRelations, FindOptionsWhere, Repository } from 'typeorm';
 import { CreateProjectMemberDto } from './dto/create-project-member.dto';
 import { ProjectMemberPageFilterDto } from './dto/project-member-page-filter.dto';
 import { ProjectMember } from './entities/project-member.entity';
+import { createUpdateEntity } from './utils/create-update-entity.util';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
 
 @Injectable()
@@ -27,24 +28,13 @@ export class ProjectMembersService
         activeUser: ActiveUserData,
     )
     {
-        const projectEntity = await this._projectsService.findOne(
+        return createUpdateEntity(
+            this._projectsService,
+            this._employeesService,
+            this._repository,
+            createDto,
             activeUser,
-            { id: createDto.projectId }
         );
-
-        const employeeIds = createDto.userIds.map(x => x.id);
-        const employeeEntities = await this._employeesService.findAll({ where: { id: In(employeeIds) } });
-
-        const entityList = employeeEntities.map(empl =>
-        {
-            const entity = new ProjectMember();
-            entity.project = projectEntity;
-            entity.employee = empl;
-
-            return entity;
-        });
-
-        return this._repository.save(entityList);
     }
 
 
