@@ -14,6 +14,7 @@ import { ProjectsService } from './projects.service';
         GroupsModule,
         EmployeesModule,
     ],
+    exports: [ ProjectsService ],
     controllers: [ ProjectsController ],
     providers: [ ProjectsService ],
 })

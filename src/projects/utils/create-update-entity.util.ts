@@ -3,6 +3,7 @@ import { GroupsService } from 'src/groups/groups.service';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { Organization } from 'src/organizations/entities/organization.entity';
 import { OrganizationsService } from 'src/organizations/organizations.service';
+import { ProjectMember } from 'src/project-members/entities/project-member.entity';
 import { Repository } from 'typeorm';
 import { CreateProjectDto } from '../dto/create-project.dto';
 import { UpdateProjectDto } from '../dto/update-project.dto';
@@ -41,7 +42,17 @@ export async function createUpdateEntity(
             leader: true,
         }
     );
-    const employeeEntity = await employeesService.findOne(
+
+    const memberList = groupEntity.employees.map(empl =>
+    {
+        const entity = new ProjectMember();
+        entity.employee = empl;
+        entity.isTeamLeader = empl.id === groupEntity.leader.id;
+
+        return entity;
+    });
+
+    const managerEntity = await employeesService.findOne(
         {
             id: dto.manager.id,
             user: {
@@ -56,19 +67,17 @@ export async function createUpdateEntity(
     {
         entity.projectType = dto.projectType;
     }
-
-    if (dto instanceof UpdateProjectDto && entity.group.id !== groupEntity.id)
+    else if (entity.group.id !== groupEntity.id)
     {
-        // remove members
-        // add new members
-        // entity.projectType = dto.projectType;
+        // remove old members
     }
 
 
     entity.name = dto.name;
     entity.codeName = dto.codeName;
     entity.group = groupEntity;
-    entity.manager = employeeEntity;
+    entity.members = memberList;
+    entity.manager = managerEntity;
     entity.organization = organizationEntity;
 
     return repository.save(entity);
