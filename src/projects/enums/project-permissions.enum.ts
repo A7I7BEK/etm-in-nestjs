@@ -11,7 +11,4 @@ export enum ProjectPermissions
     ColumnCreate = 'PROJECT_COLUMN_CREATE',
     ColumnRead = 'PROJECT_COLUMN_READ',
     ColumnUpdate = 'PROJECT_COLUMN_UPDATE',
-
-    MemberCreate = 'PROJECT_MEMBER_CREATE',
-    MemberRead = 'PROJECT_MEMBER_READ',
 }
