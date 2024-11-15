@@ -2,6 +2,7 @@ import { ForbiddenException, forwardRef, Inject, Injectable, NotFoundException }
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
+import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { OrganizationsService } from 'src/organizations/organizations.service';
 import { PermissionsService } from 'src/permissions/permissions.service';
@@ -47,22 +48,20 @@ export class RolesService
         options?: FindManyOptions<Role>,
     )
     {
-        if (activeUser.systemAdmin)
+        if (!activeUser.systemAdmin)
         {
-            return this.repository.find(options);
-        }
-        else
-        {
-            return this.repository.find({
-                ...options,
+            const orgOption: FindManyOptions<Role> = {
                 where: {
-                    ...options?.where,
                     organization: {
                         id: activeUser.orgId
                     }
                 }
-            });
+            };
+
+            setNestedOptions(options, orgOption);
         }
+
+        return this.repository.find(options);
     }
 
 
@@ -89,25 +88,20 @@ export class RolesService
         activeUser: ActiveUserData,
     )
     {
-        let entity: Role;
-        if (activeUser.systemAdmin)
+        if (!activeUser.systemAdmin)
         {
-            entity = await this.repository.findOne(options);
-        }
-        else
-        {
-            entity = await this.repository.findOne({
-                ...options,
+            const orgOption: FindOneOptions<Role> = {
                 where: {
-                    ...options?.where,
                     organization: {
                         id: activeUser.orgId
                     }
                 }
-            });
+            };
+
+            setNestedOptions(options, orgOption);
         }
 
-
+        const entity = await this.repository.findOne(options);
         if (!entity)
         {
             throw new NotFoundException(`${Role.name} not found`);
