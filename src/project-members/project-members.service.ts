@@ -2,10 +2,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
+import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
 import { EmployeesService } from 'src/employees/employees.service';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { ProjectsService } from 'src/projects/projects.service';
-import { FindManyOptions, FindOptionsRelations, FindOptionsWhere, Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { CreateProjectMemberDto } from './dto/create-project-member.dto';
 import { ProjectMemberPageFilterDto } from './dto/project-member-page-filter.dto';
 import { ProjectMember } from './entities/project-member.entity';
@@ -17,7 +18,7 @@ export class ProjectMembersService
 {
     constructor (
         @InjectRepository(ProjectMember)
-        private readonly _repository: Repository<ProjectMember>,
+        public readonly repository: Repository<ProjectMember>,
         private readonly _projectsService: ProjectsService,
         private readonly _employeesService: EmployeesService,
     ) { }
@@ -31,16 +32,34 @@ export class ProjectMembersService
         return createUpdateEntity(
             this._projectsService,
             this._employeesService,
-            this._repository,
+            this.repository,
             createDto,
             activeUser,
         );
     }
 
 
-    findAll(options?: FindManyOptions<ProjectMember>)
+    findAll(
+        activeUser: ActiveUserData,
+        options?: FindManyOptions<ProjectMember>,
+    )
     {
-        return this._repository.find(options);
+        if (!activeUser.systemAdmin)
+        {
+            const orgOption: FindManyOptions<ProjectMember> = {
+                where: {
+                    project: {
+                        organization: {
+                            id: activeUser.orgId
+                        }
+                    }
+                }
+            };
+
+            setNestedOptions(options, orgOption);
+        }
+
+        return this.repository.find(options);
     }
 
 
@@ -50,7 +69,7 @@ export class ProjectMembersService
     )
     {
         const loadedQueryBuilder = loadQueryBuilder(
-            this._repository,
+            this.repository,
             pageFilterDto,
             activeUser,
         );
@@ -63,32 +82,27 @@ export class ProjectMembersService
 
 
     async findOne(
+        options: FindOneOptions<ProjectMember>,
         activeUser: ActiveUserData,
-        where: FindOptionsWhere<ProjectMember>,
-        relations?: FindOptionsRelations<ProjectMember>,
     )
     {
-        let entity: ProjectMember;
-        if (activeUser.systemAdmin)
+        if (!activeUser.systemAdmin)
         {
-            entity = await this._repository.findOne({ where, relations });
-        }
-        else
-        {
-            entity = await this._repository.findOne({
+            const orgOption: FindOneOptions<ProjectMember> = {
                 where: {
-                    ...where,
                     project: {
                         organization: {
                             id: activeUser.orgId
                         }
                     }
-                },
-                relations,
-            });
+                }
+            };
+
+            setNestedOptions(options, orgOption);
+
         }
 
-
+        const entity = await this.repository.findOne(options);
         if (!entity)
         {
             throw new NotFoundException(`${ProjectMember.name} not found`);
@@ -103,7 +117,12 @@ export class ProjectMembersService
         activeUser: ActiveUserData,
     )
     {
-        const entity = await this.findOne(activeUser, { id });
-        return this._repository.remove(entity);
+        const entity = await this.findOne(
+            {
+                where: { id }
+            },
+            activeUser,
+        );
+        return this.repository.remove(entity);
     }
 }
