@@ -50,7 +50,13 @@ export class RolesController
         @ActiveUser() activeUser: ActiveUserData,
     )
     {
-        const entity = await this._service.findOne(activeUser, { id }, { organization: true });
+        const entity = await this._service.findOne(
+            {
+                where: { id },
+                relations: { organization: true }
+            },
+            activeUser,
+        );
         return returnModifiedEntity(entity);
     }
 

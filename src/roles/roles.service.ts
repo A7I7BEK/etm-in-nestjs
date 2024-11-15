@@ -6,7 +6,7 @@ import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { OrganizationsService } from 'src/organizations/organizations.service';
 import { PermissionsService } from 'src/permissions/permissions.service';
 import { UsersService } from 'src/users/users.service';
-import { FindManyOptions, FindOptionsRelations, FindOptionsWhere, Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { RolePageFilterDto } from './dto/role-page-filter.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
@@ -19,7 +19,7 @@ export class RolesService
 {
     constructor (
         @InjectRepository(Role)
-        private readonly _repository: Repository<Role>,
+        public readonly repository: Repository<Role>,
         private readonly _organizationsService: OrganizationsService,
         private readonly _permissionsService: PermissionsService,
         @Inject(forwardRef(() => UsersService)) // BINGO
@@ -35,16 +35,34 @@ export class RolesService
         return createUpdateEntity(
             this._organizationsService,
             this._permissionsService,
-            this._repository,
+            this.repository,
             createDto,
             activeUser,
         );
     }
 
 
-    findAll(options?: FindManyOptions<Role>)
+    findAll(
+        activeUser: ActiveUserData,
+        options?: FindManyOptions<Role>,
+    )
     {
-        return this._repository.find(options);
+        if (activeUser.systemAdmin)
+        {
+            return this.repository.find(options);
+        }
+        else
+        {
+            return this.repository.find({
+                ...options,
+                where: {
+                    ...options?.where,
+                    organization: {
+                        id: activeUser.orgId
+                    }
+                }
+            });
+        }
     }
 
 
@@ -54,7 +72,7 @@ export class RolesService
     )
     {
         const loadedQueryBuilder = loadQueryBuilder(
-            this._repository,
+            this.repository,
             pageFilterDto,
             activeUser,
         );
@@ -67,26 +85,25 @@ export class RolesService
 
 
     async findOne(
+        options: FindOneOptions<Role>,
         activeUser: ActiveUserData,
-        where: FindOptionsWhere<Role>,
-        relations?: FindOptionsRelations<Role>,
     )
     {
         let entity: Role;
         if (activeUser.systemAdmin)
         {
-            entity = await this._repository.findOne({ where, relations });
+            entity = await this.repository.findOne(options);
         }
         else
         {
-            entity = await this._repository.findOne({
+            entity = await this.repository.findOne({
+                ...options,
                 where: {
-                    ...where,
+                    ...options?.where,
                     organization: {
                         id: activeUser.orgId
                     }
-                },
-                relations,
+                }
             });
         }
 
@@ -106,7 +123,12 @@ export class RolesService
         activeUser: ActiveUserData,
     )
     {
-        const entity = await this.findOne(activeUser, { id });
+        const entity = await this.findOne(
+            {
+                where: { id }
+            },
+            activeUser,
+        );
 
         if (entity.systemCreated)
         {
@@ -116,7 +138,7 @@ export class RolesService
         return createUpdateEntity(
             this._organizationsService,
             this._permissionsService,
-            this._repository,
+            this.repository,
             updateDto,
             activeUser,
             entity,
@@ -129,13 +151,18 @@ export class RolesService
         activeUser: ActiveUserData,
     )
     {
-        const entity = await this.findOne(activeUser, { id });
+        const entity = await this.findOne(
+            {
+                where: { id }
+            },
+            activeUser,
+        );
 
         if (entity.systemCreated)
         {
             throw new ForbiddenException('System created Role cannot be deleted');
         }
 
-        return this._repository.remove(entity);
+        return this.repository.remove(entity);
     }
 }
