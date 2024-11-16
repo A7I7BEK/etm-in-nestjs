@@ -1,12 +1,11 @@
 import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { RolesService } from 'src/roles/roles.service';
-import { FindOptionsRelations, FindOptionsWhere, In, Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, In, Repository } from 'typeorm';
 import { AttachRoleDto } from './dto/attach-role.dto';
 import { ChangeLanguageDto } from './dto/change-language.dto';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { Language } from './language/language.enum';
 
@@ -15,28 +14,55 @@ export class UsersService
 {
     constructor (
         @InjectRepository(User)
-        private readonly usersRepository: Repository<User>,
+        public readonly repository: Repository<User>,
         @Inject(forwardRef(() => RolesService)) // BINGO
-        private readonly rolesService: RolesService,
+        private readonly _rolesService: RolesService,
     ) { }
 
-    create(createUserDto: CreateUserDto)
+
+    findAll
+        (
+            activeUser: ActiveUserData,
+            options?: FindManyOptions<User>,
+        )
     {
-        const entity = this.usersRepository.create({
-            ...createUserDto
-        });
-        return this.usersRepository.save(entity);
+        if (!activeUser.systemAdmin)
+        {
+            const orgOption: FindManyOptions<User> = {
+                where: {
+                    organization: {
+                        id: activeUser.orgId
+                    }
+                }
+            };
+
+            setNestedOptions(options, orgOption);
+        }
+
+        return this.repository.find(options);
     }
 
-    findAll()
-    {
-        return this.usersRepository.find();
-    }
 
-    async findOne(where: FindOptionsWhere<User>, relations?: FindOptionsRelations<User>)
+    async findOne
+        (
+            options: FindOneOptions<User>,
+            activeUser: ActiveUserData,
+        )
     {
-        const entity = await this.usersRepository.findOne({ where, relations });
+        if (!activeUser.systemAdmin)
+        {
+            const orgOption: FindOneOptions<User> = {
+                where: {
+                    organization: {
+                        id: activeUser.orgId
+                    }
+                }
+            };
 
+            setNestedOptions(options, orgOption);
+        }
+
+        const entity = await this.repository.findOne(options);
         if (!entity)
         {
             throw new NotFoundException(`${User.name} not found`);
@@ -45,35 +71,61 @@ export class UsersService
         return entity;
     }
 
-    async update(id: number, updateUserDto: UpdateUserDto)
+
+    async remove
+        (
+            id: number,
+            activeUser: ActiveUserData,
+        )
     {
-        const entity = await this.findOne({ id });
-
-        Object.assign(entity, updateUserDto);
-
-        return this.usersRepository.save(entity);
+        const entity = await this.findOne(
+            {
+                where: { id }
+            },
+            activeUser,
+        );
+        return this.repository.remove(entity);
     }
 
-    async remove(id: number)
-    {
-        const entity = await this.findOne({ id });
-        return this.usersRepository.remove(entity);
-    }
 
-    async attachRole(attachRoleDto: AttachRoleDto)
+    async attachRole
+        (
+            attachRoleDto: AttachRoleDto,
+            activeUser: ActiveUserData,
+        )
     {
-        const entity = await this.findOne({ id: attachRoleDto.userId });
+        const entity = await this.findOne(
+            {
+                where: { id: attachRoleDto.userId }
+            },
+            activeUser,
+        );
 
         const roleIds = attachRoleDto.roles.map(x => x.id);
-        const rolesFound = await this.rolesService.findAll({ where: { id: In(roleIds) } });
-        entity.roles = rolesFound;
+        const roleEntities = await this._rolesService.findAll(
+            activeUser,
+            {
+                where: { id: In(roleIds) }
+            },
+        );
+        entity.roles = roleEntities;
 
-        return this.usersRepository.save(entity);
+        return this.repository.save(entity);
     }
 
-    async changeLanguage(changeLanguageDto: ChangeLanguageDto, activeUser: ActiveUserData)
+
+    async changeLanguage
+        (
+            changeLanguageDto: ChangeLanguageDto,
+            activeUser: ActiveUserData,
+        )
     {
-        const entity = await this.findOne({ id: activeUser.sub });
+        const entity = await this.findOne(
+            {
+                where: { id: activeUser.sub }
+            },
+            activeUser,
+        );
 
         // BINGO
         const languageName = Object.keys(Language).find(key => Language[ key ] === changeLanguageDto.langCode) as (keyof typeof Language);
@@ -81,6 +133,6 @@ export class UsersService
         entity.language.code = changeLanguageDto.langCode;
         entity.language.name = languageName;
 
-        return this.usersRepository.save(entity);
+        return this.repository.save(entity);
     }
 }
