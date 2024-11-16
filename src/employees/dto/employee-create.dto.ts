@@ -1,37 +1,33 @@
-import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsDateString, IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { ObjectIdDto } from 'src/common/dto/object-id.dto';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { UserCreateDto } from 'src/users/dto/user-create.dto';
 
-export class CreateEmployeeDto
+export class EmployeeCreateDto
 {
-    @ApiProperty({ example: 'John' })
-    @IsString()
     @IsNotEmpty()
+    @IsString()
     firstName: string;
 
-    @ApiProperty({ example: 'Doe' })
-    @IsString()
     @IsNotEmpty()
+    @IsString()
     lastName: string;
 
-    @ApiProperty({ example: 'Tom' })
-    @IsString()
-    @IsNotEmpty()
     @IsOptional()
+    @IsNotEmpty()
+    @IsString()
     middleName?: string;
 
-    @IsDateString()
     @IsOptional()
+    @IsDateString()
     birthDate?: Date;
 
+    @IsOptional()
     @ValidateNested() // BINGO
     @Type(() => ObjectIdDto) // BINGO
-    @IsOptional()
     resourceFile?: ObjectIdDto; // BINGO
 
     @ValidateNested()
-    @Type(() => CreateUserDto)
-    user: CreateUserDto;
+    @Type(() => UserCreateDto)
+    user: UserCreateDto;
 }

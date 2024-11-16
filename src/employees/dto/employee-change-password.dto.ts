@@ -1,6 +1,6 @@
 import { MinLength } from 'class-validator';
 
-export class ChangePasswordDto
+export class EmployeeChangePasswordDto
 {
     @MinLength(10)
     newPassword: string;
