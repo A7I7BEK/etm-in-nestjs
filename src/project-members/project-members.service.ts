@@ -7,7 +7,7 @@ import { EmployeesService } from 'src/employees/employees.service';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { ProjectsService } from 'src/projects/projects.service';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
-import { CreateProjectMemberDto } from './dto/create-project-member.dto';
+import { ProjectMemberCreateDto } from './dto/project-member-create.dto';
 import { ProjectMemberPageFilterDto } from './dto/project-member-page-filter.dto';
 import { ProjectMember } from './entities/project-member.entity';
 import { createUpdateEntity } from './utils/create-update-entity.util';
@@ -24,10 +24,11 @@ export class ProjectMembersService
     ) { }
 
 
-    async create(
-        createDto: CreateProjectMemberDto,
-        activeUser: ActiveUserData,
-    )
+    create
+        (
+            createDto: ProjectMemberCreateDto,
+            activeUser: ActiveUserData,
+        )
     {
         return createUpdateEntity(
             this._projectsService,
@@ -39,10 +40,11 @@ export class ProjectMembersService
     }
 
 
-    findAll(
-        activeUser: ActiveUserData,
-        options?: FindManyOptions<ProjectMember>,
-    )
+    findAll
+        (
+            activeUser: ActiveUserData,
+            options?: FindManyOptions<ProjectMember>,
+        )
     {
         if (!activeUser.systemAdmin)
         {
@@ -63,10 +65,11 @@ export class ProjectMembersService
     }
 
 
-    async findAllWithFilters(
-        pageFilterDto: ProjectMemberPageFilterDto,
-        activeUser: ActiveUserData,
-    )
+    async findAllWithFilters
+        (
+            pageFilterDto: ProjectMemberPageFilterDto,
+            activeUser: ActiveUserData,
+        )
     {
         const loadedQueryBuilder = loadQueryBuilder(
             this.repository,
@@ -81,10 +84,11 @@ export class ProjectMembersService
     }
 
 
-    async findOne(
-        options: FindOneOptions<ProjectMember>,
-        activeUser: ActiveUserData,
-    )
+    async findOne
+        (
+            options: FindOneOptions<ProjectMember>,
+            activeUser: ActiveUserData,
+        )
     {
         if (!activeUser.systemAdmin)
         {
@@ -99,7 +103,6 @@ export class ProjectMembersService
             };
 
             setNestedOptions(options, orgOption);
-
         }
 
         const entity = await this.repository.findOne(options);
@@ -112,10 +115,11 @@ export class ProjectMembersService
     }
 
 
-    async remove(
-        id: number,
-        activeUser: ActiveUserData,
-    )
+    async remove
+        (
+            id: number,
+            activeUser: ActiveUserData,
+        )
     {
         const entity = await this.findOne(
             {

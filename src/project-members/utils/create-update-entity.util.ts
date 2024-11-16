@@ -2,7 +2,7 @@ import { EmployeesService } from 'src/employees/employees.service';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { ProjectsService } from 'src/projects/projects.service';
 import { In, Repository } from 'typeorm';
-import { CreateProjectMemberDto } from '../dto/create-project-member.dto';
+import { ProjectMemberCreateDto } from '../dto/project-member-create.dto';
 import { ProjectMember } from '../entities/project-member.entity';
 
 
@@ -10,7 +10,7 @@ export async function createUpdateEntity(
     projectsService: ProjectsService,
     employeesService: EmployeesService,
     repository: Repository<ProjectMember>,
-    dto: CreateProjectMemberDto,
+    dto: ProjectMemberCreateDto,
     activeUser: ActiveUserData,
 )
 {

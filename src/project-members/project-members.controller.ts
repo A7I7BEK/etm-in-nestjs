@@ -3,11 +3,11 @@ import { ApiTags } from '@nestjs/swagger';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { CreateProjectMemberDto } from './dto/create-project-member.dto';
+import { ProjectMemberCreateDto } from './dto/project-member-create.dto';
 import { ProjectMemberPageFilterDto } from './dto/project-member-page-filter.dto';
 import { ProjectMemberPermissions } from './enums/project-member-permissions.enum';
 import { ProjectMembersService } from './project-members.service';
-import { returnModifiedEntity } from './utils/return-modified-entity.util';
+import { modifyEntityForFront } from './utils/modify-entity-for-front.util';
 
 @ApiTags('project-members')
 @Controller('project-members')
@@ -18,57 +18,63 @@ export class ProjectMembersController
 
     @Post()
     @Permission(ProjectMemberPermissions.Create)
-    async create(
-        @Body() createDto: CreateProjectMemberDto,
-        @ActiveUser() activeUser: ActiveUserData,
-    )
+    async create
+        (
+            @Body() createDto: ProjectMemberCreateDto,
+            @ActiveUser() activeUser: ActiveUserData,
+        )
     {
         const entityList = await this._service.create(createDto, activeUser);
-        return entityList.map(entity => returnModifiedEntity(entity));
+        return entityList.map(entity => modifyEntityForFront(entity));
     }
 
 
     @Get()
     @Permission(ProjectMemberPermissions.Read)
-    async findAll(
-        @Query() pageFilterDto: ProjectMemberPageFilterDto,
-        @ActiveUser() activeUser: ActiveUserData,
-    )
+    async findAll
+        (
+            @Query() pageFilterDto: ProjectMemberPageFilterDto,
+            @ActiveUser() activeUser: ActiveUserData,
+        )
     {
-        const paginationWithEntity = await this._service.findAllWithFilters(pageFilterDto, activeUser);
-        paginationWithEntity.data = paginationWithEntity.data.map(entity => returnModifiedEntity(entity));
+        const entityWithPagination = await this._service.findAllWithFilters(pageFilterDto, activeUser);
+        entityWithPagination.data = entityWithPagination.data.map(entity => modifyEntityForFront(entity));
 
-        return paginationWithEntity;
+        return entityWithPagination;
     }
 
 
     @Get(':id')
     @Permission(ProjectMemberPermissions.Read)
-    async findOne(
-        @Param('id', ParseIntPipe) id: number,
-        @ActiveUser() activeUser: ActiveUserData,
-    )
+    async findOne
+        (
+            @Param('id', ParseIntPipe) id: number,
+            @ActiveUser() activeUser: ActiveUserData,
+        )
     {
         const entity = await this._service.findOne(
-            activeUser,
-            { id },
             {
-                employee: true,
-                project: true,
+                where: { id },
+                relations: {
+                    employee: true,
+                    project: true,
+                }
             },
+            activeUser,
         );
-        return returnModifiedEntity(entity);
+        return modifyEntityForFront(entity);
     }
 
 
     @Delete(':id')
     @Permission(ProjectMemberPermissions.Delete)
-    async remove(
-        @Param('id', ParseIntPipe) id: number,
-        @ActiveUser() activeUser: ActiveUserData,
-    )
+    async remove
+        (
+            @Param('id', ParseIntPipe) id: number,
+            @ActiveUser() activeUser: ActiveUserData,
+        )
     {
         const entity = await this._service.remove(id, activeUser);
-        return returnModifiedEntity(entity);
+        return modifyEntityForFront(entity);
     }
 }
