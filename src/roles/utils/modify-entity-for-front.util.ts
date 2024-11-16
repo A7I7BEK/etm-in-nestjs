@@ -3,7 +3,7 @@ import { Role } from '../entities/role.entity';
 /**
  * temporary for this project, must not exist
  */
-export function returnModifiedEntity(entity: Role)
+export function modifyEntityForFront(entity: Role)
 {
     const { organization } = entity;
 

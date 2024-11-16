@@ -3,12 +3,12 @@ import { ApiTags } from '@nestjs/swagger';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { CreateRoleDto } from './dto/create-role.dto';
+import { RoleCreateDto } from './dto/role-create.dto';
 import { RolePageFilterDto } from './dto/role-page-filter.dto';
-import { UpdateRoleDto } from './dto/update-role.dto';
+import { RoleUpdateDto } from './dto/role-update.dto';
 import { RolePermissions } from './enums/role-permissions.enum';
 import { RolesService } from './roles.service';
-import { returnModifiedEntity } from './utils/return-modified-entity.util';
+import { modifyEntityForFront } from './utils/modify-entity-for-front.util';
 
 @ApiTags('roles')
 @Controller('roles')
@@ -19,25 +19,27 @@ export class RolesController
 
     @Post()
     @Permission(RolePermissions.Create)
-    async create(
-        @Body() createDto: CreateRoleDto,
-        @ActiveUser() activeUser: ActiveUserData,
-    )
+    async create
+        (
+            @Body() createDto: RoleCreateDto,
+            @ActiveUser() activeUser: ActiveUserData,
+        )
     {
         const entity = await this._service.create(createDto, activeUser);
-        return returnModifiedEntity(entity);
+        return modifyEntityForFront(entity);
     }
 
 
     @Get()
     @Permission(RolePermissions.Read)
-    async findAll(
-        @Query() pageFilterDto: RolePageFilterDto,
-        @ActiveUser() activeUser: ActiveUserData,
-    )
+    async findAll
+        (
+            @Query() pageFilterDto: RolePageFilterDto,
+            @ActiveUser() activeUser: ActiveUserData,
+        )
     {
         const paginationWithEntity = await this._service.findAllWithFilters(pageFilterDto, activeUser);
-        paginationWithEntity.data = paginationWithEntity.data.map(entity => returnModifiedEntity(entity));
+        paginationWithEntity.data = paginationWithEntity.data.map(entity => modifyEntityForFront(entity));
 
         return paginationWithEntity;
     }
@@ -45,10 +47,11 @@ export class RolesController
 
     @Get(':id')
     @Permission(RolePermissions.Read)
-    async findOne(
-        @Param('id', ParseIntPipe) id: number,
-        @ActiveUser() activeUser: ActiveUserData,
-    )
+    async findOne
+        (
+            @Param('id', ParseIntPipe) id: number,
+            @ActiveUser() activeUser: ActiveUserData,
+        )
     {
         const entity = await this._service.findOne(
             {
@@ -57,31 +60,33 @@ export class RolesController
             },
             activeUser,
         );
-        return returnModifiedEntity(entity);
+        return modifyEntityForFront(entity);
     }
 
 
     @Put(':id')
     @Permission(RolePermissions.Update)
-    async update(
-        @Param('id', ParseIntPipe) id: number,
-        @Body() updateDto: UpdateRoleDto,
-        @ActiveUser() activeUser: ActiveUserData,
-    )
+    async update
+        (
+            @Param('id', ParseIntPipe) id: number,
+            @Body() updateDto: RoleUpdateDto,
+            @ActiveUser() activeUser: ActiveUserData,
+        )
     {
         const entity = await this._service.update(id, updateDto, activeUser);
-        return returnModifiedEntity(entity);
+        return modifyEntityForFront(entity);
     }
 
 
     @Delete(':id')
     @Permission(RolePermissions.Delete)
-    async remove(
-        @Param('id', ParseIntPipe) id: number,
-        @ActiveUser() activeUser: ActiveUserData,
-    )
+    async remove
+        (
+            @Param('id', ParseIntPipe) id: number,
+            @ActiveUser() activeUser: ActiveUserData,
+        )
     {
         const entity = await this._service.remove(id, activeUser);
-        return returnModifiedEntity(entity);
+        return modifyEntityForFront(entity);
     }
 }

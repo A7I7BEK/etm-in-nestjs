@@ -3,8 +3,8 @@ import { Organization } from 'src/organizations/entities/organization.entity';
 import { OrganizationsService } from 'src/organizations/organizations.service';
 import { PermissionsService } from 'src/permissions/permissions.service';
 import { In, Repository } from 'typeorm';
-import { CreateRoleDto } from '../dto/create-role.dto';
-import { UpdateRoleDto } from '../dto/update-role.dto';
+import { RoleCreateDto } from '../dto/role-create.dto';
+import { RoleUpdateDto } from '../dto/role-update.dto';
 import { Role } from '../entities/role.entity';
 
 
@@ -12,7 +12,7 @@ export async function createUpdateEntity(
     organizationsService: OrganizationsService,
     permissionsService: PermissionsService,
     repository: Repository<Role>,
-    dto: CreateRoleDto | UpdateRoleDto,
+    dto: RoleCreateDto | RoleUpdateDto,
     activeUser: ActiveUserData,
     entity = new Role(),
 )

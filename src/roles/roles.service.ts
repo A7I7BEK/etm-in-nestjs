@@ -8,9 +8,9 @@ import { OrganizationsService } from 'src/organizations/organizations.service';
 import { PermissionsService } from 'src/permissions/permissions.service';
 import { UsersService } from 'src/users/users.service';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
-import { CreateRoleDto } from './dto/create-role.dto';
+import { RoleCreateDto } from './dto/role-create.dto';
 import { RolePageFilterDto } from './dto/role-page-filter.dto';
-import { UpdateRoleDto } from './dto/update-role.dto';
+import { RoleUpdateDto } from './dto/role-update.dto';
 import { Role } from './entities/role.entity';
 import { createUpdateEntity } from './utils/create-update-entity.util';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
@@ -28,10 +28,11 @@ export class RolesService
     ) { }
 
 
-    async create(
-        createDto: CreateRoleDto,
-        activeUser: ActiveUserData,
-    )
+    create
+        (
+            createDto: RoleCreateDto,
+            activeUser: ActiveUserData,
+        )
     {
         return createUpdateEntity(
             this._organizationsService,
@@ -43,10 +44,11 @@ export class RolesService
     }
 
 
-    findAll(
-        activeUser: ActiveUserData,
-        options?: FindManyOptions<Role>,
-    )
+    findAll
+        (
+            activeUser: ActiveUserData,
+            options?: FindManyOptions<Role>,
+        )
     {
         if (!activeUser.systemAdmin)
         {
@@ -65,10 +67,11 @@ export class RolesService
     }
 
 
-    async findAllWithFilters(
-        pageFilterDto: RolePageFilterDto,
-        activeUser: ActiveUserData,
-    )
+    async findAllWithFilters
+        (
+            pageFilterDto: RolePageFilterDto,
+            activeUser: ActiveUserData,
+        )
     {
         const loadedQueryBuilder = loadQueryBuilder(
             this.repository,
@@ -83,10 +86,11 @@ export class RolesService
     }
 
 
-    async findOne(
-        options: FindOneOptions<Role>,
-        activeUser: ActiveUserData,
-    )
+    async findOne
+        (
+            options: FindOneOptions<Role>,
+            activeUser: ActiveUserData,
+        )
     {
         if (!activeUser.systemAdmin)
         {
@@ -111,11 +115,12 @@ export class RolesService
     }
 
 
-    async update(
-        id: number,
-        updateDto: UpdateRoleDto,
-        activeUser: ActiveUserData,
-    )
+    async update
+        (
+            id: number,
+            updateDto: RoleUpdateDto,
+            activeUser: ActiveUserData,
+        )
     {
         const entity = await this.findOne(
             {
@@ -140,10 +145,11 @@ export class RolesService
     }
 
 
-    async remove(
-        id: number,
-        activeUser: ActiveUserData,
-    )
+    async remove
+        (
+            id: number,
+            activeUser: ActiveUserData,
+        )
     {
         const entity = await this.findOne(
             {
