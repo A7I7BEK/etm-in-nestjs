@@ -5,11 +5,12 @@ import { RolePageFilterDto } from '../dto/role-page-filter.dto';
 import { Role } from '../entities/role.entity';
 
 
-export function loadQueryBuilder(
-    repository: Repository<Role>,
-    pageFilterDto: RolePageFilterDto,
-    activeUser: ActiveUserData,
-)
+export function loadQueryBuilder
+    (
+        repository: Repository<Role>,
+        pageFilterDto: RolePageFilterDto,
+        activeUser: ActiveUserData,
+    )
 {
     const [ role, org ] = [ 'role', 'organization' ];
 

@@ -8,14 +8,15 @@ import { RoleUpdateDto } from '../dto/role-update.dto';
 import { Role } from '../entities/role.entity';
 
 
-export async function createUpdateEntity(
-    organizationsService: OrganizationsService,
-    permissionsService: PermissionsService,
-    repository: Repository<Role>,
-    dto: RoleCreateDto | RoleUpdateDto,
-    activeUser: ActiveUserData,
-    entity = new Role(),
-)
+export async function createUpdateEntity
+    (
+        organizationsService: OrganizationsService,
+        permissionsService: PermissionsService,
+        repository: Repository<Role>,
+        dto: RoleCreateDto | RoleUpdateDto,
+        activeUser: ActiveUserData,
+        entity = new Role(),
+    )
 {
     let organizationEntity: Organization;
     if (!activeUser.systemAdmin)
