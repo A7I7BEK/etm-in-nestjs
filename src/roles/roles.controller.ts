@@ -38,10 +38,10 @@ export class RolesController
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const paginationWithEntity = await this._service.findAllWithFilters(pageFilterDto, activeUser);
-        paginationWithEntity.data = paginationWithEntity.data.map(entity => modifyEntityForFront(entity));
+        const entityWithPagination = await this._service.findAllWithFilters(pageFilterDto, activeUser);
+        entityWithPagination.data = entityWithPagination.data.map(entity => modifyEntityForFront(entity));
 
-        return paginationWithEntity;
+        return entityWithPagination;
     }
 
 
