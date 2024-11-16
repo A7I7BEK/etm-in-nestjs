@@ -5,12 +5,12 @@ import { ProjectType } from '../enums/project-type';
 
 export class CreateProjectDto
 {
-    @IsString()
     @IsNotEmpty()
+    @IsString()
     name: string;
 
-    @IsString()
     @IsNotEmpty()
+    @IsString()
     codeName: string;
 
     @IsEnum(ProjectType)
@@ -24,7 +24,7 @@ export class CreateProjectDto
     @Type(() => ObjectIdDto)
     manager: ObjectIdDto;
 
-    @IsInt()
     @Min(0)
+    @IsInt()
     organizationId: number;
 }
