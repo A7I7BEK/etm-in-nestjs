@@ -18,13 +18,13 @@ export async function createUpdateEntity(
 )
 {
     let organizationEntity: Organization;
-    if (activeUser.systemAdmin)
+    if (!activeUser.systemAdmin)
     {
-        organizationEntity = await organizationsService.findOne({ id: dto.organizationId });
+        organizationEntity = await organizationsService.findOne({ id: activeUser.orgId });
     }
     else
     {
-        organizationEntity = await organizationsService.findOne({ id: activeUser.orgId });
+        organizationEntity = await organizationsService.findOne({ id: dto.organizationId });
     }
 
     const permissionIds = dto.permissions.map(x => x.id); // temporary for this project, must be: [1, 2, 3]
