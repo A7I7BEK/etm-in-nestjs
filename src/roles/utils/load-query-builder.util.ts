@@ -13,12 +13,14 @@ export function loadQueryBuilder
     )
 {
     const [ role, org ] = [ 'role', 'organization' ];
-
     const queryBuilder = repository.createQueryBuilder(role);
+
+
     queryBuilder.leftJoinAndSelect(`${role}.organization`, org);
     queryBuilder.skip(pageFilterDto.skip);
     queryBuilder.take(pageFilterDto.perPage);
     queryBuilder.orderBy(role + '.' + pageFilterDto.sortBy, OrderReverse[ pageFilterDto.sortDirection ]);
+
 
     if (!activeUser.systemAdmin)
     {
@@ -28,6 +30,7 @@ export function loadQueryBuilder
     {
         queryBuilder.andWhere(`${role}.organization = :orgId`, { orgId: pageFilterDto.organizationId });
     }
+
 
     if (pageFilterDto.allSearch)
     {
@@ -39,6 +42,7 @@ export function loadQueryBuilder
             }),
         );
     }
+
 
     return queryBuilder;
 }

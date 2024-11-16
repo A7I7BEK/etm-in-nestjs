@@ -28,13 +28,16 @@ export async function createUpdateEntity
         organizationEntity = await organizationsService.findOne({ id: dto.organizationId });
     }
 
+
     const permissionIds = dto.permissions.map(x => x.id); // temporary for this project, must be: [1, 2, 3]
     const permissionEntities = await permissionsService.findAll({ where: { id: In(permissionIds) } }); // BINGO
+
 
     entity.roleName = dto.roleName;
     entity.codeName = dto.codeName;
     entity.organization = organizationEntity;
     entity.permissions = permissionEntities;
+
 
     return repository.save(entity);
 }
