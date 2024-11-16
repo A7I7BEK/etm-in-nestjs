@@ -3,8 +3,8 @@ import { ApiTags } from '@nestjs/swagger';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { AttachRoleDto } from './dto/attach-role.dto';
-import { ChangeLanguageDto } from './dto/change-language.dto';
+import { UserAttachRoleDto } from './dto/user-attach-role.dto';
+import { UserChangeLanguageDto } from './dto/user-change-language.dto';
 import { UserPermissions } from './enums/user-permissions.enum';
 import { UsersService } from './users.service';
 import { modifyEntityForFront } from './utils/modify-entity-for-front.util';
@@ -41,7 +41,7 @@ export class UsersController
     @Permission(UserPermissions.AttachRole)
     async attachRole
         (
-            @Body() attachRoleDto: AttachRoleDto,
+            @Body() attachRoleDto: UserAttachRoleDto,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
@@ -53,7 +53,7 @@ export class UsersController
     @Post('change/language')
     async changeLanguage
         (
-            @Body() changeLanguageDto: ChangeLanguageDto,
+            @Body() changeLanguageDto: UserChangeLanguageDto,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {

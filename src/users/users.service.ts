@@ -4,8 +4,8 @@ import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { RolesService } from 'src/roles/roles.service';
 import { FindManyOptions, FindOneOptions, In, Repository } from 'typeorm';
-import { AttachRoleDto } from './dto/attach-role.dto';
-import { ChangeLanguageDto } from './dto/change-language.dto';
+import { UserAttachRoleDto } from './dto/user-attach-role.dto';
+import { UserChangeLanguageDto } from './dto/user-change-language.dto';
 import { User } from './entities/user.entity';
 import { Language } from './language/language.enum';
 
@@ -90,7 +90,7 @@ export class UsersService
 
     async attachRole
         (
-            attachRoleDto: AttachRoleDto,
+            attachRoleDto: UserAttachRoleDto,
             activeUser: ActiveUserData,
         )
     {
@@ -116,7 +116,7 @@ export class UsersService
 
     async changeLanguage
         (
-            changeLanguageDto: ChangeLanguageDto,
+            changeLanguageDto: UserChangeLanguageDto,
             activeUser: ActiveUserData,
         )
     {
