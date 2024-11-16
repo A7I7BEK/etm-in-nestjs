@@ -7,6 +7,7 @@ export function modifyEntityForFront(entity: Role)
 {
     const { organization } = entity;
 
+
     if (organization)
     {
         Object.assign(entity, {
@@ -14,6 +15,7 @@ export function modifyEntityForFront(entity: Role)
             organizationName: organization.name,
         });
     }
+
 
     return entity;
 }
