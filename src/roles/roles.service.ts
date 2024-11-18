@@ -60,7 +60,7 @@ export class RolesService
                 }
             };
 
-            setNestedOptions(options, orgOption);
+            setNestedOptions(options ??= {}, orgOption); // BINGO
         }
 
         return this.repository.find(options);
@@ -102,7 +102,7 @@ export class RolesService
                 }
             };
 
-            setNestedOptions(options, orgOption);
+            setNestedOptions(options ??= {}, orgOption); // BINGO
         }
 
         const entity = await this.repository.findOne(options);

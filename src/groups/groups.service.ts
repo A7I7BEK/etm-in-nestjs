@@ -57,7 +57,7 @@ export class GroupsService
                 }
             };
 
-            setNestedOptions(options, orgOption);
+            setNestedOptions(options ??= {}, orgOption);
         }
 
         return this.repository.find(options);
@@ -99,7 +99,7 @@ export class GroupsService
                 }
             };
 
-            setNestedOptions(options, orgOption);
+            setNestedOptions(options ??= {}, orgOption);
         }
 
         const entity = await this.repository.findOne(options);
