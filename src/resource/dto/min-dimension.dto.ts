@@ -1,12 +1,17 @@
-import { IsNumberString, IsOptional } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsInt, IsOptional, Min } from 'class-validator';
 
 export class MinDimensionDto
 {
-    @IsNumberString({ no_symbols: true })
     @IsOptional()
-    minWidth: string;
+    @Min(1)
+    @IsInt()
+    @Type(() => Number)
+    minWidth?: number;
 
-    @IsNumberString({ no_symbols: true })
     @IsOptional()
-    minHeight: string;
+    @Min(1)
+    @IsInt()
+    @Type(() => Number)
+    minHeight?: number;
 }

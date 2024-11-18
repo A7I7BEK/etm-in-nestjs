@@ -15,23 +15,41 @@ export class ResourceService
 {
     constructor (
         @InjectRepository(Resource)
-        private readonly resourceRepository: Repository<Resource>,
+        public readonly repository: Repository<Resource>,
     ) { }
 
 
-    uploadFile(file: Express.Multer.File, minDimensionDto: MinDimensionDto)
+    uploadFile
+        (
+            file: Express.Multer.File,
+            minDimensionDto: MinDimensionDto,
+        )
     {
-        if (MIME_TYPE_IMAGES.includes(file.mimetype) && +minDimensionDto.minWidth && +minDimensionDto.minHeight)
+        if (
+            MIME_TYPE_IMAGES.includes(file.mimetype)
+            && minDimensionDto.minWidth
+            && minDimensionDto.minHeight
+        )
         {
-            return this.uploadFileResizedImage(file, +minDimensionDto.minWidth, +minDimensionDto.minHeight);
+            return this.uploadResizedImage(
+                file,
+                minDimensionDto.minWidth,
+                minDimensionDto.minHeight,
+            );
         }
         else
         {
-            return this.uploadFileSimple(file);
+            return this.uploadSimple(file);
         }
     }
 
-    async uploadFileResizedImage(file: Express.Multer.File, width: number, height: number)
+
+    async uploadResizedImage
+        (
+            file: Express.Multer.File,
+            width: number,
+            height: number,
+        )
     {
         const { filePath, filename } = generateFilePath(file);
         file.path = filePath;
@@ -43,7 +61,11 @@ export class ResourceService
         return this.saveFile(file, resource);
     }
 
-    uploadFileSimple(file: Express.Multer.File) // BINGO
+
+    uploadSimple // BINGO
+        (
+            file: Express.Multer.File,
+        )
     {
         const { filePath, filename } = generateFilePath(file);
         file.path = filePath;
@@ -53,14 +75,23 @@ export class ResourceService
         return this.saveFile(file, resource);
     }
 
-    uploadMultipleFiles(files: Express.Multer.File[])
+
+    uploadMultipleFiles
+        (
+            files: Express.Multer.File[],
+        )
     {
-        return Promise.all(files.map(file => this.uploadFileSimple(file))); // BINGO
+        return Promise.all(files.map(file => this.uploadSimple(file))); // BINGO
     }
 
-    async findOne(where: FindOptionsWhere<Resource>, relations?: FindOptionsRelations<Resource>)
+
+    async findOne
+        (
+            where: FindOptionsWhere<Resource>,
+            relations?: FindOptionsRelations<Resource>,
+        )
     {
-        const entity = await this.resourceRepository.findOne({ where, relations });
+        const entity = await this.repository.findOne({ where, relations });
 
         if (!entity)
         {
@@ -70,16 +101,26 @@ export class ResourceService
         return entity;
     }
 
-    async update(id: number, updateResourceDto: UpdateResourceDto)
+
+    async update
+        (
+            id: number,
+            updateDto: UpdateResourceDto,
+        )
     {
         const entity = await this.findOne({ id });
-        entity.name = updateResourceDto.name + path.extname(entity.filename);
+        entity.name = updateDto.name + path.extname(entity.filename);
+        entity.updatedAt = new Date();
         entity.now = new Date();
 
-        return this.resourceRepository.save(entity);
+        return this.repository.save(entity);
     }
 
-    async remove(id: number)
+
+    async remove
+        (
+            id: number,
+        )
     {
         const entity = await this.findOne({ id });
 
@@ -92,11 +133,14 @@ export class ResourceService
             console.log(`Failed to remove file with id: ${id}`, error);
         }
 
-        return this.resourceRepository.remove(entity);
+        return this.repository.remove(entity);
     }
 
 
-    private createResource(file: Express.Multer.File)
+    private createResource
+        (
+            file: Express.Multer.File,
+        )
     {
         const entity = new Resource();
         entity.url = file.path;
@@ -106,18 +150,24 @@ export class ResourceService
         entity.size = file.buffer.length; // BINGO
         entity.sizeCalculated = calculateFileSize(file.buffer.length);
         entity.createdAt = new Date();
+        entity.updatedAt = new Date();
         entity.now = new Date();
 
         return entity;
     }
 
-    private async saveFile(file: Express.Multer.File, resource: Resource)
+
+    private async saveFile
+        (
+            file: Express.Multer.File,
+            resource: Resource,
+        )
     {
         try
         {
             await fs.promises.writeFile(file.path, file.buffer);
 
-            return this.resourceRepository.save(resource);
+            return this.repository.save(resource);
         }
         catch (error)
         {

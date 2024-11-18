@@ -2,7 +2,7 @@ import { IsNotEmpty, IsString } from 'class-validator';
 
 export class UpdateResourceDto
 {
-    @IsString()
     @IsNotEmpty()
+    @IsString()
     name: string;
 }

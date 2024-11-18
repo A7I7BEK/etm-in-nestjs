@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, NotAcceptableException, Param, Post, Put, Query, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, NotAcceptableException, Param, ParseIntPipe, Post, Put, Query, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
 import { MinDimensionDto } from './dto/min-dimension.dto';
@@ -9,41 +9,59 @@ import { ResourceService } from './resource.service';
 @Controller('resource')
 export class ResourceController
 {
-    constructor (private readonly resourceService: ResourceService) { }
+    constructor (private readonly _service: ResourceService) { }
+
 
     @Post('upload/file')
     @UseInterceptors(FileInterceptor('file'))
-    createOne(@UploadedFile() file: Express.Multer.File, @Query() minDimensionDto: MinDimensionDto)
+    createOne
+        (
+            @UploadedFile() file: Express.Multer.File,
+            @Query() minDimensionDto: MinDimensionDto,
+        )
     {
         if (!file)
         {
             throw new NotAcceptableException();
         }
 
-        return this.resourceService.uploadFile(file, minDimensionDto);
+        return this._service.uploadFile(file, minDimensionDto);
     }
+
 
     @Post('upload-multiple')
     @UseInterceptors(FilesInterceptor('files'))
-    createMany(@UploadedFiles() files: Express.Multer.File[])
+    createMany
+        (
+            @UploadedFiles() files: Express.Multer.File[],
+        )
     {
         if (!files || files.length === 0)
         {
             throw new NotAcceptableException();
         }
 
-        return this.resourceService.uploadMultipleFiles(files);
+        return this._service.uploadMultipleFiles(files);
     }
+
 
     @Put('update/:id')
-    update(@Param('id') id: string, @Body() updateResourceDto: UpdateResourceDto)
+    update
+        (
+            @Param('id', ParseIntPipe) id: number,
+            @Body() updateDto: UpdateResourceDto,
+        )
     {
-        return this.resourceService.update(+id, updateResourceDto);
+        return this._service.update(id, updateDto);
     }
 
+
     @Delete('delete/:id')
-    remove(@Param('id') id: string)
+    remove
+        (
+            @Param('id', ParseIntPipe) id: number,
+        )
     {
-        return this.resourceService.remove(+id);
+        return this._service.remove(id);
     }
 }

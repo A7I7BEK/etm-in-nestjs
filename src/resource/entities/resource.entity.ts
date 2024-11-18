@@ -28,5 +28,8 @@ export class Resource
     createdAt: Date;
 
     @Column()
-    now: Date; // Updated at
+    updatedAt: Date;
+
+    @Column()
+    now: Date; // temporary for this project, must not exist
 }
