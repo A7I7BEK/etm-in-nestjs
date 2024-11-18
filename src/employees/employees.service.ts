@@ -50,8 +50,8 @@ export class EmployeesService
 
     findAll
         (
+            options: FindManyOptions<Employee>,
             activeUser: ActiveUserData,
-            options?: FindManyOptions<Employee>,
         )
     {
         if (!activeUser.systemAdmin)

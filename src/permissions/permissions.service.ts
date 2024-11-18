@@ -32,7 +32,7 @@ export class PermissionsService
 
     findAll
         (
-            options?: FindManyOptions<Permission>,
+            options: FindManyOptions<Permission>,
         )
     {
         return this.repository.find(options);

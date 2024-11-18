@@ -42,8 +42,8 @@ export class ProjectMembersService
 
     findAll
         (
+            options: FindManyOptions<ProjectMember>,
             activeUser: ActiveUserData,
-            options?: FindManyOptions<ProjectMember>,
         )
     {
         if (!activeUser.systemAdmin)

@@ -31,10 +31,10 @@ export async function createUpdateEntity
 
     const employeeIds = dto.userIds.map(x => x.id); // temporary for this project, must be: [1, 2, 3]
     const employeeEntities = await employeesService.findAll(
-        activeUser,
         {
             where: { id: In(employeeIds) }
-        }
+        },
+        activeUser,
     );
 
 

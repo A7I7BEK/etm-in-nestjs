@@ -46,8 +46,8 @@ export class RolesService
 
     findAll
         (
+            options: FindManyOptions<Role>,
             activeUser: ActiveUserData,
-            options?: FindManyOptions<Role>,
         )
     {
         if (!activeUser.systemAdmin)

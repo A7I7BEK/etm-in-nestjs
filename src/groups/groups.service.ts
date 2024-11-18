@@ -43,8 +43,8 @@ export class GroupsService
 
     findAll
         (
+            options: FindManyOptions<Group>,
             activeUser: ActiveUserData,
-            options?: FindManyOptions<Group>,
         )
     {
         if (!activeUser.systemAdmin)

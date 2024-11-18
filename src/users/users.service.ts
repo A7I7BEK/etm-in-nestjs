@@ -22,8 +22,8 @@ export class UsersService
 
     findAll
         (
+            options: FindManyOptions<User>,
             activeUser: ActiveUserData,
-            options?: FindManyOptions<User>,
         )
     {
         if (!activeUser.systemAdmin)
@@ -103,10 +103,10 @@ export class UsersService
 
         const roleIds = attachRoleDto.roles.map(x => x.id);
         const roleEntities = await this._rolesService.findAll(
-            activeUser,
             {
                 where: { id: In(roleIds) }
             },
+            activeUser,
         );
         entity.roles = roleEntities;
 

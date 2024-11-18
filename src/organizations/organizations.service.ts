@@ -32,7 +32,7 @@ export class OrganizationsService
 
     findAll
         (
-            options?: FindManyOptions<Organization>,
+            options: FindManyOptions<Organization>,
         )
     {
         return this.repository.find(options);
