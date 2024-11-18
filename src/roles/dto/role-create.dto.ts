@@ -12,8 +12,8 @@ export class RoleCreateDto
     @IsString()
     codeName: string;
 
-    @ValidateNested({ each: true }) // BINGO
     @ArrayMinSize(1)
+    @ValidateNested({ each: true }) // BINGO
     @Type(() => ObjectIdDto)
     permissions: ObjectIdDto[];
 

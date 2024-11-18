@@ -21,11 +21,11 @@ export async function createUpdateEntity
     let organizationEntity: Organization;
     if (!activeUser.systemAdmin)
     {
-        organizationEntity = await organizationsService.findOne({ id: activeUser.orgId });
+        organizationEntity = await organizationsService.findOne({ where: { id: activeUser.orgId } });
     }
     else
     {
-        organizationEntity = await organizationsService.findOne({ id: dto.organizationId });
+        organizationEntity = await organizationsService.findOne({ where: { id: dto.organizationId } });
     }
 
 
