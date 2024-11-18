@@ -15,22 +15,19 @@ export async function createUpdateEntity(
 )
 {
     const projectEntity = await projectsService.findOne(
+        {
+            where: { id: dto.projectId }
+        },
         activeUser,
-        { id: dto.projectId },
-        { organization: true }
     );
 
-    const employeeIds = dto.userIds.map(x => x.id);
-    const employeeEntities = await employeesService.findAll({
-        where: {
-            id: In(employeeIds),
-            user: {
-                organization: {
-                    id: projectEntity.organization.id
-                }
-            }
-        }
-    });
+    const employeeIds = dto.userIds.map(x => x.id); // temporary for this project, must be: [1, 2, 3]
+    const employeeEntities = await employeesService.findAll(
+        {
+            where: { id: In(employeeIds) }
+        },
+        activeUser,
+    );
 
     const entityList = employeeEntities.map(empl =>
     {

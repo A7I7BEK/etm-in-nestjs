@@ -1,7 +1,6 @@
 import { EmployeesService } from 'src/employees/employees.service';
 import { GroupsService } from 'src/groups/groups.service';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { Organization } from 'src/organizations/entities/organization.entity';
 import { OrganizationsService } from 'src/organizations/organizations.service';
 import { ProjectMember } from 'src/project-members/entities/project-member.entity';
 import { Repository } from 'typeorm';
@@ -20,15 +19,12 @@ export async function createUpdateEntity(
     entity = new Project()
 )
 {
-    let organizationEntity: Organization;
-    if (activeUser.systemAdmin)
-    {
-        organizationEntity = await organizationsService.findOne({ id: dto.organizationId });
-    }
-    else
-    {
-        organizationEntity = await organizationsService.findOne({ id: activeUser.orgId });
-    }
+    const organizationEntity = await organizationsService.findOneActiveUser(
+        {
+            where: { id: dto.organizationId }
+        },
+        activeUser,
+    );
 
     const groupEntity = await groupsService.findOne(
         {

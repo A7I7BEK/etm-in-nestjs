@@ -1,7 +1,6 @@
 import { ConflictException } from '@nestjs/common';
 import { HashingService } from 'src/iam/hashing/hashing.service';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { Organization } from 'src/organizations/entities/organization.entity';
 import { OrganizationsService } from 'src/organizations/organizations.service';
 import { ResourceService } from 'src/resource/resource.service';
 import { User } from 'src/users/entities/user.entity';
@@ -50,15 +49,12 @@ export async function createUpdateEntity
     }
 
 
-    let organizationEntity: Organization;
-    if (!activeUser.systemAdmin)
-    {
-        organizationEntity = await organizationsService.findOne({ id: activeUser.orgId });
-    }
-    else
-    {
-        organizationEntity = await organizationsService.findOne({ id: dto.user.organizationId });
-    }
+    const organizationEntity = await organizationsService.findOneActiveUser(
+        {
+            where: { id: dto.user.organizationId }
+        },
+        activeUser,
+    );
 
     if (dto instanceof EmployeeCreateDto)
     {

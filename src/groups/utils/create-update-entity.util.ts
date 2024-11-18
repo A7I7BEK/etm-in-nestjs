@@ -1,6 +1,5 @@
 import { EmployeesService } from 'src/employees/employees.service';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { Organization } from 'src/organizations/entities/organization.entity';
 import { OrganizationsService } from 'src/organizations/organizations.service';
 import { In, Repository } from 'typeorm';
 import { GroupCreateDto } from '../dto/group-create.dto';
@@ -18,15 +17,12 @@ export async function createUpdateEntity
         entity = new Group(),
     )
 {
-    let organizationEntity: Organization;
-    if (!activeUser.systemAdmin)
-    {
-        organizationEntity = await organizationsService.findOne({ where: { id: activeUser.orgId } });
-    }
-    else
-    {
-        organizationEntity = await organizationsService.findOne({ where: { id: dto.organizationId } });
-    }
+    const organizationEntity = await organizationsService.findOneActiveUser(
+        {
+            where: { id: dto.organizationId }
+        },
+        activeUser,
+    );
 
 
     const employeeIds = dto.userIds.map(x => x.id); // temporary for this project, must be: [1, 2, 3]

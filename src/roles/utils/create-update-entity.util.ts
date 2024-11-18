@@ -1,5 +1,4 @@
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { Organization } from 'src/organizations/entities/organization.entity';
 import { OrganizationsService } from 'src/organizations/organizations.service';
 import { PermissionsService } from 'src/permissions/permissions.service';
 import { In, Repository } from 'typeorm';
@@ -18,15 +17,12 @@ export async function createUpdateEntity
         entity = new Role(),
     )
 {
-    let organizationEntity: Organization;
-    if (!activeUser.systemAdmin)
-    {
-        organizationEntity = await organizationsService.findOne({ where: { id: activeUser.orgId } });
-    }
-    else
-    {
-        organizationEntity = await organizationsService.findOne({ where: { id: dto.organizationId } });
-    }
+    const organizationEntity = await organizationsService.findOneActiveUser(
+        {
+            where: { id: dto.organizationId }
+        },
+        activeUser,
+    );
 
 
     const permissionIds = dto.permissions.map(x => x.id); // temporary for this project, must be: [1, 2, 3]
