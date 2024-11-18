@@ -1,63 +1,67 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { OrderReverse } from 'src/common/pagination/order.enum';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
-import { Brackets, FindManyOptions, FindOptionsRelations, FindOptionsWhere, Repository } from 'typeorm';
-import { CreateOrganizationDto } from './dto/create-organization.dto';
+import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { OrganizationCreateDto } from './dto/organization-create.dto';
 import { OrganizationPageFilterDto } from './dto/organization-page-filter.dto';
-import { UpdateOrganizationDto } from './dto/update-organization.dto';
+import { OrganizationUpdateDto } from './dto/organization-update.dto';
 import { Organization } from './entities/organization.entity';
+import { loadQueryBuilder } from './utils/load-query-builder.util';
 
 @Injectable()
 export class OrganizationsService
 {
     constructor (
         @InjectRepository(Organization)
-        private readonly organizationsRepository: Repository<Organization>,
+        public readonly repository: Repository<Organization>,
     ) { }
 
-    create(createOrganizationDto: CreateOrganizationDto)
+
+    create
+        (
+            createDto: OrganizationCreateDto,
+        )
     {
-        const entity = this.organizationsRepository.create({
-            ...createOrganizationDto
+        const entity = this.repository.create({
+            ...createDto
         });
-        return this.organizationsRepository.save(entity);
+        return this.repository.save(entity);
     }
 
-    findAll(options?: FindManyOptions<Organization>)
+
+    findAll
+        (
+            options?: FindManyOptions<Organization>,
+        )
     {
-        return this.organizationsRepository.find(options);
+        return this.repository.find(options);
     }
 
-    async findAllWithFilters(pageFilterDto: OrganizationPageFilterDto)
+
+    async findAllWithFilters
+        (
+            pageFilterDto: OrganizationPageFilterDto,
+        )
     {
-        const queryBuilder = this.organizationsRepository.createQueryBuilder('org');
-        queryBuilder.skip(pageFilterDto.skip);
-        queryBuilder.take(pageFilterDto.perPage);
-        queryBuilder.orderBy('org.' + pageFilterDto.sortBy, OrderReverse[ pageFilterDto.sortDirection ]);
+        const loadedQueryBuilder = loadQueryBuilder(
+            this.repository,
+            pageFilterDto,
+        );
 
-        if (pageFilterDto.allSearch)
-        {
-            queryBuilder.andWhere(
-                new Brackets((qb) =>
-                {
-                    qb.orWhere('org.name ILIKE :search', { search: `%${pageFilterDto.allSearch}%` });
-                    qb.orWhere('org.email ILIKE :search', { search: `%${pageFilterDto.allSearch}%` });
-                }),
-            );
-        }
-
-        const [ data, total ] = await queryBuilder.getManyAndCount();
-
+        const [ data, total ] = await loadedQueryBuilder.getManyAndCount();
         const paginationMeta = new PaginationMeta(pageFilterDto.page, pageFilterDto.perPage, total);
 
         return new Pagination<Organization>(data, paginationMeta);
     }
 
-    async findOne(where: FindOptionsWhere<Organization>, relations?: FindOptionsRelations<Organization>)
+
+    async findOne
+        (
+            options: FindOneOptions<Organization>,
+        )
     {
-        const entity = await this.organizationsRepository.findOne({ where, relations });
+        const entity = await this.repository.findOne(options);
 
         if (!entity)
         {
@@ -67,18 +71,31 @@ export class OrganizationsService
         return entity;
     }
 
-    async update(id: number, updateOrganizationDto: UpdateOrganizationDto)
+
+    async update
+        (
+            id: number,
+            updateDto: OrganizationUpdateDto,
+        )
     {
-        const entity = await this.findOne({ id });
+        const entity = await this.findOne({
+            where: { id }
+        });
 
-        Object.assign(entity, updateOrganizationDto);
+        Object.assign(entity, updateDto);
 
-        return this.organizationsRepository.save(entity);
+        return this.repository.save(entity);
     }
 
-    async remove(id: number)
+
+    async remove
+        (
+            id: number,
+        )
     {
-        const entity = await this.findOne({ id });
-        return this.organizationsRepository.remove(entity);
+        const entity = await this.findOne({
+            where: { id }
+        });
+        return this.repository.remove(entity);
     }
 }

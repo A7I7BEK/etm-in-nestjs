@@ -1,9 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
-import { CreateOrganizationDto } from './dto/create-organization.dto';
+import { OrganizationCreateDto } from './dto/organization-create.dto';
 import { OrganizationPageFilterDto } from './dto/organization-page-filter.dto';
-import { UpdateOrganizationDto } from './dto/update-organization.dto';
+import { OrganizationUpdateDto } from './dto/organization-update.dto';
 import { OrganizationPermissions } from './enums/organization-permissions.enum';
 import { OrganizationsService } from './organizations.service';
 
@@ -11,40 +11,61 @@ import { OrganizationsService } from './organizations.service';
 @Controller('organizations')
 export class OrganizationsController
 {
-    constructor (private readonly organizationsService: OrganizationsService) { }
+    constructor (private readonly _service: OrganizationsService) { }
+
 
     @Post()
     @Permission(OrganizationPermissions.Create)
-    create(@Body() createOrganizationDto: CreateOrganizationDto)
+    create
+        (
+            @Body() createDto: OrganizationCreateDto,
+        )
     {
-        return this.organizationsService.create(createOrganizationDto);
+        return this._service.create(createDto);
     }
+
 
     @Get()
     @Permission(OrganizationPermissions.Read)
-    findAll(@Query() pageFilterDto: OrganizationPageFilterDto)
+    findAll
+        (
+            @Query() pageFilterDto: OrganizationPageFilterDto,
+        )
     {
-        return this.organizationsService.findAllWithFilters(pageFilterDto);
+        return this._service.findAllWithFilters(pageFilterDto);
     }
+
 
     @Get(':id')
     @Permission(OrganizationPermissions.Read)
-    findOne(@Param('id') id: string)
+    findOne
+        (
+            @Param('id', ParseIntPipe) id: number,
+        )
     {
-        return this.organizationsService.findOne({ id: +id });
+        return this._service.findOne({ where: { id } });
     }
+
 
     @Put(':id')
     @Permission(OrganizationPermissions.Update)
-    update(@Param('id') id: string, @Body() updateOrganizationDto: UpdateOrganizationDto)
+    update
+        (
+            @Param('id', ParseIntPipe) id: number,
+            @Body() updateDto: OrganizationUpdateDto,
+        )
     {
-        return this.organizationsService.update(+id, updateOrganizationDto);
+        return this._service.update(id, updateDto);
     }
+
 
     @Delete(':id')
     @Permission(OrganizationPermissions.Delete)
-    remove(@Param('id') id: string)
+    remove
+        (
+            @Param('id', ParseIntPipe) id: number,
+        )
     {
-        return this.organizationsService.remove(+id);
+        return this._service.remove(id);
     }
 }
