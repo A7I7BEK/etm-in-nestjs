@@ -2,6 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
+import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
+import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { OrganizationCreateDto } from './dto/organization-create.dto';
 import { OrganizationPageFilterDto } from './dto/organization-page-filter.dto';
@@ -63,6 +65,33 @@ export class OrganizationsService
     {
         const entity = await this.repository.findOne(options);
 
+        if (!entity)
+        {
+            throw new NotFoundException(`${Organization.name} not found`);
+        }
+
+        return entity;
+    }
+
+
+    async findOneActiveUser // BINGO
+        (
+            options: FindOneOptions<Organization>,
+            activeUser: ActiveUserData,
+        )
+    {
+        if (!activeUser.systemAdmin)
+        {
+            const orgOption: FindOneOptions<Organization> = {
+                where: {
+                    id: activeUser.orgId
+                }
+            };
+
+            setNestedOptions(options ??= {}, orgOption);
+        }
+
+        const entity = await this.repository.findOne(options);
         if (!entity)
         {
             throw new NotFoundException(`${Organization.name} not found`);
