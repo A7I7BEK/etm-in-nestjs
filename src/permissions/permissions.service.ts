@@ -1,63 +1,67 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { OrderReverse } from 'src/common/pagination/order.enum';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
-import { Brackets, FindManyOptions, FindOptionsRelations, FindOptionsWhere, Repository } from 'typeorm';
-import { CreatePermissionDto } from './dto/create-permission.dto';
+import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { PermissionCreateDto } from './dto/permission-create.dto';
 import { PermissionPageFilterDto } from './dto/permission-page-filter.dto';
-import { UpdatePermissionDto } from './dto/update-permission.dto';
+import { PermissionUpdateDto } from './dto/permission-update.dto';
 import { Permission } from './entities/permission.entity';
+import { loadQueryBuilder } from './utils/load-query-builder.util';
 
 @Injectable()
 export class PermissionsService
 {
     constructor (
         @InjectRepository(Permission)
-        private readonly permissionsRepository: Repository<Permission>,
+        public readonly repository: Repository<Permission>,
     ) { }
 
-    create(createPermissionDto: CreatePermissionDto)
+
+    create
+        (
+            createDto: PermissionCreateDto,
+        )
     {
-        const entity = this.permissionsRepository.create({
-            ...createPermissionDto
+        const entity = this.repository.create({
+            ...createDto
         });
-        return this.permissionsRepository.save(entity);
+        return this.repository.save(entity);
     }
 
-    findAll(options?: FindManyOptions<Permission>)
+
+    findAll
+        (
+            options?: FindManyOptions<Permission>,
+        )
     {
-        return this.permissionsRepository.find(options);
+        return this.repository.find(options);
     }
 
-    async findAllWithFilters(pageFilterDto: PermissionPageFilterDto)
+
+    async findAllWithFilters
+        (
+            pageFilterDto: PermissionPageFilterDto,
+        )
     {
-        const queryBuilder = this.permissionsRepository.createQueryBuilder('perm');
-        queryBuilder.skip(pageFilterDto.skip);
-        queryBuilder.take(pageFilterDto.perPage);
-        queryBuilder.orderBy('perm.' + pageFilterDto.sortBy, OrderReverse[ pageFilterDto.sortDirection ]);
+        const loadedQueryBuilder = loadQueryBuilder(
+            this.repository,
+            pageFilterDto,
+        );
 
-        if (pageFilterDto.allSearch)
-        {
-            queryBuilder.andWhere(
-                new Brackets((qb) =>
-                {
-                    qb.orWhere('perm.name ILIKE :search', { search: `%${pageFilterDto.allSearch}%` });
-                    qb.orWhere('perm.codeName ILIKE :search', { search: `%${pageFilterDto.allSearch}%` });
-                }),
-            );
-        }
-
-        const [ data, total ] = await queryBuilder.getManyAndCount();
-
+        const [ data, total ] = await loadedQueryBuilder.getManyAndCount();
         const paginationMeta = new PaginationMeta(pageFilterDto.page, pageFilterDto.perPage, total);
 
         return new Pagination<Permission>(data, paginationMeta);
     }
 
-    async findOne(where: FindOptionsWhere<Permission>, relations?: FindOptionsRelations<Permission>)
+
+    async findOne
+        (
+            options: FindOneOptions<Permission>,
+        )
     {
-        const entity = await this.permissionsRepository.findOne({ where, relations });
+        const entity = await this.repository.findOne(options);
 
         if (!entity)
         {
@@ -67,18 +71,27 @@ export class PermissionsService
         return entity;
     }
 
-    async update(id: number, updatePermissionDto: UpdatePermissionDto)
+
+    async update
+        (
+            id: number,
+            updateDto: PermissionUpdateDto,
+        )
     {
-        const entity = await this.findOne({ id });
+        const entity = await this.findOne({ where: { id } });
 
-        Object.assign(entity, updatePermissionDto);
+        Object.assign(entity, updateDto);
 
-        return this.permissionsRepository.save(entity);
+        return this.repository.save(entity);
     }
 
-    async remove(id: number)
+
+    async remove
+        (
+            id: number,
+        )
     {
-        const entity = await this.findOne({ id });
-        return this.permissionsRepository.remove(entity);
+        const entity = await this.findOne({ where: { id } });
+        return this.repository.remove(entity);
     }
 }

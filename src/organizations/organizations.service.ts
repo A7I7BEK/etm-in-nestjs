@@ -78,9 +78,7 @@ export class OrganizationsService
             updateDto: OrganizationUpdateDto,
         )
     {
-        const entity = await this.findOne({
-            where: { id }
-        });
+        const entity = await this.findOne({ where: { id } });
 
         Object.assign(entity, updateDto);
 
@@ -93,9 +91,7 @@ export class OrganizationsService
             id: number,
         )
     {
-        const entity = await this.findOne({
-            where: { id }
-        });
+        const entity = await this.findOne({ where: { id } });
         return this.repository.remove(entity);
     }
 }

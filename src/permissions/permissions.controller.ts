@@ -1,9 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
-import { CreatePermissionDto } from './dto/create-permission.dto';
+import { PermissionCreateDto } from './dto/permission-create.dto';
 import { PermissionPageFilterDto } from './dto/permission-page-filter.dto';
-import { UpdatePermissionDto } from './dto/update-permission.dto';
+import { PermissionUpdateDto } from './dto/permission-update.dto';
 import { PermissionPermissions } from './enums/permission-permissions.enum';
 import { PermissionsService } from './permissions.service';
 
@@ -11,40 +11,61 @@ import { PermissionsService } from './permissions.service';
 @Controller('permissions')
 export class PermissionsController
 {
-    constructor (private readonly permissionsService: PermissionsService) { }
+    constructor (private readonly _service: PermissionsService) { }
+
 
     @Post()
     @Permission(PermissionPermissions.Create)
-    create(@Body() createPermissionDto: CreatePermissionDto)
+    create
+        (
+            @Body() createDto: PermissionCreateDto,
+        )
     {
-        return this.permissionsService.create(createPermissionDto);
+        return this._service.create(createDto);
     }
+
 
     @Get()
     @Permission(PermissionPermissions.Read)
-    findAll(@Query() pageFilterDto: PermissionPageFilterDto)
+    findAll
+        (
+            @Query() pageFilterDto: PermissionPageFilterDto,
+        )
     {
-        return this.permissionsService.findAllWithFilters(pageFilterDto);
+        return this._service.findAllWithFilters(pageFilterDto);
     }
+
 
     @Get(':id')
     @Permission(PermissionPermissions.Read)
-    findOne(@Param('id') id: string)
+    findOne
+        (
+            @Param('id', ParseIntPipe) id: number,
+        )
     {
-        return this.permissionsService.findOne({ id: +id });
+        return this._service.findOne({ where: { id } });
     }
+
 
     @Put(':id')
     @Permission(PermissionPermissions.Update)
-    update(@Param('id') id: string, @Body() updatePermissionDto: UpdatePermissionDto)
+    update
+        (
+            @Param('id', ParseIntPipe) id: number,
+            @Body() updateDto: PermissionUpdateDto,
+        )
     {
-        return this.permissionsService.update(+id, updatePermissionDto);
+        return this._service.update(id, updateDto);
     }
+
 
     @Delete(':id')
     @Permission(PermissionPermissions.Delete)
-    remove(@Param('id') id: string)
+    remove
+        (
+            @Param('id', ParseIntPipe) id: number,
+        )
     {
-        return this.permissionsService.remove(+id);
+        return this._service.remove(id);
     }
 }
