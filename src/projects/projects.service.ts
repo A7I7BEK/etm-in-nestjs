@@ -12,6 +12,7 @@ import { CreateProjectDto } from './dto/create-project.dto';
 import { ProjectPageFilterDto } from './dto/project-page-filter.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { Project } from './entities/project.entity';
+import { ProjectType } from './enums/project-type';
 import { createUpdateEntity } from './utils/create-update-entity.util';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
 
@@ -80,6 +81,15 @@ export class ProjectsService
         );
 
         const [ data, total ] = await loadedQueryBuilder.getManyAndCount();
+        data.forEach(entity =>
+        {
+            if (entity.projectType === ProjectType.KANBAN)
+            {
+                Object.assign(entity, {
+                    percent: 100, // TODO: calculate percentage of tasks in the "Archive" column
+                });
+            }
+        });
         const paginationMeta = new PaginationMeta(pageFilterDto.page, pageFilterDto.perPage, total);
 
         return new Pagination<Project>(data, paginationMeta);
