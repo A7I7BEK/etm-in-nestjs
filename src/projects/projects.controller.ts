@@ -8,6 +8,7 @@ import { ProjectPageFilterDto } from './dto/project-page-filter.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { ProjectPermissions } from './enums/project-permissions.enum';
 import { ProjectsService } from './projects.service';
+import { modifyEntityForFront } from './utils/modify-entity-for-front.util';
 
 @ApiTags('projects')
 @Controller('projects')
@@ -18,65 +19,84 @@ export class ProjectsController
 
     @Post()
     @Permission(ProjectPermissions.Create)
-    create(
-        @Body() createDto: CreateProjectDto,
-        @ActiveUser() activeUser: ActiveUserData,
-    )
+    async create
+        (
+            @Body() createDto: CreateProjectDto,
+            @ActiveUser() activeUser: ActiveUserData,
+        )
     {
-        return this._service.create(createDto, activeUser);
+        const entity = await this._service.create(createDto, activeUser);
+        return modifyEntityForFront(entity);
     }
 
 
     @Get()
     @Permission(ProjectPermissions.Read)
-    findAll(
-        @Query() pageFilterDto: ProjectPageFilterDto,
-        @ActiveUser() activeUser: ActiveUserData,
-    )
+    async findAll
+        (
+            @Query() pageFilterDto: ProjectPageFilterDto,
+            @ActiveUser() activeUser: ActiveUserData,
+        )
     {
-        return this._service.findAllWithFilters(pageFilterDto, activeUser);
+        const entityWithPagination = await this._service.findAllWithFilters(pageFilterDto, activeUser);
+        entityWithPagination.data = entityWithPagination.data.map(entity => modifyEntityForFront(entity));
+
+        return entityWithPagination;
     }
 
 
     @Get(':id')
     @Permission(ProjectPermissions.Read)
-    findOne(
-        @Param('id', ParseIntPipe) id: number,
-        @ActiveUser() activeUser: ActiveUserData,
-    )
+    async findOne
+        (
+            @Param('id', ParseIntPipe) id: number,
+            @ActiveUser() activeUser: ActiveUserData,
+        )
     {
-        return this._service.findOne(
-            activeUser,
-            { id },
+        const entity = await this._service.findOne(
             {
-                group: true,
-                members: true,
-                manager: true,
-                organization: true,
-            }
+                where: { id },
+                relations: {
+                    group: true,
+                    members: {
+                        employee: {
+                            user: true
+                        },
+                    },
+                    manager: true,
+                    organization: true,
+                }
+
+            },
+            activeUser,
         );
+        return modifyEntityForFront(entity);
     }
 
 
     @Put(':id')
     @Permission(ProjectPermissions.Update)
-    update(
-        @Param('id', ParseIntPipe) id: number,
-        @Body() updateDto: UpdateProjectDto,
-        @ActiveUser() activeUser: ActiveUserData,
-    )
+    async update
+        (
+            @Param('id', ParseIntPipe) id: number,
+            @Body() updateDto: UpdateProjectDto,
+            @ActiveUser() activeUser: ActiveUserData,
+        )
     {
-        return this._service.update(id, updateDto, activeUser);
+        const entity = await this._service.update(id, updateDto, activeUser);
+        return modifyEntityForFront(entity);
     }
 
 
     @Delete(':id')
     @Permission(ProjectPermissions.Delete)
-    remove(
-        @Param('id', ParseIntPipe) id: number,
-        @ActiveUser() activeUser: ActiveUserData,
-    )
+    async remove
+        (
+            @Param('id', ParseIntPipe) id: number,
+            @ActiveUser() activeUser: ActiveUserData,
+        )
     {
-        return this._service.remove(id, activeUser);
+        const entity = await this._service.remove(id, activeUser);
+        return modifyEntityForFront(entity);
     }
 }

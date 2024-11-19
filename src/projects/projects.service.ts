@@ -2,11 +2,12 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
+import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
 import { EmployeesService } from 'src/employees/employees.service';
 import { GroupsService } from 'src/groups/groups.service';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { OrganizationsService } from 'src/organizations/organizations.service';
-import { FindManyOptions, FindOptionsRelations, FindOptionsWhere, Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { ProjectPageFilterDto } from './dto/project-page-filter.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
@@ -19,42 +20,61 @@ export class ProjectsService
 {
     constructor (
         @InjectRepository(Project)
-        private readonly _repository: Repository<Project>,
+        public readonly repository: Repository<Project>,
         private readonly _organizationsService: OrganizationsService,
         private readonly _groupsService: GroupsService,
         private readonly _employeesService: EmployeesService,
     ) { }
 
 
-    async create(
-        createDto: CreateProjectDto,
-        activeUser: ActiveUserData,
-    )
+    create
+        (
+            createDto: CreateProjectDto,
+            activeUser: ActiveUserData,
+        )
     {
         return createUpdateEntity(
             this._organizationsService,
             this._groupsService,
             this._employeesService,
-            this._repository,
+            this.repository,
             createDto,
             activeUser,
         );
     }
 
 
-    findAll(options?: FindManyOptions<Project>)
+    findAll
+        (
+            options: FindManyOptions<Project>,
+            activeUser: ActiveUserData,
+        )
     {
-        return this._repository.find(options);
+        if (!activeUser.systemAdmin)
+        {
+            const orgOption: FindManyOptions<Project> = {
+                where: {
+                    organization: {
+                        id: activeUser.orgId
+                    }
+                }
+            };
+
+            setNestedOptions(options ??= {}, orgOption);
+        }
+
+        return this.repository.find(options);
     }
 
 
-    async findAllWithFilters(
-        pageFilterDto: ProjectPageFilterDto,
-        activeUser: ActiveUserData,
-    )
+    async findAllWithFilters
+        (
+            pageFilterDto: ProjectPageFilterDto,
+            activeUser: ActiveUserData,
+        )
     {
         const loadedQueryBuilder = loadQueryBuilder(
-            this._repository,
+            this.repository,
             pageFilterDto,
             activeUser,
         );
@@ -66,31 +86,26 @@ export class ProjectsService
     }
 
 
-    async findOne(
-        activeUser: ActiveUserData,
-        where: FindOptionsWhere<Project>,
-        relations?: FindOptionsRelations<Project>,
-    )
+    async findOne
+        (
+            options: FindOneOptions<Project>,
+            activeUser: ActiveUserData,
+        )
     {
-        let entity: Project;
-        if (activeUser.systemAdmin)
+        if (!activeUser.systemAdmin)
         {
-            entity = await this._repository.findOne({ where, relations });
-        }
-        else
-        {
-            entity = await this._repository.findOne({
+            const orgOption: FindOneOptions<Project> = {
                 where: {
-                    ...where,
                     organization: {
                         id: activeUser.orgId
                     }
-                },
-                relations,
-            });
+                }
+            };
+
+            setNestedOptions(options ??= {}, orgOption);
         }
 
-
+        const entity = await this.repository.findOne(options);
         if (!entity)
         {
             throw new NotFoundException(`${Project.name} not found`);
@@ -100,19 +115,25 @@ export class ProjectsService
     }
 
 
-    async update(
-        id: number,
-        updateDto: UpdateProjectDto,
-        activeUser: ActiveUserData,
-    )
+    async update
+        (
+            id: number,
+            updateDto: UpdateProjectDto,
+            activeUser: ActiveUserData,
+        )
     {
-        const entity = await this.findOne(activeUser, { id });
+        const entity = await this.findOne(
+            {
+                where: { id }
+            },
+            activeUser,
+        );
 
         return createUpdateEntity(
             this._organizationsService,
             this._groupsService,
             this._employeesService,
-            this._repository,
+            this.repository,
             updateDto,
             activeUser,
             entity,
@@ -120,12 +141,18 @@ export class ProjectsService
     }
 
 
-    async remove(
-        id: number,
-        activeUser: ActiveUserData,
-    )
+    async remove
+        (
+            id: number,
+            activeUser: ActiveUserData,
+        )
     {
-        const entity = await this.findOne(activeUser, { id });
-        return this._repository.remove(entity);
+        const entity = await this.findOne(
+            {
+                where: { id }
+            },
+            activeUser,
+        );
+        return this.repository.remove(entity);
     }
 }

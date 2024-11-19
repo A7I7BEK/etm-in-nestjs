@@ -26,18 +26,15 @@ export async function createUpdateEntity(
         activeUser,
     );
 
+
     const groupEntity = await groupsService.findOne(
         {
-            id: dto.group.id,
-            organization: {
-                id: organizationEntity.id
-            }
+            where: { id: dto.group.id },
+            relations: { employees: true, leader: true }
         },
-        {
-            employees: true,
-            leader: true,
-        }
+        activeUser,
     );
+
 
     const memberList = groupEntity.employees.map(empl =>
     {
@@ -48,16 +45,14 @@ export async function createUpdateEntity(
         return entity;
     });
 
+
     const managerEntity = await employeesService.findOne(
         {
-            id: dto.manager.id,
-            user: {
-                organization: {
-                    id: organizationEntity.id
-                }
-            }
-        }
+            where: { id: dto.manager.id }
+        },
+        activeUser,
     );
+
 
     if (dto instanceof CreateProjectDto)
     {
@@ -65,7 +60,7 @@ export async function createUpdateEntity(
     }
     else if (entity.group.id !== groupEntity.id)
     {
-        // remove old members
+        // TODO: remove old members
     }
 
 

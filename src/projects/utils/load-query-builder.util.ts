@@ -11,27 +11,33 @@ export function loadQueryBuilder(
     activeUser: ActiveUserData,
 )
 {
-    const [ project, group, manager, org ] = [ 'project', 'group', 'manager', 'organization' ];
-
+    const [ project, group, manager, org, members, empl, user ] =
+        [ 'project', 'group', 'manager', 'organization', 'members', 'employee', 'user' ];
     const queryBuilder = repository.createQueryBuilder(project);
+
+
     queryBuilder.leftJoinAndSelect(`${project}.group`, group);
-    queryBuilder.leftJoinAndSelect(`${group}.employees`, 'employees');
-    queryBuilder.leftJoinAndSelect(`${group}.leader`, 'leader');
     queryBuilder.leftJoinAndSelect(`${project}.manager`, manager);
     queryBuilder.leftJoinAndSelect(`${project}.organization`, org);
+    queryBuilder.leftJoinAndSelect(`${project}.members`, members);
+    queryBuilder.leftJoinAndSelect(`${members}.employee`, empl);
+    queryBuilder.leftJoinAndSelect(`${empl}.user`, user);
     queryBuilder.skip(pageFilterDto.skip);
     queryBuilder.take(pageFilterDto.perPage);
     queryBuilder.orderBy(project + '.' + pageFilterDto.sortBy, OrderReverse[ pageFilterDto.sortDirection ]);
+
 
     if (pageFilterDto.projectType)
     {
         queryBuilder.andWhere(`${project}.projectType = :prType`, { prType: pageFilterDto.projectType });
     }
 
+
     if (pageFilterDto.groupId)
     {
         queryBuilder.andWhere(`${project}.group = :grId`, { grId: pageFilterDto.groupId });
     }
+
 
     if (pageFilterDto.managerId)
     {
