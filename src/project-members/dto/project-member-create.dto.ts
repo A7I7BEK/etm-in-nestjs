@@ -8,8 +8,8 @@ export class ProjectMemberCreateDto
     @IsInt()
     projectId: number;
 
-    @ValidateNested({ each: true })
     @ArrayMinSize(1)
+    @ValidateNested({ each: true })
     @Type(() => ObjectIdDto)
     userIds: ObjectIdDto[];
 }

@@ -14,7 +14,7 @@ export class ProjectMember
     @Column()
     lastSeenTime: Date = new Date();
 
-    @ManyToOne(type => Employee)
+    @ManyToOne(type => Employee, { eager: true })
     employee: Employee;
 
     @Column()
