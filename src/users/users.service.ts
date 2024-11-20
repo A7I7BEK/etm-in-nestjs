@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
@@ -84,6 +84,17 @@ export class UsersService
             },
             activeUser,
         );
+
+        if (entity.id === activeUser.sub)
+        {
+            throw new ForbiddenException('Cannot delete yourself');
+        }
+
+        if (entity.marks.registered)
+        {
+            throw new ForbiddenException('Cannot delete ADMIN user');
+        }
+
         return this.repository.remove(entity);
     }
 

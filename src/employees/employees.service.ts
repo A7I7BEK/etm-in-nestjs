@@ -166,15 +166,18 @@ export class EmployeesService
             activeUser,
         );
 
-
         if (entity.user.id === activeUser.sub)
         {
             throw new ForbiddenException('Cannot delete yourself');
         }
 
+        if (entity.user.marks.registered)
+        {
+            throw new ForbiddenException('Cannot delete ADMIN user');
+        }
 
         const entityRemoved = await this.repository.remove(entity);
-        await this._usersService.remove(entity.user.id, activeUser);
+        await this._usersService.repository.remove(entity.user);
 
         return entityRemoved;
     }
