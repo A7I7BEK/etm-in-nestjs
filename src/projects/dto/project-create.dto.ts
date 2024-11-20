@@ -3,7 +3,7 @@ import { IsEnum, IsInt, IsNotEmpty, IsString, Min, ValidateNested } from 'class-
 import { ObjectIdDto } from 'src/common/dto/object-id.dto';
 import { ProjectType } from '../enums/project-type';
 
-export class CreateProjectDto
+export class ProjectCreateDto
 {
     @IsNotEmpty()
     @IsString()

@@ -7,10 +7,12 @@ import { EmployeesService } from 'src/employees/employees.service';
 import { GroupsService } from 'src/groups/groups.service';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { OrganizationsService } from 'src/organizations/organizations.service';
+import { ResourceService } from 'src/resource/resource.service';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
-import { CreateProjectDto } from './dto/create-project.dto';
+import { ProjectBackgroundDto } from './dto/project-background.dto';
+import { ProjectCreateDto } from './dto/project-create.dto';
 import { ProjectPageFilterDto } from './dto/project-page-filter.dto';
-import { UpdateProjectDto } from './dto/update-project.dto';
+import { ProjectUpdateDto } from './dto/project-update.dto';
 import { Project } from './entities/project.entity';
 import { ProjectType } from './enums/project-type';
 import { createUpdateEntity } from './utils/create-update-entity.util';
@@ -25,12 +27,13 @@ export class ProjectsService
         private readonly _organizationsService: OrganizationsService,
         private readonly _groupsService: GroupsService,
         private readonly _employeesService: EmployeesService,
+        private readonly _resourceService: ResourceService,
     ) { }
 
 
     create
         (
-            createDto: CreateProjectDto,
+            createDto: ProjectCreateDto,
             activeUser: ActiveUserData,
         )
     {
@@ -128,7 +131,7 @@ export class ProjectsService
     async update
         (
             id: number,
-            updateDto: UpdateProjectDto,
+            updateDto: ProjectUpdateDto,
             activeUser: ActiveUserData,
         )
     {
@@ -164,5 +167,26 @@ export class ProjectsService
             activeUser,
         );
         return this.repository.remove(entity);
+    }
+
+
+    async setBackground
+        (
+            backgroundDto: ProjectBackgroundDto,
+            activeUser: ActiveUserData,
+        )
+    {
+        const entity = await this.findOne(
+            {
+                where: { id: backgroundDto.projectId }
+            },
+            activeUser,
+        );
+
+        const file = await this._resourceService.findOne({ url: entity.background });
+        await this._resourceService.remove(file.id);
+
+        entity.background = backgroundDto.background;
+        return this.repository.save(entity);
     }
 }

@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { EmployeesModule } from 'src/employees/employees.module';
 import { GroupsModule } from 'src/groups/groups.module';
 import { OrganizationsModule } from 'src/organizations/organizations.module';
+import { ResourceModule } from 'src/resource/resource.module';
 import { Project } from './entities/project.entity';
 import { ProjectsController } from './projects.controller';
 import { ProjectsService } from './projects.service';
@@ -13,6 +14,7 @@ import { ProjectsService } from './projects.service';
         OrganizationsModule,
         GroupsModule,
         EmployeesModule,
+        ResourceModule,
     ],
     exports: [ ProjectsService ],
     controllers: [ ProjectsController ],

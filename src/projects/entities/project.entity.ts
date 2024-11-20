@@ -17,6 +17,9 @@ export class Project
     @Column()
     codeName: string;
 
+    @Column({ nullable: true })
+    background: string;
+
     @Column({
         type: 'enum',
         enum: ProjectType,

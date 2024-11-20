@@ -3,10 +3,11 @@ import { ApiTags } from '@nestjs/swagger';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { CreateProjectDto } from './dto/create-project.dto';
+import { ProjectBackgroundDto } from './dto/project-background.dto';
+import { ProjectCreateDto } from './dto/project-create.dto';
 import { ProjectPageFilterDto } from './dto/project-page-filter.dto';
 import { ProjectSelectPageFilterDto } from './dto/project-select-page-filter.dto';
-import { UpdateProjectDto } from './dto/update-project.dto';
+import { ProjectUpdateDto } from './dto/project-update.dto';
 import { ProjectPermissions } from './enums/project-permissions.enum';
 import { ProjectsService } from './projects.service';
 import { modifyEntityForFront } from './utils/modify-entity-for-front.util';
@@ -22,7 +23,7 @@ export class ProjectsController
     @Permission(ProjectPermissions.Create)
     async create
         (
-            @Body() createDto: CreateProjectDto,
+            @Body() createDto: ProjectCreateDto,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
@@ -80,7 +81,7 @@ export class ProjectsController
     async update
         (
             @Param('id', ParseIntPipe) id: number,
-            @Body() updateDto: UpdateProjectDto,
+            @Body() updateDto: ProjectUpdateDto,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
@@ -126,5 +127,18 @@ export class ProjectsController
         );
 
         return entityList.map(entity => modifyEntityForFront(entity));
+    }
+
+
+    @Post()
+    @Permission(ProjectPermissions.Create)
+    async setBackground
+        (
+            @Body() backgroundDto: ProjectBackgroundDto,
+            @ActiveUser() activeUser: ActiveUserData,
+        )
+    {
+        const entity = await this._service.setBackground(backgroundDto, activeUser);
+        return modifyEntityForFront(entity);
     }
 }

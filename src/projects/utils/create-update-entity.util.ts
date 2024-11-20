@@ -4,8 +4,8 @@ import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { OrganizationsService } from 'src/organizations/organizations.service';
 import { ProjectMember } from 'src/project-members/entities/project-member.entity';
 import { Repository } from 'typeorm';
-import { CreateProjectDto } from '../dto/create-project.dto';
-import { UpdateProjectDto } from '../dto/update-project.dto';
+import { ProjectCreateDto } from '../dto/project-create.dto';
+import { ProjectUpdateDto } from '../dto/project-update.dto';
 import { Project } from '../entities/project.entity';
 
 
@@ -14,7 +14,7 @@ export async function createUpdateEntity(
     groupsService: GroupsService,
     employeesService: EmployeesService,
     repository: Repository<Project>,
-    dto: CreateProjectDto | UpdateProjectDto,
+    dto: ProjectCreateDto | ProjectUpdateDto,
     activeUser: ActiveUserData,
     entity = new Project()
 )
@@ -54,7 +54,7 @@ export async function createUpdateEntity(
     );
 
 
-    if (dto instanceof CreateProjectDto)
+    if (dto instanceof ProjectCreateDto)
     {
         entity.projectType = dto.projectType;
     }
