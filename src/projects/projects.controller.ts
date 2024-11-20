@@ -5,6 +5,7 @@ import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { ProjectPageFilterDto } from './dto/project-page-filter.dto';
+import { ProjectSelectPageFilterDto } from './dto/project-select-page-filter.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { ProjectPermissions } from './enums/project-permissions.enum';
 import { ProjectsService } from './projects.service';
@@ -98,5 +99,32 @@ export class ProjectsController
     {
         const entity = await this._service.remove(id, activeUser);
         return modifyEntityForFront(entity);
+    }
+
+
+    @Get('selection')
+    @Permission(ProjectPermissions.Read)
+    async findAllForSelect
+        (
+            @Query() pageFilterDto: ProjectSelectPageFilterDto,
+            @ActiveUser() activeUser: ActiveUserData,
+        )
+    {
+        const entityList = await this._service.findAll(
+            {
+                where: { // TODO: check if working correctly when undefined
+                    projectType: pageFilterDto.projectType,
+                    organization: {
+                        id: pageFilterDto.organizationId,
+                    },
+                },
+                relations: {
+                    organization: true,
+                }
+            },
+            activeUser,
+        );
+
+        return entityList.map(entity => modifyEntityForFront(entity));
     }
 }
