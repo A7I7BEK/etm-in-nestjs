@@ -131,14 +131,14 @@ export class ProjectsController
 
 
     @Post()
-    @Permission(ProjectPermissions.Create)
-    async setBackground
+    @Permission(ProjectPermissions.ChangeBackground)
+    async changeBackground
         (
             @Body() backgroundDto: ProjectBackgroundDto,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.setBackground(backgroundDto, activeUser);
+        const entity = await this._service.changeBackground(backgroundDto, activeUser);
         return modifyEntityForFront(entity);
     }
 }

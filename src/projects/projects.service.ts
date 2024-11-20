@@ -170,7 +170,7 @@ export class ProjectsService
     }
 
 
-    async setBackground
+    async changeBackground
         (
             backgroundDto: ProjectBackgroundDto,
             activeUser: ActiveUserData,

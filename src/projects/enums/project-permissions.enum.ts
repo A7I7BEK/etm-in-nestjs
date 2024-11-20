@@ -4,11 +4,12 @@ export enum ProjectPermissions
     Read = 'PROJECT_READ',
     Update = 'PROJECT_UPDATE',
     Delete = 'PROJECT_DELETE',
+    ChangeBackground = 'PROJECT_CHANGE_BACKGROUND',
 
     ReadDetails = 'PROJECT_READ_DETAILS',
-    ChangePhoto = 'PROJECT_CHANGE_PHOTO',
 
     ColumnCreate = 'PROJECT_COLUMN_CREATE',
     ColumnRead = 'PROJECT_COLUMN_READ',
     ColumnUpdate = 'PROJECT_COLUMN_UPDATE',
+    ColumnDelete = 'PROJECT_COLUMN_DELETE',
 }
