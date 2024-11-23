@@ -1,8 +1,8 @@
 export enum EmployeeProperties
 {
     ID = 'id',
-    FIRSTNAME = 'firstName',
-    LASTNAME = 'lastName',
-    MIDDLENAME = 'middleName',
-    BIRTHDATE = 'birthDate',
+    FIRST_NAME = 'firstName',
+    LAST_NAME = 'lastName',
+    MIDDLE_NAME = 'middleName',
+    BIRTH_DATE = 'birthDate',
 }

@@ -2,5 +2,5 @@ export enum PermissionProperties
 {
     ID = 'id',
     NAME = 'name',
-    CODENAME = 'codeName',
+    CODE_NAME = 'codeName',
 }

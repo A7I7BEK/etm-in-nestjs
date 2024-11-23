@@ -1,7 +1,7 @@
 export enum RoleProperties
 {
     ID = 'id',
-    ROLENAME = 'roleName',
-    CODENAME = 'codeName',
+    ROLE_NAME = 'roleName',
+    CODE_NAME = 'codeName',
     ORGANIZATION = 'organization',
 }

@@ -1,8 +1,8 @@
 export enum UserProperties
 {
     ID = 'id',
-    USERNAME = 'userName',
+    USER_NAME = 'userName',
     EMAIL = 'email',
-    PHONENUMBER = 'phoneNumber',
+    PHONE_NUMBER = 'phoneNumber',
     ORGANIZATION = 'organization',
 }
