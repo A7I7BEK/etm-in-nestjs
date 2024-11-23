@@ -1,8 +1,8 @@
 import { IsEnum, IsOptional } from 'class-validator';
-import { PageFilterDto } from 'src/common/dto/page-filter.dto';
+import { BaseQueryDto } from 'src/common/dto/base-query.dto';
 import { PermissionProperties } from '../enums/permission-properties.enum';
 
-export class PermissionPageFilterDto extends PageFilterDto<PermissionProperties>
+export class PermissionQueryDto extends BaseQueryDto<PermissionProperties>
 {
     @IsOptional()
     @IsEnum(PermissionProperties)

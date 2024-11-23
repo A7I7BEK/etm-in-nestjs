@@ -4,7 +4,7 @@ import { Permission } from 'src/iam/authorization/decorators/permission.decorato
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { GroupCreateDto } from './dto/group-create.dto';
-import { GroupPageFilterDto } from './dto/group-page-filter.dto';
+import { GroupQueryDto } from './dto/group-query.dto';
 import { GroupUpdateDto } from './dto/group-update.dto';
 import { GroupPermissions } from './enums/group-permissions.enum';
 import { GroupsService } from './groups.service';
@@ -34,11 +34,11 @@ export class GroupsController
     @Permission(GroupPermissions.Read)
     async findAll
         (
-            @Query() pageFilterDto: GroupPageFilterDto,
+            @Query() queryDto: GroupQueryDto,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entityWithPagination = await this._service.findAllWithFilters(pageFilterDto, activeUser);
+        const entityWithPagination = await this._service.findAllWithFilters(queryDto, activeUser);
         entityWithPagination.data = entityWithPagination.data.map(entity => modifyEntityForFront(entity));
 
         return entityWithPagination;

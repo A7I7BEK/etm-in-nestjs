@@ -8,7 +8,7 @@ import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { OrganizationsService } from 'src/organizations/organizations.service';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { GroupCreateDto } from './dto/group-create.dto';
-import { GroupPageFilterDto } from './dto/group-page-filter.dto';
+import { GroupQueryDto } from './dto/group-query.dto';
 import { GroupUpdateDto } from './dto/group-update.dto';
 import { Group } from './entities/group.entity';
 import { createUpdateEntity } from './utils/create-update-entity.util';
@@ -66,18 +66,18 @@ export class GroupsService
 
     async findAllWithFilters
         (
-            pageFilterDto: GroupPageFilterDto,
+            queryDto: GroupQueryDto,
             activeUser: ActiveUserData,
         )
     {
         const loadedQueryBuilder = loadQueryBuilder(
             this.repository,
-            pageFilterDto,
+            queryDto,
             activeUser,
         );
 
         const [ data, total ] = await loadedQueryBuilder.getManyAndCount();
-        const paginationMeta = new PaginationMeta(pageFilterDto.page, pageFilterDto.perPage, total);
+        const paginationMeta = new PaginationMeta(queryDto.page, queryDto.perPage, total);
 
         return new Pagination<Group>(data, paginationMeta);
     }

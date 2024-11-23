@@ -5,7 +5,7 @@ import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { EmployeeChangePasswordDto } from './dto/employee-change-password.dto';
 import { EmployeeCreateDto } from './dto/employee-create.dto';
-import { EmployeePageFilterDto } from './dto/employee-page-filter.dto';
+import { EmployeeQueryDto } from './dto/employee-query.dto';
 import { EmployeeUpdateDto } from './dto/employee-update.dto';
 import { EmployeesService } from './employees.service';
 import { EmployeePermissions } from './enums/employee-permissions.enum';
@@ -35,11 +35,11 @@ export class EmployeesController
     @Permission(EmployeePermissions.Read)
     async findAll
         (
-            @Query() pageFilterDto: EmployeePageFilterDto,
+            @Query() queryDto: EmployeeQueryDto,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entityWithPagination = await this._service.findAllWithFilters(pageFilterDto, activeUser);
+        const entityWithPagination = await this._service.findAllWithFilters(queryDto, activeUser);
         entityWithPagination.data = entityWithPagination.data.map(entity => modifyEntityForFront(entity));
 
         return entityWithPagination;

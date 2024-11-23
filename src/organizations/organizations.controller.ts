@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query } 
 import { ApiTags } from '@nestjs/swagger';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
 import { OrganizationCreateDto } from './dto/organization-create.dto';
-import { OrganizationPageFilterDto } from './dto/organization-page-filter.dto';
+import { OrganizationQueryDto } from './dto/organization-query.dto';
 import { OrganizationUpdateDto } from './dto/organization-update.dto';
 import { OrganizationPermissions } from './enums/organization-permissions.enum';
 import { OrganizationsService } from './organizations.service';
@@ -29,10 +29,10 @@ export class OrganizationsController
     @Permission(OrganizationPermissions.Read)
     findAll
         (
-            @Query() pageFilterDto: OrganizationPageFilterDto,
+            @Query() queryDto: OrganizationQueryDto,
         )
     {
-        return this._service.findAllWithFilters(pageFilterDto);
+        return this._service.findAllWithFilters(queryDto);
     }
 
 

@@ -1,13 +1,13 @@
 import { OrderReverse } from 'src/common/pagination/order.enum';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { Brackets, Repository } from 'typeorm';
-import { ProjectPageFilterDto } from '../dto/project-page-filter.dto';
+import { ProjectQueryDto } from '../dto/project-query.dto';
 import { Project } from '../entities/project.entity';
 
 
 export function loadQueryBuilder(
     repository: Repository<Project>,
-    pageFilterDto: ProjectPageFilterDto,
+    queryDto: ProjectQueryDto,
     activeUser: ActiveUserData,
 )
 {
@@ -22,26 +22,26 @@ export function loadQueryBuilder(
     queryBuilder.leftJoinAndSelect(`${project}.members`, members);
     queryBuilder.leftJoinAndSelect(`${members}.employee`, empl);
     queryBuilder.leftJoinAndSelect(`${empl}.user`, user);
-    queryBuilder.skip(pageFilterDto.skip);
-    queryBuilder.take(pageFilterDto.perPage);
-    queryBuilder.orderBy(project + '.' + pageFilterDto.sortBy, OrderReverse[ pageFilterDto.sortDirection ]);
+    queryBuilder.skip(queryDto.skip);
+    queryBuilder.take(queryDto.perPage);
+    queryBuilder.orderBy(project + '.' + queryDto.sortBy, OrderReverse[ queryDto.sortDirection ]);
 
 
-    if (pageFilterDto.projectType)
+    if (queryDto.projectType)
     {
-        queryBuilder.andWhere(`${project}.projectType = :prType`, { prType: pageFilterDto.projectType });
+        queryBuilder.andWhere(`${project}.projectType = :prType`, { prType: queryDto.projectType });
     }
 
 
-    if (pageFilterDto.groupId)
+    if (queryDto.groupId)
     {
-        queryBuilder.andWhere(`${project}.group = :grId`, { grId: pageFilterDto.groupId });
+        queryBuilder.andWhere(`${project}.group = :grId`, { grId: queryDto.groupId });
     }
 
 
-    if (pageFilterDto.managerId)
+    if (queryDto.managerId)
     {
-        queryBuilder.andWhere(`${project}.manager = :manId`, { manId: pageFilterDto.managerId });
+        queryBuilder.andWhere(`${project}.manager = :manId`, { manId: queryDto.managerId });
     }
 
 
@@ -49,23 +49,23 @@ export function loadQueryBuilder(
     {
         queryBuilder.andWhere(`${project}.organization = :orgId`, { orgId: activeUser.orgId });
     }
-    else if (pageFilterDto.organizationId)
+    else if (queryDto.organizationId)
     {
-        queryBuilder.andWhere(`${project}.organization = :orgId`, { orgId: pageFilterDto.organizationId });
+        queryBuilder.andWhere(`${project}.organization = :orgId`, { orgId: queryDto.organizationId });
     }
 
 
-    if (pageFilterDto.allSearch)
+    if (queryDto.allSearch)
     {
         queryBuilder.andWhere(
             new Brackets((qb) =>
             {
-                qb.orWhere(`${project}.name ILIKE :search`, { search: `%${pageFilterDto.allSearch}%` });
-                qb.orWhere(`${project}.codeName ILIKE :search`, { search: `%${pageFilterDto.allSearch}%` });
-                qb.orWhere(`${group}.name ILIKE :search`, { search: `%${pageFilterDto.allSearch}%` });
-                qb.orWhere(`${manager}.firstName ILIKE :search`, { search: `%${pageFilterDto.allSearch}%` });
-                qb.orWhere(`${manager}.lastName ILIKE :search`, { search: `%${pageFilterDto.allSearch}%` });
-                qb.orWhere(`${manager}.middleName ILIKE :search`, { search: `%${pageFilterDto.allSearch}%` });
+                qb.orWhere(`${project}.name ILIKE :search`, { search: `%${queryDto.allSearch}%` });
+                qb.orWhere(`${project}.codeName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
+                qb.orWhere(`${group}.name ILIKE :search`, { search: `%${queryDto.allSearch}%` });
+                qb.orWhere(`${manager}.firstName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
+                qb.orWhere(`${manager}.lastName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
+                qb.orWhere(`${manager}.middleName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
             }),
         );
     }

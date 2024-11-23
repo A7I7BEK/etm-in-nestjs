@@ -1,9 +1,9 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsInt, IsOptional, Min } from 'class-validator';
-import { PageFilterDto } from 'src/common/dto/page-filter.dto';
+import { BaseQueryDto } from 'src/common/dto/base-query.dto';
 import { ProjectMemberProperties } from '../enums/project-member-properties.enum';
 
-export class ProjectMemberPageFilterDto extends PageFilterDto<ProjectMemberProperties>
+export class ProjectMemberQueryDto extends BaseQueryDto<ProjectMemberProperties>
 {
     @IsOptional()
     @IsEnum(ProjectMemberProperties)

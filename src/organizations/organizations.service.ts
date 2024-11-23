@@ -6,7 +6,7 @@ import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { OrganizationCreateDto } from './dto/organization-create.dto';
-import { OrganizationPageFilterDto } from './dto/organization-page-filter.dto';
+import { OrganizationQueryDto } from './dto/organization-query.dto';
 import { OrganizationUpdateDto } from './dto/organization-update.dto';
 import { Organization } from './entities/organization.entity';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
@@ -43,16 +43,16 @@ export class OrganizationsService
 
     async findAllWithFilters
         (
-            pageFilterDto: OrganizationPageFilterDto,
+            queryDto: OrganizationQueryDto,
         )
     {
         const loadedQueryBuilder = loadQueryBuilder(
             this.repository,
-            pageFilterDto,
+            queryDto,
         );
 
         const [ data, total ] = await loadedQueryBuilder.getManyAndCount();
-        const paginationMeta = new PaginationMeta(pageFilterDto.page, pageFilterDto.perPage, total);
+        const paginationMeta = new PaginationMeta(queryDto.page, queryDto.perPage, total);
 
         return new Pagination<Organization>(data, paginationMeta);
     }

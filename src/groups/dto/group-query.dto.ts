@@ -1,9 +1,9 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsInt, IsOptional, Min } from 'class-validator';
-import { PageFilterDto } from 'src/common/dto/page-filter.dto';
+import { BaseQueryDto } from 'src/common/dto/base-query.dto';
 import { GroupProperties } from '../enums/group-properties.enum';
 
-export class GroupPageFilterDto extends PageFilterDto<GroupProperties>
+export class GroupQueryDto extends BaseQueryDto<GroupProperties>
 {
     @IsOptional()
     @IsEnum(GroupProperties)

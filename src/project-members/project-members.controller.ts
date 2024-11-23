@@ -4,7 +4,7 @@ import { Permission } from 'src/iam/authorization/decorators/permission.decorato
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { ProjectMemberCreateDto } from './dto/project-member-create.dto';
-import { ProjectMemberPageFilterDto } from './dto/project-member-page-filter.dto';
+import { ProjectMemberQueryDto } from './dto/project-member-query.dto';
 import { ProjectMemberPermissions } from './enums/project-member-permissions.enum';
 import { ProjectMembersService } from './project-members.service';
 import { modifyProjectMemberForFront } from './utils/modify-entity-for-front.util';
@@ -33,11 +33,11 @@ export class ProjectMembersController
     @Permission(ProjectMemberPermissions.Read)
     async findAll
         (
-            @Query() pageFilterDto: ProjectMemberPageFilterDto,
+            @Query() queryDto: ProjectMemberQueryDto,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entityWithPagination = await this._service.findAllWithFilters(pageFilterDto, activeUser);
+        const entityWithPagination = await this._service.findAllWithFilters(queryDto, activeUser);
         entityWithPagination.data = entityWithPagination.data.map(entity => modifyProjectMemberForFront(entity));
 
         return entityWithPagination;

@@ -4,7 +4,7 @@ import { Permission } from 'src/iam/authorization/decorators/permission.decorato
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { RoleCreateDto } from './dto/role-create.dto';
-import { RolePageFilterDto } from './dto/role-page-filter.dto';
+import { RoleQueryDto } from './dto/role-query.dto';
 import { RoleUpdateDto } from './dto/role-update.dto';
 import { RolePermissions } from './enums/role-permissions.enum';
 import { RolesService } from './roles.service';
@@ -34,11 +34,11 @@ export class RolesController
     @Permission(RolePermissions.Read)
     async findAll
         (
-            @Query() pageFilterDto: RolePageFilterDto,
+            @Query() queryDto: RoleQueryDto,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entityWithPagination = await this._service.findAllWithFilters(pageFilterDto, activeUser);
+        const entityWithPagination = await this._service.findAllWithFilters(queryDto, activeUser);
         entityWithPagination.data = entityWithPagination.data.map(entity => modifyEntityForFront(entity));
 
         return entityWithPagination;

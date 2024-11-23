@@ -4,7 +4,7 @@ import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { PermissionCreateDto } from './dto/permission-create.dto';
-import { PermissionPageFilterDto } from './dto/permission-page-filter.dto';
+import { PermissionQueryDto } from './dto/permission-query.dto';
 import { PermissionUpdateDto } from './dto/permission-update.dto';
 import { Permission } from './entities/permission.entity';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
@@ -41,16 +41,16 @@ export class PermissionsService
 
     async findAllWithFilters
         (
-            pageFilterDto: PermissionPageFilterDto,
+            queryDto: PermissionQueryDto,
         )
     {
         const loadedQueryBuilder = loadQueryBuilder(
             this.repository,
-            pageFilterDto,
+            queryDto,
         );
 
         const [ data, total ] = await loadedQueryBuilder.getManyAndCount();
-        const paginationMeta = new PaginationMeta(pageFilterDto.page, pageFilterDto.perPage, total);
+        const paginationMeta = new PaginationMeta(queryDto.page, queryDto.perPage, total);
 
         return new Pagination<Permission>(data, paginationMeta);
     }

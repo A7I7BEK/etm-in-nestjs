@@ -5,8 +5,8 @@ import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { ProjectBackgroundDto } from './dto/project-background.dto';
 import { ProjectCreateDto } from './dto/project-create.dto';
-import { ProjectPageFilterDto } from './dto/project-page-filter.dto';
-import { ProjectSelectPageFilterDto } from './dto/project-select-page-filter.dto';
+import { ProjectQueryDto } from './dto/project-query.dto';
+import { ProjectSelectQueryDto } from './dto/project-select-query.dto';
 import { ProjectUpdateDto } from './dto/project-update.dto';
 import { ProjectPermissions } from './enums/project-permissions.enum';
 import { ProjectsService } from './projects.service';
@@ -36,11 +36,11 @@ export class ProjectsController
     @Permission(ProjectPermissions.Read)
     async findAll
         (
-            @Query() pageFilterDto: ProjectPageFilterDto,
+            @Query() queryDto: ProjectQueryDto,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entityWithPagination = await this._service.findAllWithFilters(pageFilterDto, activeUser);
+        const entityWithPagination = await this._service.findAllWithFilters(queryDto, activeUser);
         entityWithPagination.data = entityWithPagination.data.map(entity => modifyEntityForFront(entity));
 
         return entityWithPagination;
@@ -107,16 +107,16 @@ export class ProjectsController
     @Permission(ProjectPermissions.Read)
     async findAllForSelect
         (
-            @Query() pageFilterDto: ProjectSelectPageFilterDto,
+            @Query() queryDto: ProjectSelectQueryDto,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
         const entityList = await this._service.findAll(
             {
                 where: { // TODO: check if working correctly when undefined
-                    projectType: pageFilterDto.projectType,
+                    projectType: queryDto.projectType,
                     organization: {
-                        id: pageFilterDto.organizationId,
+                        id: queryDto.organizationId,
                     },
                 },
                 relations: {

@@ -11,7 +11,7 @@ import { ResourceService } from 'src/resource/resource.service';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { ProjectBackgroundDto } from './dto/project-background.dto';
 import { ProjectCreateDto } from './dto/project-create.dto';
-import { ProjectPageFilterDto } from './dto/project-page-filter.dto';
+import { ProjectQueryDto } from './dto/project-query.dto';
 import { ProjectUpdateDto } from './dto/project-update.dto';
 import { Project } from './entities/project.entity';
 import { ProjectType } from './enums/project-type';
@@ -73,13 +73,13 @@ export class ProjectsService
 
     async findAllWithFilters
         (
-            pageFilterDto: ProjectPageFilterDto,
+            queryDto: ProjectQueryDto,
             activeUser: ActiveUserData,
         )
     {
         const loadedQueryBuilder = loadQueryBuilder(
             this.repository,
-            pageFilterDto,
+            queryDto,
             activeUser,
         );
 
@@ -93,7 +93,7 @@ export class ProjectsService
                 });
             }
         });
-        const paginationMeta = new PaginationMeta(pageFilterDto.page, pageFilterDto.perPage, total);
+        const paginationMeta = new PaginationMeta(queryDto.page, queryDto.perPage, total);
 
         return new Pagination<Project>(data, paginationMeta);
     }

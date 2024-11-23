@@ -1,10 +1,10 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsInt, IsOptional, Min } from 'class-validator';
-import { PageFilterDto } from 'src/common/dto/page-filter.dto';
+import { BaseQueryDto } from 'src/common/dto/base-query.dto';
 import { RoleProperties } from '../enums/role-properties.enum';
 
 // BINGO
-export class RolePageFilterDto extends PageFilterDto<RoleProperties>
+export class RoleQueryDto extends BaseQueryDto<RoleProperties>
 {
     @IsOptional()
     @IsEnum(RoleProperties)

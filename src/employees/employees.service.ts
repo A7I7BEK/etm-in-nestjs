@@ -11,7 +11,7 @@ import { UsersService } from 'src/users/users.service';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { EmployeeChangePasswordDto } from './dto/employee-change-password.dto';
 import { EmployeeCreateDto } from './dto/employee-create.dto';
-import { EmployeePageFilterDto } from './dto/employee-page-filter.dto';
+import { EmployeeQueryDto } from './dto/employee-query.dto';
 import { EmployeeUpdateDto } from './dto/employee-update.dto';
 import { Employee } from './entities/employee.entity';
 import { createUpdateEntity } from './utils/create-update-entity.util';
@@ -75,18 +75,18 @@ export class EmployeesService
 
     async findAllWithFilters
         (
-            pageFilterDto: EmployeePageFilterDto,
+            queryDto: EmployeeQueryDto,
             activeUser: ActiveUserData,
         )
     {
         const loadedQueryBuilder = loadQueryBuilder(
             this.repository,
-            pageFilterDto,
+            queryDto,
             activeUser,
         );
 
         const [ data, total ] = await loadedQueryBuilder.getManyAndCount();
-        const paginationMeta = new PaginationMeta(pageFilterDto.page, pageFilterDto.perPage, total);
+        const paginationMeta = new PaginationMeta(queryDto.page, queryDto.perPage, total);
 
         return new Pagination<Employee>(data, paginationMeta);
     }

@@ -8,7 +8,7 @@ import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { ProjectsService } from 'src/projects/projects.service';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { ProjectMemberCreateDto } from './dto/project-member-create.dto';
-import { ProjectMemberPageFilterDto } from './dto/project-member-page-filter.dto';
+import { ProjectMemberQueryDto } from './dto/project-member-query.dto';
 import { ProjectMember } from './entities/project-member.entity';
 import { createUpdateEntity } from './utils/create-update-entity.util';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
@@ -67,18 +67,18 @@ export class ProjectMembersService
 
     async findAllWithFilters
         (
-            pageFilterDto: ProjectMemberPageFilterDto,
+            queryDto: ProjectMemberQueryDto,
             activeUser: ActiveUserData,
         )
     {
         const loadedQueryBuilder = loadQueryBuilder(
             this.repository,
-            pageFilterDto,
+            queryDto,
             activeUser,
         );
 
         const [ data, total ] = await loadedQueryBuilder.getManyAndCount();
-        const paginationMeta = new PaginationMeta(pageFilterDto.page, pageFilterDto.perPage, total);
+        const paginationMeta = new PaginationMeta(queryDto.page, queryDto.perPage, total);
 
         return new Pagination<ProjectMember>(data, paginationMeta);
     }

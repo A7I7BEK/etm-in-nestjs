@@ -3,7 +3,7 @@ import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
 import { Order } from '../pagination/order.enum';
 
 // BINGO
-export abstract class PageFilterDto<T>
+export abstract class BaseQueryDto<T>
 {
     // BINGO
     @IsOptional()

@@ -9,7 +9,7 @@ import { PermissionsService } from 'src/permissions/permissions.service';
 import { UsersService } from 'src/users/users.service';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { RoleCreateDto } from './dto/role-create.dto';
-import { RolePageFilterDto } from './dto/role-page-filter.dto';
+import { RoleQueryDto } from './dto/role-query.dto';
 import { RoleUpdateDto } from './dto/role-update.dto';
 import { Role } from './entities/role.entity';
 import { createUpdateEntity } from './utils/create-update-entity.util';
@@ -69,18 +69,18 @@ export class RolesService
 
     async findAllWithFilters
         (
-            pageFilterDto: RolePageFilterDto,
+            queryDto: RoleQueryDto,
             activeUser: ActiveUserData,
         )
     {
         const loadedQueryBuilder = loadQueryBuilder(
             this.repository,
-            pageFilterDto,
+            queryDto,
             activeUser,
         );
 
         const [ data, total ] = await loadedQueryBuilder.getManyAndCount();
-        const paginationMeta = new PaginationMeta(pageFilterDto.page, pageFilterDto.perPage, total);
+        const paginationMeta = new PaginationMeta(queryDto.page, queryDto.perPage, total);
 
         return new Pagination<Role>(data, paginationMeta);
     }

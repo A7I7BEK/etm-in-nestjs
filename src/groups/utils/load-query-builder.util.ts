@@ -1,14 +1,14 @@
 import { OrderReverse } from 'src/common/pagination/order.enum';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { Brackets, Repository } from 'typeorm';
-import { GroupPageFilterDto } from '../dto/group-page-filter.dto';
+import { GroupQueryDto } from '../dto/group-query.dto';
 import { Group } from '../entities/group.entity';
 
 
 export function loadQueryBuilder
     (
         repository: Repository<Group>,
-        pageFilterDto: GroupPageFilterDto,
+        queryDto: GroupQueryDto,
         activeUser: ActiveUserData,
     )
 {
@@ -18,27 +18,27 @@ export function loadQueryBuilder
     queryBuilder.leftJoinAndSelect(`${group}.employees`, empl);
     queryBuilder.leftJoinAndSelect(`${group}.leader`, leader);
     queryBuilder.leftJoinAndSelect(`${group}.organization`, org);
-    queryBuilder.skip(pageFilterDto.skip);
-    queryBuilder.take(pageFilterDto.perPage);
-    queryBuilder.orderBy(group + '.' + pageFilterDto.sortBy, OrderReverse[ pageFilterDto.sortDirection ]);
+    queryBuilder.skip(queryDto.skip);
+    queryBuilder.take(queryDto.perPage);
+    queryBuilder.orderBy(group + '.' + queryDto.sortBy, OrderReverse[ queryDto.sortDirection ]);
 
 
     if (!activeUser.systemAdmin)
     {
         queryBuilder.andWhere(`${group}.organization = :orgId`, { orgId: activeUser.orgId });
     }
-    else if (pageFilterDto.organizationId)
+    else if (queryDto.organizationId)
     {
-        queryBuilder.andWhere(`${group}.organization = :orgId`, { orgId: pageFilterDto.organizationId });
+        queryBuilder.andWhere(`${group}.organization = :orgId`, { orgId: queryDto.organizationId });
     }
 
 
-    if (pageFilterDto.allSearch)
+    if (queryDto.allSearch)
     {
         queryBuilder.andWhere(
             new Brackets((qb) =>
             {
-                qb.orWhere(`${group}.name ILIKE :search`, { search: `%${pageFilterDto.allSearch}%` });
+                qb.orWhere(`${group}.name ILIKE :search`, { search: `%${queryDto.allSearch}%` });
             }),
         );
     }
