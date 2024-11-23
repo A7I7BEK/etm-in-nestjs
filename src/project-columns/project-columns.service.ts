@@ -54,8 +54,10 @@ export class ProjectColumnsService
         {
             const orgOption: FindManyOptions<ProjectColumn> = {
                 where: {
-                    organization: {
-                        id: activeUser.orgId
+                    project: {
+                        organization: {
+                            id: activeUser.orgId
+                        }
                     }
                 }
             };
@@ -96,8 +98,10 @@ export class ProjectColumnsService
         {
             const orgOption: FindOneOptions<ProjectColumn> = {
                 where: {
-                    organization: {
-                        id: activeUser.orgId
+                    project: {
+                        organization: {
+                            id: activeUser.orgId
+                        }
                     }
                 }
             };
@@ -131,7 +135,7 @@ export class ProjectColumnsService
 
         if (entity.systemCreated)
         {
-            throw new ForbiddenException('System created Role cannot be edited');
+            throw new ForbiddenException('System created Column cannot be edited');
         }
 
         return createUpdateEntity(
@@ -160,7 +164,7 @@ export class ProjectColumnsService
 
         if (entity.systemCreated)
         {
-            throw new ForbiddenException('System created Role cannot be deleted');
+            throw new ForbiddenException('System created Column cannot be deleted');
         }
 
         return this.repository.remove(entity);

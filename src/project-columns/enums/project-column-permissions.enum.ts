@@ -1,7 +1,7 @@
 export enum ProjectColumnPermissions
 {
-    Create = 'ROLE_CREATE',
-    Read = 'ROLE_READ',
-    Update = 'ROLE_UPDATE',
-    Delete = 'ROLE_DELETE',
+    Create = 'PROJECT_COLUMN_CREATE',
+    Read = 'PROJECT_COLUMN_READ',
+    Update = 'PROJECT_COLUMN_UPDATE',
+    Delete = 'PROJECT_COLUMN_DELETE',
 }

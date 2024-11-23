@@ -7,9 +7,4 @@ export enum ProjectPermissions
     ChangeBackground = 'PROJECT_CHANGE_BACKGROUND',
 
     ReadDetails = 'PROJECT_READ_DETAILS',
-
-    ColumnCreate = 'PROJECT_COLUMN_CREATE',
-    ColumnRead = 'PROJECT_COLUMN_READ',
-    ColumnUpdate = 'PROJECT_COLUMN_UPDATE',
-    ColumnDelete = 'PROJECT_COLUMN_DELETE',
 }

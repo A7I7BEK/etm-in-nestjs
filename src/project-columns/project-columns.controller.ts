@@ -56,7 +56,7 @@ export class ProjectColumnsController
         const entity = await this._service.findOne(
             {
                 where: { id },
-                relations: { organization: true }
+                relations: { project: true }
             },
             activeUser,
         );

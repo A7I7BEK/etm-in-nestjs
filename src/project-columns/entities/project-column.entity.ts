@@ -14,6 +14,9 @@ export class ProjectColumn
     codeName: string;
 
     @Column()
+    systemCreated: boolean = false;
+
+    @Column()
     ordering: number;
 
     @ManyToOne(type => Project, p => p.columns)

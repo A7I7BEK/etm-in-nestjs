@@ -1,7 +1,7 @@
 export enum ProjectColumnProperties
 {
     ID = 'id',
-    ROLENAME = 'roleName',
-    CODENAME = 'codeName',
-    ORGANIZATION = 'organization',
+    NAME = 'name',
+    CODE_NAME = 'codeName',
+    PROJECT = 'project',
 }
