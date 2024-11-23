@@ -1,6 +1,7 @@
 import { Employee } from 'src/employees/entities/employee.entity';
 import { Group } from 'src/groups/entities/group.entity';
 import { Organization } from 'src/organizations/entities/organization.entity';
+import { ProjectColumn } from 'src/project-columns/entities/project-column.entity';
 import { ProjectMember } from 'src/project-members/entities/project-member.entity';
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { ProjectType } from '../enums/project-type';
@@ -30,11 +31,14 @@ export class Project
     @ManyToOne(type => Group)
     group: Group;
 
-    @OneToMany(type => ProjectMember, pMember => pMember.project)
+    @OneToMany(type => ProjectMember, m => m.project)
     members: ProjectMember[];
 
     @ManyToOne(type => Employee)
     manager: Employee;
+
+    @OneToMany(type => ProjectColumn, c => c.project)
+    columns: ProjectColumn[];
 
     @ManyToOne(type => Organization)
     organization: Organization;
