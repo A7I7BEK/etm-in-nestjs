@@ -1,7 +1,6 @@
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { OrganizationsService } from 'src/organizations/organizations.service';
-import { PermissionsService } from 'src/permissions/permissions.service';
-import { In, Repository } from 'typeorm';
+import { ProjectsService } from 'src/projects/projects.service';
+import { Repository } from 'typeorm';
 import { ProjectColumnCreateDto } from '../dto/project-column-create.dto';
 import { ProjectColumnUpdateDto } from '../dto/project-column-update.dto';
 import { ProjectColumn } from '../entities/project-column.entity';
@@ -9,30 +8,32 @@ import { ProjectColumn } from '../entities/project-column.entity';
 
 export async function createUpdateEntity
     (
-        organizationsService: OrganizationsService,
-        permissionsService: PermissionsService,
+        projectsService: ProjectsService,
         repository: Repository<ProjectColumn>,
         dto: ProjectColumnCreateDto | ProjectColumnUpdateDto,
         activeUser: ActiveUserData,
         entity = new ProjectColumn(),
     )
 {
-    const organizationEntity = await organizationsService.findOneActiveUser(
-        {
-            where: { id: dto.organizationId }
-        },
-        activeUser,
-    );
+    if (dto instanceof ProjectColumnCreateDto)
+    {
+        entity.project = await projectsService.findOne(
+            {
+                where: { id: dto.projectId }
+            },
+            activeUser,
+        );
+
+        entity.ordering = await projectsService.repository.count(
+            {
+                where: { id: dto.projectId }
+            }
+        );
+    }
 
 
-    const permissionIds = dto.permissions.map(x => x.id); // temporary for this project, must be: [1, 2, 3]
-    const permissionEntities = await permissionsService.findAll({ where: { id: In(permissionIds) } }); // BINGO
-
-
-    entity.roleName = dto.roleName;
+    entity.name = dto.name;
     entity.codeName = dto.codeName;
-    entity.organization = organizationEntity;
-    entity.permissions = permissionEntities;
 
 
     return repository.save(entity);

@@ -5,14 +5,18 @@ import { ProjectColumn } from '../entities/project-column.entity';
  */
 export function modifyEntityForFront(entity: ProjectColumn)
 {
-    const { organization } = entity;
+    const { project } = entity;
 
 
-    if (organization)
+    if (project)
     {
         Object.assign(entity, {
-            organizationId: organization.id,
-            organizationName: organization.name,
+            projectId: project.id,
+            projectName: project.name,
+            projectType: {
+                name: project.projectType,
+                value: project.projectType,
+            },
         });
     }
 

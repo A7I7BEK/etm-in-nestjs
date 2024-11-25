@@ -4,14 +4,15 @@ import { Permission } from 'src/iam/authorization/decorators/permission.decorato
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { ProjectColumnCreateDto } from './dto/project-column-create.dto';
-import { ProjectColumnQueryDto } from './dto/project-column-query.dto';
+import { ProjectColumnMoveDto } from './dto/project-column-move.dto';
+import { ProjectColumnSelectQueryDto } from './dto/project-column-select-query.dto';
 import { ProjectColumnUpdateDto } from './dto/project-column-update.dto';
 import { ProjectColumnPermissions } from './enums/project-column-permissions.enum';
 import { ProjectColumnsService } from './project-columns.service';
 import { modifyEntityForFront } from './utils/modify-entity-for-front.util';
 
-@ApiTags('project-columns')
-@Controller('project-columns')
+@ApiTags('projectColumns')
+@Controller('projectColumns')
 export class ProjectColumnsController
 {
     constructor (private readonly _service: ProjectColumnsService) { }
@@ -30,18 +31,26 @@ export class ProjectColumnsController
     }
 
 
-    @Get()
+    @Get('selection')
     @Permission(ProjectColumnPermissions.Read)
     async findAll
         (
-            @Query() queryDto: ProjectColumnQueryDto,
+            @Query() queryDto: ProjectColumnSelectQueryDto,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entityWithPagination = await this._service.findAllWithFilters(queryDto, activeUser);
-        entityWithPagination.data = entityWithPagination.data.map(entity => modifyEntityForFront(entity));
-
-        return entityWithPagination;
+        const entityList = await this._service.findAll(
+            {
+                where: {
+                    project: {
+                        id: queryDto.projectId
+                    }
+                },
+                relations: { project: true }
+            },
+            activeUser,
+        );
+        return entityList.map(entity => modifyEntityForFront(entity));
     }
 
 
@@ -75,6 +84,19 @@ export class ProjectColumnsController
     {
         const entity = await this._service.update(id, updateDto, activeUser);
         return modifyEntityForFront(entity);
+    }
+
+
+    @Post('move')
+    @Permission(ProjectColumnPermissions.Update)
+    async move
+        (
+            @Body() moveDto: ProjectColumnMoveDto,
+            @ActiveUser() activeUser: ActiveUserData,
+        )
+    {
+        const entityList = await this._service.move(moveDto, activeUser);
+        return entityList.map(entity => modifyEntityForFront(entity));
     }
 
 
