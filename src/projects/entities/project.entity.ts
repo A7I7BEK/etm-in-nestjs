@@ -41,7 +41,7 @@ export class Project
     @OneToMany(type => ProjectColumn, c => c.project)
     columns: ProjectColumn[];
 
-    @OneToMany(type => ProjectTag, c => c.project)
+    @OneToMany(type => ProjectTag, t => t.project)
     tags: ProjectTag[];
 
     @ManyToOne(type => Organization)
