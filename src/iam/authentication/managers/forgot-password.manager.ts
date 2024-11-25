@@ -17,13 +17,11 @@ import { ForgotPassword } from '../entities/forgot-password.entity';
 export class ForgotPasswordManager
 {
     constructor (
-        @InjectRepository(User)
-        private readonly usersRepository: Repository<User>,
         @InjectRepository(ForgotPassword)
-        private readonly forgotPasswordRepository: Repository<ForgotPassword>,
-        private readonly hashingService: HashingService,
-        private readonly oneTimePasswordService: OneTimePasswordService,
-        private readonly usersService: UsersService,
+        public readonly repository: Repository<ForgotPassword>,
+        private readonly _hashingService: HashingService,
+        private readonly _oneTimePasswordService: OneTimePasswordService,
+        private readonly _usersService: UsersService,
     ) { }
 
     async forgotPasswordSend(forgotPasswordSendDto: ForgotPasswordSendDto)
@@ -43,20 +41,25 @@ export class ForgotPasswordManager
             userFindOptions.email = contact;
         }
 
-        const user = await this.usersService.findOne(userFindOptions);
-        const { otpId: id } = await this.oneTimePasswordService.send(user, options);
+        const user = await this._usersService.repository.findOneBy(userFindOptions);
+        if (!user)
+        {
+            throw new NotFoundException(`${User.name} not found`);
+        }
+
+        const { otpId: id } = await this._oneTimePasswordService.send(user, options);
 
         return { id };
     }
 
     async forgotPasswordResend(id: string)
     {
-        await this.oneTimePasswordService.resend(id);
+        await this._oneTimePasswordService.resend(id);
     }
 
     async forgotPasswordConfirm(forgotPasswordConfirmDto: ForgotPasswordConfirmDto)
     {
-        const user = await this.oneTimePasswordService.confirm(
+        const user = await this._oneTimePasswordService.confirm(
             forgotPasswordConfirmDto.otpId,
             forgotPasswordConfirmDto.otpCode,
         );
@@ -67,24 +70,24 @@ export class ForgotPasswordManager
         entity.uniqueId = uniqueId;
         entity.user = user;
         entity.createdAt = Date.now().toString();
-        await this.forgotPasswordRepository.save(entity);
+        await this.repository.save(entity);
 
         return { uniqueKey: uniqueId };
     }
 
     async forgotPasswordChange(forgotPasswordChangeDto: ForgotPasswordChangeDto)
     {
-        const entity = await this.forgotPasswordRepository.findOneBy({ uniqueId: forgotPasswordChangeDto.uniqueKey });
+        const entity = await this.repository.findOneBy({ uniqueId: forgotPasswordChangeDto.uniqueKey });
         if (!entity)
         {
             throw new NotFoundException(`${ForgotPassword.name} not found`);
         }
 
-        entity.user.password = await this.hashingService.hash(forgotPasswordChangeDto.password);
+        entity.user.password = await this._hashingService.hash(forgotPasswordChangeDto.password);
         entity.user.marks = USER_MARK_REGISTER_CONFIRMED;
-        await this.usersRepository.save(entity.user);
+        await this._usersService.repository.save(entity.user);
 
         entity.completed = true;
-        await this.forgotPasswordRepository.save(entity);
+        await this.repository.save(entity);
     }
 }
