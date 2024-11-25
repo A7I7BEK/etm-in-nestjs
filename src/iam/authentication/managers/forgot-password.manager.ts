@@ -5,7 +5,6 @@ import { OtpSendingOptions } from 'src/one-time-password/interfaces/otp-sending-
 import { OneTimePasswordService } from 'src/one-time-password/one-time-password.service';
 import { User } from 'src/users/entities/user.entity';
 import { USER_MARK_REGISTER_CONFIRMED } from 'src/users/marks/user-mark.constants';
-import { UsersService } from 'src/users/users.service';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { HashingService } from '../../hashing/hashing.service';
 import { ForgotPasswordChangeDto } from '../dto/forgot-password-change.dto';
@@ -19,9 +18,10 @@ export class ForgotPasswordManager
     constructor (
         @InjectRepository(ForgotPassword)
         public readonly repository: Repository<ForgotPassword>,
+        @InjectRepository(User)
+        private readonly _usersRepository: Repository<User>,
         private readonly _hashingService: HashingService,
         private readonly _oneTimePasswordService: OneTimePasswordService,
-        private readonly _usersService: UsersService,
     ) { }
 
     async forgotPasswordSend(forgotPasswordSendDto: ForgotPasswordSendDto)
@@ -41,7 +41,7 @@ export class ForgotPasswordManager
             userFindOptions.email = contact;
         }
 
-        const user = await this._usersService.repository.findOneBy(userFindOptions);
+        const user = await this._usersRepository.findOneBy(userFindOptions);
         if (!user)
         {
             throw new NotFoundException(`${User.name} not found`);
@@ -85,7 +85,7 @@ export class ForgotPasswordManager
 
         entity.user.password = await this._hashingService.hash(forgotPasswordChangeDto.password);
         entity.user.marks = USER_MARK_REGISTER_CONFIRMED;
-        await this._usersService.repository.save(entity.user);
+        await this._usersRepository.save(entity.user);
 
         entity.completed = true;
         await this.repository.save(entity);
