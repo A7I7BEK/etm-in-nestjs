@@ -1,23 +1,16 @@
-import { Type } from 'class-transformer';
-import { ArrayMinSize, IsInt, IsNotEmpty, IsString, Min, ValidateNested } from 'class-validator';
-import { ObjectIdDto } from 'src/common/dto/object-id.dto';
+import { IsInt, IsNotEmpty, IsString, Min } from 'class-validator';
 
 export class ProjectTagCreateDto
 {
     @IsNotEmpty()
     @IsString()
-    roleName: string;
+    name: string;
 
     @IsNotEmpty()
     @IsString()
-    codeName: string;
+    color: string;
 
-    @ArrayMinSize(1)
-    @ValidateNested({ each: true }) // BINGO
-    @Type(() => ObjectIdDto)
-    permissions: ObjectIdDto[];
-
-    @Min(0)
+    @Min(1)
     @IsInt()
-    organizationId: number;
+    projectId: number;
 }

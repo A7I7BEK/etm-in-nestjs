@@ -1,7 +1,5 @@
-import { Organization } from 'src/organizations/entities/organization.entity';
-import { Permission } from 'src/permissions/entities/permission.entity';
-import { User } from 'src/users/entities/user.entity';
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Project } from 'src/projects/entities/project.entity';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class ProjectTag
@@ -10,21 +8,11 @@ export class ProjectTag
     id: number;
 
     @Column()
-    roleName: string;
+    name: string;
 
     @Column()
-    codeName: string;
+    color: string;
 
-    @Column()
-    systemCreated: boolean = false;
-
-    @JoinTable()
-    @ManyToMany(type => Permission, { eager: true })
-    permissions: Permission[];
-
-    @ManyToMany(type => User, user => user.roles)
-    users: User[];
-
-    @ManyToOne(type => Organization)
-    organization: Organization;
+    @ManyToOne(type => Project, p => p.tags)
+    project: Project;
 }

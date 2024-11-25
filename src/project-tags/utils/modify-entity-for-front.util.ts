@@ -5,14 +5,18 @@ import { ProjectTag } from '../entities/project-tag.entity';
  */
 export function modifyEntityForFront(entity: ProjectTag)
 {
-    const { organization } = entity;
+    const { project } = entity;
 
 
-    if (organization)
+    if (project)
     {
         Object.assign(entity, {
-            organizationId: organization.id,
-            organizationName: organization.name,
+            projectId: project.id,
+            projectName: project.name,
+            projectType: {
+                name: project.projectType,
+                value: project.projectType,
+            },
         });
     }
 

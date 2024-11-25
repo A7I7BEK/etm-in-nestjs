@@ -12,23 +12,23 @@ export function loadQueryBuilder
         activeUser: ActiveUserData,
     )
 {
-    const [ role, org ] = [ 'role', 'organization' ];
-    const queryBuilder = repository.createQueryBuilder(role);
+    const [ pTag, proj, org ] = [ 'projectTag', 'project', 'organization' ];
+    const queryBuilder = repository.createQueryBuilder(pTag);
 
 
-    queryBuilder.leftJoinAndSelect(`${role}.organization`, org);
+    queryBuilder.leftJoinAndSelect(`${pTag}.project`, proj);
+    queryBuilder.leftJoinAndSelect(`${proj}.organization`, org);
     queryBuilder.skip(queryDto.skip);
     queryBuilder.take(queryDto.perPage);
-    queryBuilder.orderBy(role + '.' + queryDto.sortBy, OrderReverse[ queryDto.sortDirection ]);
+    queryBuilder.orderBy(pTag + '.' + queryDto.sortBy, OrderReverse[ queryDto.sortDirection ]);
+
+
+    queryBuilder.andWhere(`${pTag}.project = :projId`, { projId: queryDto.projectId });
 
 
     if (!activeUser.systemAdmin)
     {
-        queryBuilder.andWhere(`${role}.organization = :orgId`, { orgId: activeUser.orgId });
-    }
-    else if (queryDto.organizationId) // BINGO: activeUser.systemAdmin && queryDto.organizationId
-    {
-        queryBuilder.andWhere(`${role}.organization = :orgId`, { orgId: queryDto.organizationId });
+        queryBuilder.andWhere(`${proj}.organization = :orgId`, { orgId: activeUser.orgId });
     }
 
 
@@ -37,8 +37,7 @@ export function loadQueryBuilder
         queryBuilder.andWhere(
             new Brackets((qb) =>
             {
-                qb.orWhere(`${role}.codeName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
-                qb.orWhere(`${role}.roleName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
+                qb.orWhere(`${pTag}.name ILIKE :search`, { search: `%${queryDto.allSearch}%` });
             }),
         );
     }

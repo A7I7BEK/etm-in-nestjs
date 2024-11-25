@@ -1,12 +1,10 @@
-import { ForbiddenException, forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
 import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { OrganizationsService } from 'src/organizations/organizations.service';
-import { PermissionsService } from 'src/permissions/permissions.service';
-import { UsersService } from 'src/users/users.service';
+import { ProjectsService } from 'src/projects/projects.service';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { ProjectTagCreateDto } from './dto/project-tag-create.dto';
 import { ProjectTagQueryDto } from './dto/project-tag-query.dto';
@@ -21,10 +19,7 @@ export class ProjectTagsService
     constructor (
         @InjectRepository(ProjectTag)
         public readonly repository: Repository<ProjectTag>,
-        private readonly _organizationsService: OrganizationsService,
-        private readonly _permissionsService: PermissionsService,
-        @Inject(forwardRef(() => UsersService)) // BINGO
-        private readonly _usersService: UsersService,
+        private readonly _projectsService: ProjectsService,
     ) { }
 
 
@@ -35,8 +30,7 @@ export class ProjectTagsService
         )
     {
         return createUpdateEntity(
-            this._organizationsService,
-            this._permissionsService,
+            this._projectsService,
             this.repository,
             createDto,
             activeUser,
@@ -54,13 +48,15 @@ export class ProjectTagsService
         {
             const orgOption: FindManyOptions<ProjectTag> = {
                 where: {
-                    organization: {
-                        id: activeUser.orgId
+                    project: {
+                        organization: {
+                            id: activeUser.orgId
+                        }
                     }
                 }
             };
 
-            setNestedOptions(options ??= {}, orgOption); // BINGO
+            setNestedOptions(options ??= {}, orgOption);
         }
 
         return this.repository.find(options);
@@ -96,13 +92,15 @@ export class ProjectTagsService
         {
             const orgOption: FindOneOptions<ProjectTag> = {
                 where: {
-                    organization: {
-                        id: activeUser.orgId
+                    project: {
+                        organization: {
+                            id: activeUser.orgId
+                        }
                     }
                 }
             };
 
-            setNestedOptions(options ??= {}, orgOption); // BINGO
+            setNestedOptions(options ??= {}, orgOption);
         }
 
         const entity = await this.repository.findOne(options);
@@ -129,14 +127,8 @@ export class ProjectTagsService
             activeUser,
         );
 
-        if (entity.systemCreated)
-        {
-            throw new ForbiddenException('System created Role cannot be edited');
-        }
-
         return createUpdateEntity(
-            this._organizationsService,
-            this._permissionsService,
+            this._projectsService,
             this.repository,
             updateDto,
             activeUser,
@@ -157,11 +149,6 @@ export class ProjectTagsService
             },
             activeUser,
         );
-
-        if (entity.systemCreated)
-        {
-            throw new ForbiddenException('System created Role cannot be deleted');
-        }
 
         return this.repository.remove(entity);
     }

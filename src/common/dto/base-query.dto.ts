@@ -10,14 +10,14 @@ export abstract class BaseQueryDto<T>
     @Min(0) // temporary for this project, must be 1
     @IsInt()
     @Type(() => Number) // BINGO
-    page?: number; // default for project: 0
+    page?: number; // starts from: 0
 
     @IsOptional()
     @Max(100)
     @Min(1)
     @IsInt()
     @Type(() => Number) // BINGO
-    perPage?: number;
+    perPage?: number; // temporary for this project, must be: pageSize
 
     abstract sortBy?: T; // BINGO
 

@@ -9,9 +9,8 @@ export class ProjectTagQueryDto extends BaseQueryDto<ProjectTagProperties>
     @IsEnum(ProjectTagProperties)
     sortBy?: ProjectTagProperties = ProjectTagProperties.ID;
 
-    @IsOptional()
     @Min(1)
     @IsInt()
     @Type(() => Number)
-    organizationId?: number;
+    projectId: number;
 }

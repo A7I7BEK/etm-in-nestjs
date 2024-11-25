@@ -3,6 +3,7 @@ import { Group } from 'src/groups/entities/group.entity';
 import { Organization } from 'src/organizations/entities/organization.entity';
 import { ProjectColumn } from 'src/project-columns/entities/project-column.entity';
 import { ProjectMember } from 'src/project-members/entities/project-member.entity';
+import { ProjectTag } from 'src/project-tags/entities/project-tag.entity';
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { ProjectType } from '../enums/project-type';
 
@@ -39,6 +40,9 @@ export class Project
 
     @OneToMany(type => ProjectColumn, c => c.project)
     columns: ProjectColumn[];
+
+    @OneToMany(type => ProjectTag, c => c.project)
+    tags: ProjectTag[];
 
     @ManyToOne(type => Organization)
     organization: Organization;
