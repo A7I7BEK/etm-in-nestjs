@@ -5,6 +5,5 @@ export enum ProjectPermissions
     Update = 'PROJECT_UPDATE',
     Delete = 'PROJECT_DELETE',
     ChangeBackground = 'PROJECT_CHANGE_BACKGROUND',
-
     ReadDetails = 'PROJECT_READ_DETAILS',
 }

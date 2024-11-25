@@ -5,6 +5,7 @@ import { OrganizationPermissions } from 'src/organizations/enums/organization-pe
 import { PermissionPermissions } from 'src/permissions/enums/permission-permissions.enum';
 import { ProjectColumnPermissions } from 'src/project-columns/enums/project-column-permissions.enum';
 import { ProjectMemberPermissions } from 'src/project-members/enums/project-member-permissions.enum';
+import { ProjectTagPermissions } from 'src/project-tags/enums/project-tag-permissions.enum';
 import { ProjectPermissions } from 'src/projects/enums/project-permissions.enum';
 import { ReportPermissions } from 'src/reports/enums/report-permissions.enum';
 import { RolePermissions } from 'src/roles/enums/role-permissions.enum';
@@ -22,6 +23,7 @@ export type PermissionType = (
     | ProjectPermissions
     | ProjectColumnPermissions
     | ProjectMemberPermissions
+    | ProjectTagPermissions
     | TaskPermissions
     | CheckListGroupPermissions
     | ReportPermissions
@@ -39,6 +41,7 @@ export const permissionList = [
     ...Object.values(ProjectPermissions),
     ...Object.values(ProjectColumnPermissions),
     ...Object.values(ProjectMemberPermissions),
+    ...Object.values(ProjectTagPermissions),
     ...Object.values(TaskPermissions),
     ...Object.values(CheckListGroupPermissions),
     ...Object.values(ReportPermissions),
