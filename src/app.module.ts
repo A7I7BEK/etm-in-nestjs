@@ -5,25 +5,23 @@ import { AppService } from './app.service';
 import { CheckListGroupsModule } from './check-list-groups/check-list-groups.module';
 import appConfig from './common/config/app.config';
 import { EmployeesModule } from './employees/employees.module';
-import { Employee } from './employees/entities/employee.entity';
 import { GroupsModule } from './groups/groups.module';
 import { BcryptService } from './iam/hashing/bcrypt.service';
 import { HashingService } from './iam/hashing/hashing.service';
 import { IamModule } from './iam/iam.module';
 import { MailModule } from './mail/mail.module';
 import { OneTimePasswordModule } from './one-time-password/one-time-password.module';
-import { Organization } from './organizations/entities/organization.entity';
 import { OrganizationsModule } from './organizations/organizations.module';
 import { Permission } from './permissions/entities/permission.entity';
 import { PermissionsModule } from './permissions/permissions.module';
+import { ProjectColumnsModule } from './project-columns/project-columns.module';
 import { ProjectMembersModule } from './project-members/project-members.module';
+import { ProjectTagsModule } from './project-tags/project-tags.module';
 import { ProjectsModule } from './projects/projects.module';
 import { ReportsModule } from './reports/reports.module';
 import { ResourceModule } from './resource/resource.module';
-import { Role } from './roles/entities/role.entity';
 import { RolesModule } from './roles/roles.module';
 import { TasksModule } from './tasks/tasks.module';
-import { User } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -47,10 +45,6 @@ import { UsersModule } from './users/users.module';
             },
         }),
         TypeOrmModule.forFeature([
-            Organization,
-            User,
-            Employee,
-            Role,
             Permission,
         ]),
         IamModule,
@@ -63,11 +57,13 @@ import { UsersModule } from './users/users.module';
         PermissionsModule,
         GroupsModule,
         ProjectsModule,
+        ProjectColumnsModule,
+        ProjectMembersModule,
+        ProjectTagsModule,
         TasksModule,
         CheckListGroupsModule,
         ReportsModule,
         OneTimePasswordModule,
-        ProjectMembersModule,
     ],
     providers: [
         AppService,

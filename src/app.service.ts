@@ -9,7 +9,7 @@ export class AppService implements OnApplicationBootstrap
 {
     constructor (
         @InjectRepository(Permission)
-        private readonly permissionsRepository: Repository<Permission>,
+        private readonly _permissionsRepository: Repository<Permission>,
     ) { }
 
     async onApplicationBootstrap()
@@ -29,7 +29,7 @@ export class AppService implements OnApplicationBootstrap
             // await this.permissionsRepository.delete({}); // if deleted, roles crash
             // await this.permissionsRepository.upsert(permissions, [ "codeName" ]); // the same as below 👇
 
-            await this.permissionsRepository
+            await this._permissionsRepository
                 .createQueryBuilder()
                 .insert()
                 .values(permissions)
