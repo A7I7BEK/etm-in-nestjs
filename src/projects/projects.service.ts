@@ -7,6 +7,9 @@ import { EmployeesService } from 'src/employees/employees.service';
 import { GroupsService } from 'src/groups/groups.service';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { OrganizationsService } from 'src/organizations/organizations.service';
+import { ProjectColumnsService } from 'src/project-columns/project-columns.service';
+import { ProjectMembersService } from 'src/project-members/project-members.service';
+import { ProjectTagsService } from 'src/project-tags/project-tags.service';
 import { ResourceService } from 'src/resource/resource.service';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { ProjectBackgroundDto } from './dto/project-background.dto';
@@ -15,8 +18,9 @@ import { ProjectQueryDto } from './dto/project-query.dto';
 import { ProjectUpdateDto } from './dto/project-update.dto';
 import { Project } from './entities/project.entity';
 import { ProjectType } from './enums/project-type';
-import { createUpdateEntity } from './utils/create-update-entity.util';
+import { createEntity } from './utils/create-entity.util';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
+import { updateEntity } from './utils/update-entity.util.ts';
 
 @Injectable()
 export class ProjectsService
@@ -25,8 +29,11 @@ export class ProjectsService
         @InjectRepository(Project)
         public readonly repository: Repository<Project>,
         private readonly _organizationsService: OrganizationsService,
-        private readonly _groupsService: GroupsService,
         private readonly _employeesService: EmployeesService,
+        private readonly _groupsService: GroupsService,
+        private readonly _projectColumnsService: ProjectColumnsService,
+        private readonly _projectMembersService: ProjectMembersService,
+        private readonly _projectTagsService: ProjectTagsService,
         private readonly _resourceService: ResourceService,
     ) { }
 
@@ -37,10 +44,13 @@ export class ProjectsService
             activeUser: ActiveUserData,
         )
     {
-        return createUpdateEntity(
+        return createEntity(
             this._organizationsService,
-            this._groupsService,
             this._employeesService,
+            this._groupsService,
+            this._projectMembersService,
+            this._projectColumnsService,
+            this._projectTagsService,
             this.repository,
             createDto,
             activeUser,
@@ -142,10 +152,11 @@ export class ProjectsService
             activeUser,
         );
 
-        return createUpdateEntity(
+        return updateEntity(
             this._organizationsService,
-            this._groupsService,
             this._employeesService,
+            this._groupsService,
+            this._projectMembersService,
             this.repository,
             updateDto,
             activeUser,
@@ -184,7 +195,10 @@ export class ProjectsService
         );
 
         const file = await this._resourceService.findOne({ url: entity.background });
-        await this._resourceService.remove(file.id);
+        if (file)
+        {
+            await this._resourceService.remove(file.id);
+        }
 
         entity.background = backgroundDto.background;
         return this.repository.save(entity);
