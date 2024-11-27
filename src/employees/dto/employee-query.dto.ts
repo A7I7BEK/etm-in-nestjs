@@ -20,5 +20,5 @@ export class EmployeeQueryDto extends BaseQueryDto<EmployeeProperties | UserProp
     @Min(1)
     @IsInt()
     @Type(() => Number)
-    projectId?: number; // TODO
+    projectId?: number;
 }

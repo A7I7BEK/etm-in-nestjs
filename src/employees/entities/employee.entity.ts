@@ -1,5 +1,6 @@
+import { ProjectMember } from 'src/project-members/entities/project-member.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, Relation } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, Relation } from 'typeorm';
 
 @Entity()
 export class Employee
@@ -25,4 +26,7 @@ export class Employee
     @JoinColumn()
     @OneToOne(type => User, user => user.employee)
     user: Relation<User>;
+
+    @OneToMany(type => ProjectMember, m => m.employee)
+    members: ProjectMember[];
 }

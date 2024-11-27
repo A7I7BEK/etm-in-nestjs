@@ -12,7 +12,7 @@ export function loadQueryBuilder(
     activeUser: ActiveUserData,
 )
 {
-    const [ empl, user, org, role ] = [ 'employee', 'user', 'organization', 'role' ];
+    const [ empl, user, org, role, members ] = [ 'employee', 'user', 'organization', 'role', 'members' ];
 
     // BINGO
     const sortBy = (<any>Object)
@@ -26,6 +26,7 @@ export function loadQueryBuilder(
     queryBuilder.leftJoinAndSelect(`${empl}.user`, user);
     queryBuilder.leftJoinAndSelect(`${user}.organization`, org);
     queryBuilder.leftJoinAndSelect(`${user}.roles`, role);
+    queryBuilder.leftJoinAndSelect(`${empl}.members`, members);
     queryBuilder.skip(queryDto.skip);
     queryBuilder.take(queryDto.perPage);
     queryBuilder.orderBy(sortBy, OrderReverse[ queryDto.sortDirection ]);
@@ -33,11 +34,17 @@ export function loadQueryBuilder(
 
     if (!activeUser.systemAdmin)
     {
-        queryBuilder.andWhere(`${role}.organization = :orgId`, { orgId: activeUser.orgId });
+        queryBuilder.andWhere(`${user}.organization = :orgId`, { orgId: activeUser.orgId });
     }
     else if (queryDto.organizationId)
     {
-        queryBuilder.andWhere(`${role}.organization = :orgId`, { orgId: queryDto.organizationId });
+        queryBuilder.andWhere(`${user}.organization = :orgId`, { orgId: queryDto.organizationId });
+    }
+
+
+    if (queryDto.projectId) // TODO: check if working properly
+    {
+        queryBuilder.andWhere(`${members}.project = :prId`, { prId: queryDto.projectId });
     }
 
 
