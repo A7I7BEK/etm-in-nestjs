@@ -45,6 +45,10 @@ export async function updateEntity(
     );
 
 
+    if (!groupEntity.employees.find(x => x.id === managerEntity.id))
+    {
+        groupEntity.employees.push(managerEntity);
+    }
     const memberList = groupEntity.employees.map(item =>
     {
         const member = new ProjectMember();
@@ -53,13 +57,8 @@ export async function updateEntity(
 
         return member;
     });
+    await projectMembersService.repository.remove(entity.members);
     await projectMembersService.repository.save(memberList);
-
-
-    if (entity.group.id !== groupEntity.id)
-    {
-        // TODO: remove old members
-    }
 
 
     entity.name = dto.name;

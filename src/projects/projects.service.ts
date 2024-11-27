@@ -150,7 +150,8 @@ export class ProjectsService
     {
         const entity = await this.findOne(
             {
-                where: { id }
+                where: { id },
+                relations: { members: true },
             },
             activeUser,
         );
@@ -176,10 +177,19 @@ export class ProjectsService
     {
         const entity = await this.findOne(
             {
-                where: { id }
+                where: { id },
+                relations: {
+                    columns: true,
+                    members: true,
+                    tags: true,
+                },
             },
             activeUser,
         );
+
+        await this._projectColumnsService.repository.remove(entity.columns);
+        await this._projectMembersService.repository.remove(entity.members);
+        await this._projectTagsService.repository.remove(entity.tags);
         return this.repository.remove(entity);
     }
 

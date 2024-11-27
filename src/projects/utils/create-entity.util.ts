@@ -53,6 +53,10 @@ export async function createEntity(
     );
 
 
+    if (!groupEntity.employees.find(x => x.id === managerEntity.id))
+    {
+        groupEntity.employees.push(managerEntity);
+    }
     const memberList = groupEntity.employees.map(item =>
     {
         const member = new ProjectMember();
