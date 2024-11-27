@@ -17,7 +17,7 @@ export function modifyEntityForFront(entity: Employee) // BINGO
             userName: user.userName,
             email: user.email,
             phoneNumber: user.phoneNumber,
-            systemAdmin: false, // TODO: systemAdmin
+            systemAdmin: false,
         });
     }
 

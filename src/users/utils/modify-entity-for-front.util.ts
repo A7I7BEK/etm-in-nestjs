@@ -7,7 +7,7 @@ export function modifyEntityForFront(entity: User)
 {
     const { employee, organization } = entity;
     entity[ 'userId' ] = entity.id;
-    entity[ 'systemAdmin' ] = false; // TODO: systemAdmin
+    entity[ 'systemAdmin' ] = false;
 
     delete entity.password;
     delete entity.id;

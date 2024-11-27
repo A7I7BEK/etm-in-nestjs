@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { SYSTEM_ADMIN_DATA } from 'src/common/constants/system-admin-data.constant';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
@@ -22,6 +23,11 @@ export class UsersController
             @ActiveUser() activeUser: ActiveUserData
         )
     {
+        if (activeUser.systemAdmin)
+        {
+            return SYSTEM_ADMIN_DATA;
+        }
+
         const entity = await this._service.findOne(
             {
                 where: { id: activeUser.sub },
