@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EmployeesModule } from 'src/employees/employees.module';
 import { ProjectsModule } from 'src/projects/projects.module';
@@ -9,7 +9,7 @@ import { ProjectMembersService } from './project-members.service';
 @Module({
     imports: [
         TypeOrmModule.forFeature([ ProjectMember ]),
-        ProjectsModule,
+        forwardRef(() => ProjectsModule), // BINGO
         EmployeesModule,
     ],
     exports: [ ProjectMembersService ],

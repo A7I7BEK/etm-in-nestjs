@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProjectsModule } from 'src/projects/projects.module';
 import { ProjectColumn } from './entities/project-column.entity';
@@ -8,7 +8,7 @@ import { ProjectColumnsService } from './project-columns.service';
 @Module({
     imports: [
         TypeOrmModule.forFeature([ ProjectColumn ]),
-        ProjectsModule,
+        forwardRef(() => ProjectsModule), // BINGO
     ],
     exports: [ ProjectColumnsService ],
     controllers: [ ProjectColumnsController ],

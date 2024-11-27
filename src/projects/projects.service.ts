@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
@@ -31,8 +31,11 @@ export class ProjectsService
         private readonly _organizationsService: OrganizationsService,
         private readonly _employeesService: EmployeesService,
         private readonly _groupsService: GroupsService,
+        @Inject(forwardRef(() => ProjectColumnsService)) // BINGO
         private readonly _projectColumnsService: ProjectColumnsService,
+        @Inject(forwardRef(() => ProjectMembersService)) // BINGO
         private readonly _projectMembersService: ProjectMembersService,
+        @Inject(forwardRef(() => ProjectTagsService)) // BINGO
         private readonly _projectTagsService: ProjectTagsService,
         private readonly _resourceService: ResourceService,
     ) { }

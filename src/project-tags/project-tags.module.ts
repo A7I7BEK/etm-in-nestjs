@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProjectsModule } from 'src/projects/projects.module';
 import { ProjectTag } from './entities/project-tag.entity';
@@ -8,7 +8,7 @@ import { ProjectTagsService } from './project-tags.service';
 @Module({
     imports: [
         TypeOrmModule.forFeature([ ProjectTag ]),
-        ProjectsModule,
+        forwardRef(() => ProjectsModule), // BINGO
     ],
     exports: [ ProjectTagsService ],
     controllers: [ ProjectTagsController ],
