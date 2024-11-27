@@ -7,7 +7,6 @@ import { Project } from '../entities/project.entity';
 export function modifyEntityForFront(entity: Project)
 {
     const { manager, organization, members } = entity;
-    entity.members ??= [];
 
 
     Object.assign(entity, {

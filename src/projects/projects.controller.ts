@@ -3,7 +3,6 @@ import { ApiTags } from '@nestjs/swagger';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { Equal } from 'typeorm';
 import { ProjectBackgroundDto } from './dto/project-background.dto';
 import { ProjectCreateDto } from './dto/project-create.dto';
 import { ProjectQueryDto } from './dto/project-query.dto';
@@ -45,6 +44,36 @@ export class ProjectsController
         entityWithPagination.data = entityWithPagination.data.map(entity => modifyEntityForFront(entity));
 
         return entityWithPagination;
+    }
+
+
+    @Get('selection')
+    @Permission(ProjectPermissions.Read)
+    async findAllForSelect
+        (
+            @Query() queryDto: ProjectSelectQueryDto,
+            @ActiveUser() activeUser: ActiveUserData,
+        )
+    {
+        const entityList = await this._service.findAll(
+            {
+                where: {
+                    projectType: queryDto.projectType,
+                    organization: {
+                        id: queryDto.organizationId,
+                    },
+                },
+                relations: {
+                    organization: true,
+                },
+                order: {
+                    id: 'ASC'
+                },
+            },
+            activeUser,
+        );
+
+        return entityList.map(entity => modifyEntityForFront(entity));
     }
 
 
@@ -104,34 +133,7 @@ export class ProjectsController
     }
 
 
-    @Get('selection')
-    @Permission(ProjectPermissions.Read)
-    async findAllForSelect
-        (
-            @Query() queryDto: ProjectSelectQueryDto,
-            @ActiveUser() activeUser: ActiveUserData,
-        )
-    {
-        const entityList = await this._service.findAll(
-            {
-                where: {
-                    projectType: Equal(queryDto.projectType),
-                    organization: {
-                        id: Equal(queryDto.organizationId),
-                    },
-                },
-                relations: {
-                    organization: true,
-                }
-            },
-            activeUser,
-        );
-
-        return entityList.map(entity => modifyEntityForFront(entity));
-    }
-
-
-    @Post()
+    @Post('background')
     @Permission(ProjectPermissions.ChangeBackground)
     async changeBackground
         (
