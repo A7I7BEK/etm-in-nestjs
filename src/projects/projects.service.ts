@@ -194,7 +194,7 @@ export class ProjectsService
             activeUser,
         );
 
-        const file = await this._resourceService.findOne({ url: entity.background });
+        const file = await this._resourceService.findOne({ url: entity.background }); // TODO: check if working correctly when null
         if (file)
         {
             await this._resourceService.remove(file.id);
