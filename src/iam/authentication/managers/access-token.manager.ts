@@ -135,13 +135,11 @@ export class AccessTokenManager
         const error = new UnauthorizedException('Please, check your login credentials');
 
         // System Admin check
-        if (loginDto.userName === appConfig().admin.username)
+        if (
+            loginDto.userName === appConfig().admin.username
+            && loginDto.password === appConfig().admin.password
+        )
         {
-            if (loginDto.password !== appConfig().admin.password)
-            {
-                throw error;
-            }
-
             return this.generateTokens(0, 0, [], true);
         }
 
