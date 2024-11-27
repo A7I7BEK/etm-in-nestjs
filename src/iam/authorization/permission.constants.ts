@@ -2,6 +2,7 @@ import { CheckListGroupPermissions } from 'src/check-list-groups/enums/check-lis
 import { EmployeePermissions } from 'src/employees/enums/employee-permissions.enum';
 import { GroupPermissions } from 'src/groups/enums/group-permissions.enum';
 import { OrganizationPermissions } from 'src/organizations/enums/organization-permissions.enum';
+import { Permission } from 'src/permissions/entities/permission.entity';
 import { PermissionPermissions } from 'src/permissions/enums/permission-permissions.enum';
 import { ProjectColumnPermissions } from 'src/project-columns/enums/project-column-permissions.enum';
 import { ProjectMemberPermissions } from 'src/project-members/enums/project-member-permissions.enum';
@@ -31,7 +32,7 @@ export type PermissionType = (
 
 export const PERMISSION_TYPE_KEY = 'PERMISSION_TYPE_KEY';
 
-export const permissionList = [
+export const PERMISSION_VALUES = [
     ...Object.values(OrganizationPermissions),
     ...Object.values(PermissionPermissions),
     ...Object.values(RolePermissions),
@@ -46,3 +47,9 @@ export const permissionList = [
     ...Object.values(CheckListGroupPermissions),
     ...Object.values(ReportPermissions),
 ];
+
+export const PERMISSION_LIST: Pick<Permission, 'name' | 'codeName'>[] =
+    PERMISSION_VALUES.map(perm => ({
+        name: perm,
+        codeName: perm,
+    }));

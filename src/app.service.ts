@@ -1,7 +1,7 @@
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { permissionList } from './iam/authorization/permission.constants';
+import { PERMISSION_LIST } from './iam/authorization/permission.constants';
 import { Permission } from './permissions/entities/permission.entity';
 
 @Injectable()
@@ -21,18 +21,13 @@ export class AppService implements OnApplicationBootstrap
     {
         try
         {
-            const permissions = permissionList.map(perm => ({
-                name: perm,
-                codeName: perm,
-            }));
-
             // await this.permissionsRepository.delete({}); // if deleted, roles crash
-            // await this.permissionsRepository.upsert(permissions, [ "codeName" ]); // the same as below 👇
+            // await this.permissionsRepository.upsert(PERMISSION_LIST, [ "codeName" ]); // the same as below 👇
 
             await this._permissionsRepository
                 .createQueryBuilder()
                 .insert()
-                .values(permissions)
+                .values(PERMISSION_LIST)
                 .orIgnore() // BINGO
                 .execute();
         }
