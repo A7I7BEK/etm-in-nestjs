@@ -3,6 +3,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
+import { Equal } from 'typeorm';
 import { ProjectBackgroundDto } from './dto/project-background.dto';
 import { ProjectCreateDto } from './dto/project-create.dto';
 import { ProjectQueryDto } from './dto/project-query.dto';
@@ -113,10 +114,10 @@ export class ProjectsController
     {
         const entityList = await this._service.findAll(
             {
-                where: { // TODO: check if working correctly when undefined
-                    projectType: queryDto.projectType,
+                where: {
+                    projectType: Equal(queryDto.projectType),
                     organization: {
-                        id: queryDto.organizationId,
+                        id: Equal(queryDto.organizationId),
                     },
                 },
                 relations: {

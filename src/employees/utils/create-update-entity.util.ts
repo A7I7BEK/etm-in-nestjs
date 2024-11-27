@@ -6,7 +6,7 @@ import { ResourceService } from 'src/resource/resource.service';
 import { User } from 'src/users/entities/user.entity';
 import { USER_MARK_EMPLOYEE_NEW } from 'src/users/marks/user-mark.constants';
 import { UsersService } from 'src/users/users.service';
-import { Repository } from 'typeorm';
+import { Equal, Repository } from 'typeorm';
 import { EmployeeCreateDto } from '../dto/employee-create.dto';
 import { EmployeeUpdateDto } from '../dto/employee-update.dto';
 import { Employee } from '../entities/employee.entity';
@@ -25,25 +25,26 @@ export async function createUpdateEntity
         employeeEntity = new Employee(),
     )
 {
-    const usersFound = await usersService.repository.find({
-        where: [ // BINGO
-            { userName: dto.user.userName },
-            { email: dto.user.email },
-            { phoneNumber: dto.user.phoneNumber },
+    // BINGO
+    const foundUsers = await usersService.repository.find({
+        where: [
+            { userName: Equal(dto.user.userName) }, // BINGO
+            { email: Equal(dto.user.email) }, // BINGO
+            { phoneNumber: Equal(dto.user.phoneNumber) }, // BINGO
         ]
     });
 
-    if (usersFound && usersFound.find(x => x.userName === dto.user.userName))
+    if (foundUsers.find(x => x.userName === dto.user.userName))
     {
         throw new ConflictException('Username already exists');
     }
 
-    if (usersFound && usersFound.find(x => x.email === dto.user.email))
+    if (foundUsers.find(x => x.email === dto.user.email))
     {
         throw new ConflictException('Email already exists');
     }
 
-    if (usersFound && usersFound.find(x => x.phoneNumber === dto.user.phoneNumber))
+    if (foundUsers.find(x => x.phoneNumber === dto.user.phoneNumber))
     {
         throw new ConflictException('Phone number already exists');
     }

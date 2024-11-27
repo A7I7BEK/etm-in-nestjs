@@ -11,7 +11,7 @@ import { ProjectColumnsService } from 'src/project-columns/project-columns.servi
 import { ProjectMembersService } from 'src/project-members/project-members.service';
 import { ProjectTagsService } from 'src/project-tags/project-tags.service';
 import { ResourceService } from 'src/resource/resource.service';
-import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { Equal, FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { ProjectBackgroundDto } from './dto/project-background.dto';
 import { ProjectCreateDto } from './dto/project-create.dto';
 import { ProjectQueryDto } from './dto/project-query.dto';
@@ -197,10 +197,10 @@ export class ProjectsService
             activeUser,
         );
 
-        const file = await this._resourceService.findOne({ url: entity.background }); // TODO: check if working correctly when null
+        const file = await this._resourceService.repository.findOneBy({ url: Equal(entity.background) });
         if (file)
         {
-            await this._resourceService.remove(file.id);
+            await this._resourceService.removeFile(file);
         }
 
         entity.background = backgroundDto.background;
