@@ -1,4 +1,4 @@
-import { ForbiddenException, forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
@@ -15,7 +15,6 @@ export class UsersService
     constructor (
         @InjectRepository(User)
         public readonly repository: Repository<User>,
-        @Inject(forwardRef(() => RolesService)) // BINGO
         private readonly _rolesService: RolesService,
     ) { }
 

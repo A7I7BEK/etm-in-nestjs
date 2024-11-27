@@ -1,4 +1,4 @@
-import { ForbiddenException, forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
@@ -6,7 +6,6 @@ import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { OrganizationsService } from 'src/organizations/organizations.service';
 import { PermissionsService } from 'src/permissions/permissions.service';
-import { UsersService } from 'src/users/users.service';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { RoleCreateDto } from './dto/role-create.dto';
 import { RoleQueryDto } from './dto/role-query.dto';
@@ -23,8 +22,6 @@ export class RolesService
         public readonly repository: Repository<Role>,
         private readonly _organizationsService: OrganizationsService,
         private readonly _permissionsService: PermissionsService,
-        @Inject(forwardRef(() => UsersService)) // BINGO
-        private readonly _usersService: UsersService,
     ) { }
 
 
