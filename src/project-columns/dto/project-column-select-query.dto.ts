@@ -1,7 +1,10 @@
-import { PickType } from '@nestjs/swagger';
-import { ProjectColumnCreateDto } from './project-column-create.dto';
+import { Type } from 'class-transformer';
+import { IsInt, Min } from 'class-validator';
 
-export class ProjectColumnSelectQueryDto extends PickType(
-    ProjectColumnCreateDto,
-    [ 'projectId' ],
-) { }
+export class ProjectColumnSelectQueryDto
+{
+    @Min(1)
+    @IsInt()
+    @Type(() => Number)
+    projectId: number;
+}
