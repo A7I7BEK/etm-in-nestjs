@@ -19,16 +19,13 @@ export async function createUpdateEntity
     {
         entity.project = await projectsService.findOne(
             {
-                where: { id: dto.projectId }
+                where: { id: dto.projectId },
+                relations: { columns: true }
             },
             activeUser,
         );
 
-        entity.ordering = await projectsService.repository.count(
-            {
-                where: { id: dto.projectId }
-            }
-        );
+        entity.ordering = entity.project.columns.length;
     }
 
 
