@@ -8,15 +8,19 @@ export function modifyEntityForFront(entity: ProjectColumn)
     const { project } = entity;
 
 
+    Object.assign(entity, {
+        projectType: {
+            name: entity.projectType,
+            value: entity.projectType,
+        },
+    });
+
+
     if (project)
     {
         Object.assign(entity, {
             projectId: project.id,
             projectName: project.name,
-            projectType: {
-                name: project.projectType,
-                value: project.projectType,
-            },
         });
     }
 
