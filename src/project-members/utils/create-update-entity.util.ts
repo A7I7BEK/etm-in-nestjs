@@ -16,15 +16,22 @@ export async function createUpdateEntity(
 {
     const projectEntity = await projectsService.findOne(
         {
-            where: { id: dto.projectId }
+            where: { id: dto.projectId },
+            relations: {
+                members: {
+                    employee: true,
+                },
+            }
         },
         activeUser,
     );
 
     const employeeIds = dto.userIds.map(x => x.id); // temporary for this project, must be: [1, 2, 3]
+    const employeeIdsFiltered =
+        employeeIds.filter(id => projectEntity.members.every(x => x.employee.id !== id)); // BINGO
     const employeeEntities = await employeesService.findAll(
         {
-            where: { id: In(employeeIds) }
+            where: { id: In(employeeIdsFiltered) }
         },
         activeUser,
     );
