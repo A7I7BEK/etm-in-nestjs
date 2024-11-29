@@ -56,7 +56,9 @@ export class ProjectMembersController
             {
                 where: { id },
                 relations: {
-                    employee: true,
+                    employee: {
+                        user: true,
+                    },
                     project: true,
                 }
             },
