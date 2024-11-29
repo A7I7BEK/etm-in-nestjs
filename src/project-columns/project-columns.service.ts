@@ -166,6 +166,8 @@ export class ProjectColumnsService
         }
         else
         {
+            entity.project = { ...projectEntity };
+            delete entity.project.columns;
             projectEntity.columns.splice(moveDto.ordering, 0, entity);
         }
 
@@ -174,7 +176,9 @@ export class ProjectColumnsService
             item.ordering = index;
         });
 
-        return this.repository.save(projectEntity.columns);
+        await this.repository.save(projectEntity.columns);
+
+        return column ? column : entity;
     }
 
 

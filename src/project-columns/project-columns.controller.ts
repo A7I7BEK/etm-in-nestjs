@@ -95,8 +95,8 @@ export class ProjectColumnsController
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entityList = await this._service.move(moveDto, activeUser);
-        return entityList.map(entity => modifyEntityForFront(entity));
+        const entity = await this._service.move(moveDto, activeUser);
+        return modifyEntityForFront(entity);
     }
 
 
