@@ -45,7 +45,7 @@ export async function updateEntity(
     );
 
 
-    if (!groupEntity.employees.find(x => x.id === managerEntity.id))
+    if (groupEntity.employees.every(x => x.id !== managerEntity.id)) // BINGO
     {
         groupEntity.employees.push(managerEntity);
     }
