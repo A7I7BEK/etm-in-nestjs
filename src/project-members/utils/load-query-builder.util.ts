@@ -16,14 +16,17 @@ export function loadQueryBuilder(
 
 
     queryBuilder.leftJoinAndSelect(`${pMember}.employee`, empl);
-    queryBuilder.leftJoinAndSelect(`${empl}.user`, user).select([ // TODO: check
+    queryBuilder.leftJoinAndSelect(`${empl}.user`, user);
+    queryBuilder.select([ // BINGO
+        `${pMember}`, // All fields from ProjectMember
+        `${empl}`, // All fields from Employee
         `${user}.id`,
-        `${user}.userName`,
+        `${user}.userName`, // Only specific fields from User
         `${user}.email`,
         `${user}.phoneNumber`,
     ]);
-    queryBuilder.leftJoinAndSelect(`${pMember}.project`, proj);
-    queryBuilder.leftJoinAndSelect(`${proj}.organization`, org);
+    queryBuilder.leftJoin(`${pMember}.project`, proj); // BINGO
+    queryBuilder.leftJoin(`${proj}.organization`, org); // BINGO
     queryBuilder.skip(queryDto.skip);
     queryBuilder.take(queryDto.perPage);
     queryBuilder.orderBy(pMember + '.' + queryDto.sortBy, OrderReverse[ queryDto.sortDirection ]);
