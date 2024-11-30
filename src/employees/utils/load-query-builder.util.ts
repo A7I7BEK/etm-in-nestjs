@@ -26,7 +26,7 @@ export function loadQueryBuilder(
     queryBuilder.leftJoinAndSelect(`${empl}.user`, user);
     queryBuilder.leftJoinAndSelect(`${user}.organization`, org);
     queryBuilder.leftJoinAndSelect(`${user}.roles`, role);
-    queryBuilder.leftJoinAndSelect(`${empl}.members`, members);
+    queryBuilder.leftJoin(`${empl}.members`, members);
     queryBuilder.skip(queryDto.skip);
     queryBuilder.take(queryDto.perPage);
     queryBuilder.orderBy(sortBy, OrderReverse[ queryDto.sortDirection ]);
@@ -42,7 +42,7 @@ export function loadQueryBuilder(
     }
 
 
-    if (queryDto.projectId) // TODO: check if working properly
+    if (queryDto.projectId)
     {
         queryBuilder.andWhere(`${members}.project = :prId`, { prId: queryDto.projectId });
     }
