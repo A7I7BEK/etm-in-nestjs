@@ -4,6 +4,7 @@ import { Organization } from 'src/organizations/entities/organization.entity';
 import { ProjectColumn } from 'src/project-columns/entities/project-column.entity';
 import { ProjectMember } from 'src/project-members/entities/project-member.entity';
 import { ProjectTag } from 'src/project-tags/entities/project-tag.entity';
+import { Task } from 'src/tasks/entities/task.entity';
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { ProjectType } from '../enums/project-type.enum';
 
@@ -40,6 +41,9 @@ export class Project
 
     @OneToMany(type => ProjectColumn, c => c.project)
     columns: ProjectColumn[];
+
+    @OneToMany(type => Task, ts => ts.project)
+    tasks: Task[];
 
     @OneToMany(type => ProjectTag, t => t.project)
     tags: ProjectTag[];

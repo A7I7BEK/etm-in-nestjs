@@ -1,6 +1,7 @@
 import { Project } from 'src/projects/entities/project.entity';
 import { ProjectType } from 'src/projects/enums/project-type.enum';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Task } from 'src/tasks/entities/task.entity';
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class ProjectColumn
@@ -23,6 +24,9 @@ export class ProjectColumn
         default: ProjectType.TRELLO,
     })
     projectType: ProjectType;
+
+    @OneToMany(type => Task, ts => ts.column)
+    tasks: Task[];
 
     @ManyToOne(type => Project, p => p.columns)
     project: Project;

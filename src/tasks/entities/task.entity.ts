@@ -1,7 +1,9 @@
-import { Organization } from 'src/organizations/entities/organization.entity';
-import { Permission } from 'src/permissions/entities/permission.entity';
-import { User } from 'src/users/entities/user.entity';
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { ProjectColumn } from 'src/project-columns/entities/project-column.entity';
+import { Project } from 'src/projects/entities/project.entity';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { TaskLevel } from '../enums/task-level.enum';
+import { TaskPriority } from '../enums/task-priority.enum';
+import { TaskStatus } from '../enums/task-status.enum';
 
 @Entity()
 export class Task
@@ -10,21 +12,44 @@ export class Task
     id: number;
 
     @Column()
-    roleName: string;
+    name: string;
 
     @Column()
-    codeName: string;
+    description: string;
 
-    @Column()
-    systemCreated: boolean = false;
+    @Column({ nullable: true })
+    createdAt: Date;
 
-    @JoinTable()
-    @ManyToMany(type => Permission, { eager: true })
-    permissions: Permission[];
+    @Column({ nullable: true })
+    startDate: Date;
 
-    @ManyToMany(type => User, user => user.roles)
-    users: User[];
+    @Column({ nullable: true })
+    endDate: Date;
 
-    @ManyToOne(type => Organization)
-    organization: Organization;
+    @Column({
+        type: 'enum',
+        enum: TaskStatus,
+        nullable: true,
+    })
+    taskStatus: TaskStatus;
+
+    @Column({
+        type: 'enum',
+        enum: TaskLevel,
+        nullable: true,
+    })
+    taskLevel: TaskLevel;
+
+    @Column({
+        type: 'enum',
+        enum: TaskPriority,
+        nullable: true,
+    })
+    taskPriority: TaskPriority;
+
+    @ManyToOne(type => ProjectColumn, c => c.tasks)
+    column: ProjectColumn;
+
+    @ManyToOne(type => Project, p => p.tasks)
+    project: Project;
 }
