@@ -13,7 +13,7 @@ import { ProjectTagsService } from 'src/project-tags/project-tags.service';
 import { Repository } from 'typeorm';
 import { ProjectCreateDto } from '../dto/project-create.dto';
 import { Project } from '../entities/project.entity';
-import { ProjectType } from '../enums/project-type';
+import { ProjectType } from '../enums/project-type.enum';
 
 
 export async function createEntity(

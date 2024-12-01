@@ -1,5 +1,5 @@
 import { Project } from 'src/projects/entities/project.entity';
-import { ProjectType } from 'src/projects/enums/project-type';
+import { ProjectType } from 'src/projects/enums/project-type.enum';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()

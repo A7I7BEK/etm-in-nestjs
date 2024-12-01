@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsInt, IsNotEmpty, IsString, Min, ValidateNested } from 'class-validator';
 import { ObjectIdDto } from 'src/common/dto/object-id.dto';
-import { ProjectType } from '../enums/project-type';
+import { ProjectType } from '../enums/project-type.enum';
 
 export class ProjectCreateDto
 {

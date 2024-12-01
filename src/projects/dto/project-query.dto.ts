@@ -2,7 +2,7 @@ import { Type } from 'class-transformer';
 import { IsEnum, IsInt, IsOptional, Min } from 'class-validator';
 import { BaseQueryDto } from 'src/common/dto/base-query.dto';
 import { ProjectProperties } from '../enums/project-properties.enum';
-import { ProjectType } from '../enums/project-type';
+import { ProjectType } from '../enums/project-type.enum';
 
 export class ProjectQueryDto extends BaseQueryDto<ProjectProperties>
 {

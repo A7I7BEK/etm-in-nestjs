@@ -5,7 +5,7 @@ import { ProjectColumn } from 'src/project-columns/entities/project-column.entit
 import { ProjectMember } from 'src/project-members/entities/project-member.entity';
 import { ProjectTag } from 'src/project-tags/entities/project-tag.entity';
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { ProjectType } from '../enums/project-type';
+import { ProjectType } from '../enums/project-type.enum';
 
 @Entity()
 export class Project

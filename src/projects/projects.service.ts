@@ -17,7 +17,7 @@ import { ProjectCreateDto } from './dto/project-create.dto';
 import { ProjectQueryDto } from './dto/project-query.dto';
 import { ProjectUpdateDto } from './dto/project-update.dto';
 import { Project } from './entities/project.entity';
-import { ProjectType } from './enums/project-type';
+import { ProjectType } from './enums/project-type.enum';
 import { createEntity } from './utils/create-entity.util';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
 import { updateEntity } from './utils/update-entity.util.ts';
