@@ -1,4 +1,4 @@
-import { OrderReverse } from 'src/common/pagination/order.enum';
+import { OrderReal } from 'src/common/pagination/order.enum';
 import { Brackets, Repository } from 'typeorm';
 import { PermissionQueryDto } from '../dto/permission-query.dto';
 import { Permission } from '../entities/permission.entity';
@@ -16,7 +16,7 @@ export function loadQueryBuilder
 
     queryBuilder.skip(queryDto.skip);
     queryBuilder.take(queryDto.perPage);
-    queryBuilder.orderBy(perm + '.' + queryDto.sortBy, OrderReverse[ queryDto.sortDirection ]);
+    queryBuilder.orderBy(perm + '.' + queryDto.sortBy, OrderReal[ queryDto.sortDirection ]);
 
 
     if (queryDto.allSearch)

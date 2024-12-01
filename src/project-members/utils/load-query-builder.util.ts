@@ -1,4 +1,4 @@
-import { OrderReverse } from 'src/common/pagination/order.enum';
+import { OrderReal } from 'src/common/pagination/order.enum';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { Brackets, Repository } from 'typeorm';
 import { ProjectMemberQueryDto } from '../dto/project-member-query.dto';
@@ -29,7 +29,7 @@ export function loadQueryBuilder(
     queryBuilder.leftJoin(`${proj}.organization`, org); // BINGO
     queryBuilder.skip(queryDto.skip);
     queryBuilder.take(queryDto.perPage);
-    queryBuilder.orderBy(pMember + '.' + queryDto.sortBy, OrderReverse[ queryDto.sortDirection ]);
+    queryBuilder.orderBy(pMember + '.' + queryDto.sortBy, OrderReal[ queryDto.sortDirection ]);
 
 
     queryBuilder.andWhere(`${pMember}.project = :projId`, { projId: queryDto.projectId });

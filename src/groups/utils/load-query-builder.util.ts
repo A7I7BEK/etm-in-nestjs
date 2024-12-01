@@ -1,4 +1,4 @@
-import { OrderReverse } from 'src/common/pagination/order.enum';
+import { OrderReal } from 'src/common/pagination/order.enum';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { Brackets, Repository } from 'typeorm';
 import { GroupQueryDto } from '../dto/group-query.dto';
@@ -20,7 +20,7 @@ export function loadQueryBuilder
     queryBuilder.leftJoinAndSelect(`${group}.organization`, org);
     queryBuilder.skip(queryDto.skip);
     queryBuilder.take(queryDto.perPage);
-    queryBuilder.orderBy(group + '.' + queryDto.sortBy, OrderReverse[ queryDto.sortDirection ]);
+    queryBuilder.orderBy(group + '.' + queryDto.sortBy, OrderReal[ queryDto.sortDirection ]);
 
 
     if (!activeUser.systemAdmin)
