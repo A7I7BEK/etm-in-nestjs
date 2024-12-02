@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
-import { Order } from '../pagination/order.enum';
+import { Order, OrderReal } from '../pagination/order.enum';
 
 // BINGO
 export abstract class BaseQueryDto<T>
@@ -42,5 +42,15 @@ export abstract class BaseQueryDto<T>
         }
 
         return 0;
+    }
+
+    get order()
+    {
+        /**
+         * temporary for this project
+         * this is adapter that unite frontend
+         * with backend
+         */
+        return OrderReal[ this.sortDirection ];
     }
 }

@@ -1,4 +1,3 @@
-import { OrderReal } from 'src/common/pagination/order.enum';
 import { Brackets, Repository } from 'typeorm';
 import { OrganizationQueryDto } from '../dto/organization-query.dto';
 import { Organization } from '../entities/organization.entity';
@@ -16,7 +15,7 @@ export function loadQueryBuilder
 
     queryBuilder.skip(queryDto.skip);
     queryBuilder.take(queryDto.perPage);
-    queryBuilder.orderBy(org + '.' + queryDto.sortBy, OrderReal[ queryDto.sortDirection ]);
+    queryBuilder.orderBy(org + '.' + queryDto.sortBy, queryDto.order);
 
 
     if (queryDto.allSearch)

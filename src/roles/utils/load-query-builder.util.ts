@@ -1,4 +1,3 @@
-import { OrderReal } from 'src/common/pagination/order.enum';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { Brackets, Repository } from 'typeorm';
 import { RoleQueryDto } from '../dto/role-query.dto';
@@ -19,7 +18,7 @@ export function loadQueryBuilder
     queryBuilder.leftJoinAndSelect(`${role}.organization`, org);
     queryBuilder.skip(queryDto.skip);
     queryBuilder.take(queryDto.perPage);
-    queryBuilder.orderBy(role + '.' + queryDto.sortBy, OrderReal[ queryDto.sortDirection ]);
+    queryBuilder.orderBy(role + '.' + queryDto.sortBy, queryDto.order);
 
 
     if (!activeUser.systemAdmin)
