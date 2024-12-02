@@ -3,7 +3,6 @@ import { Project } from 'src/projects/entities/project.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { TaskLevel } from '../enums/task-level.enum';
 import { TaskPriority } from '../enums/task-priority.enum';
-import { TaskStatus } from '../enums/task-status.enum';
 
 @Entity()
 export class Task
@@ -17,6 +16,9 @@ export class Task
     @Column()
     description: string;
 
+    @Column()
+    ordering: number;
+
     @Column({ nullable: true })
     createdAt: Date;
 
@@ -28,24 +30,17 @@ export class Task
 
     @Column({
         type: 'enum',
-        enum: TaskStatus,
-        nullable: true,
-    })
-    taskStatus: TaskStatus;
-
-    @Column({
-        type: 'enum',
         enum: TaskLevel,
         nullable: true,
     })
-    taskLevel: TaskLevel;
+    level: TaskLevel;
 
     @Column({
         type: 'enum',
         enum: TaskPriority,
         nullable: true,
     })
-    taskPriority: TaskPriority;
+    priority: TaskPriority;
 
     @ManyToOne(type => ProjectColumn, c => c.tasks)
     column: ProjectColumn;
