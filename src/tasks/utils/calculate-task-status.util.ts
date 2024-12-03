@@ -1,7 +1,7 @@
 import { Task } from '../entities/task.entity';
 import { TaskStatus } from '../enums/task-status.enum';
 
-const ONE_DAY = 1000 * 60 * 60 * 24; // 24 hour
+const ONE_DAY = 1000 * 60 * 60 * 24; // 24 hour in ms
 
 export function calculateTaskStatus(entity: Task)
 {
@@ -13,7 +13,7 @@ export function calculateTaskStatus(entity: Task)
     {
         entity[ 'status' ] = TaskStatus.RED;
     }
-    else if (ONE_DAY > Date.now() - entity.endDate.getTime())
+    else if (entity.endDate.getTime() - Date.now() < ONE_DAY)
     {
         entity[ 'status' ] = TaskStatus.YELLOW;
     }
