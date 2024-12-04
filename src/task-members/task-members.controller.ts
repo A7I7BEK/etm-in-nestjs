@@ -4,6 +4,7 @@ import { Permission } from 'src/iam/authorization/decorators/permission.decorato
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { TaskMemberCreateDto } from './dto/task-member-create.dto';
+import { TaskMemberDeleteDto } from './dto/task-member-delete.dto';
 import { TaskMemberQueryDto } from './dto/task-member-query.dto';
 import { TaskMemberPermissions } from './enums/task-member-permissions.enum';
 import { TaskMembersService } from './task-members.service';
@@ -66,15 +67,15 @@ export class TaskMembersController
     }
 
 
-    @Delete(':id')
+    @Delete()
     @Permission(TaskMemberPermissions.Delete)
     async remove
         (
-            @Param('id', ParseIntPipe) id: number,
+            @Body() deleteDto: TaskMemberDeleteDto,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.remove(id, activeUser);
+        const entity = await this._service.remove(deleteDto, activeUser);
         return modifyEntityForFront(entity);
     }
 }
