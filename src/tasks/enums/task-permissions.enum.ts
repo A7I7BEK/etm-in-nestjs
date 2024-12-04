@@ -8,10 +8,6 @@ export enum TaskPermissions
     Move = 'TASK_MOVE',
     Copy = 'TASK_COPY',
 
-    MemberCreate = 'TASK_MEMBER_CREATE',
-    MemberRead = 'TASK_MEMBER_READ',
-    MemberDelete = 'TASK_MEMBER_DELETE',
-
     TagCreate = 'TASK_TAG_CREATE',
     TagRead = 'TASK_TAG_READ',
     TagUpdate = 'TASK_TAG_UPDATE',

@@ -1,7 +1,6 @@
 export enum TaskMemberPermissions
 {
-    Create = 'ROLE_CREATE',
-    Read = 'ROLE_READ',
-    Update = 'ROLE_UPDATE',
-    Delete = 'ROLE_DELETE',
+    Create = 'TASK_MEMBER_CREATE',
+    Read = 'TASK_MEMBER_READ',
+    Delete = 'TASK_MEMBER_DELETE',
 }
