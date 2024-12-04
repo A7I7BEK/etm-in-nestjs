@@ -1,7 +1,6 @@
-import { Organization } from 'src/organizations/entities/organization.entity';
-import { Permission } from 'src/permissions/entities/permission.entity';
-import { User } from 'src/users/entities/user.entity';
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Employee } from 'src/employees/entities/employee.entity';
+import { Task } from 'src/tasks/entities/task.entity';
+import { Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class TaskMember
@@ -9,22 +8,9 @@ export class TaskMember
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
-    roleName: string;
+    @ManyToOne(type => Employee, { eager: true })
+    employee: Employee;
 
-    @Column()
-    codeName: string;
-
-    @Column()
-    systemCreated: boolean = false;
-
-    @JoinTable()
-    @ManyToMany(type => Permission, { eager: true })
-    permissions: Permission[];
-
-    @ManyToMany(type => User, user => user.roles)
-    users: User[];
-
-    @ManyToOne(type => Organization)
-    organization: Organization;
+    @ManyToOne(type => Task, t => t.members)
+    task: Task;
 }
