@@ -1,11 +1,10 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { TaskMemberCreateDto } from './dto/task-member-create.dto';
 import { TaskMemberQueryDto } from './dto/task-member-query.dto';
-import { TaskMemberUpdateDto } from './dto/task-member-update.dto';
 import { TaskMemberPermissions } from './enums/task-member-permissions.enum';
 import { TaskMembersService } from './task-members.service';
 import { modifyEntityForFront } from './utils/modify-entity-for-front.util';
@@ -56,24 +55,13 @@ export class TaskMembersController
         const entity = await this._service.findOne(
             {
                 where: { id },
-                relations: { organization: true }
+                relations: {
+                    employee: true,
+                    task: true,
+                }
             },
             activeUser,
         );
-        return modifyEntityForFront(entity);
-    }
-
-
-    @Put(':id')
-    @Permission(TaskMemberPermissions.Update)
-    async update
-        (
-            @Param('id', ParseIntPipe) id: number,
-            @Body() updateDto: TaskMemberUpdateDto,
-            @ActiveUser() activeUser: ActiveUserData,
-        )
-    {
-        const entity = await this._service.update(id, updateDto, activeUser);
         return modifyEntityForFront(entity);
     }
 
