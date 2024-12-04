@@ -1,6 +1,7 @@
 import { ProjectColumn } from 'src/project-columns/entities/project-column.entity';
 import { Project } from 'src/projects/entities/project.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { TaskMember } from 'src/task-members/entities/task-member.entity';
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { TaskLevel } from '../enums/task-level.enum';
 import { TaskPriority } from '../enums/task-priority.enum';
 
@@ -47,4 +48,7 @@ export class Task
 
     @ManyToOne(type => Project, p => p.tasks)
     project: Project;
+
+    @OneToMany(type => TaskMember, m => m.task)
+    members: TaskMember[];
 }
