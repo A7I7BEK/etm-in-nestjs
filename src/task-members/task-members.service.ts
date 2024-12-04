@@ -1,15 +1,15 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
 import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
+import { EmployeesService } from 'src/employees/employees.service';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { OrganizationsService } from 'src/organizations/organizations.service';
-import { PermissionsService } from 'src/permissions/permissions.service';
+import { TasksService } from 'src/tasks/tasks.service';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { TaskMemberCreateDto } from './dto/task-member-create.dto';
+import { TaskMemberDeleteDto } from './dto/task-member-delete.dto';
 import { TaskMemberQueryDto } from './dto/task-member-query.dto';
-import { TaskMemberUpdateDto } from './dto/task-member-update.dto';
 import { TaskMember } from './entities/task-member.entity';
 import { createUpdateEntity } from './utils/create-update-entity.util';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
@@ -20,8 +20,9 @@ export class TaskMembersService
     constructor (
         @InjectRepository(TaskMember)
         public readonly repository: Repository<TaskMember>,
-        private readonly _organizationsService: OrganizationsService,
-        private readonly _permissionsService: PermissionsService,
+        @Inject(forwardRef(() => TasksService))
+        private readonly _tasksService: TasksService,
+        private readonly _employeesService: EmployeesService,
     ) { }
 
 
@@ -32,8 +33,8 @@ export class TaskMembersService
         )
     {
         return createUpdateEntity(
-            this._organizationsService,
-            this._permissionsService,
+            this._tasksService,
+            this._employeesService,
             this.repository,
             createDto,
             activeUser,
@@ -51,13 +52,17 @@ export class TaskMembersService
         {
             const orgOption: FindManyOptions<TaskMember> = {
                 where: {
-                    organization: {
-                        id: activeUser.orgId
+                    task: {
+                        project: {
+                            organization: {
+                                id: activeUser.orgId
+                            }
+                        }
                     }
                 }
             };
 
-            setNestedOptions(options ??= {}, orgOption); // BINGO
+            setNestedOptions(options ??= {}, orgOption);
         }
 
         return this.repository.find(options);
@@ -93,13 +98,17 @@ export class TaskMembersService
         {
             const orgOption: FindOneOptions<TaskMember> = {
                 where: {
-                    organization: {
-                        id: activeUser.orgId
+                    task: {
+                        project: {
+                            organization: {
+                                id: activeUser.orgId
+                            }
+                        }
                     }
                 }
             };
 
-            setNestedOptions(options ??= {}, orgOption); // BINGO
+            setNestedOptions(options ??= {}, orgOption);
         }
 
         const entity = await this.repository.findOne(options);
@@ -112,54 +121,25 @@ export class TaskMembersService
     }
 
 
-    async update
-        (
-            id: number,
-            updateDto: TaskMemberUpdateDto,
-            activeUser: ActiveUserData,
-        )
-    {
-        const entity = await this.findOne(
-            {
-                where: { id }
-            },
-            activeUser,
-        );
-
-        if (entity.systemCreated)
-        {
-            throw new ForbiddenException('System created Role cannot be edited');
-        }
-
-        return createUpdateEntity(
-            this._organizationsService,
-            this._permissionsService,
-            this.repository,
-            updateDto,
-            activeUser,
-            entity,
-        );
-    }
-
-
     async remove
         (
-            id: number,
+            deleteDto: TaskMemberDeleteDto,
             activeUser: ActiveUserData,
         )
     {
         const entity = await this.findOne(
             {
-                where: { id }
+                where: {
+                    task: {
+                        id: deleteDto.taskId,
+                    },
+                    employee: {
+                        id: deleteDto.employeeId,
+                    }
+                }
             },
             activeUser,
         );
-
-        if (entity.systemCreated)
-        {
-            throw new ForbiddenException('System created Role cannot be deleted');
-        }
-
         return this.repository.remove(entity);
     }
 }
