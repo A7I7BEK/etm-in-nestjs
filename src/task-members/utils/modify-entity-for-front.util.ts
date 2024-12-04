@@ -5,14 +5,19 @@ import { TaskMember } from '../entities/task-member.entity';
  */
 export function modifyEntityForFront(entity: TaskMember)
 {
-    const { organization } = entity;
+    const { employee } = entity;
+    const { user } = employee || {};
 
 
-    if (organization)
+    if (user)
     {
-        Object.assign(entity, {
-            organizationId: organization.id,
-            organizationName: organization.name,
+        delete entity.employee.user.password;
+
+        Object.assign(entity.employee, {
+            userId: user.id,
+            userName: user.userName,
+            email: user.email,
+            phoneNumber: user.phoneNumber,
         });
     }
 
