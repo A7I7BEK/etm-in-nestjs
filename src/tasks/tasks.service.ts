@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
@@ -6,6 +6,7 @@ import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { ProjectColumnsService } from 'src/project-columns/project-columns.service';
 import { ProjectsService } from 'src/projects/projects.service';
+import { TaskMembersService } from 'src/task-members/task-members.service';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { TaskCreateDto } from './dto/task-create.dto';
 import { TaskQueryDto } from './dto/task-query.dto';
@@ -24,6 +25,8 @@ export class TasksService
         public readonly repository: Repository<Task>,
         private readonly _projectsService: ProjectsService,
         private readonly _columnsService: ProjectColumnsService,
+        @Inject(forwardRef(() => TaskMembersService))
+        private readonly _taskMembersService: TaskMembersService,
     ) { }
 
 
