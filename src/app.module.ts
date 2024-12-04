@@ -21,6 +21,7 @@ import { ProjectsModule } from './projects/projects.module';
 import { ReportsModule } from './reports/reports.module';
 import { ResourceModule } from './resource/resource.module';
 import { RolesModule } from './roles/roles.module';
+import { TaskMembersModule } from './task-members/task-members.module';
 import { TasksModule } from './tasks/tasks.module';
 import { UsersModule } from './users/users.module';
 
@@ -61,6 +62,7 @@ import { UsersModule } from './users/users.module';
         ProjectMembersModule,
         ProjectTagsModule,
         TasksModule,
+        TaskMembersModule,
         CheckListGroupsModule,
         ReportsModule,
         OneTimePasswordModule,
