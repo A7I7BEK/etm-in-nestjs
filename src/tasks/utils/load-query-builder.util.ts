@@ -12,26 +12,79 @@ export function loadQueryBuilder
         activeUser: ActiveUserData,
     )
 {
-    const [ role, org ] = [ 'role', 'organization' ];
-    const queryBuilder = repository.createQueryBuilder(role);
+    const [ task, column, project, org ] = [ 'task', 'column', 'project', 'organization' ];
+    const queryBuilder = repository.createQueryBuilder(task);
 
 
-    queryBuilder.leftJoinAndSelect(`${role}.organization`, org);
+    queryBuilder.leftJoinAndSelect(`${task}.column`, column);
+    queryBuilder.leftJoinAndSelect(`${task}.project`, project);
+    queryBuilder.leftJoinAndSelect(`${project}.organization`, org);
     queryBuilder.skip(queryDto.skip);
     queryBuilder.take(queryDto.perPage);
     queryBuilder.orderBy(
-        role + '.' + TaskPropertiesReal[ queryDto.sortBy ],
+        task + '.' + TaskPropertiesReal[ queryDto.sortBy ],
         queryDto.order
     );
 
 
+    if (queryDto.columnId)
+    {
+        queryBuilder.andWhere(`${task}.column = :colId`, { colId: queryDto.columnId });
+    }
+
+
+    if (queryDto.projectId)
+    {
+        queryBuilder.andWhere(`${task}.project = :projId`, { projId: queryDto.projectId });
+    }
+
+
+    if (queryDto.ownTask && !activeUser.systemAdmin)
+    {
+        // TODO: task member needed
+        queryBuilder.andWhere(`${task}.TASK_MEMBER = :memId`, { memId: activeUser.sub });
+    }
+
+
+    const now = new Date();
+    if (queryDto.deadLine)
+    {
+        queryBuilder.andWhere(`${task}.endDate = :endDate`, { endDate: queryDto.deadLine });
+    }
+    else if (queryDto.hasNoDeadline)
+    {
+        queryBuilder.andWhere(`${task}.endDate IS NULL`);
+    }
+    else if (queryDto.inNextDay)
+    {
+        const nextDay = new Date(now);
+        nextDay.setDate(now.getDate() + 1);
+
+        queryBuilder.andWhere(`${task}.endDate BETWEEN :now AND :nextDay`, { now, nextDay });
+    }
+    else if (queryDto.inNextWeek)
+    {
+        const nextWeek = new Date(now);
+        nextWeek.setDate(now.getDate() + 7);
+
+        queryBuilder.andWhere(`${task}.endDate BETWEEN :now AND :nextWeek`, { now, nextWeek });
+    }
+    else if (queryDto.inNextMonth)
+    {
+        const nextMonth = new Date(now);
+        nextMonth.setMonth(now.getMonth() + 1);
+
+        queryBuilder.andWhere(`${task}.endDate BETWEEN :now AND :nextMonth`, { now, nextMonth });
+    }
+    else if (queryDto.overdue)
+    {
+        queryBuilder.andWhere(`${task}.endDate < :now`, { now });
+    }
+
+
     if (!activeUser.systemAdmin)
     {
-        queryBuilder.andWhere(`${role}.organization = :orgId`, { orgId: activeUser.orgId });
-    }
-    else if (queryDto.organizationId) // BINGO: activeUser.systemAdmin && queryDto.organizationId
-    {
-        queryBuilder.andWhere(`${role}.organization = :orgId`, { orgId: queryDto.organizationId });
+        queryBuilder.andWhere(`${project}.organization = :orgId`, { orgId: activeUser.orgId });
     }
 
 
@@ -40,8 +93,8 @@ export function loadQueryBuilder
         queryBuilder.andWhere(
             new Brackets((qb) =>
             {
-                qb.orWhere(`${role}.codeName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
-                qb.orWhere(`${role}.roleName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
+                qb.orWhere(`${task}.name ILIKE :search`, { search: `%${queryDto.allSearch}%` });
+                qb.orWhere(`${task}.description ILIKE :search`, { search: `%${queryDto.allSearch}%` });
             }),
         );
     }
