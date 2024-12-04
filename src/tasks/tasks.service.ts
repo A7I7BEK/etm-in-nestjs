@@ -1,18 +1,20 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
 import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { OrganizationsService } from 'src/organizations/organizations.service';
-import { PermissionsService } from 'src/permissions/permissions.service';
+import { ProjectColumnsService } from 'src/project-columns/project-columns.service';
+import { ProjectsService } from 'src/projects/projects.service';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { TaskCreateDto } from './dto/task-create.dto';
 import { TaskQueryDto } from './dto/task-query.dto';
 import { TaskUpdateDto } from './dto/task-update.dto';
 import { Task } from './entities/task.entity';
-import { createUpdateEntity } from './utils/create-update-entity.util';
+import { calculateTaskStatus } from './utils/calculate-task-status.util';
+import { createEntity } from './utils/create-entity.util';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
+import { updateEntity } from './utils/update-entity.util';
 
 @Injectable()
 export class TasksService
@@ -20,8 +22,8 @@ export class TasksService
     constructor (
         @InjectRepository(Task)
         public readonly repository: Repository<Task>,
-        private readonly _organizationsService: OrganizationsService,
-        private readonly _permissionsService: PermissionsService,
+        private readonly _projectsService: ProjectsService,
+        private readonly _columnsService: ProjectColumnsService,
     ) { }
 
 
@@ -31,9 +33,8 @@ export class TasksService
             activeUser: ActiveUserData,
         )
     {
-        return createUpdateEntity(
-            this._organizationsService,
-            this._permissionsService,
+        return createEntity(
+            this._columnsService,
             this.repository,
             createDto,
             activeUser,
@@ -41,7 +42,7 @@ export class TasksService
     }
 
 
-    findAll
+    async findAll
         (
             options: FindManyOptions<Task>,
             activeUser: ActiveUserData,
@@ -51,16 +52,20 @@ export class TasksService
         {
             const orgOption: FindManyOptions<Task> = {
                 where: {
-                    organization: {
-                        id: activeUser.orgId
+                    project: {
+                        organization: {
+                            id: activeUser.orgId
+                        }
                     }
                 }
             };
 
-            setNestedOptions(options ??= {}, orgOption); // BINGO
+            setNestedOptions(options ??= {}, orgOption);
         }
 
-        return this.repository.find(options);
+        const entityList = await this.repository.find(options);
+        entityList.forEach(item => calculateTaskStatus(item));
+        return entityList;
     }
 
 
@@ -77,6 +82,7 @@ export class TasksService
         );
 
         const [ data, total ] = await loadedQueryBuilder.getManyAndCount();
+        data.forEach(item => calculateTaskStatus(item));
         const paginationMeta = new PaginationMeta(queryDto.page, queryDto.perPage, total);
 
         return new Pagination<Task>(data, paginationMeta);
@@ -93,13 +99,15 @@ export class TasksService
         {
             const orgOption: FindOneOptions<Task> = {
                 where: {
-                    organization: {
-                        id: activeUser.orgId
+                    project: {
+                        organization: {
+                            id: activeUser.orgId
+                        }
                     }
                 }
             };
 
-            setNestedOptions(options ??= {}, orgOption); // BINGO
+            setNestedOptions(options ??= {}, orgOption);
         }
 
         const entity = await this.repository.findOne(options);
@@ -108,7 +116,7 @@ export class TasksService
             throw new NotFoundException(`${Task.name} not found`);
         }
 
-        return entity;
+        return calculateTaskStatus(entity);
     }
 
 
@@ -126,17 +134,9 @@ export class TasksService
             activeUser,
         );
 
-        if (entity.systemCreated)
-        {
-            throw new ForbiddenException('System created Role cannot be edited');
-        }
-
-        return createUpdateEntity(
-            this._organizationsService,
-            this._permissionsService,
+        return updateEntity(
             this.repository,
             updateDto,
-            activeUser,
             entity,
         );
     }
@@ -154,11 +154,6 @@ export class TasksService
             },
             activeUser,
         );
-
-        if (entity.systemCreated)
-        {
-            throw new ForbiddenException('System created Role cannot be deleted');
-        }
 
         return this.repository.remove(entity);
     }
