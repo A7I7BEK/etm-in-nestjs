@@ -8,7 +8,7 @@ import { TaskQueryDto } from './dto/task-query.dto';
 import { TaskUpdateDto } from './dto/task-update.dto';
 import { TaskPermissions } from './enums/task-permissions.enum';
 import { TasksService } from './tasks.service';
-import { modifyEntityForFront } from './utils/modify-entity-for-front.util';
+import { modifyTaskForFront } from './utils/modify-entity-for-front.util';
 
 @ApiTags('tasks')
 @Controller('tasks')
@@ -26,7 +26,7 @@ export class TasksController
         )
     {
         const entity = await this._service.create(createDto, activeUser);
-        return modifyEntityForFront(entity);
+        return modifyTaskForFront(entity);
     }
 
 
@@ -39,7 +39,7 @@ export class TasksController
         )
     {
         const entityWithPagination = await this._service.findAllWithFilters(queryDto, activeUser);
-        entityWithPagination.data = entityWithPagination.data.map(entity => modifyEntityForFront(entity));
+        entityWithPagination.data = entityWithPagination.data.map(entity => modifyTaskForFront(entity));
 
         return entityWithPagination;
     }
@@ -56,11 +56,14 @@ export class TasksController
         const entity = await this._service.findOne(
             {
                 where: { id },
-                relations: { organization: true }
+                relations: {
+                    column: true,
+                    project: true,
+                },
             },
             activeUser,
         );
-        return modifyEntityForFront(entity);
+        return modifyTaskForFront(entity);
     }
 
 
@@ -74,7 +77,7 @@ export class TasksController
         )
     {
         const entity = await this._service.update(id, updateDto, activeUser);
-        return modifyEntityForFront(entity);
+        return modifyTaskForFront(entity);
     }
 
 
@@ -87,6 +90,6 @@ export class TasksController
         )
     {
         const entity = await this._service.remove(id, activeUser);
-        return modifyEntityForFront(entity);
+        return modifyTaskForFront(entity);
     }
 }
