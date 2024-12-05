@@ -7,6 +7,7 @@ import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { ProjectColumnsService } from 'src/project-columns/project-columns.service';
 import { ProjectsService } from 'src/projects/projects.service';
 import { TaskMembersService } from 'src/task-members/task-members.service';
+import { TaskTagsService } from 'src/task-tags/task-tags.service';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { TaskCreateDto } from './dto/task-create.dto';
 import { TaskQueryDto } from './dto/task-query.dto';
@@ -27,6 +28,8 @@ export class TasksService
         private readonly _columnsService: ProjectColumnsService,
         @Inject(forwardRef(() => TaskMembersService))
         private readonly _taskMembersService: TaskMembersService,
+        @Inject(forwardRef(() => TaskTagsService))
+        private readonly _taskTagsService: TaskTagsService,
     ) { }
 
 

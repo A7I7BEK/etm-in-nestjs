@@ -1,38 +1,35 @@
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { OrganizationsService } from 'src/organizations/organizations.service';
-import { PermissionsService } from 'src/permissions/permissions.service';
-import { In, Repository } from 'typeorm';
+import { ProjectTagsService } from 'src/project-tags/project-tags.service';
+import { TasksService } from 'src/tasks/tasks.service';
+import { Repository } from 'typeorm';
 import { TaskTagCreateDto } from '../dto/task-tag-create.dto';
-import { TaskTagUpdateDto } from '../dto/task-tag-update.dto';
 import { TaskTag } from '../entities/task-tag.entity';
 
 
 export async function createUpdateEntity
     (
-        organizationsService: OrganizationsService,
-        permissionsService: PermissionsService,
+        tasksService: TasksService,
+        projectTagsService: ProjectTagsService,
         repository: Repository<TaskTag>,
-        dto: TaskTagCreateDto | TaskTagUpdateDto,
+        dto: TaskTagCreateDto,
         activeUser: ActiveUserData,
         entity = new TaskTag(),
     )
 {
-    const organizationEntity = await organizationsService.findOneActiveUser(
+    entity.task = await tasksService.findOne(
         {
-            where: { id: dto.organizationId }
+            where: { id: dto.taskId }
         },
         activeUser,
     );
 
 
-    const permissionIds = dto.permissions.map(x => x.id); // temporary for this project, must be: [1, 2, 3]
-    const permissionEntities = await permissionsService.findAll({ where: { id: In(permissionIds) } }); // BINGO
-
-
-    entity.roleName = dto.roleName;
-    entity.codeName = dto.codeName;
-    entity.organization = organizationEntity;
-    entity.permissions = permissionEntities;
+    entity.projectTag = await projectTagsService.findOne(
+        {
+            where: { id: dto.projectTagId }
+        },
+        activeUser,
+    );
 
 
     return repository.save(entity);

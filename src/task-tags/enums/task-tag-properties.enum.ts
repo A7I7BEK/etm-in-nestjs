@@ -1,7 +1,6 @@
 export enum TaskTagProperties
 {
     ID = 'id',
-    ROLE_NAME = 'roleName',
-    CODE_NAME = 'codeName',
-    ORGANIZATION = 'organization',
+    TASK = 'task',
+    PROJECT_TAG = 'projectTag',
 }

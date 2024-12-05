@@ -5,14 +5,14 @@ import { TaskTag } from '../entities/task-tag.entity';
  */
 export function modifyEntityForFront(entity: TaskTag)
 {
-    const { organization } = entity;
+    const { projectTag } = entity;
 
 
-    if (organization)
+    if (projectTag)
     {
         Object.assign(entity, {
-            organizationId: organization.id,
-            organizationName: organization.name,
+            name: projectTag.name,
+            color: projectTag.color,
         });
     }
 

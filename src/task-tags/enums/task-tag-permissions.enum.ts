@@ -1,7 +1,6 @@
 export enum TaskTagPermissions
 {
-    Create = 'ROLE_CREATE',
-    Read = 'ROLE_READ',
-    Update = 'ROLE_UPDATE',
-    Delete = 'ROLE_DELETE',
+    Create = 'TASK_TAG_CREATE',
+    Read = 'TASK_TAG_READ',
+    Delete = 'TASK_TAG_DELETE',
 }

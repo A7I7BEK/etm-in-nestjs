@@ -1,17 +1,17 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { TaskTagCreateDto } from './dto/task-tag-create.dto';
+import { TaskTagDeleteDto } from './dto/task-tag-delete.dto';
 import { TaskTagQueryDto } from './dto/task-tag-query.dto';
-import { TaskTagUpdateDto } from './dto/task-tag-update.dto';
 import { TaskTagPermissions } from './enums/task-tag-permissions.enum';
 import { TaskTagsService } from './task-tags.service';
 import { modifyEntityForFront } from './utils/modify-entity-for-front.util';
 
-@ApiTags('roles')
-@Controller('roles')
+@ApiTags('taskTags')
+@Controller('taskTags')
 export class TaskTagsController
 {
     constructor (private readonly _service: TaskTagsService) { }
@@ -56,7 +56,10 @@ export class TaskTagsController
         const entity = await this._service.findOne(
             {
                 where: { id },
-                relations: { organization: true }
+                relations: {
+                    task: true,
+                    projectTag: true,
+                }
             },
             activeUser,
         );
@@ -64,29 +67,15 @@ export class TaskTagsController
     }
 
 
-    @Put(':id')
-    @Permission(TaskTagPermissions.Update)
-    async update
-        (
-            @Param('id', ParseIntPipe) id: number,
-            @Body() updateDto: TaskTagUpdateDto,
-            @ActiveUser() activeUser: ActiveUserData,
-        )
-    {
-        const entity = await this._service.update(id, updateDto, activeUser);
-        return modifyEntityForFront(entity);
-    }
-
-
-    @Delete(':id')
+    @Delete()
     @Permission(TaskTagPermissions.Delete)
     async remove
         (
-            @Param('id', ParseIntPipe) id: number,
+            @Body() deleteDto: TaskTagDeleteDto,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.remove(id, activeUser);
+        const entity = await this._service.remove(deleteDto, activeUser);
         return modifyEntityForFront(entity);
     }
 }

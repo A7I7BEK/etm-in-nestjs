@@ -1,3 +1,3 @@
 import { TaskTagCreateDto } from './task-tag-create.dto';
 
-export class TaskTagUpdateDto extends TaskTagCreateDto { }
+export class TaskTagDeleteDto extends TaskTagCreateDto { }

@@ -4,12 +4,12 @@ import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
 import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { OrganizationsService } from 'src/organizations/organizations.service';
-import { PermissionsService } from 'src/permissions/permissions.service';
+import { ProjectTagsService } from 'src/project-tags/project-tags.service';
+import { TasksService } from 'src/tasks/tasks.service';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { TaskTagCreateDto } from './dto/task-tag-create.dto';
+import { TaskTagDeleteDto } from './dto/task-tag-delete.dto';
 import { TaskTagQueryDto } from './dto/task-tag-query.dto';
-import { TaskTagUpdateDto } from './dto/task-tag-update.dto';
 import { TaskTag } from './entities/task-tag.entity';
 import { createUpdateEntity } from './utils/create-update-entity.util';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
@@ -20,8 +20,8 @@ export class TaskTagsService
     constructor (
         @InjectRepository(TaskTag)
         public readonly repository: Repository<TaskTag>,
-        private readonly _organizationsService: OrganizationsService,
-        private readonly _permissionsService: PermissionsService,
+        private readonly _tasksService: TasksService,
+        private readonly _projectTagsService: ProjectTagsService,
     ) { }
 
 
@@ -32,8 +32,8 @@ export class TaskTagsService
         )
     {
         return createUpdateEntity(
-            this._organizationsService,
-            this._permissionsService,
+            this._tasksService,
+            this._projectTagsService,
             this.repository,
             createDto,
             activeUser,
@@ -51,8 +51,12 @@ export class TaskTagsService
         {
             const orgOption: FindManyOptions<TaskTag> = {
                 where: {
-                    organization: {
-                        id: activeUser.orgId
+                    task: {
+                        project: {
+                            organization: {
+                                id: activeUser.orgId
+                            }
+                        }
                     }
                 }
             };
@@ -93,8 +97,12 @@ export class TaskTagsService
         {
             const orgOption: FindOneOptions<TaskTag> = {
                 where: {
-                    organization: {
-                        id: activeUser.orgId
+                    task: {
+                        project: {
+                            organization: {
+                                id: activeUser.orgId
+                            }
+                        }
                     }
                 }
             };
@@ -112,40 +120,22 @@ export class TaskTagsService
     }
 
 
-    async update
-        (
-            id: number,
-            updateDto: TaskTagUpdateDto,
-            activeUser: ActiveUserData,
-        )
-    {
-        const entity = await this.findOne(
-            {
-                where: { id }
-            },
-            activeUser,
-        );
-
-        return createUpdateEntity(
-            this._organizationsService,
-            this._permissionsService,
-            this.repository,
-            updateDto,
-            activeUser,
-            entity,
-        );
-    }
-
-
     async remove
         (
-            id: number,
+            deleteDto: TaskTagDeleteDto,
             activeUser: ActiveUserData,
         )
     {
         const entity = await this.findOne(
             {
-                where: { id }
+                where: {
+                    task: {
+                        id: deleteDto.taskId,
+                    },
+                    projectTag: {
+                        id: deleteDto.projectTagId,
+                    },
+                }
             },
             activeUser,
         );
