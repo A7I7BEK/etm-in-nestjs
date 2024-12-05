@@ -9,9 +9,8 @@ export class TaskMemberQueryDto extends BaseQueryDto<TaskMemberProperties>
     @IsEnum(TaskMemberProperties)
     sortBy?: TaskMemberProperties = TaskMemberProperties.ID;
 
-    @IsOptional()
     @Min(1)
     @IsInt()
     @Type(() => Number)
-    organizationId?: number;
+    taskId: number;
 }

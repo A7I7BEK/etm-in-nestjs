@@ -71,7 +71,7 @@ export class TaskMembersController
     @Permission(TaskMemberPermissions.Delete)
     async remove
         (
-            @Body() deleteDto: TaskMemberDeleteDto,
+            @Body() deleteDto: TaskMemberDeleteDto, // TODO: check if it is working
             @ActiveUser() activeUser: ActiveUserData,
         )
     {

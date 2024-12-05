@@ -11,23 +11,27 @@ export function loadQueryBuilder
         activeUser: ActiveUserData,
     )
 {
-    const [ role, org ] = [ 'role', 'organization' ];
-    const queryBuilder = repository.createQueryBuilder(role);
+    const [ tMember, empl, user, task, proj, org ] =
+        [ 'taskMember', 'employee', 'user', 'task', 'project', 'organization' ];
+    const queryBuilder = repository.createQueryBuilder(tMember);
 
 
-    queryBuilder.leftJoinAndSelect(`${role}.organization`, org);
+    queryBuilder.leftJoinAndSelect(`${tMember}.employee`, empl);
+    queryBuilder.leftJoinAndSelect(`${empl}.user`, user);
+    queryBuilder.leftJoinAndSelect(`${tMember}.task`, task);
+    queryBuilder.leftJoin(`${task}.project`, proj);
+    queryBuilder.leftJoin(`${proj}.organization`, org);
     queryBuilder.skip(queryDto.skip);
     queryBuilder.take(queryDto.perPage);
-    queryBuilder.orderBy(role + '.' + queryDto.sortBy, queryDto.order);
+    queryBuilder.orderBy(tMember + '.' + queryDto.sortBy, queryDto.order);
+
+
+    queryBuilder.andWhere(`${tMember}.task = :taskId`, { taskId: queryDto.taskId });
 
 
     if (!activeUser.systemAdmin)
     {
-        queryBuilder.andWhere(`${role}.organization = :orgId`, { orgId: activeUser.orgId });
-    }
-    else if (queryDto.organizationId) // BINGO: activeUser.systemAdmin && queryDto.organizationId
-    {
-        queryBuilder.andWhere(`${role}.organization = :orgId`, { orgId: queryDto.organizationId });
+        queryBuilder.andWhere(`${proj}.organization = :orgId`, { orgId: activeUser.orgId });
     }
 
 
@@ -36,8 +40,10 @@ export function loadQueryBuilder
         queryBuilder.andWhere(
             new Brackets((qb) =>
             {
-                qb.orWhere(`${role}.codeName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
-                qb.orWhere(`${role}.roleName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
+                qb.orWhere(`${empl}.firstName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
+                qb.orWhere(`${empl}.lastName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
+                qb.orWhere(`${empl}.middleName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
+                qb.orWhere(`${user}.userName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
             }),
         );
     }
