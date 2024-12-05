@@ -12,13 +12,17 @@ export function loadQueryBuilder
         activeUser: ActiveUserData,
     )
 {
-    const [ task, column, project, org ] = [ 'task', 'column', 'project', 'organization' ];
+    const [ task, column, project, org, members, empl, user ] =
+        [ 'task', 'column', 'project', 'organization', 'members', 'employee', 'user' ];
     const queryBuilder = repository.createQueryBuilder(task);
 
 
     queryBuilder.leftJoinAndSelect(`${task}.column`, column);
     queryBuilder.leftJoinAndSelect(`${task}.project`, project);
-    queryBuilder.leftJoinAndSelect(`${project}.organization`, org);
+    queryBuilder.leftJoin(`${project}.organization`, org);
+    queryBuilder.leftJoin(`${task}.members`, members);
+    queryBuilder.leftJoin(`${members}.employee`, empl);
+    queryBuilder.leftJoin(`${empl}.user`, user);
     queryBuilder.skip(queryDto.skip);
     queryBuilder.take(queryDto.perPage);
     queryBuilder.orderBy(
@@ -41,8 +45,8 @@ export function loadQueryBuilder
 
     if (queryDto.ownTask && !activeUser.systemAdmin)
     {
-        // TODO: task member needed
-        queryBuilder.andWhere(`${task}.TASK_MEMBER = :memId`, { memId: activeUser.sub });
+        // TODO: check if it is working
+        queryBuilder.andWhere(`${empl}.user = :userId`, { userId: activeUser.sub });
     }
 
 
