@@ -1,7 +1,7 @@
-import { Organization } from 'src/organizations/entities/organization.entity';
-import { Permission } from 'src/permissions/entities/permission.entity';
-import { User } from 'src/users/entities/user.entity';
+import { Employee } from 'src/employees/entities/employee.entity';
+import { Task } from 'src/tasks/entities/task.entity';
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { TaskCommentType } from '../enums/task-comment-type.enum';
 
 @Entity()
 export class TaskComment
@@ -9,22 +9,22 @@ export class TaskComment
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
-    roleName: string;
+    @ManyToOne(type => Employee, { eager: true })
+    author: Employee;
 
     @Column()
-    codeName: string;
+    commentText: string;
 
-    @Column()
-    systemCreated: boolean = false;
+    @Column({
+        type: 'enum',
+        enum: TaskCommentType,
+    })
+    commentType: TaskCommentType;
 
     @JoinTable()
-    @ManyToMany(type => Permission, { eager: true })
-    permissions: Permission[];
+    @ManyToMany(type => Employee)
+    members: Employee[];
 
-    @ManyToMany(type => User, user => user.roles)
-    users: User[];
-
-    @ManyToOne(type => Organization)
-    organization: Organization;
+    @ManyToOne(type => Task, t => t.comments)
+    task: Task;
 }

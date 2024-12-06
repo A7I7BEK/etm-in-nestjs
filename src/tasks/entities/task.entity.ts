@@ -1,5 +1,6 @@
 import { ProjectColumn } from 'src/project-columns/entities/project-column.entity';
 import { Project } from 'src/projects/entities/project.entity';
+import { TaskComment } from 'src/task-comments/entities/task-comment.entity';
 import { TaskMember } from 'src/task-members/entities/task-member.entity';
 import { TaskTag } from 'src/task-tags/entities/task-tag.entity';
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
@@ -55,4 +56,7 @@ export class Task
 
     @OneToMany(type => TaskTag, t => t.task)
     tags: TaskTag[];
+
+    @OneToMany(type => TaskComment, c => c.task)
+    comments: TaskComment[];
 }
