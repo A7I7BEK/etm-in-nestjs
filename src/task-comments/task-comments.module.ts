@@ -1,7 +1,7 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { OrganizationsModule } from 'src/organizations/organizations.module';
-import { PermissionsModule } from 'src/permissions/permissions.module';
+import { EmployeesModule } from 'src/employees/employees.module';
+import { TasksModule } from 'src/tasks/tasks.module';
 import { TaskComment } from './entities/task-comment.entity';
 import { TaskCommentsController } from './task-comments.controller';
 import { TaskCommentsService } from './task-comments.service';
@@ -9,8 +9,8 @@ import { TaskCommentsService } from './task-comments.service';
 @Module({
     imports: [
         TypeOrmModule.forFeature([ TaskComment ]),
-        OrganizationsModule,
-        PermissionsModule,
+        forwardRef(() => TasksModule),
+        EmployeesModule,
     ],
     exports: [ TaskCommentsService ],
     controllers: [ TaskCommentsController ],

@@ -11,23 +11,35 @@ export function loadQueryBuilder
         activeUser: ActiveUserData,
     )
 {
-    const [ role, org ] = [ 'role', 'organization' ];
-    const queryBuilder = repository.createQueryBuilder(role);
+    const [ comment, auth, authUser, members, memUser, task, proj, org ] =
+        [ 'taskComment', 'author', 'authUser', 'members', 'memUser', 'task', 'project', 'organization' ];
+    const queryBuilder = repository.createQueryBuilder(comment);
 
 
-    queryBuilder.leftJoinAndSelect(`${role}.organization`, org);
+    queryBuilder.leftJoinAndSelect(`${comment}.author`, auth);
+    queryBuilder.leftJoinAndSelect(`${auth}.user`, authUser);
+    queryBuilder.leftJoinAndSelect(`${comment}.members`, members);
+    queryBuilder.leftJoinAndSelect(`${members}.user`, memUser);
+    queryBuilder.leftJoinAndSelect(`${comment}.task`, task);
+    queryBuilder.leftJoin(`${task}.project`, proj);
+    queryBuilder.leftJoin(`${proj}.organization`, org);
     queryBuilder.skip(queryDto.skip);
     queryBuilder.take(queryDto.perPage);
-    queryBuilder.orderBy(role + '.' + queryDto.sortBy, queryDto.order);
+    queryBuilder.orderBy(comment + '.' + queryDto.sortBy, queryDto.order);
+
+
+    queryBuilder.andWhere(`${task}.project = :projId`, { projId: queryDto.projectId });
+
+
+    if (queryDto.taskId)
+    {
+        queryBuilder.andWhere(`${comment}.task = :taskId`, { taskId: queryDto.taskId });
+    }
 
 
     if (!activeUser.systemAdmin)
     {
-        queryBuilder.andWhere(`${role}.organization = :orgId`, { orgId: activeUser.orgId });
-    }
-    else if (queryDto.organizationId) // BINGO: activeUser.systemAdmin && queryDto.organizationId
-    {
-        queryBuilder.andWhere(`${role}.organization = :orgId`, { orgId: queryDto.organizationId });
+        queryBuilder.andWhere(`${proj}.organization = :orgId`, { orgId: activeUser.orgId });
     }
 
 
@@ -36,8 +48,11 @@ export function loadQueryBuilder
         queryBuilder.andWhere(
             new Brackets((qb) =>
             {
-                qb.orWhere(`${role}.codeName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
-                qb.orWhere(`${role}.roleName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
+                qb.orWhere(`${comment}.commentText ILIKE :search`, { search: `%${queryDto.allSearch}%` });
+                qb.orWhere(`${members}.firstName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
+                qb.orWhere(`${members}.lastName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
+                qb.orWhere(`${members}.middleName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
+                qb.orWhere(`${memUser}.userName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
             }),
         );
     }

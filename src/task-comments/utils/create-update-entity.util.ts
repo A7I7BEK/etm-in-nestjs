@@ -1,6 +1,6 @@
+import { EmployeesService } from 'src/employees/employees.service';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { OrganizationsService } from 'src/organizations/organizations.service';
-import { PermissionsService } from 'src/permissions/permissions.service';
+import { TasksService } from 'src/tasks/tasks.service';
 import { In, Repository } from 'typeorm';
 import { TaskCommentCreateDto } from '../dto/task-comment-create.dto';
 import { TaskCommentUpdateDto } from '../dto/task-comment-update.dto';
@@ -9,30 +9,50 @@ import { TaskComment } from '../entities/task-comment.entity';
 
 export async function createUpdateEntity
     (
-        organizationsService: OrganizationsService,
-        permissionsService: PermissionsService,
+        tasksService: TasksService,
+        employeesService: EmployeesService,
         repository: Repository<TaskComment>,
         dto: TaskCommentCreateDto | TaskCommentUpdateDto,
         activeUser: ActiveUserData,
         entity = new TaskComment(),
     )
 {
-    const organizationEntity = await organizationsService.findOneActiveUser(
+    if (dto instanceof TaskCommentCreateDto)
+    {
+        entity.task = await tasksService.findOne(
+            {
+                where: { id: dto.taskId }
+            },
+            activeUser,
+        );
+        entity.createdAt = new Date();
+    }
+
+
+    if (!activeUser.systemAdmin)
+    {
+        entity.author = await employeesService.findOne(
+            {
+                where: { id: activeUser.sub }
+            },
+            activeUser,
+        );
+    }
+
+
+    const memberIds = dto.members.map(x => x.id);
+    const memberEntities = await employeesService.findAll(
         {
-            where: { id: dto.organizationId }
+            where: { id: In(memberIds) }
         },
         activeUser,
     );
 
 
-    const permissionIds = dto.permissions.map(x => x.id); // temporary for this project, must be: [1, 2, 3]
-    const permissionEntities = await permissionsService.findAll({ where: { id: In(permissionIds) } }); // BINGO
-
-
-    entity.roleName = dto.roleName;
-    entity.codeName = dto.codeName;
-    entity.organization = organizationEntity;
-    entity.permissions = permissionEntities;
+    entity.commentText = dto.commentText;
+    entity.commentType = dto.commentType;
+    entity.members = memberEntities;
+    entity.updatedAt = new Date();
 
 
     return repository.save(entity);

@@ -56,7 +56,15 @@ export class TaskCommentsController
         const entity = await this._service.findOne(
             {
                 where: { id },
-                relations: { organization: true }
+                relations: {
+                    author: {
+                        user: true,
+                    },
+                    members: {
+                        user: true,
+                    },
+                    task: true,
+                }
             },
             activeUser,
         );
