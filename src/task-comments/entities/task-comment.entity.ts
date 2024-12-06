@@ -21,6 +21,12 @@ export class TaskComment
     })
     commentType: TaskCommentType;
 
+    @Column()
+    createdAt: Date;
+
+    @Column()
+    updatedAt: Date;
+
     @JoinTable()
     @ManyToMany(type => Employee)
     members: Employee[];
