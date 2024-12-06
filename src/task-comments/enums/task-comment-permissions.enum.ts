@@ -1,7 +1,7 @@
 export enum TaskCommentPermissions
 {
-    Create = 'ROLE_CREATE',
-    Read = 'ROLE_READ',
-    Update = 'ROLE_UPDATE',
-    Delete = 'ROLE_DELETE',
+    Create = 'TASK_COMMENT_CREATE',
+    Read = 'TASK_COMMENT_READ',
+    Update = 'TASK_COMMENT_UPDATE',
+    Delete = 'TASK_COMMENT_DELETE',
 }
