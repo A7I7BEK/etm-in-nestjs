@@ -9,9 +9,14 @@ export class TaskCommentQueryDto extends BaseQueryDto<TaskCommentProperties>
     @IsEnum(TaskCommentProperties)
     sortBy?: TaskCommentProperties = TaskCommentProperties.ID;
 
+    @Min(1)
+    @IsInt()
+    @Type(() => Number)
+    projectId: number;
+
     @IsOptional()
     @Min(1)
     @IsInt()
     @Type(() => Number)
-    organizationId?: number;
+    taskId?: number;
 }

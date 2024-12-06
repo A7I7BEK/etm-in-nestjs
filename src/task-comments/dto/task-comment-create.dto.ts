@@ -1,23 +1,23 @@
 import { Type } from 'class-transformer';
-import { ArrayMinSize, IsInt, IsNotEmpty, IsString, Min, ValidateNested } from 'class-validator';
+import { ArrayMinSize, IsEnum, IsInt, IsNotEmpty, IsString, Min, ValidateNested } from 'class-validator';
 import { ObjectIdDto } from 'src/common/dto/object-id.dto';
+import { TaskCommentType } from '../enums/task-comment-type.enum';
 
 export class TaskCommentCreateDto
 {
     @IsNotEmpty()
     @IsString()
-    roleName: string;
+    commentText: string;
 
-    @IsNotEmpty()
-    @IsString()
-    codeName: string;
+    @IsEnum(TaskCommentType)
+    commentType: TaskCommentType;
 
     @ArrayMinSize(1)
-    @ValidateNested({ each: true }) // BINGO
+    @ValidateNested({ each: true })
     @Type(() => ObjectIdDto)
-    permissions: ObjectIdDto[];
+    members: ObjectIdDto[];
 
-    @Min(0)
+    @Min(1)
     @IsInt()
-    organizationId: number;
+    taskId: number;
 }
