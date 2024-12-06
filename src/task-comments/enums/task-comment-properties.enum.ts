@@ -1,7 +1,8 @@
 export enum TaskCommentProperties
 {
     ID = 'id',
-    ROLE_NAME = 'roleName',
-    CODE_NAME = 'codeName',
-    ORGANIZATION = 'organization',
+    AUTHOR = 'author',
+    COMMENT_TYPE = 'commentType',
+    CREATED_AT = 'createdAt',
+    UPDATED_AT = 'updatedAt',
 }
