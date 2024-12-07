@@ -10,6 +10,7 @@ import { ProjectColumnMoveDto } from './dto/project-column-move.dto';
 import { ProjectColumnUpdateDto } from './dto/project-column-update.dto';
 import { ProjectColumn } from './entities/project-column.entity';
 import { createUpdateEntity } from './utils/create-update-entity.util';
+import { moveEntity } from './utils/move-entity.util';
 
 @Injectable()
 export class ProjectColumnsService
@@ -18,7 +19,7 @@ export class ProjectColumnsService
         @InjectRepository(ProjectColumn)
         public readonly repository: Repository<ProjectColumn>,
         @Inject(forwardRef(() => ProjectsService)) // BINGO
-        private readonly _projectsService: ProjectsService,
+        public readonly projectsService: ProjectsService,
     ) { }
 
 
@@ -29,7 +30,7 @@ export class ProjectColumnsService
         )
     {
         return createUpdateEntity(
-            this._projectsService,
+            this.projectsService,
             this.repository,
             createDto,
             activeUser,
@@ -113,7 +114,7 @@ export class ProjectColumnsService
         }
 
         return createUpdateEntity(
-            this._projectsService,
+            this.projectsService,
             this.repository,
             updateDto,
             activeUser,
@@ -128,57 +129,11 @@ export class ProjectColumnsService
             activeUser: ActiveUserData,
         )
     {
-        const entity = await this.findOne(
-            {
-                where: { id: moveDto.id },
-            },
+        return moveEntity(
+            this, // BINGO
+            moveDto,
             activeUser,
         );
-
-        if (entity.projectType === ProjectType.KANBAN)
-        {
-            throw new ForbiddenException(`Column of ${ProjectType.KANBAN} project cannot be moved`);
-        }
-
-        const projectEntity = await this._projectsService.findOne(
-            {
-                where: { id: moveDto.projectId },
-                relations: { columns: true },
-                order: {
-                    columns: {
-                        ordering: 'ASC',
-                    }
-                }
-            },
-            activeUser,
-        );
-
-        if (projectEntity.projectType === ProjectType.KANBAN)
-        {
-            throw new ForbiddenException(`Column cannot be moved into ${ProjectType.KANBAN} project`);
-        }
-
-        const column = projectEntity.columns.find((col) => col.id === entity.id);
-        if (column)
-        {
-            projectEntity.columns.splice(projectEntity.columns.indexOf(column), 1);
-            projectEntity.columns.splice(moveDto.ordering, 0, column);
-        }
-        else
-        {
-            entity.project = { ...projectEntity };
-            delete entity.project.columns;
-            projectEntity.columns.splice(moveDto.ordering, 0, entity);
-        }
-
-        projectEntity.columns.forEach((item, index) =>
-        {
-            item.ordering = index;
-        });
-
-        await this.repository.save(projectEntity.columns);
-
-        return column ? column : entity;
     }
 
 
