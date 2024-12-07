@@ -9,12 +9,14 @@ import { ProjectsService } from 'src/projects/projects.service';
 import { TaskMembersService } from 'src/task-members/task-members.service';
 import { TaskTagsService } from 'src/task-tags/task-tags.service';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { TaskCopyDto } from './dto/task-copy.dto';
 import { TaskCreateDto } from './dto/task-create.dto';
 import { TaskMoveDto } from './dto/task-move.dto';
 import { TaskQueryDto } from './dto/task-query.dto';
 import { TaskUpdateDto } from './dto/task-update.dto';
 import { Task } from './entities/task.entity';
 import { calculateTaskStatus } from './utils/calculate-task-status.util';
+import { copyEntity } from './utils/copy-entity.util';
 import { createEntity } from './utils/create-entity.util';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
 import { moveEntity } from './utils/move-entity.util';
@@ -150,42 +152,6 @@ export class TasksService
     }
 
 
-    async copy
-        (
-            id: number,
-            updateDto: TaskUpdateDto,
-            activeUser: ActiveUserData,
-        )
-    {
-        const entity = await this.findOne(
-            {
-                where: { id }
-            },
-            activeUser,
-        );
-
-        return updateEntity(
-            this.repository,
-            updateDto,
-            entity,
-        );
-    }
-
-
-    async move
-        (
-            moveDto: TaskMoveDto,
-            activeUser: ActiveUserData,
-        )
-    {
-        return moveEntity(
-            this,
-            moveDto,
-            activeUser,
-        );
-    }
-
-
     async remove
         (
             id: number,
@@ -200,5 +166,33 @@ export class TasksService
         );
 
         return this.repository.remove(entity);
+    }
+
+
+    copy
+        (
+            copyDto: TaskCopyDto,
+            activeUser: ActiveUserData,
+        )
+    {
+        return copyEntity(
+            this,
+            copyDto,
+            activeUser,
+        );
+    }
+
+
+    move
+        (
+            moveDto: TaskMoveDto,
+            activeUser: ActiveUserData,
+        )
+    {
+        return moveEntity(
+            this,
+            moveDto,
+            activeUser,
+        );
     }
 }

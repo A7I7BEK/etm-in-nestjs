@@ -3,6 +3,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
+import { TaskCopyDto } from './dto/task-copy.dto';
 import { TaskCreateDto } from './dto/task-create.dto';
 import { TaskMoveDto } from './dto/task-move.dto';
 import { TaskQueryDto } from './dto/task-query.dto';
@@ -99,11 +100,11 @@ export class TasksController
     @Permission(TaskPermissions.Copy)
     async copy
         (
-            @Body() moveDto: TaskMoveDto,
+            @Body() copyDto: TaskCopyDto,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.move(moveDto, activeUser);
+        const entity = await this._service.copy(copyDto, activeUser);
         return modifyTaskForFront(entity);
     }
 
