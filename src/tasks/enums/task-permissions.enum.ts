@@ -4,9 +4,8 @@ export enum TaskPermissions
     Read = 'TASK_READ',
     Update = 'TASK_UPDATE',
     Delete = 'TASK_DELETE',
-
-    Move = 'TASK_MOVE',
     Copy = 'TASK_COPY',
+    Move = 'TASK_MOVE',
 
     CheckCreate = 'TASK_CHECK_CREATE',
     CheckRead = 'TASK_CHECK_READ',

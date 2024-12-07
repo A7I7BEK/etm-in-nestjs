@@ -4,6 +4,7 @@ import { Permission } from 'src/iam/authorization/decorators/permission.decorato
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { TaskCreateDto } from './dto/task-create.dto';
+import { TaskMoveDto } from './dto/task-move.dto';
 import { TaskQueryDto } from './dto/task-query.dto';
 import { TaskUpdateDto } from './dto/task-update.dto';
 import { TaskPermissions } from './enums/task-permissions.enum';
@@ -90,6 +91,32 @@ export class TasksController
         )
     {
         const entity = await this._service.remove(id, activeUser);
+        return modifyTaskForFront(entity);
+    }
+
+
+    @Post('copy')
+    @Permission(TaskPermissions.Copy)
+    async copy
+        (
+            @Body() moveDto: TaskMoveDto,
+            @ActiveUser() activeUser: ActiveUserData,
+        )
+    {
+        const entity = await this._service.move(moveDto, activeUser);
+        return modifyTaskForFront(entity);
+    }
+
+
+    @Post('move')
+    @Permission(TaskPermissions.Move)
+    async move
+        (
+            @Body() moveDto: TaskMoveDto,
+            @ActiveUser() activeUser: ActiveUserData,
+        )
+    {
+        const entity = await this._service.move(moveDto, activeUser);
         return modifyTaskForFront(entity);
     }
 }

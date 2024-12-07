@@ -10,12 +10,14 @@ import { TaskMembersService } from 'src/task-members/task-members.service';
 import { TaskTagsService } from 'src/task-tags/task-tags.service';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { TaskCreateDto } from './dto/task-create.dto';
+import { TaskMoveDto } from './dto/task-move.dto';
 import { TaskQueryDto } from './dto/task-query.dto';
 import { TaskUpdateDto } from './dto/task-update.dto';
 import { Task } from './entities/task.entity';
 import { calculateTaskStatus } from './utils/calculate-task-status.util';
 import { createEntity } from './utils/create-entity.util';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
+import { moveEntity } from './utils/move-entity.util';
 import { updateEntity } from './utils/update-entity.util';
 
 @Injectable()
@@ -24,8 +26,8 @@ export class TasksService
     constructor (
         @InjectRepository(Task)
         public readonly repository: Repository<Task>,
-        private readonly _projectsService: ProjectsService,
-        private readonly _columnsService: ProjectColumnsService,
+        public readonly projectsService: ProjectsService,
+        public readonly columnsService: ProjectColumnsService,
         @Inject(forwardRef(() => TaskMembersService))
         private readonly _taskMembersService: TaskMembersService,
         @Inject(forwardRef(() => TaskTagsService))
@@ -40,7 +42,7 @@ export class TasksService
         )
     {
         return createEntity(
-            this._columnsService,
+            this.columnsService,
             this.repository,
             createDto,
             activeUser,
@@ -144,6 +146,42 @@ export class TasksService
             this.repository,
             updateDto,
             entity,
+        );
+    }
+
+
+    async copy
+        (
+            id: number,
+            updateDto: TaskUpdateDto,
+            activeUser: ActiveUserData,
+        )
+    {
+        const entity = await this.findOne(
+            {
+                where: { id }
+            },
+            activeUser,
+        );
+
+        return updateEntity(
+            this.repository,
+            updateDto,
+            entity,
+        );
+    }
+
+
+    async move
+        (
+            moveDto: TaskMoveDto,
+            activeUser: ActiveUserData,
+        )
+    {
+        return moveEntity(
+            this,
+            moveDto,
+            activeUser,
         );
     }
 
