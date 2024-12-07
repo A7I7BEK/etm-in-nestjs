@@ -1,23 +1,14 @@
-import { Type } from 'class-transformer';
-import { ArrayMinSize, IsInt, IsNotEmpty, IsString, Min, ValidateNested } from 'class-validator';
-import { ObjectIdDto } from 'src/common/dto/object-id.dto';
+import { OmitType } from '@nestjs/swagger';
+import { IsBoolean, IsOptional } from 'class-validator';
+import { TaskDeadlineUpdateDto } from './task-deadline-update.dto';
 
-export class TaskDeadlineDeleteDto
+export class TaskDeadlineDeleteDto extends OmitType(TaskDeadlineUpdateDto, [ 'startDate', 'deadLine' ])
 {
-    @IsNotEmpty()
-    @IsString()
-    roleName: string;
+    @IsOptional()
+    @IsBoolean()
+    startDate?: boolean;
 
-    @IsNotEmpty()
-    @IsString()
-    codeName: string;
-
-    @ArrayMinSize(1)
-    @ValidateNested({ each: true }) // BINGO
-    @Type(() => ObjectIdDto)
-    permissions: ObjectIdDto[];
-
-    @Min(0)
-    @IsInt()
-    organizationId: number;
+    @IsOptional()
+    @IsBoolean()
+    deadLine?: boolean;
 }
