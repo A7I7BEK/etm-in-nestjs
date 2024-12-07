@@ -16,6 +16,4 @@ export enum TaskPermissions
     AttachmentRead = 'TASK_ATTACHMENT_READ',
 
     ActionRead = 'TASK_ACTION_READ',
-
-    TimeCreate = 'TASK_CREATE_TIME',
 }
