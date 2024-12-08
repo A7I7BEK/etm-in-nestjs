@@ -10,7 +10,7 @@ import { TaskQueryDto } from './dto/task-query.dto';
 import { TaskUpdateDto } from './dto/task-update.dto';
 import { TaskPermissions } from './enums/task-permissions.enum';
 import { TasksService } from './tasks.service';
-import { modifyTaskForFront } from './utils/modify-entity-for-front.util';
+import { modifyTaskForFront } from './utils/modify-task-for-front.util';
 
 @ApiTags('tasks')
 @Controller('tasks')
