@@ -1,6 +1,6 @@
 import { Task } from 'src/tasks/entities/task.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { TaskDeadlineChangeType } from '../enums/task-deadline-change-type.enum';
+import { TaskDeadlineAction } from '../enums/task-deadline-action.enum';
 
 @Entity()
 export class TaskDeadline
@@ -13,15 +13,15 @@ export class TaskDeadline
 
     @Column({
         type: 'enum',
-        enum: TaskDeadlineChangeType,
+        enum: TaskDeadlineAction,
     })
-    changeType: TaskDeadlineChangeType;
+    action: TaskDeadlineAction;
 
     @Column('json')
-    changeDetails: Record<string, any>;
+    details: Record<string, any>;
 
     @Column()
-    commentReason: string;
+    comment: string;
 
     @Column()
     createdAt: Date;
