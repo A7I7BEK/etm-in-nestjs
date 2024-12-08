@@ -2,6 +2,7 @@ import { Module, UnsupportedMediaTypeException } from '@nestjs/common';
 import { MulterModule } from '@nestjs/platform-express';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import appConfig from 'src/common/config/app.config';
+import { OrganizationsModule } from 'src/organizations/organizations.module';
 import { Resource } from './entities/resource.entity';
 import { ResourceController } from './resource.controller';
 import { ResourceService } from './resource.service';
@@ -29,6 +30,7 @@ import { ALLOWED_MIME_TYPES } from './utils/resource.constants';
             }),
         }),
         TypeOrmModule.forFeature([ Resource ]),
+        OrganizationsModule,
     ],
     exports: [ ResourceService ],
     controllers: [ ResourceController ],

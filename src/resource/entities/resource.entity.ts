@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Organization } from 'src/organizations/entities/organization.entity';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Resource
@@ -32,4 +33,7 @@ export class Resource
 
     @Column()
     now: Date; // temporary for this project, must not exist
+
+    @ManyToOne(type => Organization)
+    organization: Organization;
 }

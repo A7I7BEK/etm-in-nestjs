@@ -1,14 +1,18 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as sharp from 'sharp';
-import { FindOptionsRelations, FindOptionsWhere, Repository } from 'typeorm';
+import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
+import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
+import { OrganizationsService } from 'src/organizations/organizations.service';
+import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { MinDimensionDto } from './dto/min-dimension.dto';
 import { UpdateResourceDto } from './dto/update-resource.dto';
 import { Resource } from './entities/resource.entity';
+import { createEntity } from './utils/create-entity.util';
 import { MIME_TYPE_IMAGES } from './utils/resource.constants';
-import { calculateFileSize, generateFilePath } from './utils/resource.utils';
+
 
 @Injectable()
 export class ResourceService
@@ -16,6 +20,7 @@ export class ResourceService
     constructor (
         @InjectRepository(Resource)
         public readonly repository: Repository<Resource>,
+        public readonly organizationsService: OrganizationsService,
     ) { }
 
 
@@ -23,23 +28,18 @@ export class ResourceService
         (
             file: Express.Multer.File,
             minDimensionDto: MinDimensionDto,
+            activeUser: ActiveUserData,
         )
     {
-        if (
-            MIME_TYPE_IMAGES.includes(file.mimetype)
-            && minDimensionDto.minWidth
-            && minDimensionDto.minHeight
-        )
+        const { minWidth: width, minHeight: height } = minDimensionDto;
+
+        if (MIME_TYPE_IMAGES.includes(file.mimetype) && width && height)
         {
-            return this.uploadResizedImage(
-                file,
-                minDimensionDto.minWidth,
-                minDimensionDto.minHeight,
-            );
+            return this.uploadResizedImage(file, width, height, activeUser);
         }
         else
         {
-            return this.uploadSimple(file);
+            return this.uploadSimple(file, activeUser);
         }
     }
 
@@ -49,50 +49,77 @@ export class ResourceService
             file: Express.Multer.File,
             width: number,
             height: number,
+            activeUser: ActiveUserData,
         )
     {
-        const { filePath, filename } = generateFilePath(file);
-        file.path = filePath;
-        file.filename = filename;
-
         file.buffer = await sharp(file.buffer).resize({ width, height, fit: sharp.fit.outside }).toBuffer();
-
-        const resource = this.createResource(file);
-        return this.saveFile(file, resource);
+        return createEntity(this, file, activeUser);
     }
 
 
     uploadSimple // BINGO
         (
             file: Express.Multer.File,
+            activeUser: ActiveUserData,
         )
     {
-        const { filePath, filename } = generateFilePath(file);
-        file.path = filePath;
-        file.filename = filename;
-
-        const resource = this.createResource(file);
-        return this.saveFile(file, resource);
+        return createEntity(this, file, activeUser);
     }
 
 
     uploadMultipleFiles
         (
             files: Express.Multer.File[],
+            activeUser: ActiveUserData,
         )
     {
-        return Promise.all(files.map(file => this.uploadSimple(file))); // BINGO
+        return Promise.all(files.map(file => this.uploadSimple(file, activeUser))); // BINGO
+    }
+
+
+    findAll
+        (
+            options: FindManyOptions<Resource>,
+            activeUser: ActiveUserData,
+        )
+    {
+        if (!activeUser.systemAdmin)
+        {
+            const orgOption: FindManyOptions<Resource> = {
+                where: {
+                    organization: {
+                        id: activeUser.orgId
+                    }
+                }
+            };
+
+            setNestedOptions(options ??= {}, orgOption);
+        }
+
+        return this.repository.find(options);
     }
 
 
     async findOne
         (
-            where: FindOptionsWhere<Resource>,
-            relations?: FindOptionsRelations<Resource>,
+            options: FindOneOptions<Resource>,
+            activeUser: ActiveUserData,
         )
     {
-        const entity = await this.repository.findOne({ where, relations });
+        if (!activeUser.systemAdmin)
+        {
+            const orgOption: FindOneOptions<Resource> = {
+                where: {
+                    organization: {
+                        id: activeUser.orgId
+                    }
+                }
+            };
 
+            setNestedOptions(options ??= {}, orgOption);
+        }
+
+        const entity = await this.repository.findOne(options);
         if (!entity)
         {
             throw new NotFoundException(`${Resource.name} not found`);
@@ -106,9 +133,15 @@ export class ResourceService
         (
             id: number,
             updateDto: UpdateResourceDto,
+            activeUser: ActiveUserData,
         )
     {
-        const entity = await this.findOne({ id });
+        const entity = await this.findOne(
+            {
+                where: { id }
+            },
+            activeUser,
+        );
         entity.name = updateDto.name + path.extname(entity.filename);
         entity.updatedAt = new Date();
         entity.now = new Date();
@@ -120,18 +153,16 @@ export class ResourceService
     async remove
         (
             id: number,
+            activeUser: ActiveUserData,
         )
     {
-        const entity = await this.findOne({ id });
-        return this.removeFile(entity);
-    }
+        const entity = await this.findOne(
+            {
+                where: { id }
+            },
+            activeUser,
+        );
 
-
-    async removeFile
-        (
-            entity: Resource,
-        )
-    {
         try
         {
             await fs.promises.rm(entity.url);
@@ -142,44 +173,5 @@ export class ResourceService
         }
 
         return this.repository.remove(entity);
-    }
-
-
-    private createResource
-        (
-            file: Express.Multer.File,
-        )
-    {
-        const entity = new Resource();
-        entity.url = file.path;
-        entity.name = file.filename;
-        entity.filename = file.filename;
-        entity.mimetype = file.mimetype;
-        entity.size = file.buffer.length; // BINGO
-        entity.sizeCalculated = calculateFileSize(file.buffer.length);
-        entity.createdAt = new Date();
-        entity.updatedAt = new Date();
-        entity.now = new Date();
-
-        return entity;
-    }
-
-
-    private async saveFile
-        (
-            file: Express.Multer.File,
-            resource: Resource,
-        )
-    {
-        try
-        {
-            await fs.promises.writeFile(file.path, file.buffer);
-
-            return this.repository.save(resource);
-        }
-        catch (error)
-        {
-            throw new InternalServerErrorException('Failed to save file');
-        }
     }
 }

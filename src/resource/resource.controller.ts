@@ -1,6 +1,8 @@
 import { Body, Controller, Delete, NotAcceptableException, Param, ParseIntPipe, Post, Put, Query, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
+import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
+import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { MinDimensionDto } from './dto/min-dimension.dto';
 import { UpdateResourceDto } from './dto/update-resource.dto';
 import { ResourceService } from './resource.service';
@@ -18,6 +20,7 @@ export class ResourceController
         (
             @UploadedFile() file: Express.Multer.File,
             @Query() minDimensionDto: MinDimensionDto,
+            @ActiveUser() activeUser: ActiveUserData,
         )
     {
         if (!file)
@@ -25,7 +28,7 @@ export class ResourceController
             throw new NotAcceptableException();
         }
 
-        return this._service.uploadFile(file, minDimensionDto);
+        return this._service.uploadFile(file, minDimensionDto, activeUser);
     }
 
 
@@ -34,6 +37,7 @@ export class ResourceController
     createMany
         (
             @UploadedFiles() files: Express.Multer.File[],
+            @ActiveUser() activeUser: ActiveUserData,
         )
     {
         if (!files || files.length === 0)
@@ -41,7 +45,7 @@ export class ResourceController
             throw new NotAcceptableException();
         }
 
-        return this._service.uploadMultipleFiles(files);
+        return this._service.uploadMultipleFiles(files, activeUser);
     }
 
 
@@ -50,9 +54,10 @@ export class ResourceController
         (
             @Param('id', ParseIntPipe) id: number,
             @Body() updateDto: UpdateResourceDto,
+            @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        return this._service.update(id, updateDto);
+        return this._service.update(id, updateDto, activeUser);
     }
 
 
@@ -60,8 +65,9 @@ export class ResourceController
     remove
         (
             @Param('id', ParseIntPipe) id: number,
+            @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        return this._service.remove(id);
+        return this._service.remove(id, activeUser);
     }
 }
