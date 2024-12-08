@@ -1,4 +1,5 @@
-import { IsInt, IsNotEmpty, IsString, Min } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsDate, IsInt, Min } from 'class-validator';
 
 export class TaskDeadlineCreateDto
 {
@@ -6,11 +7,11 @@ export class TaskDeadlineCreateDto
     @IsInt()
     taskId: number;
 
-    @IsNotEmpty()
-    @IsString()
-    startDate: string;
+    @IsDate()
+    @Type(() => Date)
+    startDate: Date;
 
-    @IsNotEmpty()
-    @IsString()
-    deadLine: string;
+    @IsDate()
+    @Type(() => Date)
+    deadLine: Date;
 }
