@@ -21,6 +21,7 @@ import { ProjectsModule } from './projects/projects.module';
 import { ReportsModule } from './reports/reports.module';
 import { ResourceModule } from './resource/resource.module';
 import { RolesModule } from './roles/roles.module';
+import { TaskAttachmentsModule } from './task-attachments/task-attachments.module';
 import { TaskCommentsModule } from './task-comments/task-comments.module';
 import { TaskDeadlineModule } from './task-deadline/task-deadline.module';
 import { TaskMembersModule } from './task-members/task-members.module';
@@ -69,6 +70,7 @@ import { UsersModule } from './users/users.module';
         TaskTagsModule,
         TaskCommentsModule,
         TaskDeadlineModule,
+        TaskAttachmentsModule,
         CheckListGroupsModule,
         ReportsModule,
         OneTimePasswordModule,

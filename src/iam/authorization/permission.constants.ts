@@ -10,6 +10,7 @@ import { ProjectTagPermissions } from 'src/project-tags/enums/project-tag-permis
 import { ProjectPermissions } from 'src/projects/enums/project-permissions.enum';
 import { ReportPermissions } from 'src/reports/enums/report-permissions.enum';
 import { RolePermissions } from 'src/roles/enums/role-permissions.enum';
+import { TaskAttachmentPermissions } from 'src/task-attachments/enums/task-attachment-permissions.enum';
 import { TaskCommentPermissions } from 'src/task-comments/enums/task-comment-permissions.enum';
 import { TaskDeadlinePermissions } from 'src/task-deadline/enums/task-deadline-permissions.enum';
 import { TaskMemberPermissions } from 'src/task-members/enums/task-member-permissions.enum';
@@ -34,6 +35,7 @@ export type PermissionType = (
     | TaskTagPermissions
     | TaskCommentPermissions
     | TaskDeadlinePermissions
+    | TaskAttachmentPermissions
     | CheckListGroupPermissions
     | ReportPermissions
 );
@@ -56,6 +58,7 @@ export const PERMISSION_VALUES = [
     ...Object.values(TaskTagPermissions),
     ...Object.values(TaskCommentPermissions),
     ...Object.values(TaskDeadlinePermissions),
+    ...Object.values(TaskAttachmentPermissions),
     ...Object.values(CheckListGroupPermissions),
     ...Object.values(ReportPermissions),
 ];

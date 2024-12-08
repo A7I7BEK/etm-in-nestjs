@@ -1,5 +1,6 @@
 import { ProjectColumn } from 'src/project-columns/entities/project-column.entity';
 import { Project } from 'src/projects/entities/project.entity';
+import { TaskAttachment } from 'src/task-attachments/entities/task-attachment.entity';
 import { TaskComment } from 'src/task-comments/entities/task-comment.entity';
 import { TaskMember } from 'src/task-members/entities/task-member.entity';
 import { TaskTag } from 'src/task-tags/entities/task-tag.entity';
@@ -59,4 +60,7 @@ export class Task
 
     @OneToMany(type => TaskComment, c => c.task)
     comments: TaskComment[];
+
+    @OneToMany(type => TaskAttachment, a => a.task)
+    attachments: TaskAttachment[];
 }

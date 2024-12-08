@@ -12,8 +12,5 @@ export enum TaskPermissions
     CheckUpdate = 'TASK_CHECK_UPDATE',
     CheckDelete = 'TASK_CHECK_DELETE',
 
-    AttachmentBind = 'TASK_ATTACHMENT_BIND',
-    AttachmentRead = 'TASK_ATTACHMENT_READ',
-
     ActionRead = 'TASK_ACTION_READ',
 }
