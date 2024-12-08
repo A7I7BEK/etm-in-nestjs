@@ -64,7 +64,12 @@ export async function createUpdateEntity
 
     if (dto.resourceFile?.id)
     {
-        employeeEntity.photoUrl = (await resourceService.findOne({ id: dto.resourceFile?.id })).url;
+        employeeEntity.photoUrl = (await resourceService.findOne(
+            {
+                where: { id: dto.resourceFile?.id }
+            },
+            activeUser,
+        )).url;
     }
 
 

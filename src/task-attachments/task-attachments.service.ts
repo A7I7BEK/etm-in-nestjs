@@ -33,9 +33,12 @@ export class TaskAttachmentsService
         );
 
         const resourceIds = createDto.attachments.map(x => x.id);
-        const resourceEntities = await this._resourceService.repository.find({
-            where: { id: In(resourceIds) }
-        });
+        const resourceEntities = await this._resourceService.findAll(
+            {
+                where: { id: In(resourceIds) },
+            },
+            activeUser,
+        );
 
         const entityList = resourceEntities.map(item =>
         {

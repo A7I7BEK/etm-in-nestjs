@@ -210,7 +210,7 @@ export class ProjectsService
         const file = await this._resourceService.repository.findOneBy({ url: Equal(entity.background) });
         if (file)
         {
-            await this._resourceService.removeFile(file);
+            await this._resourceService.remove(file.id, activeUser);
         }
 
         entity.background = backgroundDto.background;
