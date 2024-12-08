@@ -120,4 +120,15 @@ export class TasksController
         const entity = await this._service.move(moveDto, activeUser);
         return modifyTaskForFront(entity);
     }
+
+
+    @Post('timeSheet')
+    @Permission(TaskPermissions.Update)
+    async toggleTimer
+        (
+            @ActiveUser() activeUser: ActiveUserData,
+        )
+    {
+        return 0; // TODO: implement
+    }
 }
