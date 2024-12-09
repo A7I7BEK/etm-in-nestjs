@@ -6,18 +6,14 @@ export class CheckListItemCreateDto
 {
     @IsNotEmpty()
     @IsString()
-    roleName: string;
+    text: string;
 
-    @IsNotEmpty()
-    @IsString()
-    codeName: string;
-
-    @ArrayMinSize(1)
-    @ValidateNested({ each: true }) // BINGO
+    @ArrayMinSize(0)
+    @ValidateNested({ each: true })
     @Type(() => ObjectIdDto)
-    permissions: ObjectIdDto[];
+    members: ObjectIdDto[];
 
-    @Min(0)
+    @Min(1)
     @IsInt()
-    organizationId: number;
+    checkListGroupId: number;
 }
