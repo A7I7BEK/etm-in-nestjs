@@ -1,11 +1,12 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CheckListGroupsService } from 'src/check-list-groups/check-list-groups.service';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
 import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
+import { EmployeesService } from 'src/employees/employees.service';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { OrganizationsService } from 'src/organizations/organizations.service';
-import { PermissionsService } from 'src/permissions/permissions.service';
+import { TasksService } from 'src/tasks/tasks.service';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { CheckListItemCreateDto } from './dto/check-list-item-create.dto';
 import { CheckListItemQueryDto } from './dto/check-list-item-query.dto';
@@ -21,8 +22,10 @@ export class CheckListItemsService
     constructor (
         @InjectRepository(CheckListItem)
         public readonly repository: Repository<CheckListItem>,
-        private readonly _organizationsService: OrganizationsService,
-        private readonly _permissionsService: PermissionsService,
+        @Inject(forwardRef(() => CheckListGroupsService))
+        public readonly chGroupsService: CheckListGroupsService,
+        public readonly tasksService: TasksService,
+        public readonly employeesService: EmployeesService,
     ) { }
 
 
@@ -32,13 +35,7 @@ export class CheckListItemsService
             activeUser: ActiveUserData,
         )
     {
-        return createUpdateEntity(
-            this._organizationsService,
-            this._permissionsService,
-            this.repository,
-            createDto,
-            activeUser,
-        );
+        return createUpdateEntity(this, createDto, activeUser);
     }
 
 
@@ -52,13 +49,17 @@ export class CheckListItemsService
         {
             const orgOption: FindManyOptions<CheckListItem> = {
                 where: {
-                    organization: {
-                        id: activeUser.orgId
+                    task: {
+                        project: {
+                            organization: {
+                                id: activeUser.orgId
+                            }
+                        }
                     }
                 }
             };
 
-            setNestedOptions(options ??= {}, orgOption); // BINGO
+            setNestedOptions(options ??= {}, orgOption);
         }
 
         return this.repository.find(options);
@@ -94,13 +95,17 @@ export class CheckListItemsService
         {
             const orgOption: FindOneOptions<CheckListItem> = {
                 where: {
-                    organization: {
-                        id: activeUser.orgId
+                    task: {
+                        project: {
+                            organization: {
+                                id: activeUser.orgId
+                            }
+                        }
                     }
                 }
             };
 
-            setNestedOptions(options ??= {}, orgOption); // BINGO
+            setNestedOptions(options ??= {}, orgOption);
         }
 
         const entity = await this.repository.findOne(options);
@@ -126,20 +131,7 @@ export class CheckListItemsService
             },
             activeUser,
         );
-
-        if (entity.systemCreated)
-        {
-            throw new ForbiddenException('System created Role cannot be edited');
-        }
-
-        return createUpdateEntity(
-            this._organizationsService,
-            this._permissionsService,
-            this.repository,
-            updateDto,
-            activeUser,
-            entity,
-        );
+        return createUpdateEntity(this, updateDto, activeUser, entity);
     }
 
 
@@ -155,12 +147,6 @@ export class CheckListItemsService
             },
             activeUser,
         );
-
-        if (entity.systemCreated)
-        {
-            throw new ForbiddenException('System created Role cannot be deleted');
-        }
-
         return this.repository.remove(entity);
     }
 }
