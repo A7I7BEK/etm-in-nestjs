@@ -5,14 +5,31 @@ import { CheckListItem } from '../entities/check-list-item.entity';
  */
 export function modifyEntityForFront(entity: CheckListItem)
 {
-    const { organization } = entity;
+    const { members, checkListGroup } = entity;
 
 
-    if (organization)
+    if (members)
+    {
+        members.forEach(item =>
+        {
+            Object.assign(item, {
+                employee: {
+                    firstName: item.firstName,
+                    lastName: item.lastName,
+                    middleName: item.middleName,
+                    userId: item.user?.id,
+                    userName: item.user?.userName,
+                }
+            });
+        });
+    }
+
+
+    if (checkListGroup)
     {
         Object.assign(entity, {
-            organizationId: organization.id,
-            organizationName: organization.name,
+            checkListGroupId: checkListGroup.id,
+            checkListGroupName: checkListGroup.name,
         });
     }
 
