@@ -3,15 +3,15 @@ import { ApiTags } from '@nestjs/swagger';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
+import { CheckListItemsService } from './check-list-items.service';
 import { CheckListItemCreateDto } from './dto/check-list-item-create.dto';
 import { CheckListItemQueryDto } from './dto/check-list-item-query.dto';
 import { CheckListItemUpdateDto } from './dto/check-list-item-update.dto';
 import { CheckListItemPermissions } from './enums/check-list-item-permissions.enum';
-import { CheckListItemsService } from './check-list-items.service';
 import { modifyEntityForFront } from './utils/modify-entity-for-front.util';
 
-@ApiTags('roles')
-@Controller('roles')
+@ApiTags('taskCheckLists')
+@Controller('taskCheckLists')
 export class CheckListItemsController
 {
     constructor (private readonly _service: CheckListItemsService) { }
@@ -56,7 +56,12 @@ export class CheckListItemsController
         const entity = await this._service.findOne(
             {
                 where: { id },
-                relations: { organization: true }
+                relations: {
+                    members: {
+                        user: true
+                    },
+                    checkListGroup: true
+                }
             },
             activeUser,
         );
