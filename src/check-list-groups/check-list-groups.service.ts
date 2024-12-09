@@ -1,32 +1,165 @@
-import { Injectable } from '@nestjs/common';
-import { CreateCheckListGroupDto } from './dto/create-check-list-group.dto';
-import { UpdateCheckListGroupDto } from './dto/update-check-list-group.dto';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
+import { Pagination } from 'src/common/pagination/pagination.class';
+import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
+import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
+import { OrganizationsService } from 'src/organizations/organizations.service';
+import { PermissionsService } from 'src/permissions/permissions.service';
+import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { CheckListGroupCreateDto } from './dto/check-list-group-create.dto';
+import { CheckListGroupQueryDto } from './dto/check-list-group-query.dto';
+import { CheckListGroupUpdateDto } from './dto/check-list-group-update.dto';
+import { CheckListGroup } from './entities/check-list-group.entity';
+import { createUpdateEntity } from './utils/create-update-entity.util';
+import { loadQueryBuilder } from './utils/load-query-builder.util';
 
 @Injectable()
 export class CheckListGroupsService
 {
-    create(createCheckListGroupDto: CreateCheckListGroupDto)
+    constructor (
+        @InjectRepository(CheckListGroup)
+        public readonly repository: Repository<CheckListGroup>,
+        private readonly _organizationsService: OrganizationsService,
+        private readonly _permissionsService: PermissionsService,
+    ) { }
+
+
+    create
+        (
+            createDto: CheckListGroupCreateDto,
+            activeUser: ActiveUserData,
+        )
     {
-        return 'This action adds a new checkListGroup';
+        return createUpdateEntity(
+            this._organizationsService,
+            this._permissionsService,
+            this.repository,
+            createDto,
+            activeUser,
+        );
     }
 
-    findAll()
+
+    findAll
+        (
+            options: FindManyOptions<CheckListGroup>,
+            activeUser: ActiveUserData,
+        )
     {
-        return `This action returns all checkListGroups`;
+        if (!activeUser.systemAdmin)
+        {
+            const orgOption: FindManyOptions<CheckListGroup> = {
+                where: {
+                    organization: {
+                        id: activeUser.orgId
+                    }
+                }
+            };
+
+            setNestedOptions(options ??= {}, orgOption); // BINGO
+        }
+
+        return this.repository.find(options);
     }
 
-    findOne(id: number)
+
+    async findAllWithFilters
+        (
+            queryDto: CheckListGroupQueryDto,
+            activeUser: ActiveUserData,
+        )
     {
-        return `This action returns a #${id} checkListGroup`;
+        const loadedQueryBuilder = loadQueryBuilder(
+            this.repository,
+            queryDto,
+            activeUser,
+        );
+
+        const [ data, total ] = await loadedQueryBuilder.getManyAndCount();
+        const paginationMeta = new PaginationMeta(queryDto.page, queryDto.perPage, total);
+
+        return new Pagination<CheckListGroup>(data, paginationMeta);
     }
 
-    update(id: number, updateCheckListGroupDto: UpdateCheckListGroupDto)
+
+    async findOne
+        (
+            options: FindOneOptions<CheckListGroup>,
+            activeUser: ActiveUserData,
+        )
     {
-        return `This action updates a #${id} checkListGroup`;
+        if (!activeUser.systemAdmin)
+        {
+            const orgOption: FindOneOptions<CheckListGroup> = {
+                where: {
+                    organization: {
+                        id: activeUser.orgId
+                    }
+                }
+            };
+
+            setNestedOptions(options ??= {}, orgOption); // BINGO
+        }
+
+        const entity = await this.repository.findOne(options);
+        if (!entity)
+        {
+            throw new NotFoundException(`${CheckListGroup.name} not found`);
+        }
+
+        return entity;
     }
 
-    remove(id: number)
+
+    async update
+        (
+            id: number,
+            updateDto: CheckListGroupUpdateDto,
+            activeUser: ActiveUserData,
+        )
     {
-        return `This action removes a #${id} checkListGroup`;
+        const entity = await this.findOne(
+            {
+                where: { id }
+            },
+            activeUser,
+        );
+
+        if (entity.systemCreated)
+        {
+            throw new ForbiddenException('System created Role cannot be edited');
+        }
+
+        return createUpdateEntity(
+            this._organizationsService,
+            this._permissionsService,
+            this.repository,
+            updateDto,
+            activeUser,
+            entity,
+        );
+    }
+
+
+    async remove
+        (
+            id: number,
+            activeUser: ActiveUserData,
+        )
+    {
+        const entity = await this.findOne(
+            {
+                where: { id }
+            },
+            activeUser,
+        );
+
+        if (entity.systemCreated)
+        {
+            throw new ForbiddenException('System created Role cannot be deleted');
+        }
+
+        return this.repository.remove(entity);
     }
 }

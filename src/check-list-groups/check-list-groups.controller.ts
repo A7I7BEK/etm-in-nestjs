@@ -1,40 +1,92 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
+import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
+import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { CheckListGroupsService } from './check-list-groups.service';
-import { CreateCheckListGroupDto } from './dto/create-check-list-group.dto';
-import { UpdateCheckListGroupDto } from './dto/update-check-list-group.dto';
+import { CheckListGroupCreateDto } from './dto/check-list-group-create.dto';
+import { CheckListGroupQueryDto } from './dto/check-list-group-query.dto';
+import { CheckListGroupUpdateDto } from './dto/check-list-group-update.dto';
+import { CheckListGroupPermissions } from './enums/check-list-group-permissions.enum';
+import { modifyEntityForFront } from './utils/modify-entity-for-front.util';
 
-@Controller('check-list-groups')
+@ApiTags('checkListGroups')
+@Controller('checkListGroups')
 export class CheckListGroupsController
 {
-    constructor (private readonly checkListGroupsService: CheckListGroupsService) { }
+    constructor (private readonly _service: CheckListGroupsService) { }
+
 
     @Post()
-    create(@Body() createCheckListGroupDto: CreateCheckListGroupDto)
+    @Permission(CheckListGroupPermissions.Create)
+    async create
+        (
+            @Body() createDto: CheckListGroupCreateDto,
+            @ActiveUser() activeUser: ActiveUserData,
+        )
     {
-        return this.checkListGroupsService.create(createCheckListGroupDto);
+        const entity = await this._service.create(createDto, activeUser);
+        return modifyEntityForFront(entity);
     }
+
 
     @Get()
-    findAll()
+    @Permission(CheckListGroupPermissions.Read)
+    async findAll
+        (
+            @Query() queryDto: CheckListGroupQueryDto,
+            @ActiveUser() activeUser: ActiveUserData,
+        )
     {
-        return this.checkListGroupsService.findAll();
+        const entityWithPagination = await this._service.findAllWithFilters(queryDto, activeUser);
+        entityWithPagination.data = entityWithPagination.data.map(entity => modifyEntityForFront(entity));
+
+        return entityWithPagination;
     }
+
 
     @Get(':id')
-    findOne(@Param('id') id: string)
+    @Permission(CheckListGroupPermissions.Read)
+    async findOne
+        (
+            @Param('id', ParseIntPipe) id: number,
+            @ActiveUser() activeUser: ActiveUserData,
+        )
     {
-        return this.checkListGroupsService.findOne(+id);
+        const entity = await this._service.findOne(
+            {
+                where: { id },
+                relations: { organization: true }
+            },
+            activeUser,
+        );
+        return modifyEntityForFront(entity);
     }
+
 
     @Put(':id')
-    update(@Param('id') id: string, @Body() updateCheckListGroupDto: UpdateCheckListGroupDto)
+    @Permission(CheckListGroupPermissions.Update)
+    async update
+        (
+            @Param('id', ParseIntPipe) id: number,
+            @Body() updateDto: CheckListGroupUpdateDto,
+            @ActiveUser() activeUser: ActiveUserData,
+        )
     {
-        return this.checkListGroupsService.update(+id, updateCheckListGroupDto);
+        const entity = await this._service.update(id, updateDto, activeUser);
+        return modifyEntityForFront(entity);
     }
 
+
     @Delete(':id')
-    remove(@Param('id') id: string)
+    @Permission(CheckListGroupPermissions.Delete)
+    async remove
+        (
+            @Param('id', ParseIntPipe) id: number,
+            @ActiveUser() activeUser: ActiveUserData,
+        )
     {
-        return this.checkListGroupsService.remove(+id);
+        const entity = await this._service.remove(id, activeUser);
+        return modifyEntityForFront(entity);
     }
 }
