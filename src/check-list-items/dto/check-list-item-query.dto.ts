@@ -9,9 +9,8 @@ export class CheckListItemQueryDto extends BaseQueryDto<CheckListItemProperties>
     @IsEnum(CheckListItemProperties)
     sortBy?: CheckListItemProperties = CheckListItemProperties.ID;
 
-    @IsOptional()
     @Min(1)
     @IsInt()
     @Type(() => Number)
-    organizationId?: number;
+    checkListGroupId: number;
 }
