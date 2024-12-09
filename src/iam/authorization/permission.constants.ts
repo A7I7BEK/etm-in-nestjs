@@ -1,4 +1,5 @@
 import { CheckListGroupPermissions } from 'src/check-list-groups/enums/check-list-group-permissions.enum';
+import { CheckListItemPermissions } from 'src/check-list-items/enums/check-list-item-permissions.enum';
 import { EmployeePermissions } from 'src/employees/enums/employee-permissions.enum';
 import { GroupPermissions } from 'src/groups/enums/group-permissions.enum';
 import { OrganizationPermissions } from 'src/organizations/enums/organization-permissions.enum';
@@ -37,6 +38,7 @@ export type PermissionType = (
     | TaskDeadlinePermissions
     | TaskAttachmentPermissions
     | CheckListGroupPermissions
+    | CheckListItemPermissions
     | ReportPermissions
 );
 
@@ -60,6 +62,7 @@ export const PERMISSION_VALUES = [
     ...Object.values(TaskDeadlinePermissions),
     ...Object.values(TaskAttachmentPermissions),
     ...Object.values(CheckListGroupPermissions),
+    ...Object.values(CheckListItemPermissions),
     ...Object.values(ReportPermissions),
 ];
 

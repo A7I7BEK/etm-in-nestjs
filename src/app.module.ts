@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppService } from './app.service';
 import { CheckListGroupsModule } from './check-list-groups/check-list-groups.module';
+import { CheckListItemsModule } from './check-list-items/check-list-items.module';
 import appConfig from './common/config/app.config';
 import { EmployeesModule } from './employees/employees.module';
 import { GroupsModule } from './groups/groups.module';
@@ -72,6 +73,7 @@ import { UsersModule } from './users/users.module';
         TaskDeadlineModule,
         TaskAttachmentsModule,
         CheckListGroupsModule,
+        CheckListItemsModule,
         ReportsModule,
         OneTimePasswordModule,
     ],
