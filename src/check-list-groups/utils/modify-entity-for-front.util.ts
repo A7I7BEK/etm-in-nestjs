@@ -1,18 +1,26 @@
+import { modifyCheckListItemForFront } from 'src/check-list-items/utils/modify-entity-for-front.util';
 import { CheckListGroup } from '../entities/check-list-group.entity';
 
 /**
  * temporary for this project, must not exist
  */
-export function modifyEntityForFront(entity: CheckListGroup)
+export function modifyCheckListGroupForFront(entity: CheckListGroup)
 {
-    const { organization } = entity;
+    const { checkList, task } = entity;
 
 
-    if (organization)
+    if (checkList)
+    {
+        entity.checkList =
+            entity.checkList.map(item => modifyCheckListItemForFront(item));
+    }
+
+
+    if (task)
     {
         Object.assign(entity, {
-            organizationId: organization.id,
-            organizationName: organization.name,
+            taskId: task.id,
+            taskName: task.name,
         });
     }
 
