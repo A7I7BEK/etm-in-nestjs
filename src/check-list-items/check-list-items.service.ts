@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CheckListGroupsService } from 'src/check-list-groups/check-list-groups.service';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
@@ -6,7 +6,6 @@ import { Pagination } from 'src/common/pagination/pagination.class';
 import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
 import { EmployeesService } from 'src/employees/employees.service';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { TasksService } from 'src/tasks/tasks.service';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { CheckListItemCreateDto } from './dto/check-list-item-create.dto';
 import { CheckListItemQueryDto } from './dto/check-list-item-query.dto';
@@ -22,9 +21,7 @@ export class CheckListItemsService
     constructor (
         @InjectRepository(CheckListItem)
         public readonly repository: Repository<CheckListItem>,
-        @Inject(forwardRef(() => CheckListGroupsService))
         public readonly chGroupsService: CheckListGroupsService,
-        public readonly tasksService: TasksService,
         public readonly employeesService: EmployeesService,
     ) { }
 
