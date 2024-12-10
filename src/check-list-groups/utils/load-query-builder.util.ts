@@ -11,23 +11,29 @@ export function loadQueryBuilder
         activeUser: ActiveUserData,
     )
 {
-    const [ role, org ] = [ 'role', 'organization' ];
-    const queryBuilder = repository.createQueryBuilder(role);
+    const [ chGroup, checkList, chListGroup, members, user, task, proj, org ] =
+        [ 'chGroup', 'checkList', 'checkListGroup', 'members', 'user', 'task', 'project', 'organization' ];
+    const queryBuilder = repository.createQueryBuilder(chGroup);
 
 
-    queryBuilder.leftJoinAndSelect(`${role}.organization`, org);
+    queryBuilder.leftJoinAndSelect(`${chGroup}.checkList`, checkList);
+    queryBuilder.leftJoinAndSelect(`${checkList}.checkListGroup`, chListGroup);
+    queryBuilder.leftJoinAndSelect(`${checkList}.members`, members);
+    queryBuilder.leftJoinAndSelect(`${members}.user`, user);
+    queryBuilder.leftJoinAndSelect(`${chGroup}.task`, task);
+    queryBuilder.leftJoin(`${task}.project`, proj);
+    queryBuilder.leftJoin(`${proj}.organization`, org);
     queryBuilder.skip(queryDto.skip);
     queryBuilder.take(queryDto.perPage);
-    queryBuilder.orderBy(role + '.' + queryDto.sortBy, queryDto.order);
+    queryBuilder.orderBy(chGroup + '.' + queryDto.sortBy, queryDto.order);
+
+
+    queryBuilder.andWhere(`${chGroup}.task = :taskId`, { taskId: queryDto.taskId });
 
 
     if (!activeUser.systemAdmin)
     {
-        queryBuilder.andWhere(`${role}.organization = :orgId`, { orgId: activeUser.orgId });
-    }
-    else if (queryDto.organizationId) // BINGO: activeUser.systemAdmin && queryDto.organizationId
-    {
-        queryBuilder.andWhere(`${role}.organization = :orgId`, { orgId: queryDto.organizationId });
+        queryBuilder.andWhere(`${proj}.organization = :orgId`, { orgId: activeUser.orgId });
     }
 
 
@@ -36,8 +42,7 @@ export function loadQueryBuilder
         queryBuilder.andWhere(
             new Brackets((qb) =>
             {
-                qb.orWhere(`${role}.codeName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
-                qb.orWhere(`${role}.roleName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
+                qb.orWhere(`${chGroup}.name ILIKE :search`, { search: `%${queryDto.allSearch}%` });
             }),
         );
     }
