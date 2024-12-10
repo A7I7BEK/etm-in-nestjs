@@ -1,11 +1,10 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
 import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { OrganizationsService } from 'src/organizations/organizations.service';
-import { PermissionsService } from 'src/permissions/permissions.service';
+import { TasksService } from 'src/tasks/tasks.service';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { CheckListGroupCreateDto } from './dto/check-list-group-create.dto';
 import { CheckListGroupQueryDto } from './dto/check-list-group-query.dto';
@@ -20,8 +19,8 @@ export class CheckListGroupsService
     constructor (
         @InjectRepository(CheckListGroup)
         public readonly repository: Repository<CheckListGroup>,
-        private readonly _organizationsService: OrganizationsService,
-        private readonly _permissionsService: PermissionsService,
+        @Inject(forwardRef(() => TasksService))
+        public readonly tasksService: TasksService,
     ) { }
 
 
@@ -31,13 +30,7 @@ export class CheckListGroupsService
             activeUser: ActiveUserData,
         )
     {
-        return createUpdateEntity(
-            this._organizationsService,
-            this._permissionsService,
-            this.repository,
-            createDto,
-            activeUser,
-        );
+        return createUpdateEntity(this, createDto, activeUser);
     }
 
 
@@ -51,13 +44,17 @@ export class CheckListGroupsService
         {
             const orgOption: FindManyOptions<CheckListGroup> = {
                 where: {
-                    organization: {
-                        id: activeUser.orgId
+                    task: {
+                        project: {
+                            organization: {
+                                id: activeUser.orgId
+                            }
+                        }
                     }
                 }
             };
 
-            setNestedOptions(options ??= {}, orgOption); // BINGO
+            setNestedOptions(options ??= {}, orgOption);
         }
 
         return this.repository.find(options);
@@ -77,6 +74,15 @@ export class CheckListGroupsService
         );
 
         const [ data, total ] = await loadedQueryBuilder.getManyAndCount();
+        data.forEach(entity =>
+        {
+            const totalCount = entity.checkList.length;
+            const checkedCount = entity.checkList.filter(item => item.checked).length;
+            const percent = Math.floor(checkedCount / totalCount * 100);
+
+            Object.assign(entity, { percent });
+        });
+
         const paginationMeta = new PaginationMeta(queryDto.page, queryDto.perPage, total);
 
         return new Pagination<CheckListGroup>(data, paginationMeta);
@@ -93,13 +99,17 @@ export class CheckListGroupsService
         {
             const orgOption: FindOneOptions<CheckListGroup> = {
                 where: {
-                    organization: {
-                        id: activeUser.orgId
+                    task: {
+                        project: {
+                            organization: {
+                                id: activeUser.orgId
+                            }
+                        }
                     }
                 }
             };
 
-            setNestedOptions(options ??= {}, orgOption); // BINGO
+            setNestedOptions(options ??= {}, orgOption);
         }
 
         const entity = await this.repository.findOne(options);
@@ -125,20 +135,7 @@ export class CheckListGroupsService
             },
             activeUser,
         );
-
-        if (entity.systemCreated)
-        {
-            throw new ForbiddenException('System created Role cannot be edited');
-        }
-
-        return createUpdateEntity(
-            this._organizationsService,
-            this._permissionsService,
-            this.repository,
-            updateDto,
-            activeUser,
-            entity,
-        );
+        return createUpdateEntity(this, updateDto, activeUser, entity);
     }
 
 
@@ -154,12 +151,6 @@ export class CheckListGroupsService
             },
             activeUser,
         );
-
-        if (entity.systemCreated)
-        {
-            throw new ForbiddenException('System created Role cannot be deleted');
-        }
-
         return this.repository.remove(entity);
     }
 }
