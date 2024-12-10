@@ -8,7 +8,7 @@ import { CheckListGroupCreateDto } from './dto/check-list-group-create.dto';
 import { CheckListGroupQueryDto } from './dto/check-list-group-query.dto';
 import { CheckListGroupUpdateDto } from './dto/check-list-group-update.dto';
 import { CheckListGroupPermissions } from './enums/check-list-group-permissions.enum';
-import { modifyEntityForFront } from './utils/modify-entity-for-front.util';
+import { modifyCheckListGroupForFront } from './utils/modify-entity-for-front.util';
 
 @ApiTags('checkListGroups')
 @Controller('checkListGroups')
@@ -26,7 +26,7 @@ export class CheckListGroupsController
         )
     {
         const entity = await this._service.create(createDto, activeUser);
-        return modifyEntityForFront(entity);
+        return modifyCheckListGroupForFront(entity);
     }
 
 
@@ -39,7 +39,8 @@ export class CheckListGroupsController
         )
     {
         const entityWithPagination = await this._service.findAllWithFilters(queryDto, activeUser);
-        entityWithPagination.data = entityWithPagination.data.map(entity => modifyEntityForFront(entity));
+        entityWithPagination.data =
+            entityWithPagination.data.map(entity => modifyCheckListGroupForFront(entity));
 
         return entityWithPagination;
     }
@@ -56,11 +57,14 @@ export class CheckListGroupsController
         const entity = await this._service.findOne(
             {
                 where: { id },
-                relations: { organization: true }
+                relations: {
+                    checkList: true,
+                    task: true,
+                }
             },
             activeUser,
         );
-        return modifyEntityForFront(entity);
+        return modifyCheckListGroupForFront(entity);
     }
 
 
@@ -74,7 +78,7 @@ export class CheckListGroupsController
         )
     {
         const entity = await this._service.update(id, updateDto, activeUser);
-        return modifyEntityForFront(entity);
+        return modifyCheckListGroupForFront(entity);
     }
 
 
@@ -87,6 +91,6 @@ export class CheckListGroupsController
         )
     {
         const entity = await this._service.remove(id, activeUser);
-        return modifyEntityForFront(entity);
+        return modifyCheckListGroupForFront(entity);
     }
 }
