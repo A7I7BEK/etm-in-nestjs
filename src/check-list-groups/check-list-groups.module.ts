@@ -1,16 +1,14 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { OrganizationsModule } from 'src/organizations/organizations.module';
-import { PermissionsModule } from 'src/permissions/permissions.module';
-import { CheckListGroup } from './entities/check-list-group.entity';
+import { TasksModule } from 'src/tasks/tasks.module';
 import { CheckListGroupsController } from './check-list-groups.controller';
 import { CheckListGroupsService } from './check-list-groups.service';
+import { CheckListGroup } from './entities/check-list-group.entity';
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([ CheckListGroup ]),
-        OrganizationsModule,
-        PermissionsModule,
+        forwardRef(() => TasksModule),
     ],
     exports: [ CheckListGroupsService ],
     controllers: [ CheckListGroupsController ],
