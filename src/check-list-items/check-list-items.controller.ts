@@ -8,7 +8,7 @@ import { CheckListItemCreateDto } from './dto/check-list-item-create.dto';
 import { CheckListItemQueryDto } from './dto/check-list-item-query.dto';
 import { CheckListItemUpdateDto } from './dto/check-list-item-update.dto';
 import { CheckListItemPermissions } from './enums/check-list-item-permissions.enum';
-import { modifyEntityForFront } from './utils/modify-entity-for-front.util';
+import { modifyCheckListItemForFront } from './utils/modify-check-list-item-for-front.util';
 
 @ApiTags('taskCheckLists')
 @Controller('taskCheckLists')
@@ -26,7 +26,7 @@ export class CheckListItemsController
         )
     {
         const entity = await this._service.create(createDto, activeUser);
-        return modifyEntityForFront(entity);
+        return modifyCheckListItemForFront(entity);
     }
 
 
@@ -39,7 +39,7 @@ export class CheckListItemsController
         )
     {
         const entityWithPagination = await this._service.findAllWithFilters(queryDto, activeUser);
-        entityWithPagination.data = entityWithPagination.data.map(entity => modifyEntityForFront(entity));
+        entityWithPagination.data = entityWithPagination.data.map(entity => modifyCheckListItemForFront(entity));
 
         return entityWithPagination;
     }
@@ -65,7 +65,7 @@ export class CheckListItemsController
             },
             activeUser,
         );
-        return modifyEntityForFront(entity);
+        return modifyCheckListItemForFront(entity);
     }
 
 
@@ -79,7 +79,7 @@ export class CheckListItemsController
         )
     {
         const entity = await this._service.update(id, updateDto, activeUser);
-        return modifyEntityForFront(entity);
+        return modifyCheckListItemForFront(entity);
     }
 
 
@@ -92,6 +92,6 @@ export class CheckListItemsController
         )
     {
         const entity = await this._service.remove(id, activeUser);
-        return modifyEntityForFront(entity);
+        return modifyCheckListItemForFront(entity);
     }
 }

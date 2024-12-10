@@ -1,4 +1,4 @@
-import { modifyCheckListItemForFront } from 'src/check-list-items/utils/modify-entity-for-front.util';
+import { modifyCheckListItemForFront } from 'src/check-list-items/utils/modify-check-list-item-for-front.util';
 import { CheckListGroup } from '../entities/check-list-group.entity';
 
 /**
