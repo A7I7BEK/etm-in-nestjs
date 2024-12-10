@@ -42,7 +42,6 @@ export function loadQueryBuilder
             new Brackets((qb) =>
             {
                 qb.orWhere(`${checkItem}.text ILIKE :search`, { search: `%${queryDto.allSearch}%` });
-                qb.orWhere(`${checkGroup}.name ILIKE :search`, { search: `%${queryDto.allSearch}%` });
             }),
         );
     }
