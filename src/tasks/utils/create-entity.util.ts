@@ -38,5 +38,9 @@ export async function createEntity
     entity.createdAt = new Date();
 
 
+    delete entity.column.project;
+    delete entity.column.tasks;
+
+
     return repository.save(entity);
 }
