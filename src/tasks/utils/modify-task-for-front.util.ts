@@ -7,23 +7,37 @@ import { TaskPriority } from '../enums/task-priority.enum';
  */
 export function modifyTaskForFront(entity: Task)
 {
-    const { project, column } = entity;
+    const { level, priority, project, column } = entity;
 
 
     Object.assign(entity, {
         startAt: entity.createdAt,
         deadLine: entity.endDate,
-        taskLevelType: {
-            id: entity.level,
-            name: TaskLevel[ entity.level ],
-            value: TaskLevel[ entity.level ],
-        },
-        taskPriorityType: {
-            id: entity.priority,
-            name: TaskPriority[ entity.priority ],
-            value: TaskPriority[ entity.priority ],
-        },
     });
+
+
+    if (level)
+    {
+        Object.assign(entity, {
+            taskLevelType: {
+                id: level,
+                name: TaskLevel[ level ],
+                value: TaskLevel[ level ],
+            },
+        });
+    }
+
+
+    if (priority)
+    {
+        Object.assign(entity, {
+            taskPriorityType: {
+                id: priority,
+                name: TaskPriority[ priority ],
+                value: TaskPriority[ priority ],
+            },
+        });
+    }
 
 
     if (project)
