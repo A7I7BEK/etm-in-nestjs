@@ -1,6 +1,6 @@
+import { reOrderItems } from 'src/common/utils/re-order-items.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { TaskMoveDto } from '../dto/task-move.dto';
-import { Task } from '../entities/task.entity';
 import { TasksService } from '../tasks.service';
 
 
@@ -55,7 +55,7 @@ export async function moveEntity
         // old column
         const oldColumn = entity.column;
         oldColumn.tasks.splice(oldColumn.tasks.findIndex(a => a.id === entity.id), 1);
-        reOrderTasks(oldColumn.tasks);
+        reOrderItems(oldColumn.tasks);
         await service.repository.save(oldColumn.tasks);
 
 
@@ -66,18 +66,9 @@ export async function moveEntity
     }
 
 
-    reOrderTasks(columnEntity.tasks);
+    reOrderItems(columnEntity.tasks);
     await service.repository.save(columnEntity.tasks);
 
 
     return task ? task : entity;
-}
-
-
-function reOrderTasks(columns: Task[])
-{
-    columns.forEach((item, index) =>
-    {
-        item.ordering = index;
-    });
 }

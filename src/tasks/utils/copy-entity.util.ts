@@ -1,3 +1,4 @@
+import { reOrderItems } from 'src/common/utils/re-order-items.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { TaskCopyDto } from '../dto/task-copy.dto';
 import { Task } from '../entities/task.entity';
@@ -52,18 +53,9 @@ export async function copyEntity
 
 
     columnEntity.tasks.splice(copyDto.ordering, 0, entity);
-    reOrderTasks(columnEntity.tasks);
+    reOrderItems(columnEntity.tasks);
     await service.repository.save(columnEntity.tasks);
 
 
     return entity;
-}
-
-
-function reOrderTasks(columns: Task[])
-{
-    columns.forEach((item, index) =>
-    {
-        item.ordering = index;
-    });
 }

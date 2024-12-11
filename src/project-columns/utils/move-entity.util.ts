@@ -1,8 +1,8 @@
 import { ForbiddenException } from '@nestjs/common';
+import { reOrderItems } from 'src/common/utils/re-order-items.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { ProjectType } from 'src/projects/enums/project-type.enum';
 import { ProjectColumnMoveDto } from '../dto/project-column-move.dto';
-import { ProjectColumn } from '../entities/project-column.entity';
 import { ProjectColumnsService } from '../project-columns.service';
 
 
@@ -64,7 +64,7 @@ export async function moveEntity
         // old project
         const oldProject = entity.project;
         oldProject.columns.splice(oldProject.columns.findIndex(a => a.id === entity.id), 1);
-        reOrderColumns(oldProject.columns);
+        reOrderItems(oldProject.columns);
         await service.repository.save(oldProject.columns);
 
 
@@ -75,18 +75,9 @@ export async function moveEntity
     }
 
 
-    reOrderColumns(projectEntity.columns);
+    reOrderItems(projectEntity.columns);
     await service.repository.save(projectEntity.columns);
 
 
     return column ? column : entity;
-}
-
-
-function reOrderColumns(columns: ProjectColumn[])
-{
-    columns.forEach((item, index) =>
-    {
-        item.ordering = index;
-    });
 }
