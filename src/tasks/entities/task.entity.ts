@@ -18,13 +18,13 @@ export class Task
     @Column()
     name: string;
 
-    @Column()
+    @Column({ nullable: true })
     description: string;
 
     @Column()
     ordering: number;
 
-    @Column({ nullable: true })
+    @Column()
     createdAt: Date;
 
     @Column({ nullable: true })
