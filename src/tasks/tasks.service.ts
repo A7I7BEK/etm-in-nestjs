@@ -2,6 +2,7 @@ import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/commo
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
+import { reOrderItems } from 'src/common/utils/re-order-items.util';
 import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { ProjectColumnsService } from 'src/project-columns/project-columns.service';
@@ -160,12 +161,30 @@ export class TasksService
     {
         const entity = await this.findOne(
             {
-                where: { id }
+                where: { id },
+                relations: { column: true }
+            },
+            activeUser,
+        );
+        await this.repository.remove(entity);
+
+        const columnEntity = await this.columnsService.findOne(
+            {
+                where: { id: entity.column.id },
+                relations: { tasks: true },
+                order: {
+                    tasks: {
+                        ordering: 'ASC',
+                    }
+                }
             },
             activeUser,
         );
 
-        return this.repository.remove(entity);
+        reOrderItems(columnEntity.tasks);
+        await this.repository.save(columnEntity.tasks);
+
+        return entity;
     }
 
 
