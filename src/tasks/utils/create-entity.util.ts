@@ -35,6 +35,7 @@ export async function createEntity
     entity.column = columnEntity;
     entity.project = columnEntity.project;
     entity.ordering = columnEntity.tasks.length;
+    entity.createdAt = new Date();
 
 
     return repository.save(entity);
