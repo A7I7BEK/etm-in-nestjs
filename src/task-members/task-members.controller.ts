@@ -57,7 +57,9 @@ export class TaskMembersController
             {
                 where: { id },
                 relations: {
-                    employee: true,
+                    employee: {
+                        user: true,
+                    },
                     task: true,
                 }
             },
@@ -71,7 +73,7 @@ export class TaskMembersController
     @Permission(TaskMemberPermissions.Delete)
     async remove
         (
-            @Body() deleteDto: TaskMemberDeleteDto, // TODO: check if it is working
+            @Body() deleteDto: TaskMemberDeleteDto,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
