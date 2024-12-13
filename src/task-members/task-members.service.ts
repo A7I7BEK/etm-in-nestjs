@@ -21,8 +21,8 @@ export class TaskMembersService
         @InjectRepository(TaskMember)
         public readonly repository: Repository<TaskMember>,
         @Inject(forwardRef(() => TasksService))
-        public readonly _tasksService: TasksService,
-        public readonly _projectMembersService: ProjectMembersService,
+        public readonly tasksService: TasksService,
+        public readonly projectMembersService: ProjectMembersService,
     ) { }
 
 

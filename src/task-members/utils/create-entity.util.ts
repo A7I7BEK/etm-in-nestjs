@@ -36,7 +36,7 @@ export async function createEntity
     const entity = new TaskMember();
 
 
-    entity.task = await service._tasksService.findOne(
+    entity.task = await service.tasksService.findOne(
         {
             where: { id: dto.taskId }
         },
@@ -44,7 +44,7 @@ export async function createEntity
     );
 
 
-    entity.projectMember = await service._projectMembersService.findOne(
+    entity.projectMember = await service.projectMembersService.findOne(
         {
             where: { id: dto.projectMemberId }
         },
