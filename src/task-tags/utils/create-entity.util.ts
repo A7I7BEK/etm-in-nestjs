@@ -5,7 +5,7 @@ import { TaskTag } from '../entities/task-tag.entity';
 import { TaskTagsService } from '../task-tags.service';
 
 
-export async function createUpdateEntity
+export async function createEntity
     (
         service: TaskTagsService,
         dto: TaskTagCreateDto,

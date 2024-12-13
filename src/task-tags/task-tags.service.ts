@@ -11,7 +11,7 @@ import { TaskTagCreateDto } from './dto/task-tag-create.dto';
 import { TaskTagDeleteDto } from './dto/task-tag-delete.dto';
 import { TaskTagQueryDto } from './dto/task-tag-query.dto';
 import { TaskTag } from './entities/task-tag.entity';
-import { createUpdateEntity } from './utils/create-update-entity.util';
+import { createEntity } from './utils/create-entity.util';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
 
 @Injectable()
@@ -32,7 +32,7 @@ export class TaskTagsService
             activeUser: ActiveUserData,
         )
     {
-        return createUpdateEntity(this, createDto, activeUser);
+        return createEntity(this, createDto, activeUser);
     }
 
 
