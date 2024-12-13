@@ -8,5 +8,5 @@ export class TaskMemberCreateDto
 
     @Min(1)
     @IsInt()
-    employeeId: number;
+    projectMemberId: number;
 }
