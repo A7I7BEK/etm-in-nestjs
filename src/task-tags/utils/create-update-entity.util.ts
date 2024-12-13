@@ -1,22 +1,42 @@
+import { ConflictException } from '@nestjs/common';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { ProjectTagsService } from 'src/project-tags/project-tags.service';
-import { TasksService } from 'src/tasks/tasks.service';
-import { Repository } from 'typeorm';
 import { TaskTagCreateDto } from '../dto/task-tag-create.dto';
 import { TaskTag } from '../entities/task-tag.entity';
+import { TaskTagsService } from '../task-tags.service';
 
 
 export async function createUpdateEntity
     (
-        tasksService: TasksService,
-        projectTagsService: ProjectTagsService,
-        repository: Repository<TaskTag>,
+        service: TaskTagsService,
         dto: TaskTagCreateDto,
         activeUser: ActiveUserData,
-        entity = new TaskTag(),
     )
 {
-    entity.task = await tasksService.findOne(
+    const entityExists = await service.repository.exists({
+        where: {
+            task: {
+                id: dto.taskId,
+                project: {
+                    organization: {
+                        id: activeUser.orgId
+                    }
+                }
+            },
+            projectTag: {
+                id: dto.projectTagId,
+            },
+        }
+    });
+    if (entityExists)
+    {
+        throw new ConflictException(`${TaskTag.name} already exists`);
+    }
+
+
+    const entity = new TaskTag();
+
+
+    entity.task = await service.tasksService.findOne(
         {
             where: { id: dto.taskId }
         },
@@ -24,7 +44,7 @@ export async function createUpdateEntity
     );
 
 
-    entity.projectTag = await projectTagsService.findOne(
+    entity.projectTag = await service.projectTagsService.findOne(
         {
             where: { id: dto.projectTagId }
         },
@@ -32,5 +52,5 @@ export async function createUpdateEntity
     );
 
 
-    return repository.save(entity);
+    return service.repository.save(entity);
 }

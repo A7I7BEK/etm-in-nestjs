@@ -21,8 +21,8 @@ export class TaskTagsService
         @InjectRepository(TaskTag)
         public readonly repository: Repository<TaskTag>,
         @Inject(forwardRef(() => TasksService))
-        private readonly _tasksService: TasksService,
-        private readonly _projectTagsService: ProjectTagsService,
+        public readonly tasksService: TasksService,
+        public readonly projectTagsService: ProjectTagsService,
     ) { }
 
 
@@ -32,13 +32,7 @@ export class TaskTagsService
             activeUser: ActiveUserData,
         )
     {
-        return createUpdateEntity(
-            this._tasksService,
-            this._projectTagsService,
-            this.repository,
-            createDto,
-            activeUser,
-        );
+        return createUpdateEntity(this, createDto, activeUser);
     }
 
 
