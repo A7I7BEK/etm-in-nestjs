@@ -3,15 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
 import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
-import { EmployeesService } from 'src/employees/employees.service';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
+import { ProjectMembersService } from 'src/project-members/project-members.service';
 import { TasksService } from 'src/tasks/tasks.service';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { TaskMemberCreateDto } from './dto/task-member-create.dto';
 import { TaskMemberDeleteDto } from './dto/task-member-delete.dto';
 import { TaskMemberQueryDto } from './dto/task-member-query.dto';
 import { TaskMember } from './entities/task-member.entity';
-import { createUpdateEntity } from './utils/create-update-entity.util';
+import { createEntity } from './utils/create-entity.util';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
 
 @Injectable()
@@ -21,8 +21,8 @@ export class TaskMembersService
         @InjectRepository(TaskMember)
         public readonly repository: Repository<TaskMember>,
         @Inject(forwardRef(() => TasksService))
-        private readonly _tasksService: TasksService,
-        private readonly _employeesService: EmployeesService,
+        public readonly _tasksService: TasksService,
+        public readonly _projectMembersService: ProjectMembersService,
     ) { }
 
 
@@ -32,13 +32,7 @@ export class TaskMembersService
             activeUser: ActiveUserData,
         )
     {
-        return createUpdateEntity(
-            this._tasksService,
-            this._employeesService,
-            this.repository,
-            createDto,
-            activeUser,
-        );
+        return createEntity(this, createDto, activeUser);
     }
 
 
@@ -133,8 +127,8 @@ export class TaskMembersService
                     task: {
                         id: deleteDto.taskId,
                     },
-                    employee: {
-                        id: deleteDto.employeeId,
+                    projectMember: {
+                        id: deleteDto.projectMemberId,
                     }
                 }
             },
