@@ -1,4 +1,4 @@
-import { Employee } from 'src/employees/entities/employee.entity';
+import { ProjectMember } from 'src/project-members/entities/project-member.entity';
 import { Task } from 'src/tasks/entities/task.entity';
 import { Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -8,9 +8,9 @@ export class TaskMember
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(type => Employee, { eager: true })
-    employee: Employee;
-
     @ManyToOne(type => Task, t => t.members)
     task: Task;
+
+    @ManyToOne(type => ProjectMember, { eager: true })
+    projectMember: ProjectMember;
 }
