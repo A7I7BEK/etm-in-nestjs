@@ -1,3 +1,4 @@
+import { ConflictException } from '@nestjs/common';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { TaskMemberCreateDto } from '../dto/task-member-create.dto';
 import { TaskMember } from '../entities/task-member.entity';
@@ -11,6 +12,27 @@ export async function createEntity
         activeUser: ActiveUserData,
     )
 {
+    const entityExists = await service.repository.exists({
+        where: {
+            task: {
+                id: dto.taskId,
+                project: {
+                    organization: {
+                        id: activeUser.orgId
+                    }
+                }
+            },
+            projectMember: {
+                id: dto.projectMemberId,
+            },
+        }
+    });
+    if (entityExists)
+    {
+        throw new ConflictException(`${TaskMember.name} already exists`);
+    }
+
+
     const entity = new TaskMember();
 
 
