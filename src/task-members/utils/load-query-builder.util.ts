@@ -11,22 +11,23 @@ export function loadQueryBuilder
         activeUser: ActiveUserData,
     )
 {
-    const [ tMember, empl, user, task, proj, org ] =
-        [ 'taskMember', 'employee', 'user', 'task', 'project', 'organization' ];
-    const queryBuilder = repository.createQueryBuilder(tMember);
+    const [ mem, pMember, empl, user, task, proj, org ] =
+        [ 'taskMember', 'projectMember', 'employee', 'user', 'task', 'project', 'organization' ];
+    const queryBuilder = repository.createQueryBuilder(mem);
 
 
-    queryBuilder.leftJoinAndSelect(`${tMember}.employee`, empl);
+    queryBuilder.leftJoinAndSelect(`${mem}.projectMember`, pMember);
+    queryBuilder.leftJoinAndSelect(`${pMember}.employee`, empl);
     queryBuilder.leftJoinAndSelect(`${empl}.user`, user);
-    queryBuilder.leftJoinAndSelect(`${tMember}.task`, task);
+    queryBuilder.leftJoinAndSelect(`${mem}.task`, task);
     queryBuilder.leftJoin(`${task}.project`, proj);
     queryBuilder.leftJoin(`${proj}.organization`, org);
     queryBuilder.skip(queryDto.skip);
     queryBuilder.take(queryDto.perPage);
-    queryBuilder.orderBy(tMember + '.' + queryDto.sortBy, queryDto.order);
+    queryBuilder.orderBy(mem + '.' + queryDto.sortBy, queryDto.order);
 
 
-    queryBuilder.andWhere(`${tMember}.task = :taskId`, { taskId: queryDto.taskId });
+    queryBuilder.andWhere(`${mem}.task = :taskId`, { taskId: queryDto.taskId });
 
 
     if (!activeUser.systemAdmin)
