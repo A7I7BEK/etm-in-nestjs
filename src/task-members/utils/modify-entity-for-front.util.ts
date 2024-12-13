@@ -1,3 +1,4 @@
+import { modifyProjectMemberForFront } from 'src/project-members/utils/modify-entity-for-front.util';
 import { TaskMember } from '../entities/task-member.entity';
 
 /**
@@ -5,20 +6,13 @@ import { TaskMember } from '../entities/task-member.entity';
  */
 export function modifyEntityForFront(entity: TaskMember)
 {
-    const { employee } = entity;
-    const { user } = employee || {};
+    const { projectMember } = entity;
 
 
-    if (user)
+    if (projectMember)
     {
-        delete entity.employee.user.password;
-
-        Object.assign(entity.employee, {
-            userId: user.id,
-            userName: user.userName,
-            email: user.email,
-            phoneNumber: user.phoneNumber,
-        });
+        entity.projectMember = modifyProjectMemberForFront(entity.projectMember);
+        entity[ 'employee' ] = entity.projectMember.employee;
     }
 
 
