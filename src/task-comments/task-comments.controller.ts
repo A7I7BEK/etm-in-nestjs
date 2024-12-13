@@ -10,8 +10,8 @@ import { TaskCommentPermissions } from './enums/task-comment-permissions.enum';
 import { TaskCommentsService } from './task-comments.service';
 import { modifyEntityForFront } from './utils/modify-entity-for-front.util';
 
-@ApiTags('tasks/comments')
-@Controller('tasks/comments')
+@ApiTags('taskComments')
+@Controller('taskComments')
 export class TaskCommentsController
 {
     constructor (private readonly _service: TaskCommentsService) { }
