@@ -57,8 +57,10 @@ export class TaskMembersController
             {
                 where: { id },
                 relations: {
-                    employee: {
-                        user: true,
+                    projectMember: {
+                        employee: {
+                            user: true,
+                        },
                     },
                     task: true,
                 }
