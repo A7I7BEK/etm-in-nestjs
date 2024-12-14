@@ -13,10 +13,9 @@ export async function createEntity
         activeUser: ActiveUserData,
     )
 {
-    const organizationEntity = await service.organizationsService.findOneActiveUser(
-        {},
-        activeUser,
-    );
+    const organizationEntity = await service.organizationsService.findOne({
+        where: { id: activeUser.orgId }
+    });
 
 
     const { filePath, filename } = generateFilePath(file);
@@ -41,7 +40,7 @@ export async function createEntity
     {
         await fs.promises.writeFile(file.path, file.buffer);
 
-        return this.repository.save(entity);
+        return service.repository.save(entity);
     }
     catch (error)
     {
