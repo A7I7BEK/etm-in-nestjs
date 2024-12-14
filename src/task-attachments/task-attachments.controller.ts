@@ -8,8 +8,8 @@ import { TaskAttachmentQueryDto } from './dto/task-attachment-query.dto';
 import { TaskAttachmentPermissions } from './enums/task-attachment-permissions.enum';
 import { TaskAttachmentsService } from './task-attachments.service';
 
-@ApiTags('tasks/attachments')
-@Controller('tasks/attachments')
+@ApiTags('taskAttachments')
+@Controller('taskAttachments')
 export class TaskAttachmentsController
 {
     constructor (private readonly _service: TaskAttachmentsService) { }
