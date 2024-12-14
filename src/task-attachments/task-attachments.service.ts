@@ -1,12 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
+import { Pagination } from 'src/common/pagination/pagination.class';
 import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { ResourceService } from 'src/resource/resource.service';
 import { TasksService } from 'src/tasks/tasks.service';
-import { FindManyOptions, FindOneOptions, In, Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { TaskAttachmentCreateDto } from './dto/task-attachment-create.dto';
+import { TaskAttachmentDeleteDto } from './dto/task-attachment-delete.dto';
+import { TaskAttachmentQueryDto } from './dto/task-attachment-query.dto';
 import { TaskAttachment } from './entities/task-attachment.entity';
+import { createEntity } from './utils/create-entity.util';
+import { loadQueryBuilder } from './utils/load-query-builder.util';
 
 @Injectable()
 export class TaskAttachmentsService
@@ -14,42 +20,18 @@ export class TaskAttachmentsService
     constructor (
         @InjectRepository(TaskAttachment)
         public readonly repository: Repository<TaskAttachment>,
-        private readonly _tasksService: TasksService,
-        private readonly _resourceService: ResourceService,
+        public readonly tasksService: TasksService,
+        public readonly resourceService: ResourceService,
     ) { }
 
 
-    async create
+    create
         (
             createDto: TaskAttachmentCreateDto,
             activeUser: ActiveUserData,
         )
     {
-        const taskEntity = await this._tasksService.findOne(
-            {
-                where: { id: createDto.taskId }
-            },
-            activeUser,
-        );
-
-        const resourceIds = createDto.attachments.map(x => x.id);
-        const resourceEntities = await this._resourceService.findAll(
-            {
-                where: { id: In(resourceIds) },
-            },
-            activeUser,
-        );
-
-        const entityList = resourceEntities.map(item =>
-        {
-            const entity = new TaskAttachment();
-            Object.assign(entity, item);
-            entity.task = taskEntity;
-
-            return entity;
-        });
-
-        return this.repository.save(entityList);
+        return createEntity(this, createDto, activeUser);
     }
 
 
@@ -77,6 +59,25 @@ export class TaskAttachmentsService
         }
 
         return this.repository.find(options);
+    }
+
+
+    async findAllWithFilters
+        (
+            queryDto: TaskAttachmentQueryDto,
+            activeUser: ActiveUserData,
+        )
+    {
+        const loadedQueryBuilder = loadQueryBuilder(
+            this.repository,
+            queryDto,
+            activeUser,
+        );
+
+        const [ data, total ] = await loadedQueryBuilder.getManyAndCount();
+        const paginationMeta = new PaginationMeta(queryDto.page, queryDto.perPage, total);
+
+        return new Pagination<TaskAttachment>(data, paginationMeta);
     }
 
 
@@ -115,13 +116,20 @@ export class TaskAttachmentsService
 
     async remove
         (
-            id: number,
+            deleteDto: TaskAttachmentDeleteDto,
             activeUser: ActiveUserData,
         )
     {
         const entity = await this.findOne(
             {
-                where: { id }
+                where: {
+                    task: {
+                        id: deleteDto.taskId,
+                    },
+                    file: {
+                        id: deleteDto.fileId,
+                    }
+                }
             },
             activeUser,
         );
