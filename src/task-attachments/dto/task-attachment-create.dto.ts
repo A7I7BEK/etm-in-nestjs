@@ -1,6 +1,4 @@
-import { Type } from 'class-transformer';
-import { ArrayMinSize, IsInt, Min, ValidateNested } from 'class-validator';
-import { ObjectIdDto } from 'src/common/dto/object-id.dto';
+import { IsInt, Min } from 'class-validator';
 
 export class TaskAttachmentCreateDto
 {
@@ -8,8 +6,7 @@ export class TaskAttachmentCreateDto
     @IsInt()
     taskId: number;
 
-    @ArrayMinSize(1)
-    @ValidateNested({ each: true })
-    @Type(() => ObjectIdDto)
-    attachments: ObjectIdDto[];
+    @Min(1)
+    @IsInt()
+    fileId: number;
 }
