@@ -4,9 +4,11 @@ import { Permission } from 'src/iam/authorization/decorators/permission.decorato
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { TaskAttachmentCreateDto } from './dto/task-attachment-create.dto';
+import { TaskAttachmentDeleteDto } from './dto/task-attachment-delete.dto';
 import { TaskAttachmentQueryDto } from './dto/task-attachment-query.dto';
 import { TaskAttachmentPermissions } from './enums/task-attachment-permissions.enum';
 import { TaskAttachmentsService } from './task-attachments.service';
+import { modifyEntityForFront } from './utils/modify-entity-for-front.util';
 
 @ApiTags('taskAttachments')
 @Controller('taskAttachments')
@@ -17,34 +19,29 @@ export class TaskAttachmentsController
 
     @Post()
     @Permission(TaskAttachmentPermissions.Create)
-    create
+    async create
         (
             @Body() createDto: TaskAttachmentCreateDto,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        return this._service.create(createDto, activeUser);
+        const entity = await this._service.create(createDto, activeUser);
+        return modifyEntityForFront(entity);
     }
 
 
     @Get()
     @Permission(TaskAttachmentPermissions.Read)
-    findAll
+    async findAll
         (
             @Query() queryDto: TaskAttachmentQueryDto,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        return this._service.findAll(
-            {
-                where: {
-                    task: {
-                        id: queryDto.taskId
-                    }
-                },
-            },
-            activeUser,
-        );
+        const entityWithPagination = await this._service.findAllWithFilters(queryDto, activeUser);
+        entityWithPagination.data = entityWithPagination.data.map(entity => modifyEntityForFront(entity));
+
+        return entityWithPagination;
     }
 
 
@@ -56,24 +53,29 @@ export class TaskAttachmentsController
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        return this._service.findOne(
+        const entity = await this._service.findOne(
             {
                 where: { id },
-                relations: { task: true }
+                relations: {
+                    file: true,
+                    task: true,
+                }
             },
             activeUser,
         );
+        return modifyEntityForFront(entity);
     }
 
 
-    @Delete(':id')
+    @Delete()
     @Permission(TaskAttachmentPermissions.Delete)
-    remove
+    async remove
         (
-            @Param('id', ParseIntPipe) id: number,
+            @Body() deleteDto: TaskAttachmentDeleteDto,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        return this._service.remove(id, activeUser);
+        const entity = await this._service.remove(deleteDto, activeUser);
+        return modifyEntityForFront(entity);
     }
 }
