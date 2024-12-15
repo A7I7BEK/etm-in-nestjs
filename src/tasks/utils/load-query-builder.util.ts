@@ -54,7 +54,7 @@ export function loadQueryBuilder
     const now = new Date();
     if (queryDto.deadLine)
     {
-        queryBuilder.andWhere(`${task}.endDate = :endDate`, { endDate: queryDto.deadLine });
+        queryBuilder.andWhere(`CAST(${task}.endDate AS DATE) = :endDate`, { endDate: queryDto.deadLine });
     }
     else if (queryDto.hasNoDeadline)
     {
