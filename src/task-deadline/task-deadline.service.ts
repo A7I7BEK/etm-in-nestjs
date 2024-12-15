@@ -35,8 +35,8 @@ export class TaskDeadlineService
 
         const dto = new TaskDeadlineAllDto();
         dto.taskId = createDto.taskId;
-        dto.startDate = new Date(createDto.startDate);
-        dto.endDate = new Date(createDto.deadLine);
+        dto.startDate = createDto.startDate;
+        dto.endDate = createDto.deadLine;
 
         return createUpdateDeleteEntity(this, entity, dto, activeUser);
     }
@@ -56,8 +56,8 @@ export class TaskDeadlineService
 
         const dto = new TaskDeadlineAllDto();
         dto.taskId = updateDto.taskId;
-        dto.startDate = new Date(updateDto.startDate);
-        dto.endDate = new Date(updateDto.deadLine);
+        dto.startDate = updateDto.startDate;
+        dto.endDate = updateDto.deadLine;
 
         return createUpdateDeleteEntity(this, entity, dto, activeUser);
     }
