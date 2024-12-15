@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import { IsDate, IsInt, Min } from 'class-validator';
 
 export class TaskDeadlineCreateDto
@@ -7,8 +8,10 @@ export class TaskDeadlineCreateDto
     taskId: number;
 
     @IsDate()
+    @Type(() => Date)
     startDate: Date;
 
     @IsDate()
+    @Type(() => Date)
     deadLine: Date;
 }
