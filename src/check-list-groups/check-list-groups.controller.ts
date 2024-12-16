@@ -58,7 +58,12 @@ export class CheckListGroupsController
             {
                 where: { id },
                 relations: {
-                    checkList: true,
+                    checkList: {
+                        checkListGroup: true,
+                        members: {
+                            user: true
+                        }
+                    },
                     task: true,
                 }
             },
