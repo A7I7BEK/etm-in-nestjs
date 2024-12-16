@@ -19,7 +19,7 @@ export class CheckListItem
     @ManyToMany(type => Employee)
     members: Employee[];
 
-    @ManyToOne(type => CheckListGroup, c => c.checkList)
+    @ManyToOne(type => CheckListGroup, c => c.checkList, { onDelete: 'CASCADE' })
     checkListGroup: CheckListGroup;
 
     @ManyToOne(type => Task)
