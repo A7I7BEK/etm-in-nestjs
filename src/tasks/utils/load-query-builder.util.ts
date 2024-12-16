@@ -46,7 +46,6 @@ export function loadQueryBuilder
 
     if (queryDto.ownTask && !activeUser.systemAdmin)
     {
-        // TODO: check if it is working
         queryBuilder.andWhere(`${empl}.user = :userId`, { userId: activeUser.sub });
     }
 
