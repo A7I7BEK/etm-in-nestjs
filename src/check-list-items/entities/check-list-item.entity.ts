@@ -19,7 +19,7 @@ export class CheckListItem
     @ManyToMany(type => Employee)
     members: Employee[];
 
-    @ManyToOne(type => CheckListGroup, c => c.checkList, { onDelete: 'CASCADE' })
+    @ManyToOne(type => CheckListGroup, c => c.checkList, { onDelete: 'CASCADE' }) // BINGO
     checkListGroup: CheckListGroup;
 
     @ManyToOne(type => Task)
