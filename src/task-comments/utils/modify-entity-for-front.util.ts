@@ -37,7 +37,7 @@ export function modifyEntityForFront(entity: TaskComment)
 
     if (members)
     {
-        members.forEach(item =>
+        entity.members.forEach(item =>
         {
             delete item.user?.password;
 
