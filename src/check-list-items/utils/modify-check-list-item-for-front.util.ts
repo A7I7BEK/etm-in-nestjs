@@ -12,6 +12,8 @@ export function modifyCheckListItemForFront(entity: CheckListItem)
     {
         entity.members.forEach(item =>
         {
+            delete item.user?.password;
+
             Object.assign(item, {
                 employee: {
                     firstName: item.firstName,
