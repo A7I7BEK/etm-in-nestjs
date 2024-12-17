@@ -17,7 +17,7 @@ import { ProjectCreateDto } from './dto/project-create.dto';
 import { ProjectQueryDto } from './dto/project-query.dto';
 import { ProjectUpdateDto } from './dto/project-update.dto';
 import { Project } from './entities/project.entity';
-import { ProjectType } from './enums/project-type.enum';
+import { calculateProjectPercent } from './utils/calculate-project-percent.util';
 import { createEntity } from './utils/create-entity.util';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
 import { updateEntity } from './utils/update-entity.util.ts';
@@ -61,7 +61,7 @@ export class ProjectsService
     }
 
 
-    findAll
+    async findAll
         (
             options: FindManyOptions<Project>,
             activeUser: ActiveUserData,
@@ -80,7 +80,9 @@ export class ProjectsService
             setNestedOptions(options ??= {}, orgOption);
         }
 
-        return this.repository.find(options);
+        const entityList = await this.repository.find(options);
+        entityList.forEach(item => calculateProjectPercent(item));
+        return entityList;
     }
 
 
@@ -97,15 +99,7 @@ export class ProjectsService
         );
 
         const [ data, total ] = await loadedQueryBuilder.getManyAndCount();
-        data.forEach(entity =>
-        {
-            if (entity.projectType === ProjectType.KANBAN)
-            {
-                Object.assign(entity, {
-                    percent: 100, // TODO: calculate percentage of tasks in the "Archive" column
-                });
-            }
-        });
+        data.forEach(item => calculateProjectPercent(item));
         const paginationMeta = new PaginationMeta(queryDto.page, queryDto.perPage, total);
 
         return new Pagination<Project>(data, paginationMeta);
@@ -137,7 +131,7 @@ export class ProjectsService
             throw new NotFoundException(`${Project.name} not found`);
         }
 
-        return entity;
+        return calculateProjectPercent(entity);
     }
 
 
