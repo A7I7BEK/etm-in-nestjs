@@ -1,7 +1,7 @@
-import { Organization } from 'src/organizations/entities/organization.entity';
-import { Permission } from 'src/permissions/entities/permission.entity';
-import { User } from 'src/users/entities/user.entity';
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Employee } from 'src/employees/entities/employee.entity';
+import { Task } from 'src/tasks/entities/task.entity';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { TaskTimerStatus } from '../enums/task-timer-status.enum';
 
 @Entity()
 export class TaskTimer
@@ -9,22 +9,18 @@ export class TaskTimer
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
-    roleName: string;
+    @Column({
+        type: 'enum',
+        enum: TaskTimerStatus,
+    })
+    status: TaskTimerStatus;
 
     @Column()
-    codeName: string;
+    time: Date;
 
-    @Column()
-    systemCreated: boolean = false;
+    @ManyToOne(type => Task)
+    task: Task;
 
-    @JoinTable()
-    @ManyToMany(type => Permission, { eager: true })
-    permissions: Permission[];
-
-    @ManyToMany(type => User, user => user.roles)
-    users: User[];
-
-    @ManyToOne(type => Organization)
-    organization: Organization;
+    @ManyToOne(type => Employee)
+    employee: Employee;
 }
