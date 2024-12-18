@@ -52,7 +52,9 @@ export class TaskTimerController
                 where: { id },
                 relations: {
                     task: true,
-                    employee: true,
+                    employee: {
+                        user: true
+                    },
                 }
             },
             activeUser,
