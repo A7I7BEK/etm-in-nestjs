@@ -89,4 +89,15 @@ export class RolesController
         const entity = await this._service.remove(id, activeUser);
         return modifyEntityForFront(entity);
     }
+
+
+    @Put('update/admins')
+    @Permission(RolePermissions.Update)
+    async updateAdminRoles
+        (
+            @ActiveUser() activeUser: ActiveUserData,
+        )
+    {
+        return this._service.updateAdminRoles(activeUser);
+    }
 }
