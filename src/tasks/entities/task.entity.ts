@@ -5,6 +5,7 @@ import { TaskAttachment } from 'src/task-attachments/entities/task-attachment.en
 import { TaskComment } from 'src/task-comments/entities/task-comment.entity';
 import { TaskMember } from 'src/task-members/entities/task-member.entity';
 import { TaskTag } from 'src/task-tags/entities/task-tag.entity';
+import { TaskTimerStatus } from 'src/task-timer/enums/task-timer-status.enum';
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { TaskLevel } from '../enums/task-level.enum';
 import { TaskPriority } from '../enums/task-priority.enum';
@@ -46,6 +47,16 @@ export class Task
         nullable: true,
     })
     priority: TaskPriority;
+
+    @Column({
+        type: 'enum',
+        enum: TaskTimerStatus,
+        default: TaskTimerStatus.STOP,
+    })
+    timeEntryType: TaskTimerStatus;
+
+    @Column()
+    totalTimeSpent: number = 0;
 
     @ManyToOne(type => ProjectColumn, c => c.tasks)
     column: ProjectColumn;
