@@ -1,23 +1,12 @@
-import { Type } from 'class-transformer';
-import { ArrayMinSize, IsInt, IsNotEmpty, IsString, Min, ValidateNested } from 'class-validator';
-import { ObjectIdDto } from 'src/common/dto/object-id.dto';
+import { IsEnum, IsInt, Min } from 'class-validator';
+import { TaskTimerStatus } from '../enums/task-timer-status.enum';
 
 export class TaskTimerCreateDto
 {
-    @IsNotEmpty()
-    @IsString()
-    roleName: string;
-
-    @IsNotEmpty()
-    @IsString()
-    codeName: string;
-
-    @ArrayMinSize(1)
-    @ValidateNested({ each: true }) // BINGO
-    @Type(() => ObjectIdDto)
-    permissions: ObjectIdDto[];
-
-    @Min(0)
+    @Min(1)
     @IsInt()
-    organizationId: number;
+    taskId: number;
+
+    @IsEnum(TaskTimerStatus)
+    entryTypeCode: TaskTimerStatus;
 }
