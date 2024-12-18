@@ -27,6 +27,7 @@ import { TaskCommentsModule } from './task-comments/task-comments.module';
 import { TaskDeadlineModule } from './task-deadline/task-deadline.module';
 import { TaskMembersModule } from './task-members/task-members.module';
 import { TaskTagsModule } from './task-tags/task-tags.module';
+import { TaskTimerModule } from './task-timer/task-timer.module';
 import { TasksModule } from './tasks/tasks.module';
 import { UsersModule } from './users/users.module';
 
@@ -72,6 +73,7 @@ import { UsersModule } from './users/users.module';
         TaskCommentsModule,
         TaskDeadlineModule,
         TaskAttachmentsModule,
+        TaskTimerModule,
         CheckListGroupsModule,
         CheckListItemsModule,
         ReportsModule,

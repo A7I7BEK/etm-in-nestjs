@@ -16,6 +16,7 @@ import { TaskCommentPermissions } from 'src/task-comments/enums/task-comment-per
 import { TaskDeadlinePermissions } from 'src/task-deadline/enums/task-deadline-permissions.enum';
 import { TaskMemberPermissions } from 'src/task-members/enums/task-member-permissions.enum';
 import { TaskTagPermissions } from 'src/task-tags/enums/task-tag-permissions.enum';
+import { TaskTimerPermissions } from 'src/task-timer/enums/task-timer-permissions.enum';
 import { TaskPermissions } from 'src/tasks/enums/task-permissions.enum';
 import { UserPermissions } from 'src/users/enums/user-permissions.enum';
 
@@ -37,6 +38,7 @@ export type PermissionType = (
     | TaskCommentPermissions
     | TaskDeadlinePermissions
     | TaskAttachmentPermissions
+    | TaskTimerPermissions
     | CheckListGroupPermissions
     | CheckListItemPermissions
     | ReportPermissions
@@ -61,6 +63,7 @@ export const PERMISSION_VALUES = [
     ...Object.values(TaskCommentPermissions),
     ...Object.values(TaskDeadlinePermissions),
     ...Object.values(TaskAttachmentPermissions),
+    ...Object.values(TaskTimerPermissions),
     ...Object.values(CheckListGroupPermissions),
     ...Object.values(CheckListItemPermissions),
     ...Object.values(ReportPermissions),
