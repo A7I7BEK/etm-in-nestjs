@@ -9,9 +9,8 @@ export class TaskTimerQueryDto extends BaseQueryDto<TaskTimerProperties>
     @IsEnum(TaskTimerProperties)
     sortBy?: TaskTimerProperties = TaskTimerProperties.ID;
 
-    @IsOptional()
     @Min(1)
     @IsInt()
     @Type(() => Number)
-    organizationId?: number;
+    taskId: number;
 }
