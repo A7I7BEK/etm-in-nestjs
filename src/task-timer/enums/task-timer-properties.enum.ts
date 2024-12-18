@@ -1,7 +1,8 @@
 export enum TaskTimerProperties
 {
     ID = 'id',
-    ROLE_NAME = 'roleName',
-    CODE_NAME = 'codeName',
-    ORGANIZATION = 'organization',
+    STATUS = 'status',
+    TIME = 'time',
+    TASK = 'task',
+    EMPLOYEE = 'employee',
 }
