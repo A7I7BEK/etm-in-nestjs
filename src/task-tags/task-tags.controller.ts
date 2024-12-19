@@ -8,7 +8,7 @@ import { TaskTagDeleteDto } from './dto/task-tag-delete.dto';
 import { TaskTagQueryDto } from './dto/task-tag-query.dto';
 import { TaskTagPermissions } from './enums/task-tag-permissions.enum';
 import { TaskTagsService } from './task-tags.service';
-import { modifyEntityForFront } from './utils/modify-entity-for-front.util';
+import { modifyTaskTagForFront } from './utils/modify-task-tag-for-front.util';
 
 @ApiTags('taskTags')
 @Controller('taskTags')
@@ -26,7 +26,7 @@ export class TaskTagsController
         )
     {
         const entity = await this._service.create(createDto, activeUser);
-        return modifyEntityForFront(entity);
+        return modifyTaskTagForFront(entity);
     }
 
 
@@ -39,7 +39,7 @@ export class TaskTagsController
         )
     {
         const entityWithPagination = await this._service.findAllWithFilters(queryDto, activeUser);
-        entityWithPagination.data = entityWithPagination.data.map(entity => modifyEntityForFront(entity));
+        entityWithPagination.data = entityWithPagination.data.map(entity => modifyTaskTagForFront(entity));
 
         return entityWithPagination;
     }
@@ -63,7 +63,7 @@ export class TaskTagsController
             },
             activeUser,
         );
-        return modifyEntityForFront(entity);
+        return modifyTaskTagForFront(entity);
     }
 
 
@@ -76,6 +76,6 @@ export class TaskTagsController
         )
     {
         const entity = await this._service.remove(deleteDto, activeUser);
-        return modifyEntityForFront(entity);
+        return modifyTaskTagForFront(entity);
     }
 }
