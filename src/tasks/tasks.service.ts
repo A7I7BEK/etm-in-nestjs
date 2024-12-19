@@ -19,6 +19,7 @@ import { Task } from './entities/task.entity';
 import { calculateTaskStatus } from './utils/calculate-task-status.util';
 import { copyEntity } from './utils/copy-entity.util';
 import { createEntity } from './utils/create-entity.util';
+import { getTaskDetails } from './utils/get-task-details.util';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
 import { moveEntity } from './utils/move-entity.util';
 import { updateEntity } from './utils/update-entity.util';
@@ -213,5 +214,15 @@ export class TasksService
             moveDto,
             activeUser,
         );
+    }
+
+
+    getAllDetails
+        (
+            id: number,
+            activeUser: ActiveUserData,
+        )
+    {
+        return getTaskDetails(this, id, activeUser);
     }
 }
