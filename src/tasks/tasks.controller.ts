@@ -122,13 +122,14 @@ export class TasksController
     }
 
 
-    @Post('timeSheet')
-    @Permission(TaskPermissions.Update)
-    async toggleTimer
+    @Get(':id/details')
+    @Permission(TaskPermissions.Read)
+    async getAllDetails
         (
+            @Param('id', ParseIntPipe) id: number,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        return 0; // TODO: implement
+        return this._service.getAllDetails(id, activeUser);
     }
 }
