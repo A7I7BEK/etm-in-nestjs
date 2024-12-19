@@ -8,7 +8,7 @@ import { CheckListGroupCreateDto } from './dto/check-list-group-create.dto';
 import { CheckListGroupQueryDto } from './dto/check-list-group-query.dto';
 import { CheckListGroupUpdateDto } from './dto/check-list-group-update.dto';
 import { CheckListGroupPermissions } from './enums/check-list-group-permissions.enum';
-import { modifyCheckListGroupForFront } from './utils/modify-entity-for-front.util';
+import { modifyCheckListGroupForFront } from './utils/modify-check-list-group-for-front.util';
 
 @ApiTags('checkListGroups')
 @Controller('checkListGroups')
