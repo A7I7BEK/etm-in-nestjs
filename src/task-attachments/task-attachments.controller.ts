@@ -8,7 +8,7 @@ import { TaskAttachmentDeleteDto } from './dto/task-attachment-delete.dto';
 import { TaskAttachmentQueryDto } from './dto/task-attachment-query.dto';
 import { TaskAttachmentPermissions } from './enums/task-attachment-permissions.enum';
 import { TaskAttachmentsService } from './task-attachments.service';
-import { modifyEntityForFront } from './utils/modify-entity-for-front.util';
+import { modifyTaskAttachmentForFront } from './utils/modify-task-attachment-for-front.util';
 
 @ApiTags('taskAttachments')
 @Controller('taskAttachments')
@@ -26,7 +26,7 @@ export class TaskAttachmentsController
         )
     {
         const entity = await this._service.create(createDto, activeUser);
-        return modifyEntityForFront(entity);
+        return modifyTaskAttachmentForFront(entity);
     }
 
 
@@ -39,7 +39,7 @@ export class TaskAttachmentsController
         )
     {
         const entityWithPagination = await this._service.findAllWithFilters(queryDto, activeUser);
-        entityWithPagination.data = entityWithPagination.data.map(entity => modifyEntityForFront(entity));
+        entityWithPagination.data = entityWithPagination.data.map(entity => modifyTaskAttachmentForFront(entity));
 
         return entityWithPagination;
     }
@@ -63,7 +63,7 @@ export class TaskAttachmentsController
             },
             activeUser,
         );
-        return modifyEntityForFront(entity);
+        return modifyTaskAttachmentForFront(entity);
     }
 
 
@@ -76,6 +76,6 @@ export class TaskAttachmentsController
         )
     {
         const entity = await this._service.remove(deleteDto, activeUser);
-        return modifyEntityForFront(entity);
+        return modifyTaskAttachmentForFront(entity);
     }
 }

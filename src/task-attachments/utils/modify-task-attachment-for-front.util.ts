@@ -3,7 +3,7 @@ import { TaskAttachment } from '../entities/task-attachment.entity';
 /**
  * temporary for this project, must not exist
  */
-export function modifyEntityForFront(entity: TaskAttachment)
+export function modifyTaskAttachmentForFront(entity: TaskAttachment)
 {
     const { file } = entity;
 
