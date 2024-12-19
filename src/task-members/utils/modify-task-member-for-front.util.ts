@@ -4,7 +4,7 @@ import { TaskMember } from '../entities/task-member.entity';
 /**
  * temporary for this project, must not exist
  */
-export function modifyEntityForFront(entity: TaskMember)
+export function modifyTaskMemberForFront(entity: TaskMember)
 {
     const { projectMember } = entity;
 
