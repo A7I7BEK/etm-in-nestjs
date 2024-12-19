@@ -4,7 +4,7 @@ import { TaskCommentType } from '../enums/task-comment-type.enum';
 /**
  * temporary for this project, must not exist
  */
-export function modifyEntityForFront(entity: TaskComment)
+export function modifyTaskCommentForFront(entity: TaskComment)
 {
     const { author, members, task } = entity;
 
@@ -23,7 +23,7 @@ export function modifyEntityForFront(entity: TaskComment)
         delete entity.author.user?.password;
 
         Object.assign(entity, {
-            authorId: author.id,
+            employeeId: author.id,
             firstName: author.firstName,
             lastName: author.lastName,
             middleName: author.middleName,

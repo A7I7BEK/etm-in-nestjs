@@ -8,7 +8,7 @@ import { TaskCommentQueryDto } from './dto/task-comment-query.dto';
 import { TaskCommentUpdateDto } from './dto/task-comment-update.dto';
 import { TaskCommentPermissions } from './enums/task-comment-permissions.enum';
 import { TaskCommentsService } from './task-comments.service';
-import { modifyEntityForFront } from './utils/modify-entity-for-front.util';
+import { modifyTaskCommentForFront } from './utils/modify-task-comment-for-front.util';
 
 @ApiTags('taskComments')
 @Controller('taskComments')
@@ -26,7 +26,7 @@ export class TaskCommentsController
         )
     {
         const entity = await this._service.create(createDto, activeUser);
-        return modifyEntityForFront(entity);
+        return modifyTaskCommentForFront(entity);
     }
 
 
@@ -39,7 +39,7 @@ export class TaskCommentsController
         )
     {
         const entityWithPagination = await this._service.findAllWithFilters(queryDto, activeUser);
-        entityWithPagination.data = entityWithPagination.data.map(entity => modifyEntityForFront(entity));
+        entityWithPagination.data = entityWithPagination.data.map(entity => modifyTaskCommentForFront(entity));
 
         return entityWithPagination;
     }
@@ -68,7 +68,7 @@ export class TaskCommentsController
             },
             activeUser,
         );
-        return modifyEntityForFront(entity);
+        return modifyTaskCommentForFront(entity);
     }
 
 
@@ -82,7 +82,7 @@ export class TaskCommentsController
         )
     {
         const entity = await this._service.update(id, updateDto, activeUser);
-        return modifyEntityForFront(entity);
+        return modifyTaskCommentForFront(entity);
     }
 
 
@@ -95,6 +95,6 @@ export class TaskCommentsController
         )
     {
         const entity = await this._service.remove(id, activeUser);
-        return modifyEntityForFront(entity);
+        return modifyTaskCommentForFront(entity);
     }
 }
