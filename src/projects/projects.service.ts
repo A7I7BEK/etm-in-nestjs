@@ -19,6 +19,7 @@ import { ProjectUpdateDto } from './dto/project-update.dto';
 import { Project } from './entities/project.entity';
 import { calculateProjectPercent } from './utils/calculate-project-percent.util';
 import { createEntity } from './utils/create-entity.util';
+import { getProjectDetails } from './utils/get-project-details.util';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
 import { updateEntity } from './utils/update-entity.util.ts';
 
@@ -209,5 +210,15 @@ export class ProjectsService
 
         entity.background = backgroundDto.background;
         return this.repository.save(entity);
+    }
+
+
+    getAllDetails
+        (
+            id: number,
+            activeUser: ActiveUserData,
+        )
+    {
+        return getProjectDetails(this, id, activeUser);
     }
 }
