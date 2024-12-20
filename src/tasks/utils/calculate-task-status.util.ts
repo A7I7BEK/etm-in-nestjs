@@ -7,19 +7,19 @@ export function calculateTaskStatus(entity: Task)
 {
     if (!entity.endDate)
     {
-        entity[ 'status' ] = TaskStatus.BLUE;
+        entity[ 'status' ] = TaskStatus[ TaskStatus.BLUE ];
     }
     else if (Date.now() > entity.endDate.getTime())
     {
-        entity[ 'status' ] = TaskStatus.RED;
+        entity[ 'status' ] = TaskStatus[ TaskStatus.RED ];
     }
     else if (entity.endDate.getTime() - Date.now() < ONE_DAY)
     {
-        entity[ 'status' ] = TaskStatus.YELLOW;
+        entity[ 'status' ] = TaskStatus[ TaskStatus.YELLOW ];
     }
     else
     {
-        entity[ 'status' ] = TaskStatus.GREEN;
+        entity[ 'status' ] = TaskStatus[ TaskStatus.GREEN ];
     }
 
 
