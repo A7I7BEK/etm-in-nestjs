@@ -10,7 +10,7 @@ import { ProjectSelectQueryDto } from './dto/project-select-query.dto';
 import { ProjectUpdateDto } from './dto/project-update.dto';
 import { ProjectPermissions } from './enums/project-permissions.enum';
 import { ProjectsService } from './projects.service';
-import { modifyEntityForFront } from './utils/modify-entity-for-front.util';
+import { modifyProjectForFront } from './utils/modify-project-for-front.util';
 
 @ApiTags('projects')
 @Controller('projects')
@@ -28,7 +28,7 @@ export class ProjectsController
         )
     {
         const entity = await this._service.create(createDto, activeUser);
-        return modifyEntityForFront(entity);
+        return modifyProjectForFront(entity);
     }
 
 
@@ -41,7 +41,7 @@ export class ProjectsController
         )
     {
         const entityWithPagination = await this._service.findAllWithFilters(queryDto, activeUser);
-        entityWithPagination.data = entityWithPagination.data.map(entity => modifyEntityForFront(entity));
+        entityWithPagination.data = entityWithPagination.data.map(entity => modifyProjectForFront(entity));
 
         return entityWithPagination;
     }
@@ -73,7 +73,7 @@ export class ProjectsController
             activeUser,
         );
 
-        return entityList.map(entity => modifyEntityForFront(entity));
+        return entityList.map(entity => modifyProjectForFront(entity));
     }
 
 
@@ -102,7 +102,7 @@ export class ProjectsController
             },
             activeUser,
         );
-        return modifyEntityForFront(entity);
+        return modifyProjectForFront(entity);
     }
 
 
@@ -116,7 +116,7 @@ export class ProjectsController
         )
     {
         const entity = await this._service.update(id, updateDto, activeUser);
-        return modifyEntityForFront(entity);
+        return modifyProjectForFront(entity);
     }
 
 
@@ -129,7 +129,7 @@ export class ProjectsController
         )
     {
         const entity = await this._service.remove(id, activeUser);
-        return modifyEntityForFront(entity);
+        return modifyProjectForFront(entity);
     }
 
 
@@ -142,6 +142,18 @@ export class ProjectsController
         )
     {
         const entity = await this._service.changeBackground(backgroundDto, activeUser);
-        return modifyEntityForFront(entity);
+        return modifyProjectForFront(entity);
+    }
+
+
+    @Get(':id/details')
+    @Permission(ProjectPermissions.Read)
+    async getAllDetails
+        (
+            @Param('id', ParseIntPipe) id: number,
+            @ActiveUser() activeUser: ActiveUserData,
+        )
+    {
+        return this._service.getAllDetails(id, activeUser);
     }
 }
