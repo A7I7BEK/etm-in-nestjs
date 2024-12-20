@@ -4,7 +4,7 @@ import { Project } from '../entities/project.entity';
 /**
  * temporary for this project, must not exist
  */
-export function modifyEntityForFront(entity: Project)
+export function modifyProjectForFront(entity: Project)
 {
     const { manager, organization, members } = entity;
 
