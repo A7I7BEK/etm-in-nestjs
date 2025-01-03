@@ -7,8 +7,6 @@ import { CheckListItemsModule } from './check-list-items/check-list-items.module
 import appConfig from './common/config/app.config';
 import { EmployeesModule } from './employees/employees.module';
 import { GroupsModule } from './groups/groups.module';
-import { BcryptService } from './iam/hashing/bcrypt.service';
-import { HashingService } from './iam/hashing/hashing.service';
 import { IamModule } from './iam/iam.module';
 import { MailModule } from './mail/mail.module';
 import { OneTimePasswordModule } from './one-time-password/one-time-password.module';
@@ -22,6 +20,7 @@ import { ProjectsModule } from './projects/projects.module';
 import { ReportsModule } from './reports/reports.module';
 import { ResourceModule } from './resource/resource.module';
 import { RolesModule } from './roles/roles.module';
+import { SocketModule } from './socket/socket.module';
 import { TaskAttachmentsModule } from './task-attachments/task-attachments.module';
 import { TaskCommentsModule } from './task-comments/task-comments.module';
 import { TaskDeadlineModule } from './task-deadline/task-deadline.module';
@@ -78,13 +77,10 @@ import { UsersModule } from './users/users.module';
         CheckListItemsModule,
         ReportsModule,
         OneTimePasswordModule,
+        SocketModule,
     ],
     providers: [
         AppService,
-        {
-            provide: HashingService,
-            useClass: BcryptService,
-        },
     ],
 })
 export class AppModule { }
