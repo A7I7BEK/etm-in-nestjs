@@ -1,20 +1,18 @@
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { ProjectColumnsService } from 'src/project-columns/project-columns.service';
-import { Repository } from 'typeorm';
 import { TaskCreateDto } from '../dto/task-create.dto';
 import { Task } from '../entities/task.entity';
+import { TasksService } from '../tasks.service';
 
 
 export async function createEntity
     (
-        columnsService: ProjectColumnsService,
-        repository: Repository<Task>,
+        service: TasksService,
         dto: TaskCreateDto,
         activeUser: ActiveUserData,
         entity = new Task(),
     )
 {
-    const columnEntity = await columnsService.findOne(
+    const columnEntity = await service.columnsService.findOne(
         {
             where: {
                 id: dto.columnId,
@@ -42,5 +40,5 @@ export async function createEntity
     delete entity.column.tasks;
 
 
-    return repository.save(entity);
+    return service.repository.save(entity);
 }
