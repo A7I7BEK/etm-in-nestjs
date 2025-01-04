@@ -1,11 +1,11 @@
-import { Repository } from 'typeorm';
 import { TaskUpdateDto } from '../dto/task-update.dto';
 import { Task } from '../entities/task.entity';
+import { TasksService } from '../tasks.service';
 
 
 export function updateEntity
     (
-        repository: Repository<Task>,
+        service: TasksService,
         dto: TaskUpdateDto,
         entity: Task,
     )
@@ -16,5 +16,5 @@ export function updateEntity
     entity.priority = dto.taskPriorityType;
 
 
-    return repository.save(entity);
+    return service.repository.save(entity);
 }
