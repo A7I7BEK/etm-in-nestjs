@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
@@ -20,7 +20,6 @@ export class TaskTagsService
     constructor (
         @InjectRepository(TaskTag)
         public readonly repository: Repository<TaskTag>,
-        @Inject(forwardRef(() => TasksService))
         public readonly tasksService: TasksService,
         public readonly projectTagsService: ProjectTagsService,
     ) { }
