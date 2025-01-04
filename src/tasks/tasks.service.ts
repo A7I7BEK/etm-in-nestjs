@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
@@ -6,9 +6,7 @@ import { reOrderItems } from 'src/common/utils/re-order-items.util';
 import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { ProjectColumnsService } from 'src/project-columns/project-columns.service';
-import { ProjectsService } from 'src/projects/projects.service';
-import { TaskMembersService } from 'src/task-members/task-members.service';
-import { TaskTagsService } from 'src/task-tags/task-tags.service';
+import { SocketGateway } from 'src/socket/socket.gateway';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { TaskCopyDto } from './dto/task-copy.dto';
 import { TaskCreateDto } from './dto/task-create.dto';
@@ -30,12 +28,8 @@ export class TasksService
     constructor (
         @InjectRepository(Task)
         public readonly repository: Repository<Task>,
-        public readonly projectsService: ProjectsService,
         public readonly columnsService: ProjectColumnsService,
-        @Inject(forwardRef(() => TaskMembersService))
-        private readonly _taskMembersService: TaskMembersService,
-        @Inject(forwardRef(() => TaskTagsService))
-        private readonly _taskTagsService: TaskTagsService,
+        public readonly socketGateway: SocketGateway,
     ) { }
 
 
@@ -46,8 +40,7 @@ export class TasksService
         )
     {
         return createEntity(
-            this.columnsService,
-            this.repository,
+            this,
             createDto,
             activeUser,
         );
@@ -147,7 +140,7 @@ export class TasksService
         );
 
         return updateEntity(
-            this.repository,
+            this,
             updateDto,
             entity,
         );
@@ -224,5 +217,22 @@ export class TasksService
         )
     {
         return getTaskDetails(this, id, activeUser);
+    }
+
+
+    async wsEmitOne
+        (
+            id: number,
+            activeUser: ActiveUserData,
+        )
+    {
+        const entity = await this.findOne(
+            {
+                where: { id }
+            },
+            activeUser,
+        );
+
+        this.socketGateway.emitTaskChange(entity);
     }
 }
