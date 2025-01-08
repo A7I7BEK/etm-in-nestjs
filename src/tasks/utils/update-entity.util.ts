@@ -14,7 +14,10 @@ export async function updateEntity
 {
     const entity = await service.findOne(
         {
-            where: { id }
+            where: { id },
+            relations: {
+                project: true,
+            },
         },
         activeUser,
     );
@@ -27,7 +30,13 @@ export async function updateEntity
     await service.repository.save(entity);
 
 
-    wsEmitOneTask(service, entity.id, activeUser, 'replace');
+    wsEmitOneTask(
+        service,
+        entity.id,
+        entity.project.id,
+        activeUser,
+        'replace',
+    );
 
 
     return entity;

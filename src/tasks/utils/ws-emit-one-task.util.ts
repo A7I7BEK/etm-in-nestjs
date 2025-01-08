@@ -6,6 +6,7 @@ export async function wsEmitOneTask
     (
         service: TasksService,
         id: number,
+        projectId: number,
         activeUser: ActiveUserData,
         action: 'insert' | 'replace',
     )
@@ -24,10 +25,10 @@ export async function wsEmitOneTask
 
     if (action === 'insert')
     {
-        service.tasksGateway.emitInsert(entity);
+        service.tasksGateway.emitInsert(entity, projectId);
     }
     else if (action === 'replace')
     {
-        service.tasksGateway.emitReplace(entity);
+        service.tasksGateway.emitReplace(entity, projectId);
     }
 }

@@ -50,7 +50,13 @@ export async function createEntity
     await service.repository.save(columnEntity.tasks);
 
 
-    wsEmitOneTask(service, entity.id, activeUser, 'insert');
+    wsEmitOneTask(
+        service,
+        entity.id,
+        entity.project.id,
+        activeUser,
+        'insert',
+    );
 
 
     return entity;

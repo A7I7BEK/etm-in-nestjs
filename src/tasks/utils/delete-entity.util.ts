@@ -13,7 +13,10 @@ export async function deleteEntity
     const entity = await service.findOne(
         {
             where: { id },
-            relations: { column: true }
+            relations: {
+                project: true,
+                column: true,
+            }
         },
         activeUser,
     );
@@ -41,7 +44,7 @@ export async function deleteEntity
 
 
     entity.id = id;
-    service.tasksGateway.emitDelete(entity);
+    service.tasksGateway.emitDelete(entity, entity.project.id);
 
 
     return entity;
