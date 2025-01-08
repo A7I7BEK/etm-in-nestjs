@@ -2,6 +2,7 @@ import { reOrderItems } from 'src/common/utils/re-order-items.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { TaskMoveDto } from '../dto/task-move.dto';
 import { TasksService } from '../tasks.service';
+import { wsEmitOneTask } from './ws-emit-one-task.util';
 
 
 export async function moveEntity
@@ -15,13 +16,43 @@ export async function moveEntity
         {
             where: { id: moveDto.id },
             relations: {
+                project: true,
                 column: {
                     tasks: true
+                }
+            },
+            order: {
+                column: {
+                    tasks: {
+                        ordering: 'ASC',
+                    }
                 }
             }
         },
         activeUser,
     );
+
+
+    if (
+        entity.column.id === moveDto.columnId
+        && entity.project.id === moveDto.projectId
+    )
+    {
+        // same column
+        const taskList = [ ...entity.column.tasks ];
+        const task = taskList.find(a => a.id === entity.id);
+        taskList.splice(taskList.indexOf(task), 1);
+        taskList.splice(moveDto.ordering, 0, task);
+        reOrderItems(taskList);
+        await service.repository.save(taskList);
+
+
+        delete entity.column.tasks;
+        service.tasksGateway.emitReorder(entity, entity.project.id);
+
+
+        return entity;
+    }
 
 
     const columnEntity = await service.columnsService.findOne(
@@ -32,7 +63,10 @@ export async function moveEntity
                     id: moveDto.projectId,
                 }
             },
-            relations: { tasks: true },
+            relations: {
+                project: true,
+                tasks: true,
+            },
             order: {
                 tasks: {
                     ordering: 'ASC',
@@ -43,32 +77,43 @@ export async function moveEntity
     );
 
 
-    const task = columnEntity.tasks.find(a => a.id === entity.id);
-    if (task)
-    {
-        // existing column
-        columnEntity.tasks.splice(columnEntity.tasks.indexOf(task), 1);
-        columnEntity.tasks.splice(moveDto.ordering, 0, task);
-    }
-    else
-    {
-        // old column
-        const oldColumn = entity.column;
-        oldColumn.tasks.splice(oldColumn.tasks.findIndex(a => a.id === entity.id), 1);
-        reOrderItems(oldColumn.tasks);
-        await service.repository.save(oldColumn.tasks);
+    // old column
+    const oldTaskList = entity.column.tasks.filter(a => a.id !== entity.id);
+    reOrderItems(oldTaskList);
+    await service.repository.save(oldTaskList);
 
 
-        // new column
+    if (entity.project.id === moveDto.projectId)
+    {
+        // new column, same project
+        entity[ 'oldColumnId' ] = entity.column.id;
         entity.column = { ...columnEntity };
         delete entity.column.tasks;
         columnEntity.tasks.splice(moveDto.ordering, 0, entity);
+        reOrderItems(columnEntity.tasks);
+        await service.repository.save(columnEntity.tasks);
+
+
+        service.tasksGateway.emitMove(entity, entity.project.id);
+    }
+    else
+    {
+        // new column, new project
+        const entityOld = structuredClone(entity); // BINGO
+
+        entity.column = { ...columnEntity };
+        delete entity.column.tasks;
+        entity.project = columnEntity.project;
+        columnEntity.tasks.splice(moveDto.ordering, 0, entity);
+        reOrderItems(columnEntity.tasks);
+        await service.repository.save(columnEntity.tasks);
+
+
+        delete entityOld.column.tasks;
+        service.tasksGateway.emitDelete(entityOld, entityOld.project.id); // delete from old project
+        wsEmitOneTask(service, entity.id, entity.project.id, activeUser, 'insert'); // insert to new project
     }
 
 
-    reOrderItems(columnEntity.tasks);
-    await service.repository.save(columnEntity.tasks);
-
-
-    return task ? task : entity;
+    return entity;
 }
