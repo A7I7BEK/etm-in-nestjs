@@ -2,11 +2,9 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
-import { reOrderItems } from 'src/common/utils/re-order-items.util';
 import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { ProjectColumnsService } from 'src/project-columns/project-columns.service';
-import { SocketGateway } from 'src/socket/socket.gateway';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { TaskCopyDto } from './dto/task-copy.dto';
 import { TaskCreateDto } from './dto/task-create.dto';
@@ -14,13 +12,16 @@ import { TaskMoveDto } from './dto/task-move.dto';
 import { TaskQueryDto } from './dto/task-query.dto';
 import { TaskUpdateDto } from './dto/task-update.dto';
 import { Task } from './entities/task.entity';
+import { TasksGateway } from './tasks.gateway';
 import { calculateTaskStatus } from './utils/calculate-task-status.util';
 import { copyEntity } from './utils/copy-entity.util';
 import { createEntity } from './utils/create-entity.util';
+import { deleteEntity } from './utils/delete-entity.util';
 import { getTaskDetails } from './utils/get-task-details.util';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
 import { moveEntity } from './utils/move-entity.util';
 import { updateEntity } from './utils/update-entity.util';
+
 
 @Injectable()
 export class TasksService
@@ -29,7 +30,7 @@ export class TasksService
         @InjectRepository(Task)
         public readonly repository: Repository<Task>,
         public readonly columnsService: ProjectColumnsService,
-        public readonly socketGateway: SocketGateway,
+        public readonly tasksGateway: TasksGateway,
     ) { }
 
 
@@ -39,11 +40,7 @@ export class TasksService
             activeUser: ActiveUserData,
         )
     {
-        return createEntity(
-            this,
-            createDto,
-            activeUser,
-        );
+        return createEntity(this, createDto, activeUser);
     }
 
 
@@ -132,18 +129,7 @@ export class TasksService
             activeUser: ActiveUserData,
         )
     {
-        const entity = await this.findOne(
-            {
-                where: { id }
-            },
-            activeUser,
-        );
-
-        return updateEntity(
-            this,
-            updateDto,
-            entity,
-        );
+        return updateEntity(this, id, updateDto, activeUser);
     }
 
 
@@ -153,32 +139,7 @@ export class TasksService
             activeUser: ActiveUserData,
         )
     {
-        const entity = await this.findOne(
-            {
-                where: { id },
-                relations: { column: true }
-            },
-            activeUser,
-        );
-        await this.repository.remove(entity);
-
-        const columnEntity = await this.columnsService.findOne(
-            {
-                where: { id: entity.column.id },
-                relations: { tasks: true },
-                order: {
-                    tasks: {
-                        ordering: 'ASC',
-                    }
-                }
-            },
-            activeUser,
-        );
-
-        reOrderItems(columnEntity.tasks);
-        await this.repository.save(columnEntity.tasks);
-
-        return entity;
+        return deleteEntity(this, id, activeUser);
     }
 
 
@@ -188,11 +149,7 @@ export class TasksService
             activeUser: ActiveUserData,
         )
     {
-        return copyEntity(
-            this,
-            copyDto,
-            activeUser,
-        );
+        return copyEntity(this, copyDto, activeUser);
     }
 
 
@@ -202,11 +159,7 @@ export class TasksService
             activeUser: ActiveUserData,
         )
     {
-        return moveEntity(
-            this,
-            moveDto,
-            activeUser,
-        );
+        return moveEntity(this, moveDto, activeUser);
     }
 
 
@@ -217,22 +170,5 @@ export class TasksService
         )
     {
         return getTaskDetails(this, id, activeUser);
-    }
-
-
-    async wsEmitOne
-        (
-            id: number,
-            activeUser: ActiveUserData,
-        )
-    {
-        const entity = await this.findOne(
-            {
-                where: { id }
-            },
-            activeUser,
-        );
-
-        this.socketGateway.emitTaskChange(entity);
     }
 }
