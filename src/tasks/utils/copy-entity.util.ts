@@ -3,6 +3,7 @@ import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { TaskCopyDto } from '../dto/task-copy.dto';
 import { Task } from '../entities/task.entity';
 import { TasksService } from '../tasks.service';
+import { wsEmitOneTask } from './ws-emit-one-task.util';
 
 
 export async function copyEntity
@@ -49,12 +50,23 @@ export async function copyEntity
     entity.column = { ...columnEntity };
     delete entity.column.tasks;
     entity.project = columnEntity.project;
+    entity.ordering = 0;
+    entity.createdAt = new Date();
     await service.repository.save(entity);
 
 
     columnEntity.tasks.splice(copyDto.ordering, 0, entity);
     reOrderItems(columnEntity.tasks);
     await service.repository.save(columnEntity.tasks);
+
+
+    wsEmitOneTask(
+        service,
+        entity.id,
+        entity.project.id,
+        activeUser,
+        'insert',
+    );
 
 
     return entity;
