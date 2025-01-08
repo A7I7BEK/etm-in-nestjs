@@ -15,23 +15,15 @@ export async function deleteEntity
             where: { id },
             relations: {
                 project: true,
-                column: true,
-            }
-        },
-        activeUser,
-    );
-
-
-    await service.repository.remove(entity);
-
-
-    const columnEntity = await service.columnsService.findOne(
-        {
-            where: { id: entity.column.id },
-            relations: { tasks: true },
+                column: {
+                    tasks: true
+                }
+            },
             order: {
-                tasks: {
-                    ordering: 'ASC',
+                column: {
+                    tasks: {
+                        ordering: 'ASC',
+                    }
                 }
             }
         },
@@ -39,11 +31,14 @@ export async function deleteEntity
     );
 
 
-    reOrderItems(columnEntity.tasks);
-    await service.repository.save(columnEntity.tasks);
+    const taskList = entity.column.tasks.filter(a => a.id !== entity.id);
+    reOrderItems(taskList);
+    await service.repository.save(taskList);
+    await service.repository.remove(entity);
 
 
     entity.id = id;
+    delete entity.column.tasks;
     service.tasksGateway.emitDelete(entity, entity.project.id);
 
 
