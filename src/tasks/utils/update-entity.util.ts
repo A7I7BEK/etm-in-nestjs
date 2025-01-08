@@ -1,20 +1,34 @@
+import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { TaskUpdateDto } from '../dto/task-update.dto';
-import { Task } from '../entities/task.entity';
 import { TasksService } from '../tasks.service';
+import { wsEmitOneTask } from './ws-emit-one-task.util';
 
 
-export function updateEntity
+export async function updateEntity
     (
         service: TasksService,
+        id: number,
         dto: TaskUpdateDto,
-        entity: Task,
+        activeUser: ActiveUserData,
     )
 {
+    const entity = await service.findOne(
+        {
+            where: { id }
+        },
+        activeUser,
+    );
+
+
     entity.name = dto.name;
     entity.description = dto.description;
     entity.level = dto.taskLevelType;
     entity.priority = dto.taskPriorityType;
+    await service.repository.save(entity);
 
 
-    return service.repository.save(entity);
+    wsEmitOneTask(service, entity.id, activeUser, 'replace');
+
+
+    return entity;
 }
