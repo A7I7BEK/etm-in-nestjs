@@ -16,7 +16,6 @@ export class TasksGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     server: Server;
 
     roomName: 'project-';
-    roomId: string;
 
 
     afterInit(server: Server)
@@ -26,8 +25,8 @@ export class TasksGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
     handleConnection(client: Socket)
     {
-        this.roomId = client.handshake.query.roomId as string;
-        client.join(this.roomName + this.roomId);
+        const roomId = client.handshake.query.roomId as string;
+        client.join(this.roomName + roomId);
 
         this.logger.log(`Client Connected: ${client.id}`);
         console.log('Connected: ', client.handshake);
@@ -39,27 +38,27 @@ export class TasksGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     }
 
 
-    emitInsert(payload: Task, roomId: string = this.roomId)
+    emitInsert(payload: Task, roomId: string | number)
     {
         this.server.to(this.roomName + roomId).emit('task-insert', payload);
     }
 
-    emitDelete(payload: Task, roomId: string = this.roomId)
+    emitDelete(payload: Task, roomId: string | number)
     {
         this.server.to(this.roomName + roomId).emit('task-delete', payload);
     }
 
-    emitReplace(payload: Task, roomId: string = this.roomId)
+    emitReplace(payload: Task, roomId: string | number)
     {
         this.server.to(this.roomName + roomId).emit('task-replace', payload);
     }
 
-    emitReorder(payload: Task, roomId: string = this.roomId)
+    emitReorder(payload: Task, roomId: string | number)
     {
         this.server.to(this.roomName + roomId).emit('task-reorder', payload);
     }
 
-    emitMove(payload: Task, roomId: string = this.roomId)
+    emitMove(payload: Task, roomId: string | number)
     {
         this.server.to(this.roomName + roomId).emit('task-move', payload);
     }
