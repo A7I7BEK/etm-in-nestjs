@@ -2,6 +2,7 @@ import { modifyProjectColumnForFront } from 'src/project-columns/utils/modify-en
 import { modifyProjectMemberForFront } from 'src/project-members/utils/modify-entity-for-front.util';
 import { modifyTaskForFront } from 'src/tasks/utils/modify-task-for-front.util';
 import { Project } from '../entities/project.entity';
+import { calculateProjectPercent } from './calculate-project-percent.util';
 
 /**
  * temporary for this project, must not exist
@@ -9,6 +10,9 @@ import { Project } from '../entities/project.entity';
 export function modifyProjectForFront(entity: Project)
 {
     const { manager, organization } = entity;
+
+
+    calculateProjectPercent(entity);
 
 
     Object.assign(entity, {

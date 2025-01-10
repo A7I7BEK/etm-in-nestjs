@@ -17,7 +17,6 @@ import { ProjectCreateDto } from './dto/project-create.dto';
 import { ProjectQueryDto } from './dto/project-query.dto';
 import { ProjectUpdateDto } from './dto/project-update.dto';
 import { Project } from './entities/project.entity';
-import { calculateProjectPercent } from './utils/calculate-project-percent.util';
 import { createEntity } from './utils/create-entity.util';
 import { getProjectDetails } from './utils/get-project-details.util';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
@@ -81,9 +80,7 @@ export class ProjectsService
             setNestedOptions(options ??= {}, orgOption);
         }
 
-        const entityList = await this.repository.find(options);
-        entityList.forEach(item => calculateProjectPercent(item));
-        return entityList;
+        return this.repository.find(options);
     }
 
 
@@ -100,7 +97,6 @@ export class ProjectsService
         );
 
         const [ data, total ] = await loadedQueryBuilder.getManyAndCount();
-        data.forEach(item => calculateProjectPercent(item));
         const paginationMeta = new PaginationMeta(queryDto.page, queryDto.perPage, total);
 
         return new Pagination<Project>(data, paginationMeta);
@@ -132,7 +128,7 @@ export class ProjectsService
             throw new NotFoundException(`${Project.name} not found`);
         }
 
-        return calculateProjectPercent(entity);
+        return entity;
     }
 
 
