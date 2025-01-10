@@ -13,7 +13,6 @@ import { TaskQueryDto } from './dto/task-query.dto';
 import { TaskUpdateDto } from './dto/task-update.dto';
 import { Task } from './entities/task.entity';
 import { TasksGateway } from './tasks.gateway';
-import { calculateTaskStatus } from './utils/calculate-task-status.util';
 import { copyEntity } from './utils/copy-entity.util';
 import { createEntity } from './utils/create-entity.util';
 import { deleteEntity } from './utils/delete-entity.util';
@@ -65,9 +64,7 @@ export class TasksService
             setNestedOptions(options ??= {}, orgOption);
         }
 
-        const entityList = await this.repository.find(options);
-        entityList.forEach(item => calculateTaskStatus(item));
-        return entityList;
+        return this.repository.find(options);
     }
 
 
@@ -84,7 +81,6 @@ export class TasksService
         );
 
         const [ data, total ] = await loadedQueryBuilder.getManyAndCount();
-        data.forEach(item => calculateTaskStatus(item));
         const paginationMeta = new PaginationMeta(queryDto.page, queryDto.perPage, total);
 
         return new Pagination<Task>(data, paginationMeta);
@@ -118,7 +114,7 @@ export class TasksService
             throw new NotFoundException(`${Task.name} not found`);
         }
 
-        return calculateTaskStatus(entity);
+        return entity;
     }
 
 

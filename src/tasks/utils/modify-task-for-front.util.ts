@@ -1,6 +1,7 @@
 import { Task } from '../entities/task.entity';
 import { TaskLevel } from '../enums/task-level.enum';
 import { TaskPriority } from '../enums/task-priority.enum';
+import { calculateTaskStatus } from './calculate-task-status.util';
 
 /**
  * temporary for this project, must not exist
@@ -8,6 +9,9 @@ import { TaskPriority } from '../enums/task-priority.enum';
 export function modifyTaskForFront(entity: Task)
 {
     const { level, priority, project, column } = entity;
+
+
+    calculateTaskStatus(entity);
 
 
     Object.assign(entity, {
