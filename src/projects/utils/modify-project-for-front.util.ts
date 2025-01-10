@@ -1,4 +1,6 @@
+import { modifyProjectColumnForFront } from 'src/project-columns/utils/modify-entity-for-front.util';
 import { modifyProjectMemberForFront } from 'src/project-members/utils/modify-entity-for-front.util';
+import { modifyTaskForFront } from 'src/tasks/utils/modify-task-for-front.util';
 import { Project } from '../entities/project.entity';
 
 /**
@@ -6,7 +8,7 @@ import { Project } from '../entities/project.entity';
  */
 export function modifyProjectForFront(entity: Project)
 {
-    const { manager, organization, members } = entity;
+    const { manager, organization } = entity;
 
 
     Object.assign(entity, {
@@ -17,10 +19,17 @@ export function modifyProjectForFront(entity: Project)
     });
 
 
-    if (members)
+    entity.columns?.forEach(col =>
     {
-        entity.members = entity.members.map(item => modifyProjectMemberForFront(item));
-    }
+        modifyProjectColumnForFront(col);
+        col.tasks?.forEach(task =>
+        {
+            modifyTaskForFront(task);
+        });
+    });
+
+
+    entity.members?.forEach(item => modifyProjectMemberForFront(item));
 
 
     if (manager)
