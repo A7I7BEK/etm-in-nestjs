@@ -1,5 +1,7 @@
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { TaskCommentType } from 'src/task-comments/enums/task-comment-type.enum';
+import { modifyTaskMemberForFront } from 'src/task-members/utils/modify-task-member-for-front.util';
+import { modifyTaskTagForFront } from 'src/task-tags/utils/modify-task-tag-for-front.util';
 import { TaskLevel } from 'src/tasks/enums/task-level.enum';
 import { TaskPriority } from 'src/tasks/enums/task-priority.enum';
 import { TaskStatus } from 'src/tasks/enums/task-status.enum';
@@ -19,7 +21,22 @@ export async function getProjectDetails
             where: { id },
             relations: {
                 columns: {
-                    tasks: true
+                    tasks: {
+                        checkListGroups: {
+                            checkList: true
+                        },
+                        comments: true,
+                        members: {
+                            projectMember: {
+                                employee: {
+                                    user: true
+                                }
+                            }
+                        },
+                        tags: {
+                            projectTag: true
+                        }
+                    }
                 },
                 group: true,
                 manager: true,
@@ -31,6 +48,15 @@ export async function getProjectDetails
                 tags: true,
                 organization: true,
             },
+            order: {
+                columns: {
+                    tasks: {
+                        comments: {
+                            id: 'DESC'
+                        },
+                    }
+                },
+            },
         },
         activeUser,
     );
@@ -39,6 +65,39 @@ export async function getProjectDetails
     modifyProjectForFront(entity);
     entity[ 'actions' ] = [];
     entity[ 'actionsCount' ] = 123;
+
+
+    entity.columns?.forEach(col => // TODO: Check if this is correct
+    {
+        col.tasks?.forEach(task =>
+        {
+            const allChecklist = task.checkListGroups.flatMap(item => item.checkList);
+            Object.assign(task, {
+                checkListCount: {
+                    totalCount: allChecklist.length,
+                    checkedCount: allChecklist.filter(a => a.checked).length,
+                },
+            });
+            delete task.checkListGroups;
+
+            if (task.comments.length)
+            {
+                const commentType = task.comments[ 0 ].commentType;
+                Object.assign(task, {
+                    commentCount: task.comments.length,
+                    lastCommentType: {
+                        id: commentType,
+                        name: TaskCommentType[ commentType ],
+                        value: TaskCommentType[ commentType ],
+                    },
+                });
+            }
+            delete task.comments;
+
+            task.members.forEach(item => modifyTaskMemberForFront(item));
+            task.tags.forEach(item => modifyTaskTagForFront(item));
+        });
+    });
 
 
     entity[ 'taskStatusType' ] = Object.keys(TaskStatus).filter(a => Number(a))
