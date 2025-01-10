@@ -9,7 +9,7 @@ import { ProjectColumnSelectQueryDto } from './dto/project-column-select-query.d
 import { ProjectColumnUpdateDto } from './dto/project-column-update.dto';
 import { ProjectColumnPermissions } from './enums/project-column-permissions.enum';
 import { ProjectColumnsService } from './project-columns.service';
-import { modifyEntityForFront } from './utils/modify-entity-for-front.util';
+import { modifyProjectColumnForFront } from './utils/modify-entity-for-front.util';
 
 @ApiTags('projectColumns')
 @Controller('projectColumns')
@@ -27,7 +27,7 @@ export class ProjectColumnsController
         )
     {
         const entity = await this._service.create(createDto, activeUser);
-        return modifyEntityForFront(entity);
+        return modifyProjectColumnForFront(entity);
     }
 
 
@@ -50,7 +50,7 @@ export class ProjectColumnsController
             },
             activeUser,
         );
-        return entityList.map(entity => modifyEntityForFront(entity));
+        return entityList.map(entity => modifyProjectColumnForFront(entity));
     }
 
 
@@ -69,7 +69,7 @@ export class ProjectColumnsController
             },
             activeUser,
         );
-        return modifyEntityForFront(entity);
+        return modifyProjectColumnForFront(entity);
     }
 
 
@@ -83,7 +83,7 @@ export class ProjectColumnsController
         )
     {
         const entity = await this._service.update(id, updateDto, activeUser);
-        return modifyEntityForFront(entity);
+        return modifyProjectColumnForFront(entity);
     }
 
 
@@ -96,7 +96,7 @@ export class ProjectColumnsController
         )
     {
         const entity = await this._service.move(moveDto, activeUser);
-        return modifyEntityForFront(entity);
+        return modifyProjectColumnForFront(entity);
     }
 
 
@@ -109,6 +109,6 @@ export class ProjectColumnsController
         )
     {
         const entity = await this._service.remove(id, activeUser);
-        return modifyEntityForFront(entity);
+        return modifyProjectColumnForFront(entity);
     }
 }

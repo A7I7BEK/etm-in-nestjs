@@ -3,7 +3,7 @@ import { ProjectColumn } from '../entities/project-column.entity';
 /**
  * temporary for this project, must not exist
  */
-export function modifyEntityForFront(entity: ProjectColumn)
+export function modifyProjectColumnForFront(entity: ProjectColumn)
 {
     const { project } = entity;
 
