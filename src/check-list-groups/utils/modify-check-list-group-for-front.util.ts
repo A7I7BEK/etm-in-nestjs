@@ -6,14 +6,10 @@ import { CheckListGroup } from '../entities/check-list-group.entity';
  */
 export function modifyCheckListGroupForFront(entity: CheckListGroup)
 {
-    const { checkList, task } = entity;
+    const { task } = entity;
 
 
-    if (checkList)
-    {
-        entity.checkList =
-            entity.checkList.map(item => modifyCheckListItemForFront(item));
-    }
+    entity.checkList?.forEach(item => modifyCheckListItemForFront(item));
 
 
     if (task)
