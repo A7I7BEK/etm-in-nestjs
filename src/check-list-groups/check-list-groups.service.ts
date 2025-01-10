@@ -10,7 +10,6 @@ import { CheckListGroupCreateDto } from './dto/check-list-group-create.dto';
 import { CheckListGroupQueryDto } from './dto/check-list-group-query.dto';
 import { CheckListGroupUpdateDto } from './dto/check-list-group-update.dto';
 import { CheckListGroup } from './entities/check-list-group.entity';
-import { calculateCheckListGroupPercent } from './utils/calculate-check-list-group-percent.util';
 import { createUpdateEntity } from './utils/create-update-entity.util';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
 
@@ -58,9 +57,7 @@ export class CheckListGroupsService
             setNestedOptions(options ??= {}, orgOption);
         }
 
-        const entityList = await this.repository.find(options);
-        entityList.forEach(item => calculateCheckListGroupPercent(item));
-        return entityList;
+        return this.repository.find(options);
     }
 
 
@@ -77,7 +74,6 @@ export class CheckListGroupsService
         );
 
         const [ data, total ] = await loadedQueryBuilder.getManyAndCount();
-        data.forEach(item => calculateCheckListGroupPercent(item));
         const paginationMeta = new PaginationMeta(queryDto.page, queryDto.perPage, total);
 
         return new Pagination<CheckListGroup>(data, paginationMeta);
@@ -113,7 +109,7 @@ export class CheckListGroupsService
             throw new NotFoundException(`${CheckListGroup.name} not found`);
         }
 
-        return calculateCheckListGroupPercent(entity);
+        return entity;
     }
 
 

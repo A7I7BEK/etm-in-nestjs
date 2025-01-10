@@ -1,4 +1,3 @@
-import { calculateCheckListGroupPercent } from 'src/check-list-groups/utils/calculate-check-list-group-percent.util';
 import { modifyCheckListGroupForFront } from 'src/check-list-groups/utils/modify-check-list-group-for-front.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { modifyTaskAttachmentForFront } from 'src/task-attachments/utils/modify-task-attachment-for-front.util';
@@ -58,11 +57,7 @@ export async function getTaskDetails
 
 
     modifyTaskForFront(entity);
-    entity.checkListGroups.forEach(item =>
-    {
-        calculateCheckListGroupPercent(item);
-        modifyCheckListGroupForFront(item);
-    });
+    entity.checkListGroups.forEach(item => modifyCheckListGroupForFront(item));
     entity.comments.forEach(item => modifyTaskCommentForFront(item));
     entity[ 'commentsCount' ] = entity.comments.length;
     entity.members.forEach(item => modifyTaskMemberForFront(item));
