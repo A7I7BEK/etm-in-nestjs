@@ -27,5 +27,6 @@ export function calculateProjectPercent(entity: Project)
 
 
     Object.assign(entity, { percent });
+    delete entity.tasks;
     return entity;
 }
