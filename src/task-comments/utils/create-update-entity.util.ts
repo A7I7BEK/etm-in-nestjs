@@ -1,6 +1,7 @@
 import { EmployeesService } from 'src/employees/employees.service';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { TasksService } from 'src/tasks/tasks.service';
+import { wsEmitOneTask } from 'src/tasks/utils/ws-emit-one-task.util';
 import { In, Repository } from 'typeorm';
 import { TaskCommentCreateDto } from '../dto/task-comment-create.dto';
 import { TaskCommentUpdateDto } from '../dto/task-comment-update.dto';
@@ -53,7 +54,16 @@ export async function createUpdateEntity
     entity.commentType = dto.commentType;
     entity.members = memberEntities;
     entity.updatedAt = new Date();
+    await repository.save(entity);
 
 
-    return repository.save(entity);
+    wsEmitOneTask(
+        tasksService,
+        entity.task.id,
+        activeUser,
+        'replace',
+    );
+
+
+    return entity;
 }

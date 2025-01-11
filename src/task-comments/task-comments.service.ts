@@ -6,6 +6,7 @@ import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
 import { EmployeesService } from 'src/employees/employees.service';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { TasksService } from 'src/tasks/tasks.service';
+import { wsEmitOneTask } from 'src/tasks/utils/ws-emit-one-task.util';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { TaskCommentCreateDto } from './dto/task-comment-create.dto';
 import { TaskCommentQueryDto } from './dto/task-comment-query.dto';
@@ -130,7 +131,10 @@ export class TaskCommentsService
     {
         const entity = await this.findOne(
             {
-                where: { id }
+                where: { id },
+                relations: {
+                    task: true,
+                }
             },
             activeUser,
         );
@@ -154,10 +158,22 @@ export class TaskCommentsService
     {
         const entity = await this.findOne(
             {
-                where: { id }
+                where: { id },
+                relations: {
+                    task: true,
+                }
             },
             activeUser,
         );
-        return this.repository.remove(entity);
+        await this.repository.remove(entity);
+
+        wsEmitOneTask(
+            this._tasksService,
+            entity.task.id,
+            activeUser,
+            'replace',
+        );
+
+        return entity;
     }
 }
