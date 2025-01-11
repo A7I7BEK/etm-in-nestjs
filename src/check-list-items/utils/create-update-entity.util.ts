@@ -1,4 +1,5 @@
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
+import { wsEmitOneTask } from 'src/tasks/utils/ws-emit-one-task.util';
 import { In } from 'typeorm';
 import { CheckListItemsService } from '../check-list-items.service';
 import { CheckListItemCreateDto } from '../dto/check-list-item-create.dto';
@@ -43,7 +44,16 @@ export async function createUpdateEntity
 
 
     entity.text = dto.text;
+    await service.repository.save(entity);
 
 
-    return service.repository.save(entity);
+    wsEmitOneTask(
+        service.tasksService,
+        entity.task.id,
+        activeUser,
+        'replace',
+    );
+
+
+    return entity;
 }

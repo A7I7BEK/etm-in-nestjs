@@ -6,6 +6,8 @@ import { Pagination } from 'src/common/pagination/pagination.class';
 import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
 import { EmployeesService } from 'src/employees/employees.service';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
+import { TasksService } from 'src/tasks/tasks.service';
+import { wsEmitOneTask } from 'src/tasks/utils/ws-emit-one-task.util';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { CheckListItemCreateDto } from './dto/check-list-item-create.dto';
 import { CheckListItemQueryDto } from './dto/check-list-item-query.dto';
@@ -23,6 +25,7 @@ export class CheckListItemsService
         public readonly repository: Repository<CheckListItem>,
         public readonly chGroupsService: CheckListGroupsService,
         public readonly employeesService: EmployeesService,
+        public readonly tasksService: TasksService,
     ) { }
 
 
@@ -124,7 +127,8 @@ export class CheckListItemsService
     {
         const entity = await this.findOne(
             {
-                where: { id }
+                where: { id },
+                relations: { task: true }
             },
             activeUser,
         );
@@ -140,10 +144,20 @@ export class CheckListItemsService
     {
         const entity = await this.findOne(
             {
-                where: { id }
+                where: { id },
+                relations: { task: true }
             },
             activeUser,
         );
-        return this.repository.remove(entity);
+        await this.repository.remove(entity);
+
+        wsEmitOneTask(
+            this.tasksService,
+            entity.task.id,
+            activeUser,
+            'replace',
+        );
+
+        return entity;
     }
 }
