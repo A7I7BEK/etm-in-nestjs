@@ -7,14 +7,12 @@ export function calculateProjectPercent(entity: Project)
 {
     const { tasks } = entity;
 
-
+    // TODO: check if it is working
     if (entity.projectType !== ProjectType.KANBAN || !tasks)
     {
         return entity;
     }
-
-
-    if (tasks.length === 0)
+    else if (tasks.length === 0)
     {
         Object.assign(entity, { percent: 0 });
         return entity;
@@ -28,5 +26,7 @@ export function calculateProjectPercent(entity: Project)
 
     Object.assign(entity, { percent });
     delete entity.tasks;
+
+
     return entity;
 }
