@@ -1,5 +1,6 @@
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { TasksService } from '../tasks.service';
+import { modifyTaskForProject } from './modify-task-for-project.util';
 
 
 export async function wsEmitOneTask
@@ -16,11 +17,32 @@ export async function wsEmitOneTask
             where: { id },
             relations: {
                 column: true,
-                members: true,
-            }
+                checkListGroups: {
+                    checkList: true
+                },
+                comments: true,
+                members: {
+                    projectMember: {
+                        employee: {
+                            user: true
+                        }
+                    }
+                },
+                tags: {
+                    projectTag: true
+                }
+            },
+            order: {
+                comments: {
+                    id: 'DESC'
+                },
+            },
         },
         activeUser,
     );
+
+
+    modifyTaskForProject(entity);
 
 
     if (action === 'insert')
