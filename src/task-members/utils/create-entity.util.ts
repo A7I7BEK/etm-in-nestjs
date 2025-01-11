@@ -1,5 +1,6 @@
 import { ConflictException } from '@nestjs/common';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
+import { wsEmitOneTask } from 'src/tasks/utils/ws-emit-one-task.util';
 import { TaskMemberCreateDto } from '../dto/task-member-create.dto';
 import { TaskMember } from '../entities/task-member.entity';
 import { TaskMembersService } from '../task-members.service';
@@ -34,23 +35,28 @@ export async function createEntity
 
 
     const entity = new TaskMember();
-
-
     entity.task = await service.tasksService.findOne(
         {
             where: { id: dto.taskId }
         },
         activeUser,
     );
-
-
     entity.projectMember = await service.projectMembersService.findOne(
         {
             where: { id: dto.projectMemberId }
         },
         activeUser,
     );
+    await service.repository.save(entity);
 
 
-    return service.repository.save(entity);
+    wsEmitOneTask(
+        service.tasksService,
+        dto.taskId,
+        activeUser,
+        'replace',
+    );
+
+
+    return entity;
 }

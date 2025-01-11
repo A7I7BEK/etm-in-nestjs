@@ -6,6 +6,7 @@ import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { ProjectMembersService } from 'src/project-members/project-members.service';
 import { TasksService } from 'src/tasks/tasks.service';
+import { wsEmitOneTask } from 'src/tasks/utils/ws-emit-one-task.util';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { TaskMemberCreateDto } from './dto/task-member-create.dto';
 import { TaskMemberDeleteDto } from './dto/task-member-delete.dto';
@@ -133,6 +134,15 @@ export class TaskMembersService
             },
             activeUser,
         );
-        return this.repository.remove(entity);
+        await this.repository.remove(entity);
+
+        wsEmitOneTask(
+            this.tasksService,
+            deleteDto.taskId,
+            activeUser,
+            'replace',
+        );
+
+        return entity;
     }
 }
