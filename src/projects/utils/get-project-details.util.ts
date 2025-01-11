@@ -67,39 +67,6 @@ export async function getProjectDetails
     entity[ 'actionsCount' ] = 123;
 
 
-    entity.columns?.forEach(col => // TODO: Check if this is correct
-    {
-        col.tasks?.forEach(task =>
-        {
-            const allChecklist = task.checkListGroups.flatMap(item => item.checkList);
-            Object.assign(task, {
-                checkListCount: {
-                    totalCount: allChecklist.length,
-                    checkedCount: allChecklist.filter(a => a.checked).length,
-                },
-            });
-            delete task.checkListGroups;
-
-            if (task.comments.length)
-            {
-                const commentType = task.comments[ 0 ].commentType;
-                Object.assign(task, {
-                    commentCount: task.comments.length,
-                    lastCommentType: {
-                        id: commentType,
-                        name: TaskCommentType[ commentType ],
-                        value: TaskCommentType[ commentType ],
-                    },
-                });
-            }
-            delete task.comments;
-
-            task.members.forEach(item => modifyTaskMemberForFront(item));
-            task.tags.forEach(item => modifyTaskTagForFront(item));
-        });
-    });
-
-
     entity[ 'taskStatusType' ] = Object.keys(TaskStatus).filter(a => Number(a))
         .map(item =>
         {

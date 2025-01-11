@@ -1,6 +1,6 @@
 import { modifyProjectColumnForFront } from 'src/project-columns/utils/modify-entity-for-front.util';
 import { modifyProjectMemberForFront } from 'src/project-members/utils/modify-entity-for-front.util';
-import { modifyTaskForFront } from 'src/tasks/utils/modify-task-for-front.util';
+import { modifyTaskForProject } from 'src/tasks/utils/modify-task-for-project.util';
 import { Project } from '../entities/project.entity';
 import { calculateProjectPercent } from './calculate-project-percent.util';
 
@@ -28,7 +28,7 @@ export function modifyProjectForFront(entity: Project)
         modifyProjectColumnForFront(col);
         col.tasks?.forEach(task =>
         {
-            modifyTaskForFront(task);
+            modifyTaskForProject(task);
         });
     });
 
