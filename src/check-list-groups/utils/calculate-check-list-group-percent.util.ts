@@ -6,7 +6,7 @@ export function calculateCheckListGroupPercent(entity: CheckListGroup)
     const { checkList } = entity;
 
 
-    if (checkList?.length > 0)
+    if (checkList?.length)
     {
         const totalCount = checkList.length;
         const checkedCount = checkList.filter(item => item.checked).length;
