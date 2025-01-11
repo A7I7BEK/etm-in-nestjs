@@ -7,7 +7,6 @@ export async function wsEmitOneTask
     (
         service: TasksService,
         id: number,
-        projectId: number,
         activeUser: ActiveUserData,
         action: 'insert' | 'replace',
     )
@@ -16,6 +15,7 @@ export async function wsEmitOneTask
         {
             where: { id },
             relations: {
+                project: true,
                 column: true,
                 checkListGroups: {
                     checkList: true
@@ -47,10 +47,10 @@ export async function wsEmitOneTask
 
     if (action === 'insert')
     {
-        service.tasksGateway.emitInsert(entity, projectId);
+        service.tasksGateway.emitInsert(entity, entity.project.id);
     }
     else if (action === 'replace')
     {
-        service.tasksGateway.emitReplace(entity, projectId);
+        service.tasksGateway.emitReplace(entity, entity.project.id);
     }
 }

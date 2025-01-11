@@ -111,7 +111,7 @@ export async function moveEntity
 
         delete entityOld.column.tasks;
         service.tasksGateway.emitDelete(entityOld, entityOld.project.id); // delete from old project
-        wsEmitOneTask(service, entity.id, entity.project.id, activeUser, 'insert'); // insert to new project
+        wsEmitOneTask(service, entity.id, activeUser, 'insert'); // insert to new project
     }
 
 

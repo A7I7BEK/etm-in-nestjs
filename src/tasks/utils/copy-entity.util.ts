@@ -63,7 +63,6 @@ export async function copyEntity
     wsEmitOneTask(
         service,
         entity.id,
-        entity.project.id,
         activeUser,
         'insert',
     );

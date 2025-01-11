@@ -53,7 +53,6 @@ export async function createEntity
     wsEmitOneTask(
         service,
         entity.id,
-        entity.project.id,
         activeUser,
         'insert',
     );
