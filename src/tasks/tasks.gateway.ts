@@ -1,11 +1,19 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import appConfig from 'src/common/config/app.config';
 import { Task } from './entities/task.entity';
+
 
 @WebSocketGateway({
     path: '/ws-tasks',
-    cors: { origin: '*' },
+    cors: {
+        origin: (req, callback) =>
+        {
+            const isProduction = appConfig().application.nodeEnv === appConfig().application.nodeEnvProd;
+            callback(null, isProduction ? false : true);
+        }
+    },
 })
 @Injectable()
 export class TasksGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
@@ -20,7 +28,7 @@ export class TasksGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
     afterInit(server: Server)
     {
-        this.logger.log(`Server Initialized in: ${server._opts.path}`);
+        this.logger.log(`Server Initialized in: "${server._opts.path}"`);
     }
 
     handleConnection(client: Socket)
@@ -28,13 +36,12 @@ export class TasksGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
         const roomId = client.handshake.query.roomId as string;
         client.join(this.roomName + roomId);
 
-        this.logger.log(`Client Connected: ${client.id}`);
-        console.log('Connected: ', client.handshake);
+        this.logger.log(`Client Connected: ${client.data.user}`);
     }
 
     handleDisconnect(client: Socket)
     {
-        this.logger.log(`Client Disconnected: ${client.id}`);
+        this.logger.log(`Client Disconnected: ${client.data.user}`);
     }
 
 
