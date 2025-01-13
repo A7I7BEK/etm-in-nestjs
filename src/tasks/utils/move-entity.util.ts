@@ -47,6 +47,7 @@ export async function moveEntity
         await service.repository.save(taskList);
 
 
+        entity.ordering = task.ordering;
         delete entity.column.tasks;
         service.tasksGateway.emitReorder(entity, entity.project.id);
 
@@ -89,6 +90,7 @@ export async function moveEntity
         entity[ 'oldColumnId' ] = entity.column.id;
         entity.column = { ...columnEntity };
         delete entity.column.tasks;
+        delete entity.column.project;
         columnEntity.tasks.splice(moveDto.ordering, 0, entity);
         reOrderItems(columnEntity.tasks);
         await service.repository.save(columnEntity.tasks);
@@ -103,6 +105,7 @@ export async function moveEntity
 
         entity.column = { ...columnEntity };
         delete entity.column.tasks;
+        delete entity.column.project;
         entity.project = columnEntity.project;
         columnEntity.tasks.splice(moveDto.ordering, 0, entity);
         reOrderItems(columnEntity.tasks);
