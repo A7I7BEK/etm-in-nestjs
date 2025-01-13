@@ -23,7 +23,7 @@ export class TasksGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     @WebSocketServer()
     server: Server;
 
-    roomName: 'project-';
+    roomPrefix = 'project-';
 
 
     afterInit(server: Server)
@@ -33,40 +33,43 @@ export class TasksGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
     handleConnection(client: Socket)
     {
-        const roomId = client.handshake.query.roomId as string;
-        client.join(this.roomName + roomId);
+        const roomName = this.roomPrefix + client.handshake.query.roomId;
+        client.data.room = roomName;
+        client.join(roomName);
 
-        this.logger.log(`Client Connected: ${client.data.user}`);
+        const { id } = client.data.user || {};
+        this.logger.log(`Connected: { userId: ${id} } && { room: ${client.data.room} }`);
     }
 
     handleDisconnect(client: Socket)
     {
-        this.logger.log(`Client Disconnected: ${client.data.user}`);
+        const { id } = client.data.user || {};
+        this.logger.log(`Disconnected: { userId: ${id} } && { room: ${client.data.room} }`);
     }
 
 
     emitInsert(payload: Task, roomId: string | number)
     {
-        this.server.to(this.roomName + roomId).emit('task-insert', payload);
+        this.server.to(this.roomPrefix + roomId).emit('task-insert', payload);
     }
 
     emitDelete(payload: Task, roomId: string | number)
     {
-        this.server.to(this.roomName + roomId).emit('task-delete', payload);
+        this.server.to(this.roomPrefix + roomId).emit('task-delete', payload);
     }
 
     emitReplace(payload: Task, roomId: string | number)
     {
-        this.server.to(this.roomName + roomId).emit('task-replace', payload);
+        this.server.to(this.roomPrefix + roomId).emit('task-replace', payload);
     }
 
     emitReorder(payload: Task, roomId: string | number)
     {
-        this.server.to(this.roomName + roomId).emit('task-reorder', payload);
+        this.server.to(this.roomPrefix + roomId).emit('task-reorder', payload);
     }
 
     emitMove(payload: Task, roomId: string | number)
     {
-        this.server.to(this.roomName + roomId).emit('task-move', payload);
+        this.server.to(this.roomPrefix + roomId).emit('task-move', payload);
     }
 }
