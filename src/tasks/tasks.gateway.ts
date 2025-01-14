@@ -1,7 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
+import { JwtService } from '@nestjs/jwt';
+import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { Server } from 'socket.io';
 import appConfig from 'src/common/config/app.config';
+import { BaseGateway } from 'src/common/gateways/base.gateway';
 import { Task } from './entities/task.entity';
 
 
@@ -16,35 +18,17 @@ import { Task } from './entities/task.entity';
     },
 })
 @Injectable()
-export class TasksGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
+export class TasksGateway extends BaseGateway
 {
-    private logger: Logger = new Logger('TasksGateway');
-
     @WebSocketServer()
     server: Server;
 
     roomPrefix = 'project-';
 
 
-    afterInit(server: Server)
+    constructor (jwtService: JwtService)
     {
-        this.logger.log(`Server Initialized in: "${server._opts.path}"`);
-    }
-
-    handleConnection(client: Socket)
-    {
-        const roomName = this.roomPrefix + client.handshake.query.roomId;
-        client.data.room = roomName;
-        client.join(roomName);
-
-        const { id } = client.data.user || {};
-        this.logger.log(`Connected: { userId: ${id} } && { room: ${client.data.room} }`);
-    }
-
-    handleDisconnect(client: Socket)
-    {
-        const { id } = client.data.user || {};
-        this.logger.log(`Disconnected: { userId: ${id} } && { room: ${client.data.room} }`);
+        super(new Logger('TasksGateway'), jwtService);
     }
 
 
