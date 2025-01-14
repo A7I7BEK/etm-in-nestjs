@@ -12,8 +12,8 @@ import { Task } from './entities/task.entity';
     cors: {
         origin: (req, callback) =>
         {
-            const isProduction = appConfig().application.nodeEnv === appConfig().application.nodeEnvProd;
-            callback(null, isProduction ? false : true);
+            const isDevelopment = appConfig().application.nodeEnv === appConfig().application.nodeEnvDev;
+            callback(null, isDevelopment);
         }
     },
 })
