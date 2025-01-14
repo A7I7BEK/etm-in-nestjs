@@ -32,6 +32,7 @@ import { HashingService } from './hashing/hashing.service';
             ForgotPassword,
         ]),
         JwtModule.registerAsync({
+            global: true, // BINGO
             useFactory: async () => ({
                 secret: appConfig().jwt.accessTokenSecret,
                 signOptions: {
