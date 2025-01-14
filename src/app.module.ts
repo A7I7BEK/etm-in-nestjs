@@ -20,7 +20,6 @@ import { ProjectsModule } from './projects/projects.module';
 import { ReportsModule } from './reports/reports.module';
 import { ResourceModule } from './resource/resource.module';
 import { RolesModule } from './roles/roles.module';
-import { SocketModule } from './socket/socket.module';
 import { TaskAttachmentsModule } from './task-attachments/task-attachments.module';
 import { TaskCommentsModule } from './task-comments/task-comments.module';
 import { TaskDeadlineModule } from './task-deadline/task-deadline.module';
@@ -77,7 +76,6 @@ import { UsersModule } from './users/users.module';
         CheckListItemsModule,
         ReportsModule,
         OneTimePasswordModule,
-        SocketModule,
     ],
     providers: [
         AppService,
