@@ -40,6 +40,31 @@ export async function moveEntity
     }
 
 
+    const columnList = [ ...entity.project.columns ];
+    const column = columnList.find(a => a.id === entity.id);
+    columnList.splice(columnList.indexOf(column), 1);
+    columnList.splice(moveDto.ordering, 0, column);
+    reOrderItems(columnList);
+    await service.repository.save(columnList);
+
+
+    entity.ordering = column.ordering;
+    delete entity.project.columns;
+    service.columnsGateway.emitReorder(entity, entity.project.id);
+
+
+    return entity;
+
+
+    /**
+     * There are a lot of complications when moving column
+     * into a new project. Specifically:
+     * - all tasks inside the column must be moved too
+     * - all the details in a task that are connected
+     * to the current project must be updated
+     * - most probably every project has different settings,
+     * so it will be hard to update all task details
+     */
     if (entity.project.id === moveDto.projectId)
     {
         // same project
