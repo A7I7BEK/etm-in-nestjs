@@ -1,8 +1,7 @@
-import { ForbiddenException, forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { ProjectType } from 'src/projects/enums/project-type.enum';
 import { ProjectsService } from 'src/projects/projects.service';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { ProjectColumnCreateDto } from './dto/project-column-create.dto';
@@ -10,8 +9,10 @@ import { ProjectColumnMoveDto } from './dto/project-column-move.dto';
 import { ProjectColumnUpdateDto } from './dto/project-column-update.dto';
 import { ProjectColumn } from './entities/project-column.entity';
 import { ProjectColumnsGateway } from './project-columns.gateway';
-import { createUpdateEntity } from './utils/create-update-entity.util';
+import { createEntity } from './utils/create-entity.util';
+import { deleteEntity } from './utils/delete-entity.util';
 import { moveEntity } from './utils/move-entity.util';
+import { updateEntity } from './utils/update-entity.util';
 
 @Injectable()
 export class ProjectColumnsService
@@ -31,12 +32,7 @@ export class ProjectColumnsService
             activeUser: ActiveUserData,
         )
     {
-        return createUpdateEntity(
-            this.projectsService,
-            this.repository,
-            createDto,
-            activeUser,
-        );
+        return createEntity(this, createDto, activeUser);
     }
 
 
@@ -96,36 +92,18 @@ export class ProjectColumnsService
     }
 
 
-    async update
+    update
         (
             id: number,
             updateDto: ProjectColumnUpdateDto,
             activeUser: ActiveUserData,
         )
     {
-        const entity = await this.findOne(
-            {
-                where: { id },
-            },
-            activeUser,
-        );
-
-        if (entity.projectType === ProjectType.KANBAN)
-        {
-            throw new ForbiddenException(`Column of ${ProjectType.KANBAN} project cannot be edited`);
-        }
-
-        return createUpdateEntity(
-            this.projectsService,
-            this.repository,
-            updateDto,
-            activeUser,
-            entity,
-        );
+        return updateEntity(this, id, updateDto, activeUser);
     }
 
 
-    async move
+    move
         (
             moveDto: ProjectColumnMoveDto,
             activeUser: ActiveUserData,
@@ -139,24 +117,12 @@ export class ProjectColumnsService
     }
 
 
-    async remove
+    remove
         (
             id: number,
             activeUser: ActiveUserData,
         )
     {
-        const entity = await this.findOne(
-            {
-                where: { id },
-            },
-            activeUser,
-        );
-
-        if (entity.projectType === ProjectType.KANBAN)
-        {
-            throw new ForbiddenException(`Column of ${ProjectType.KANBAN} project cannot be deleted`);
-        }
-
-        return this.repository.remove(entity);
+        return deleteEntity(this, id, activeUser);
     }
 }
