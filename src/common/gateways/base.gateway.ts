@@ -22,7 +22,8 @@ export abstract class BaseGateway implements OnGatewayInit, OnGatewayConnection,
 
         server.use(async (socket, next) =>
         {
-            const token = socket.handshake.headers.token as string;
+            const token = socket.handshake.headers.token as string; // for Postman
+            // const token = socket.handshake.auth.token as string; // for Frontend
             const roomId = socket.handshake.query.roomId as string;
 
             if (!token || !roomId)
