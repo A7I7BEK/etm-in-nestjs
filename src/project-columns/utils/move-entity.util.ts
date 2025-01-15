@@ -21,6 +21,13 @@ export async function moveEntity
                 project: {
                     columns: true
                 }
+            },
+            order: {
+                project: {
+                    columns: {
+                        ordering: 'ASC',
+                    }
+                }
             }
         },
         activeUser,
