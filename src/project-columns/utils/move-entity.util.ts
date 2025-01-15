@@ -4,6 +4,7 @@ import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { ProjectType } from 'src/projects/enums/project-type.enum';
 import { ProjectColumnMoveDto } from '../dto/project-column-move.dto';
 import { ProjectColumnsService } from '../project-columns.service';
+import { wsEmitOneColumn } from './ws-emit-one-column.util';
 
 
 export async function moveEntity
@@ -32,6 +33,26 @@ export async function moveEntity
     }
 
 
+    if (entity.project.id === moveDto.projectId)
+    {
+        // same project
+        const columnList = [ ...entity.project.columns ];
+        const column = columnList.find(a => a.id === entity.id);
+        columnList.splice(columnList.indexOf(column), 1);
+        columnList.splice(moveDto.ordering, 0, column);
+        reOrderItems(columnList);
+        await service.repository.save(columnList);
+
+
+        entity.ordering = column.ordering;
+        delete entity.project.columns;
+        service.columnsGateway.emitReorder(entity, entity.project.id);
+
+
+        return entity;
+    }
+
+
     const projectEntity = await service.projectsService.findOne(
         {
             where: { id: moveDto.projectId },
@@ -52,32 +73,26 @@ export async function moveEntity
     }
 
 
-    const column = projectEntity.columns.find((col) => col.id === entity.id);
-    if (column)
-    {
-        // existing project
-        projectEntity.columns.splice(projectEntity.columns.indexOf(column), 1);
-        projectEntity.columns.splice(moveDto.ordering, 0, column);
-    }
-    else
-    {
-        // old project
-        const oldProject = entity.project;
-        oldProject.columns.splice(oldProject.columns.findIndex(a => a.id === entity.id), 1);
-        reOrderItems(oldProject.columns);
-        await service.repository.save(oldProject.columns);
+    // old project
+    const oldColumnList = entity.project.columns.filter(a => a.id !== entity.id);
+    reOrderItems(oldColumnList);
+    await service.repository.save(oldColumnList);
 
 
-        // new project
-        entity.project = { ...projectEntity };
-        delete entity.project.columns;
-        projectEntity.columns.splice(moveDto.ordering, 0, entity);
-    }
+    // new project
+    const entityOld = structuredClone(entity);
+    delete entityOld.project.columns;
 
-
+    entity.project = { ...projectEntity };
+    delete entity.project.columns;
+    projectEntity.columns.splice(moveDto.ordering, 0, entity);
     reOrderItems(projectEntity.columns);
     await service.repository.save(projectEntity.columns);
 
 
-    return column ? column : entity;
+    service.columnsGateway.emitDelete(entityOld, entityOld.project.id); // delete from old project
+    wsEmitOneColumn(service, entity.id, activeUser, 'send'); // insert to new project
+
+
+    return entity;
 }
