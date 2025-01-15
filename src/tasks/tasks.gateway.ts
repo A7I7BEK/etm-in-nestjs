@@ -28,7 +28,7 @@ export class TasksGateway extends BaseGateway
 
     constructor (jwtService: JwtService)
     {
-        super(new Logger('TasksGateway'), jwtService);
+        super(new Logger(TasksGateway.name), jwtService);
     }
 
 
