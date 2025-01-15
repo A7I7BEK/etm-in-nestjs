@@ -1,4 +1,6 @@
+import { ForbiddenException } from '@nestjs/common';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
+import { ProjectType } from 'src/projects/enums/project-type.enum';
 import { ProjectColumnCreateDto } from '../dto/project-column-create.dto';
 import { ProjectColumn } from '../entities/project-column.entity';
 import { ProjectColumnsService } from '../project-columns.service';
@@ -28,6 +30,12 @@ export async function createEntity
         },
         activeUser,
     );
+
+
+    if (projectEntity.projectType === ProjectType.KANBAN)
+    {
+        throw new ForbiddenException(`Column cannot be created in a ${ProjectType.KANBAN} project`);
+    }
 
 
     const entity = new ProjectColumn();
