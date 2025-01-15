@@ -43,7 +43,7 @@ export class TasksService
     }
 
 
-    async findAll
+    findAll
         (
             options: FindManyOptions<Task>,
             activeUser: ActiveUserData,
@@ -118,7 +118,7 @@ export class TasksService
     }
 
 
-    async update
+    update
         (
             id: number,
             updateDto: TaskUpdateDto,
@@ -129,7 +129,7 @@ export class TasksService
     }
 
 
-    async remove
+    remove
         (
             id: number,
             activeUser: ActiveUserData,
