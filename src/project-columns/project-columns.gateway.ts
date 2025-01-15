@@ -51,9 +51,4 @@ export class ProjectColumnsGateway extends BaseGateway
     {
         this.server.to(this.roomPrefix + roomId).emit('column-reorder', payload);
     }
-
-    emitMove(payload: ProjectColumn, roomId: string | number)
-    {
-        this.server.to(this.roomPrefix + roomId).emit('column-move', payload);
-    }
 }
