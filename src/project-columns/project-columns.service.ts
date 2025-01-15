@@ -9,6 +9,7 @@ import { ProjectColumnCreateDto } from './dto/project-column-create.dto';
 import { ProjectColumnMoveDto } from './dto/project-column-move.dto';
 import { ProjectColumnUpdateDto } from './dto/project-column-update.dto';
 import { ProjectColumn } from './entities/project-column.entity';
+import { ProjectColumnsGateway } from './project-columns.gateway';
 import { createUpdateEntity } from './utils/create-update-entity.util';
 import { moveEntity } from './utils/move-entity.util';
 
@@ -20,6 +21,7 @@ export class ProjectColumnsService
         public readonly repository: Repository<ProjectColumn>,
         @Inject(forwardRef(() => ProjectsService)) // BINGO
         public readonly projectsService: ProjectsService,
+        public readonly columnsGateway: ProjectColumnsGateway,
     ) { }
 
 
