@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ActionsModule } from './actions/actions.module';
 import { AppService } from './app.service';
 import { CheckListGroupsModule } from './check-list-groups/check-list-groups.module';
 import { CheckListItemsModule } from './check-list-items/check-list-items.module';
@@ -74,6 +75,7 @@ import { UsersModule } from './users/users.module';
         TaskTimerModule,
         CheckListGroupsModule,
         CheckListItemsModule,
+        ActionsModule,
         ReportsModule,
         OneTimePasswordModule,
     ],

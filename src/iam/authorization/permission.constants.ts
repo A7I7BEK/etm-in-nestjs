@@ -1,3 +1,4 @@
+import { ActionPermissions } from 'src/actions/enums/action-permissions.enum';
 import { CheckListGroupPermissions } from 'src/check-list-groups/enums/check-list-group-permissions.enum';
 import { CheckListItemPermissions } from 'src/check-list-items/enums/check-list-item-permissions.enum';
 import { EmployeePermissions } from 'src/employees/enums/employee-permissions.enum';
@@ -41,6 +42,7 @@ export type PermissionType = (
     | TaskTimerPermissions
     | CheckListGroupPermissions
     | CheckListItemPermissions
+    | ActionPermissions
     | ReportPermissions
 );
 
@@ -66,6 +68,7 @@ export const PERMISSION_VALUES = [
     ...Object.values(TaskTimerPermissions),
     ...Object.values(CheckListGroupPermissions),
     ...Object.values(CheckListItemPermissions),
+    ...Object.values(ActionPermissions),
     ...Object.values(ReportPermissions),
 ];
 
