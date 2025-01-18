@@ -1,7 +1,8 @@
-import { Organization } from 'src/organizations/entities/organization.entity';
-import { Permission } from 'src/permissions/entities/permission.entity';
-import { User } from 'src/users/entities/user.entity';
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Employee } from 'src/employees/entities/employee.entity';
+import { PERMISSION_VALUES, PermissionType } from 'src/iam/authorization/permission.constants';
+import { Project } from 'src/projects/entities/project.entity';
+import { Task } from 'src/tasks/entities/task.entity';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Action
@@ -10,21 +11,23 @@ export class Action
     id: number;
 
     @Column()
-    roleName: string;
+    createdAt: Date;
 
-    @Column()
-    codeName: string;
+    @Column({
+        type: 'enum',
+        enum: PERMISSION_VALUES,
+    })
+    activityType: PermissionType;
 
-    @Column()
-    systemCreated: boolean = false;
+    @Column('json')
+    details: Record<string, any>;
 
-    @JoinTable()
-    @ManyToMany(type => Permission, { eager: true })
-    permissions: Permission[];
+    @ManyToOne(type => Employee)
+    employee: Employee;
 
-    @ManyToMany(type => User, user => user.roles)
-    users: User[];
+    @ManyToOne(type => Project, p => p.actions)
+    project: Project;
 
-    @ManyToOne(type => Organization)
-    organization: Organization;
+    @ManyToOne(type => Task, t => t.actions)
+    task: Task;
 }

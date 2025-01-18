@@ -13,5 +13,11 @@ export class ActionQueryDto extends BaseQueryDto<ActionProperties>
     @Min(1)
     @IsInt()
     @Type(() => Number)
-    organizationId?: number;
+    projectId?: number;
+
+    @IsOptional()
+    @Min(1)
+    @IsInt()
+    @Type(() => Number)
+    taskId?: number;
 }

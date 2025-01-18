@@ -11,23 +11,42 @@ export function loadQueryBuilder
         activeUser: ActiveUserData,
     )
 {
-    const [ role, org ] = [ 'role', 'organization' ];
-    const queryBuilder = repository.createQueryBuilder(role);
+    const [ action, empl, user, task, proj, org ] =
+        [ 'action', 'employee', 'user', 'task', 'project', 'organization' ];
+    const queryBuilder = repository.createQueryBuilder(action);
 
 
-    queryBuilder.leftJoinAndSelect(`${role}.organization`, org);
+    queryBuilder.leftJoinAndSelect(`${action}.employee`, empl);
+    queryBuilder.leftJoin(`${empl}.user`, user);
+    queryBuilder.addSelect([
+        `${user}.id`,
+        `${user}.userName`,
+        `${user}.email`,
+        `${user}.phoneNumber`,
+    ]);
+    queryBuilder.leftJoinAndSelect(`${action}.task`, task);
+    queryBuilder.leftJoinAndSelect(`${action}.project`, proj);
+    queryBuilder.leftJoin(`${proj}.organization`, org);
     queryBuilder.skip(queryDto.skip);
     queryBuilder.take(queryDto.perPage);
-    queryBuilder.orderBy(role + '.' + queryDto.sortBy, queryDto.order);
+    queryBuilder.orderBy(action + '.' + queryDto.sortBy, queryDto.order);
 
 
     if (!activeUser.systemAdmin)
     {
-        queryBuilder.andWhere(`${role}.organization = :orgId`, { orgId: activeUser.orgId });
+        queryBuilder.andWhere(`${proj}.organization = :orgId`, { orgId: activeUser.orgId });
     }
-    else if (queryDto.organizationId) // BINGO: activeUser.systemAdmin && queryDto.organizationId
+
+
+    if (queryDto.taskId)
     {
-        queryBuilder.andWhere(`${role}.organization = :orgId`, { orgId: queryDto.organizationId });
+        queryBuilder.andWhere(`${action}.task = :taskId`, { taskId: queryDto.taskId });
+    }
+
+
+    if (queryDto.projectId)
+    {
+        queryBuilder.andWhere(`${action}.project = :prId`, { prId: queryDto.projectId });
     }
 
 
@@ -36,8 +55,13 @@ export function loadQueryBuilder
         queryBuilder.andWhere(
             new Brackets((qb) =>
             {
-                qb.orWhere(`${role}.codeName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
-                qb.orWhere(`${role}.roleName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
+                qb.orWhere(`${empl}.firstName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
+                qb.orWhere(`${empl}.lastName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
+                qb.orWhere(`${empl}.middleName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
+                qb.orWhere(`${user}.userName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
+                qb.orWhere(`${user}.email ILIKE :search`, { search: `%${queryDto.allSearch}%` });
+                qb.orWhere(`${task}.name ILIKE :search`, { search: `%${queryDto.allSearch}%` });
+                qb.orWhere(`${proj}.name ILIKE :search`, { search: `%${queryDto.allSearch}%` });
             }),
         );
     }
