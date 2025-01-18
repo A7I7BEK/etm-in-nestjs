@@ -9,11 +9,10 @@ export class ActionQueryDto extends BaseQueryDto<ActionProperties>
     @IsEnum(ActionProperties)
     sortBy?: ActionProperties = ActionProperties.ID;
 
-    @IsOptional()
     @Min(1)
     @IsInt()
     @Type(() => Number)
-    projectId?: number;
+    projectId: number;
 
     @IsOptional()
     @Min(1)

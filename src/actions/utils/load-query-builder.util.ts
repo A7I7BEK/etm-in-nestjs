@@ -11,8 +11,8 @@ export function loadQueryBuilder
         activeUser: ActiveUserData,
     )
 {
-    const [ action, empl, user, task, proj, org ] =
-        [ 'action', 'employee', 'user', 'task', 'project', 'organization' ];
+    const [ action, empl, user, proj, org, task ] =
+        [ 'action', 'employee', 'user', 'project', 'organization', 'task' ];
     const queryBuilder = repository.createQueryBuilder(action);
 
 
@@ -24,12 +24,15 @@ export function loadQueryBuilder
         `${user}.email`,
         `${user}.phoneNumber`,
     ]);
-    queryBuilder.leftJoinAndSelect(`${action}.task`, task);
     queryBuilder.leftJoinAndSelect(`${action}.project`, proj);
     queryBuilder.leftJoin(`${proj}.organization`, org);
+    queryBuilder.leftJoinAndSelect(`${action}.task`, task);
     queryBuilder.skip(queryDto.skip);
     queryBuilder.take(queryDto.perPage);
     queryBuilder.orderBy(action + '.' + queryDto.sortBy, queryDto.order);
+
+
+    queryBuilder.andWhere(`${action}.project = :projId`, { projId: queryDto.projectId });
 
 
     if (!activeUser.systemAdmin)
@@ -44,12 +47,6 @@ export function loadQueryBuilder
     }
 
 
-    if (queryDto.projectId)
-    {
-        queryBuilder.andWhere(`${action}.project = :prId`, { prId: queryDto.projectId });
-    }
-
-
     if (queryDto.allSearch)
     {
         queryBuilder.andWhere(
@@ -60,8 +57,8 @@ export function loadQueryBuilder
                 qb.orWhere(`${empl}.middleName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
                 qb.orWhere(`${user}.userName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
                 qb.orWhere(`${user}.email ILIKE :search`, { search: `%${queryDto.allSearch}%` });
-                qb.orWhere(`${task}.name ILIKE :search`, { search: `%${queryDto.allSearch}%` });
                 qb.orWhere(`${proj}.name ILIKE :search`, { search: `%${queryDto.allSearch}%` });
+                qb.orWhere(`${task}.name ILIKE :search`, { search: `%${queryDto.allSearch}%` });
             }),
         );
     }
