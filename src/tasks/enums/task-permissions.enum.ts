@@ -6,6 +6,4 @@ export enum TaskPermissions
     Delete = 'TASK_DELETE',
     Copy = 'TASK_COPY',
     Move = 'TASK_MOVE',
-
-    ActionRead = 'TASK_ACTION_READ',
 }

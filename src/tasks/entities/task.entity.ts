@@ -1,3 +1,4 @@
+import { Action } from 'src/actions/entities/action.entity';
 import { CheckListGroup } from 'src/check-list-groups/entities/check-list-group.entity';
 import { ProjectColumn } from 'src/project-columns/entities/project-column.entity';
 import { Project } from 'src/projects/entities/project.entity';
@@ -78,4 +79,7 @@ export class Task
 
     @OneToMany(type => CheckListGroup, c => c.task)
     checkListGroups: CheckListGroup[];
+
+    @OneToMany(type => Action, a => a.task)
+    actions: Action[];
 }

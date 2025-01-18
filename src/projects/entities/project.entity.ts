@@ -1,3 +1,4 @@
+import { Action } from 'src/actions/entities/action.entity';
 import { Employee } from 'src/employees/entities/employee.entity';
 import { Group } from 'src/groups/entities/group.entity';
 import { Organization } from 'src/organizations/entities/organization.entity';
@@ -47,6 +48,9 @@ export class Project
 
     @OneToMany(type => ProjectTag, t => t.project)
     tags: ProjectTag[];
+
+    @OneToMany(type => Action, a => a.project)
+    actions: Action[];
 
     @ManyToOne(type => Organization)
     organization: Organization;
