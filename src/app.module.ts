@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ActionsModule } from './actions/actions.module';
 import { AppService } from './app.service';
@@ -33,6 +34,7 @@ import { UsersModule } from './users/users.module';
 @Module({
     imports: [
         ConfigModule.forRoot(),
+        EventEmitterModule.forRoot(),
         TypeOrmModule.forRootAsync({
             useFactory: async () =>
             {
