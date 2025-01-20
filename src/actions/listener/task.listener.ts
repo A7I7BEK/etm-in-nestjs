@@ -9,6 +9,7 @@ import { BaseCreateEvent } from '../event/base-create.event';
 import { BaseDeleteEvent } from '../event/base-delete.event';
 import { BaseUpdateEvent } from '../event/base-update.event';
 import { TaskCopyEvent } from '../event/task-copy.event';
+import { TaskMoveEvent } from '../event/task-move.event';
 
 
 @Injectable()
@@ -54,7 +55,7 @@ export class TaskListener
 
         action.details = {
             id: oldEntity.id,
-            name: dto.name,
+            name: oldEntity.name,
             changes: this._service.detectChanges(dto, oldEntity),
         };
 
@@ -103,6 +104,64 @@ export class TaskListener
             id: newEntity.id,
             name: newEntity.name,
         };
+
+        await this._service.repository.save(action);
+    }
+
+
+    @OnEvent([ Action.name, TaskPermissions.Move ], { async: true })
+    async listenMoveEvent(data: TaskMoveEvent<Task>)
+    {
+        const { oldEntity, newEntity, activeUser } = data;
+
+        const action = new Action();
+        action.createdAt = new Date();
+        action.activityType = TaskPermissions.Move;
+        action.task = newEntity;
+        action.project = newEntity.project;
+        action.employee = await this._service.getEmployee(activeUser);
+
+        if (oldEntity.project.id !== newEntity.project.id)
+        {
+            action.details = {
+                action: 'migrate',
+                id: newEntity.id,
+                name: newEntity.name,
+                oldProject: {
+                    id: oldEntity.project.id,
+                    name: oldEntity.project.name,
+                },
+                newProject: {
+                    id: newEntity.project.id,
+                    name: newEntity.project.name,
+                },
+            };
+        }
+        else if (oldEntity.column.id !== newEntity.column.id)
+        {
+            action.details = {
+                action: 'move',
+                id: newEntity.id,
+                name: newEntity.name,
+                oldColumn: {
+                    id: oldEntity.column.id,
+                    name: oldEntity.column.name,
+                },
+                newColumn: {
+                    id: newEntity.column.id,
+                    name: newEntity.column.name,
+                },
+            };
+        }
+        else
+        {
+            action.details = {
+                action: 'reorder',
+                id: newEntity.id,
+                name: newEntity.name,
+            };
+        }
+
 
         await this._service.repository.save(action);
     }

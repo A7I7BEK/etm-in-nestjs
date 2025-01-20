@@ -1,6 +1,10 @@
+import { Action } from 'src/actions/entities/action.entity';
+import { TaskMoveEvent } from 'src/actions/event/task-move.event';
 import { reOrderItems } from 'src/common/utils/re-order-items.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { TaskMoveDto } from '../dto/task-move.dto';
+import { Task } from '../entities/task.entity';
+import { TaskPermissions } from '../enums/task-permissions.enum';
 import { TasksService } from '../tasks.service';
 import { wsEmitOneTask } from './ws-emit-one-task.util';
 
@@ -31,6 +35,13 @@ export async function moveEntity
         },
         activeUser,
     );
+    const oldEntity = structuredClone(entity); // BINGO
+    delete oldEntity.column.tasks;
+
+
+    let actionData: TaskMoveEvent<Task>;
+    actionData.oldEntity = oldEntity;
+    actionData.activeUser = activeUser;
 
 
     if (
@@ -50,6 +61,13 @@ export async function moveEntity
         entity.ordering = task.ordering;
         delete entity.column.tasks;
         service.tasksGateway.emitReorder(entity, entity.project.id);
+
+
+        actionData.newEntity = entity;
+        service.eventEmitter.emit(
+            [ Action.name, TaskPermissions.Move ],
+            actionData
+        );
 
 
         return entity;
@@ -96,13 +114,18 @@ export async function moveEntity
         await service.repository.save(columnEntity.tasks);
 
 
+        actionData.newEntity = entity;
+        service.eventEmitter.emit(
+            [ Action.name, TaskPermissions.Move ],
+            actionData
+        );
+
+
         service.tasksGateway.emitMove(entity, entity.project.id);
     }
     else
     {
         // new column, new project
-        const entityOld = structuredClone(entity); // BINGO
-
         entity.column = { ...columnEntity };
         delete entity.column.tasks;
         delete entity.column.project;
@@ -112,8 +135,14 @@ export async function moveEntity
         await service.repository.save(columnEntity.tasks);
 
 
-        delete entityOld.column.tasks;
-        service.tasksGateway.emitDelete(entityOld, entityOld.project.id); // delete from old project
+        actionData.newEntity = entity;
+        service.eventEmitter.emit(
+            [ Action.name, TaskPermissions.Move ],
+            actionData
+        );
+
+
+        service.tasksGateway.emitDelete(oldEntity, oldEntity.project.id); // delete from old project
         wsEmitOneTask(service, entity.id, activeUser, 'insert'); // insert to new project
     }
 
