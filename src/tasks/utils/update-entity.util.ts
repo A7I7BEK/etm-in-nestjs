@@ -19,6 +19,9 @@ export async function updateEntity
     const entity = await service.findOne(
         {
             where: { id },
+            relations: {
+                project: true,
+            }
         },
         activeUser,
     );
