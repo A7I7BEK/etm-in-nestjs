@@ -1,7 +1,10 @@
+import { Action } from 'src/actions/entities/action.entity';
+import { BaseCreateEvent } from 'src/actions/event/base-create.event';
 import { reOrderItems } from 'src/common/utils/re-order-items.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { TaskCreateDto } from '../dto/task-create.dto';
 import { Task } from '../entities/task.entity';
+import { TaskPermissions } from '../enums/task-permissions.enum';
 import { TasksService } from '../tasks.service';
 import { wsEmitOneTask } from './ws-emit-one-task.util';
 
@@ -50,12 +53,18 @@ export async function createEntity
     await service.repository.save(columnEntity.tasks);
 
 
-    wsEmitOneTask(
-        service,
-        entity.id,
+    const actionData: BaseCreateEvent<Task, TaskCreateDto> = {
+        entity,
+        dto,
         activeUser,
-        'insert',
+    };
+    service.eventEmitter.emit(
+        [ Action.name, TaskPermissions.Create ],
+        actionData
     );
+
+
+    wsEmitOneTask(service, entity.id, activeUser, 'insert');
 
 
     return entity;
