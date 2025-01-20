@@ -1,8 +1,4 @@
-import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
+import { BaseCreateEvent } from './base-create.event';
 
-export interface BaseDeleteEvent<T>
-{
-    entity: T;
-
-    activeUser: ActiveUserData;
-}
+export interface BaseDeleteEvent<T> extends BaseCreateEvent<T>
+{ }

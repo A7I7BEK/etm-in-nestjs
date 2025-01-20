@@ -53,9 +53,8 @@ export async function createEntity
     await service.repository.save(columnEntity.tasks);
 
 
-    const actionData: BaseCreateEvent<Task, TaskCreateDto> = {
+    const actionData: BaseCreateEvent<Task> = {
         entity,
-        dto,
         activeUser,
     };
     service.eventEmitter.emit(

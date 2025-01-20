@@ -20,9 +20,9 @@ export class TaskListener
 
 
     @OnEvent([ Action.name, TaskPermissions.Create ], { async: true })
-    async listenCreateEvent(data: BaseCreateEvent<Task, TaskCreateDto>)
+    async listenCreateEvent(data: BaseCreateEvent<Task>)
     {
-        const { entity, dto, activeUser } = data;
+        const { entity, activeUser } = data;
 
         const action = new Action();
         action.createdAt = new Date();
@@ -51,7 +51,12 @@ export class TaskListener
         action.task = oldEntity;
         action.project = oldEntity.project;
         action.employee = await this._service.getEmployee(activeUser);
-        action.details = this._service.detectChanges(dto, oldEntity);
+
+        action.details = {
+            id: oldEntity.id,
+            name: dto.name,
+            changes: this._service.detectChanges(dto, oldEntity),
+        };
 
         await this._service.repository.save(action);
     }

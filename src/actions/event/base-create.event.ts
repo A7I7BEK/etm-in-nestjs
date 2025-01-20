@@ -1,10 +1,8 @@
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 
-export interface BaseCreateEvent<T, K>
+export interface BaseCreateEvent<T>
 {
     entity: T;
-
-    dto: K;
 
     activeUser: ActiveUserData;
 }
