@@ -1,7 +1,10 @@
+import { Action } from 'src/actions/entities/action.entity';
+import { TaskCopyEvent } from 'src/actions/event/task-copy.event';
 import { reOrderItems } from 'src/common/utils/re-order-items.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { TaskCopyDto } from '../dto/task-copy.dto';
 import { Task } from '../entities/task.entity';
+import { TaskPermissions } from '../enums/task-permissions.enum';
 import { TasksService } from '../tasks.service';
 import { wsEmitOneTask } from './ws-emit-one-task.util';
 
@@ -58,6 +61,17 @@ export async function copyEntity
     columnEntity.tasks.splice(copyDto.ordering, 0, entity);
     reOrderItems(columnEntity.tasks);
     await service.repository.save(columnEntity.tasks);
+
+
+    const actionData: TaskCopyEvent<Task> = {
+        oldEntity: taskEntity,
+        newEntity: entity,
+        activeUser,
+    };
+    service.eventEmitter.emit(
+        [ Action.name, TaskPermissions.Copy ],
+        actionData
+    );
 
 
     wsEmitOneTask(

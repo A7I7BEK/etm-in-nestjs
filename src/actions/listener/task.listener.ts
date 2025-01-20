@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { TaskCreateDto } from 'src/tasks/dto/task-create.dto';
 import { TaskUpdateDto } from 'src/tasks/dto/task-update.dto';
 import { Task } from 'src/tasks/entities/task.entity';
 import { TaskPermissions } from 'src/tasks/enums/task-permissions.enum';
@@ -9,6 +8,7 @@ import { Action } from '../entities/action.entity';
 import { BaseCreateEvent } from '../event/base-create.event';
 import { BaseDeleteEvent } from '../event/base-delete.event';
 import { BaseUpdateEvent } from '../event/base-update.event';
+import { TaskCopyEvent } from '../event/task-copy.event';
 
 
 @Injectable()
@@ -77,6 +77,31 @@ export class TaskListener
         action.details = {
             id: entity.id,
             name: entity.name,
+        };
+
+        await this._service.repository.save(action);
+    }
+
+
+    @OnEvent([ Action.name, TaskPermissions.Copy ], { async: true })
+    async listenCopyEvent(data: TaskCopyEvent<Task>)
+    {
+        const { oldEntity, newEntity, activeUser } = data;
+
+        const action = new Action();
+        action.createdAt = new Date();
+        action.activityType = TaskPermissions.Copy;
+        action.task = newEntity;
+        action.project = newEntity.project;
+        action.employee = await this._service.getEmployee(activeUser);
+
+        action.details = {
+            originalTask: {
+                id: oldEntity.id,
+                name: oldEntity.name,
+            },
+            id: newEntity.id,
+            name: newEntity.name,
         };
 
         await this._service.repository.save(action);
