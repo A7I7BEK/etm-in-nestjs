@@ -15,9 +15,9 @@ export class TaskUpdateDto
 
     @IsOptional()
     @IsEnum(TaskLevel)
-    taskLevelType?: TaskLevel;
+    level?: TaskLevel;
 
     @IsOptional()
     @IsEnum(TaskPriority)
-    taskPriorityType?: TaskPriority;
+    priority?: TaskPriority;
 }
