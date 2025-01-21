@@ -5,6 +5,7 @@ import { TasksModule } from 'src/tasks/tasks.module';
 import { ActionsController } from './actions.controller';
 import { ActionsService } from './actions.service';
 import { Action } from './entities/action.entity';
+import { ColumnListener } from './listener/column.listener';
 import { TaskListener } from './listener/task.listener';
 
 @Module({
@@ -18,6 +19,7 @@ import { TaskListener } from './listener/task.listener';
     providers: [
         ActionsService,
         TaskListener,
+        ColumnListener,
     ],
 })
 export class ActionsModule { }

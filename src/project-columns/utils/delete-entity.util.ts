@@ -1,7 +1,11 @@
 import { ForbiddenException } from '@nestjs/common';
+import { Action } from 'src/actions/entities/action.entity';
+import { BaseDeleteEvent } from 'src/actions/event/base-delete.event';
 import { reOrderItems } from 'src/common/utils/re-order-items.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { ProjectType } from 'src/projects/enums/project-type.enum';
+import { ProjectColumn } from '../entities/project-column.entity';
+import { ProjectColumnPermissions } from '../enums/project-column-permissions.enum';
 import { ProjectColumnsService } from '../project-columns.service';
 
 
@@ -47,6 +51,16 @@ export async function deleteEntity
     entity.id = id;
     delete entity.project.columns;
     service.columnsGateway.emitDelete(entity, entity.project.id);
+
+
+    const actionData: BaseDeleteEvent<ProjectColumn> = {
+        entity,
+        activeUser,
+    };
+    service.eventEmitter.emit(
+        [ Action.name, ProjectColumnPermissions.Delete ],
+        actionData
+    );
 
 
     return entity;

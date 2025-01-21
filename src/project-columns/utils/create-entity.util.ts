@@ -1,8 +1,11 @@
 import { ForbiddenException } from '@nestjs/common';
+import { Action } from 'src/actions/entities/action.entity';
+import { BaseCreateEvent } from 'src/actions/event/base-create.event';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { ProjectType } from 'src/projects/enums/project-type.enum';
 import { ProjectColumnCreateDto } from '../dto/project-column-create.dto';
 import { ProjectColumn } from '../entities/project-column.entity';
+import { ProjectColumnPermissions } from '../enums/project-column-permissions.enum';
 import { ProjectColumnsService } from '../project-columns.service';
 import { wsEmitOneColumn } from './ws-emit-one-column.util';
 
@@ -47,12 +50,17 @@ export async function createEntity
     await service.repository.save(entity);
 
 
-    wsEmitOneColumn(
-        service,
-        entity.id,
+    const actionData: BaseCreateEvent<ProjectColumn> = {
+        entity,
         activeUser,
-        'insert',
+    };
+    service.eventEmitter.emit(
+        [ Action.name, ProjectColumnPermissions.Create ],
+        actionData
     );
+
+
+    wsEmitOneColumn(service, entity.id, activeUser, 'insert');
 
 
     return entity;

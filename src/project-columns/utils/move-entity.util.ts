@@ -1,8 +1,12 @@
 import { ForbiddenException } from '@nestjs/common';
+import { Action } from 'src/actions/entities/action.entity';
+import { BaseMoveEvent } from 'src/actions/event/base-move.event';
 import { reOrderItems } from 'src/common/utils/re-order-items.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { ProjectType } from 'src/projects/enums/project-type.enum';
 import { ProjectColumnMoveDto } from '../dto/project-column-move.dto';
+import { ProjectColumn } from '../entities/project-column.entity';
+import { ProjectColumnPermissions } from '../enums/project-column-permissions.enum';
 import { ProjectColumnsService } from '../project-columns.service';
 import { wsEmitOneColumn } from './ws-emit-one-column.util';
 
@@ -40,6 +44,10 @@ export async function moveEntity
     }
 
 
+    const oldEntity = structuredClone(entity);
+    delete oldEntity.project.columns;
+
+
     const columnList = [ ...entity.project.columns ];
     const column = columnList.find(a => a.id === entity.id);
     columnList.splice(columnList.indexOf(column), 1);
@@ -51,6 +59,17 @@ export async function moveEntity
     entity.ordering = column.ordering;
     delete entity.project.columns;
     service.columnsGateway.emitReorder(entity, entity.project.id);
+
+
+    const actionData: BaseMoveEvent<ProjectColumn> = {
+        oldEntity,
+        newEntity: entity,
+        activeUser,
+    };
+    service.eventEmitter.emit(
+        [ Action.name, ProjectColumnPermissions.Move ],
+        actionData
+    );
 
 
     return entity;

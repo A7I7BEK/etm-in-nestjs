@@ -1,7 +1,11 @@
 import { ForbiddenException } from '@nestjs/common';
+import { Action } from 'src/actions/entities/action.entity';
+import { BaseUpdateEvent } from 'src/actions/event/base-update.event';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { ProjectType } from 'src/projects/enums/project-type.enum';
 import { ProjectColumnUpdateDto } from '../dto/project-column-update.dto';
+import { ProjectColumn } from '../entities/project-column.entity';
+import { ProjectColumnPermissions } from '../enums/project-column-permissions.enum';
 import { ProjectColumnsService } from '../project-columns.service';
 import { wsEmitOneColumn } from './ws-emit-one-column.util';
 
@@ -17,6 +21,9 @@ export async function updateEntity
     const entity = await service.findOne(
         {
             where: { id },
+            relations: {
+                project: true,
+            }
         },
         activeUser,
     );
@@ -28,17 +35,25 @@ export async function updateEntity
     }
 
 
-    entity.name = dto.name;
-    entity.codeName = dto.codeName;
+    const oldEntity = structuredClone(entity);
+
+
+    Object.assign(entity, dto);
     await service.repository.save(entity);
 
 
-    wsEmitOneColumn(
-        service,
-        entity.id,
+    const actionData: BaseUpdateEvent<ProjectColumn, ProjectColumnUpdateDto> = {
+        oldEntity,
+        dto,
         activeUser,
-        'replace',
+    };
+    service.eventEmitter.emit(
+        [ Action.name, ProjectColumnPermissions.Update ],
+        actionData
     );
+
+
+    wsEmitOneColumn(service, entity.id, activeUser, 'replace');
 
 
     return entity;

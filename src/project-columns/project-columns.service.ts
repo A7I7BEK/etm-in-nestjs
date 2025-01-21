@@ -1,4 +1,5 @@
 import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
@@ -23,6 +24,7 @@ export class ProjectColumnsService
         @Inject(forwardRef(() => ProjectsService)) // BINGO
         public readonly projectsService: ProjectsService,
         public readonly columnsGateway: ProjectColumnsGateway,
+        public readonly eventEmitter: EventEmitter2,
     ) { }
 
 
