@@ -1,4 +1,5 @@
 import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
@@ -28,16 +29,17 @@ export class ProjectsService
     constructor (
         @InjectRepository(Project)
         public readonly repository: Repository<Project>,
-        private readonly _organizationsService: OrganizationsService,
-        private readonly _employeesService: EmployeesService,
-        private readonly _groupsService: GroupsService,
+        public readonly organizationsService: OrganizationsService,
+        public readonly employeesService: EmployeesService,
+        public readonly groupsService: GroupsService,
         @Inject(forwardRef(() => ProjectColumnsService)) // BINGO
-        private readonly _projectColumnsService: ProjectColumnsService,
+        public readonly projectColumnsService: ProjectColumnsService,
         @Inject(forwardRef(() => ProjectMembersService)) // BINGO
-        private readonly _projectMembersService: ProjectMembersService,
+        public readonly projectMembersService: ProjectMembersService,
         @Inject(forwardRef(() => ProjectTagsService)) // BINGO
-        private readonly _projectTagsService: ProjectTagsService,
-        private readonly _resourceService: ResourceService,
+        public readonly projectTagsService: ProjectTagsService,
+        public readonly resourceService: ResourceService,
+        public readonly eventEmitter: EventEmitter2,
     ) { }
 
 
@@ -47,17 +49,7 @@ export class ProjectsService
             activeUser: ActiveUserData,
         )
     {
-        return createEntity(
-            this._organizationsService,
-            this._employeesService,
-            this._groupsService,
-            this._projectMembersService,
-            this._projectColumnsService,
-            this._projectTagsService,
-            this.repository,
-            createDto,
-            activeUser,
-        );
+        return createEntity(this, createDto, activeUser);
     }
 
 
@@ -139,24 +131,7 @@ export class ProjectsService
             activeUser: ActiveUserData,
         )
     {
-        const entity = await this.findOne(
-            {
-                where: { id },
-                relations: { members: true },
-            },
-            activeUser,
-        );
-
-        return updateEntity(
-            this._organizationsService,
-            this._employeesService,
-            this._groupsService,
-            this._projectMembersService,
-            this.repository,
-            updateDto,
-            activeUser,
-            entity,
-        );
+        return updateEntity(this, id, updateDto, activeUser);
     }
 
 
@@ -178,9 +153,9 @@ export class ProjectsService
             activeUser,
         );
 
-        await this._projectColumnsService.repository.remove(entity.columns);
-        await this._projectMembersService.repository.remove(entity.members);
-        await this._projectTagsService.repository.remove(entity.tags);
+        await this.projectColumnsService.repository.remove(entity.columns);
+        await this.projectMembersService.repository.remove(entity.members);
+        await this.projectTagsService.repository.remove(entity.tags);
         return this.repository.remove(entity);
     }
 
@@ -198,10 +173,10 @@ export class ProjectsService
             activeUser,
         );
 
-        const file = await this._resourceService.repository.findOneBy({ url: Equal(entity.background) });
+        const file = await this.resourceService.repository.findOneBy({ url: Equal(entity.background) });
         if (file)
         {
-            await this._resourceService.remove(file.id, activeUser);
+            await this.resourceService.remove(file.id, activeUser);
         }
 
         entity.background = backgroundDto.background;

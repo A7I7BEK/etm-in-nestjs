@@ -6,6 +6,7 @@ import { ActionsController } from './actions.controller';
 import { ActionsService } from './actions.service';
 import { Action } from './entities/action.entity';
 import { ColumnListener } from './listener/column.listener';
+import { ProjectListener } from './listener/project.listener';
 import { TaskListener } from './listener/task.listener';
 
 @Module({
@@ -20,6 +21,7 @@ import { TaskListener } from './listener/task.listener';
         ActionsService,
         TaskListener,
         ColumnListener,
+        ProjectListener,
     ],
 })
 export class ActionsModule { }

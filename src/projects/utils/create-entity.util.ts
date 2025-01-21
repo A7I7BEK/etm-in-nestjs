@@ -1,34 +1,25 @@
-import { EmployeesService } from 'src/employees/employees.service';
-import { GroupsService } from 'src/groups/groups.service';
+import { Action } from 'src/actions/entities/action.entity';
+import { BaseSimpleEvent } from 'src/actions/event/base-simple.event';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { OrganizationsService } from 'src/organizations/organizations.service';
 import { ProjectColumn } from 'src/project-columns/entities/project-column.entity';
 import { ProjectColumnTypeKanban } from 'src/project-columns/enums/project-column-type-kanban.enum';
-import { ProjectColumnsService } from 'src/project-columns/project-columns.service';
 import { ProjectMember } from 'src/project-members/entities/project-member.entity';
-import { ProjectMembersService } from 'src/project-members/project-members.service';
 import { PROJECT_TAG_COLORS } from 'src/project-tags/constants/project-tag-colors.constant';
 import { ProjectTag } from 'src/project-tags/entities/project-tag.entity';
-import { ProjectTagsService } from 'src/project-tags/project-tags.service';
-import { Repository } from 'typeorm';
 import { ProjectCreateDto } from '../dto/project-create.dto';
 import { Project } from '../entities/project.entity';
+import { ProjectPermissions } from '../enums/project-permissions.enum';
 import { ProjectType } from '../enums/project-type.enum';
+import { ProjectsService } from '../projects.service';
 
 
 export async function createEntity(
-    organizationsService: OrganizationsService,
-    employeesService: EmployeesService,
-    groupsService: GroupsService,
-    projectMembersService: ProjectMembersService,
-    projectColumnsService: ProjectColumnsService,
-    projectTagsService: ProjectTagsService,
-    repository: Repository<Project>,
+    service: ProjectsService,
     dto: ProjectCreateDto,
     activeUser: ActiveUserData,
 )
 {
-    const organizationEntity = await organizationsService.findOneActiveUser(
+    const organizationEntity = await service.organizationsService.findOneActiveUser(
         {
             where: { id: dto.organizationId }
         },
@@ -36,7 +27,7 @@ export async function createEntity(
     );
 
 
-    const managerEntity = await employeesService.findOne(
+    const managerEntity = await service.employeesService.findOne(
         {
             where: { id: dto.manager.id }
         },
@@ -44,7 +35,7 @@ export async function createEntity(
     );
 
 
-    const groupEntity = await groupsService.findOne(
+    const groupEntity = await service.groupsService.findOne(
         {
             where: { id: dto.group.id },
             relations: { employees: true, leader: true }
@@ -65,7 +56,7 @@ export async function createEntity(
 
         return member;
     });
-    await projectMembersService.repository.save(memberList);
+    await service.projectMembersService.repository.save(memberList);
 
 
     let columnList: ProjectColumn[];
@@ -82,7 +73,7 @@ export async function createEntity(
             return column;
         });
 
-        await projectColumnsService.repository.save(columnList);
+        await service.projectColumnsService.repository.save(columnList);
     }
 
 
@@ -93,7 +84,7 @@ export async function createEntity(
 
         return tag;
     });
-    await projectTagsService.repository.save(tagList);
+    await service.projectTagsService.repository.save(tagList);
 
 
     const entity = new Project();
@@ -106,7 +97,18 @@ export async function createEntity(
     entity.members = memberList;
     entity.columns = columnList;
     entity.tags = tagList;
+    await service.repository.save(entity);
 
 
-    return repository.save(entity);
+    const actionData: BaseSimpleEvent<Project> = {
+        entity,
+        activeUser,
+    };
+    service.eventEmitter.emit(
+        [ Action.name, ProjectPermissions.Create ],
+        actionData
+    );
+
+
+    return entity;
 }

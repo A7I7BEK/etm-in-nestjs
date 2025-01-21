@@ -1,26 +1,34 @@
-import { EmployeesService } from 'src/employees/employees.service';
-import { GroupsService } from 'src/groups/groups.service';
+import { Action } from 'src/actions/entities/action.entity';
+import { BaseDiffEvent } from 'src/actions/event/base-diff.event';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { OrganizationsService } from 'src/organizations/organizations.service';
 import { ProjectMember } from 'src/project-members/entities/project-member.entity';
-import { ProjectMembersService } from 'src/project-members/project-members.service';
-import { Repository } from 'typeorm';
 import { ProjectUpdateDto } from '../dto/project-update.dto';
 import { Project } from '../entities/project.entity';
+import { ProjectPermissions } from '../enums/project-permissions.enum';
+import { ProjectsService } from '../projects.service';
 
 
 export async function updateEntity(
-    organizationsService: OrganizationsService,
-    employeesService: EmployeesService,
-    groupsService: GroupsService,
-    projectMembersService: ProjectMembersService,
-    repository: Repository<Project>,
+    service: ProjectsService,
+    id: number,
     dto: ProjectUpdateDto,
     activeUser: ActiveUserData,
-    entity: Project,
 )
 {
-    const organizationEntity = await organizationsService.findOneActiveUser(
+    const entity = await service.findOne(
+        {
+            where: { id },
+            relations: {
+                members: true,
+            },
+        },
+        activeUser,
+    );
+    const oldEntity = structuredClone(entity);
+    delete oldEntity.members;
+
+
+    const organizationEntity = await service.organizationsService.findOneActiveUser(
         {
             where: { id: dto.organizationId }
         },
@@ -28,7 +36,7 @@ export async function updateEntity(
     );
 
 
-    const managerEntity = await employeesService.findOne(
+    const managerEntity = await service.employeesService.findOne(
         {
             where: { id: dto.manager.id }
         },
@@ -36,10 +44,13 @@ export async function updateEntity(
     );
 
 
-    const groupEntity = await groupsService.findOne(
+    const groupEntity = await service.groupsService.findOne(
         {
             where: { id: dto.group.id },
-            relations: { employees: true, leader: true }
+            relations: {
+                employees: true,
+                leader: true,
+            }
         },
         activeUser,
     );
@@ -57,8 +68,8 @@ export async function updateEntity(
 
         return member;
     });
-    await projectMembersService.repository.remove(entity.members);
-    await projectMembersService.repository.save(memberList);
+    await service.projectMembersService.repository.remove(entity.members);
+    await service.projectMembersService.repository.save(memberList);
 
 
     entity.name = dto.name;
@@ -67,7 +78,19 @@ export async function updateEntity(
     entity.manager = managerEntity;
     entity.group = groupEntity;
     entity.members = memberList;
+    await service.repository.save(entity);
 
 
-    return repository.save(entity);
+    const actionData: BaseDiffEvent<Project> = {
+        oldEntity,
+        newEntity: entity,
+        activeUser,
+    };
+    service.eventEmitter.emit(
+        [ Action.name, ProjectPermissions.Update ],
+        actionData
+    );
+
+
+    return entity;
 }
