@@ -5,7 +5,6 @@ import { Pagination } from 'src/common/pagination/pagination.class';
 import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
 import { EmployeesService } from 'src/employees/employees.service';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { TasksService } from 'src/tasks/tasks.service';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { ActionQueryDto } from './dto/action-query.dto';
 import { Action } from './entities/action.entity';
@@ -17,7 +16,6 @@ export class ActionsService
     constructor (
         @InjectRepository(Action)
         public readonly repository: Repository<Action>,
-        public readonly tasksService: TasksService,
         public readonly employeesService: EmployeesService,
     ) { }
 
