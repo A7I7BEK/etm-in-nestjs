@@ -9,7 +9,7 @@ import { BaseSimpleEvent } from '../event/base-simple.event';
 
 
 @Injectable()
-export class ColumnListener
+export class ProjectColumnListener
 {
     constructor (
         private readonly _service: ActionsService,

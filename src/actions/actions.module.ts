@@ -5,7 +5,7 @@ import { TasksModule } from 'src/tasks/tasks.module';
 import { ActionsController } from './actions.controller';
 import { ActionsService } from './actions.service';
 import { Action } from './entities/action.entity';
-import { ColumnListener } from './listener/column.listener';
+import { ProjectColumnListener } from './listener/project-column.listener';
 import { ProjectListener } from './listener/project.listener';
 import { TaskListener } from './listener/task.listener';
 
@@ -20,7 +20,7 @@ import { TaskListener } from './listener/task.listener';
     providers: [
         ActionsService,
         TaskListener,
-        ColumnListener,
+        ProjectColumnListener,
         ProjectListener,
     ],
 })
