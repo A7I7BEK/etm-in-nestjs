@@ -1,6 +1,6 @@
 import { ForbiddenException } from '@nestjs/common';
 import { Action } from 'src/actions/entities/action.entity';
-import { BaseMoveEvent } from 'src/actions/event/base-move.event';
+import { BaseDiffEvent } from 'src/actions/event/base-diff.event';
 import { reOrderItems } from 'src/common/utils/re-order-items.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { ProjectType } from 'src/projects/enums/project-type.enum';
@@ -61,7 +61,7 @@ export async function moveEntity
     service.columnsGateway.emitReorder(entity, entity.project.id);
 
 
-    const actionData: BaseMoveEvent<ProjectColumn> = {
+    const actionData: BaseDiffEvent<ProjectColumn> = {
         oldEntity,
         newEntity: entity,
         activeUser,

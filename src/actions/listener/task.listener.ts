@@ -5,10 +5,9 @@ import { Task } from 'src/tasks/entities/task.entity';
 import { TaskPermissions } from 'src/tasks/enums/task-permissions.enum';
 import { ActionsService } from '../actions.service';
 import { Action } from '../entities/action.entity';
-import { BaseCreateEvent } from '../event/base-create.event';
-import { BaseDeleteEvent } from '../event/base-delete.event';
-import { BaseMoveEvent } from '../event/base-move.event';
-import { BaseUpdateEvent } from '../event/base-update.event';
+import { BaseDiffDtoEvent } from '../event/base-diff-dto.event';
+import { BaseDiffEvent } from '../event/base-diff.event';
+import { BaseSimpleEvent } from '../event/base-simple.event';
 
 
 @Injectable()
@@ -20,7 +19,7 @@ export class TaskListener
 
 
     @OnEvent([ Action.name, TaskPermissions.Create ], { async: true })
-    async listenCreateEvent(data: BaseCreateEvent<Task>)
+    async listenCreateEvent(data: BaseSimpleEvent<Task>)
     {
         const { entity, activeUser } = data;
 
@@ -41,7 +40,7 @@ export class TaskListener
 
 
     @OnEvent([ Action.name, TaskPermissions.Update ], { async: true })
-    async listenUpdateEvent(data: BaseUpdateEvent<Task, TaskUpdateDto>)
+    async listenUpdateEvent(data: BaseDiffDtoEvent<Task, TaskUpdateDto>)
     {
         const { oldEntity, dto, activeUser } = data;
 
@@ -63,7 +62,7 @@ export class TaskListener
 
 
     @OnEvent([ Action.name, TaskPermissions.Delete ], { async: true })
-    async listenDeleteEvent(data: BaseDeleteEvent<Task>)
+    async listenDeleteEvent(data: BaseSimpleEvent<Task>)
     {
         const { entity, activeUser } = data;
 
@@ -84,7 +83,7 @@ export class TaskListener
 
 
     @OnEvent([ Action.name, TaskPermissions.Copy ], { async: true })
-    async listenCopyEvent(data: BaseMoveEvent<Task>)
+    async listenCopyEvent(data: BaseDiffEvent<Task>)
     {
         const { oldEntity, newEntity, activeUser } = data;
 
@@ -109,7 +108,7 @@ export class TaskListener
 
 
     @OnEvent([ Action.name, TaskPermissions.Move ], { async: true })
-    async listenMoveEvent(data: BaseMoveEvent<Task>)
+    async listenMoveEvent(data: BaseDiffEvent<Task>)
     {
         const { oldEntity, newEntity, activeUser } = data;
 

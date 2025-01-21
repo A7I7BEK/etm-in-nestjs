@@ -1,5 +1,5 @@
 import { Action } from 'src/actions/entities/action.entity';
-import { BaseCreateEvent } from 'src/actions/event/base-create.event';
+import { BaseSimpleEvent } from 'src/actions/event/base-simple.event';
 import { reOrderItems } from 'src/common/utils/re-order-items.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { TaskCreateDto } from '../dto/task-create.dto';
@@ -53,7 +53,7 @@ export async function createEntity
     await service.repository.save(columnEntity.tasks);
 
 
-    const actionData: BaseCreateEvent<Task> = {
+    const actionData: BaseSimpleEvent<Task> = {
         entity,
         activeUser,
     };

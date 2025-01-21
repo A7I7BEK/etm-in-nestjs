@@ -1,6 +1,6 @@
 import { ForbiddenException } from '@nestjs/common';
 import { Action } from 'src/actions/entities/action.entity';
-import { BaseCreateEvent } from 'src/actions/event/base-create.event';
+import { BaseSimpleEvent } from 'src/actions/event/base-simple.event';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { ProjectType } from 'src/projects/enums/project-type.enum';
 import { ProjectColumnCreateDto } from '../dto/project-column-create.dto';
@@ -50,7 +50,7 @@ export async function createEntity
     await service.repository.save(entity);
 
 
-    const actionData: BaseCreateEvent<ProjectColumn> = {
+    const actionData: BaseSimpleEvent<ProjectColumn> = {
         entity,
         activeUser,
     };

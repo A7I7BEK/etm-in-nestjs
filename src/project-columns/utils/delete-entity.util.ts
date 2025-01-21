@@ -1,6 +1,6 @@
 import { ForbiddenException } from '@nestjs/common';
 import { Action } from 'src/actions/entities/action.entity';
-import { BaseDeleteEvent } from 'src/actions/event/base-delete.event';
+import { BaseSimpleEvent } from 'src/actions/event/base-simple.event';
 import { reOrderItems } from 'src/common/utils/re-order-items.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { ProjectType } from 'src/projects/enums/project-type.enum';
@@ -53,7 +53,7 @@ export async function deleteEntity
     service.columnsGateway.emitDelete(entity, entity.project.id);
 
 
-    const actionData: BaseDeleteEvent<ProjectColumn> = {
+    const actionData: BaseSimpleEvent<ProjectColumn> = {
         entity,
         activeUser,
     };

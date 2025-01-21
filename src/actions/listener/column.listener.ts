@@ -5,10 +5,9 @@ import { ProjectColumn } from 'src/project-columns/entities/project-column.entit
 import { ProjectColumnPermissions } from 'src/project-columns/enums/project-column-permissions.enum';
 import { ActionsService } from '../actions.service';
 import { Action } from '../entities/action.entity';
-import { BaseCreateEvent } from '../event/base-create.event';
-import { BaseDeleteEvent } from '../event/base-delete.event';
-import { BaseMoveEvent } from '../event/base-move.event';
-import { BaseUpdateEvent } from '../event/base-update.event';
+import { BaseDiffDtoEvent } from '../event/base-diff-dto.event';
+import { BaseDiffEvent } from '../event/base-diff.event';
+import { BaseSimpleEvent } from '../event/base-simple.event';
 
 
 @Injectable()
@@ -20,7 +19,7 @@ export class ColumnListener
 
 
     @OnEvent([ Action.name, ProjectColumnPermissions.Create ], { async: true })
-    async listenCreateEvent(data: BaseCreateEvent<ProjectColumn>)
+    async listenCreateEvent(data: BaseSimpleEvent<ProjectColumn>)
     {
         const { entity, activeUser } = data;
 
@@ -40,7 +39,7 @@ export class ColumnListener
 
 
     @OnEvent([ Action.name, ProjectColumnPermissions.Update ], { async: true })
-    async listenUpdateEvent(data: BaseUpdateEvent<ProjectColumn, ProjectColumnUpdateDto>)
+    async listenUpdateEvent(data: BaseDiffDtoEvent<ProjectColumn, ProjectColumnUpdateDto>)
     {
         const { oldEntity, dto, activeUser } = data;
 
@@ -61,7 +60,7 @@ export class ColumnListener
 
 
     @OnEvent([ Action.name, ProjectColumnPermissions.Delete ], { async: true })
-    async listenDeleteEvent(data: BaseDeleteEvent<ProjectColumn>)
+    async listenDeleteEvent(data: BaseSimpleEvent<ProjectColumn>)
     {
         const { entity, activeUser } = data;
 
@@ -81,7 +80,7 @@ export class ColumnListener
 
 
     @OnEvent([ Action.name, ProjectColumnPermissions.Move ], { async: true })
-    async listenMoveEvent(data: BaseMoveEvent<ProjectColumn>)
+    async listenMoveEvent(data: BaseDiffEvent<ProjectColumn>)
     {
         const { oldEntity, newEntity, activeUser } = data;
 

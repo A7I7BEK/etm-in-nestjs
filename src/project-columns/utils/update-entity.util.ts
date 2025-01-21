@@ -1,6 +1,6 @@
 import { ForbiddenException } from '@nestjs/common';
 import { Action } from 'src/actions/entities/action.entity';
-import { BaseUpdateEvent } from 'src/actions/event/base-update.event';
+import { BaseDiffDtoEvent } from 'src/actions/event/base-diff-dto.event';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { ProjectType } from 'src/projects/enums/project-type.enum';
 import { ProjectColumnUpdateDto } from '../dto/project-column-update.dto';
@@ -42,7 +42,7 @@ export async function updateEntity
     await service.repository.save(entity);
 
 
-    const actionData: BaseUpdateEvent<ProjectColumn, ProjectColumnUpdateDto> = {
+    const actionData: BaseDiffDtoEvent<ProjectColumn, ProjectColumnUpdateDto> = {
         oldEntity,
         dto,
         activeUser,

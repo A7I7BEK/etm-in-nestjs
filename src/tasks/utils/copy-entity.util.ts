@@ -1,5 +1,5 @@
 import { Action } from 'src/actions/entities/action.entity';
-import { BaseMoveEvent } from 'src/actions/event/base-move.event';
+import { BaseDiffEvent } from 'src/actions/event/base-diff.event';
 import { reOrderItems } from 'src/common/utils/re-order-items.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { TaskCopyDto } from '../dto/task-copy.dto';
@@ -63,7 +63,7 @@ export async function copyEntity
     await service.repository.save(columnEntity.tasks);
 
 
-    const actionData: BaseMoveEvent<Task> = {
+    const actionData: BaseDiffEvent<Task> = {
         oldEntity: taskEntity,
         newEntity: entity,
         activeUser,
