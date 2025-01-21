@@ -1,5 +1,5 @@
 import { Action } from 'src/actions/entities/action.entity';
-import { TaskCopyEvent } from 'src/actions/event/task-copy.event';
+import { BaseMoveEvent } from 'src/actions/event/base-move.event';
 import { reOrderItems } from 'src/common/utils/re-order-items.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { TaskCopyDto } from '../dto/task-copy.dto';
@@ -63,7 +63,7 @@ export async function copyEntity
     await service.repository.save(columnEntity.tasks);
 
 
-    const actionData: TaskCopyEvent<Task> = {
+    const actionData: BaseMoveEvent<Task> = {
         oldEntity: taskEntity,
         newEntity: entity,
         activeUser,
@@ -74,12 +74,7 @@ export async function copyEntity
     );
 
 
-    wsEmitOneTask(
-        service,
-        entity.id,
-        activeUser,
-        'insert',
-    );
+    wsEmitOneTask(service, entity.id, activeUser, 'insert');
 
 
     return entity;

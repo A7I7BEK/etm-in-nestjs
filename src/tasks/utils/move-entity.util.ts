@@ -1,5 +1,5 @@
 import { Action } from 'src/actions/entities/action.entity';
-import { TaskMoveEvent } from 'src/actions/event/task-move.event';
+import { BaseMoveEvent } from 'src/actions/event/base-move.event';
 import { reOrderItems } from 'src/common/utils/re-order-items.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { TaskMoveDto } from '../dto/task-move.dto';
@@ -39,7 +39,7 @@ export async function moveEntity
     delete oldEntity.column.tasks;
 
 
-    let actionData: TaskMoveEvent<Task>;
+    let actionData: BaseMoveEvent<Task>;
     actionData.oldEntity = oldEntity;
     actionData.activeUser = activeUser;
 

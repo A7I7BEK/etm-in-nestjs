@@ -25,7 +25,7 @@ export async function updateEntity
         },
         activeUser,
     );
-    const oldEntity = { ...entity };
+    const oldEntity = structuredClone(entity);
 
 
     Object.assign(entity, dto);

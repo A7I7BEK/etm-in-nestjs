@@ -7,9 +7,8 @@ import { ActionsService } from '../actions.service';
 import { Action } from '../entities/action.entity';
 import { BaseCreateEvent } from '../event/base-create.event';
 import { BaseDeleteEvent } from '../event/base-delete.event';
+import { BaseMoveEvent } from '../event/base-move.event';
 import { BaseUpdateEvent } from '../event/base-update.event';
-import { TaskCopyEvent } from '../event/task-copy.event';
-import { TaskMoveEvent } from '../event/task-move.event';
 
 
 @Injectable()
@@ -85,7 +84,7 @@ export class TaskListener
 
 
     @OnEvent([ Action.name, TaskPermissions.Copy ], { async: true })
-    async listenCopyEvent(data: TaskCopyEvent<Task>)
+    async listenCopyEvent(data: BaseMoveEvent<Task>)
     {
         const { oldEntity, newEntity, activeUser } = data;
 
@@ -110,7 +109,7 @@ export class TaskListener
 
 
     @OnEvent([ Action.name, TaskPermissions.Move ], { async: true })
-    async listenMoveEvent(data: TaskMoveEvent<Task>)
+    async listenMoveEvent(data: BaseMoveEvent<Task>)
     {
         const { oldEntity, newEntity, activeUser } = data;
 
