@@ -87,19 +87,6 @@ export class ProjectColumnsController
     }
 
 
-    @Post('move')
-    @Permission(ProjectColumnPermissions.Update)
-    async move
-        (
-            @Body() moveDto: ProjectColumnMoveDto,
-            @ActiveUser() activeUser: ActiveUserData,
-        )
-    {
-        const entity = await this._service.move(moveDto, activeUser);
-        return modifyProjectColumnForFront(entity);
-    }
-
-
     @Delete(':id')
     @Permission(ProjectColumnPermissions.Delete)
     async remove
@@ -109,6 +96,19 @@ export class ProjectColumnsController
         )
     {
         const entity = await this._service.remove(id, activeUser);
+        return modifyProjectColumnForFront(entity);
+    }
+
+
+    @Post('move')
+    @Permission(ProjectColumnPermissions.Move)
+    async move
+        (
+            @Body() moveDto: ProjectColumnMoveDto,
+            @ActiveUser() activeUser: ActiveUserData,
+        )
+    {
+        const entity = await this._service.move(moveDto, activeUser);
         return modifyProjectColumnForFront(entity);
     }
 }
