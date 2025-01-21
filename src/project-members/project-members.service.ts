@@ -1,5 +1,8 @@
 import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Action } from 'src/actions/entities/action.entity';
+import { BaseSimpleEvent } from 'src/actions/event/base-simple.event';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
 import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
@@ -10,8 +13,10 @@ import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { ProjectMemberCreateDto } from './dto/project-member-create.dto';
 import { ProjectMemberQueryDto } from './dto/project-member-query.dto';
 import { ProjectMember } from './entities/project-member.entity';
-import { createUpdateEntity } from './utils/create-update-entity.util';
+import { ProjectMemberPermissions } from './enums/project-member-permissions.enum';
+import { createEntity } from './utils/create-entity.util';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
+
 
 @Injectable()
 export class ProjectMembersService
@@ -20,8 +25,9 @@ export class ProjectMembersService
         @InjectRepository(ProjectMember)
         public readonly repository: Repository<ProjectMember>,
         @Inject(forwardRef(() => ProjectsService)) // BINGO
-        private readonly _projectsService: ProjectsService,
-        private readonly _employeesService: EmployeesService,
+        public readonly projectsService: ProjectsService,
+        public readonly employeesService: EmployeesService,
+        public readonly eventEmitter: EventEmitter2,
     ) { }
 
 
@@ -31,13 +37,7 @@ export class ProjectMembersService
             activeUser: ActiveUserData,
         )
     {
-        return createUpdateEntity(
-            this._projectsService,
-            this._employeesService,
-            this.repository,
-            createDto,
-            activeUser,
-        );
+        return createEntity(this, createDto, activeUser);
     }
 
 
@@ -124,10 +124,24 @@ export class ProjectMembersService
     {
         const entity = await this.findOne(
             {
-                where: { id }
+                where: { id },
+                relations: {
+                    employee: true,
+                    project: true,
+                }
             },
             activeUser,
         );
+
+        const actionData: BaseSimpleEvent<ProjectMember> = {
+            entity,
+            activeUser,
+        };
+        this.eventEmitter.emit(
+            [ Action.name, ProjectMemberPermissions.Delete ],
+            actionData
+        );
+
         return this.repository.remove(entity);
     }
 }
