@@ -1,5 +1,5 @@
 import { Action } from 'src/actions/entities/action.entity';
-import { BaseDiffDtoEvent } from 'src/actions/event/base-diff-dto.event';
+import { BaseDiffEvent } from 'src/actions/event/base-diff.event';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { TaskUpdateDto } from '../dto/task-update.dto';
 import { Task } from '../entities/task.entity';
@@ -32,9 +32,9 @@ export async function updateEntity
     await service.repository.save(entity);
 
 
-    const actionData: BaseDiffDtoEvent<Task, TaskUpdateDto> = {
+    const actionData: BaseDiffEvent<Task> = {
         oldEntity,
-        dto,
+        newEntity: entity,
         activeUser,
     };
     service.eventEmitter.emit(

@@ -112,20 +112,27 @@ export class ActionsService
     }
 
 
-    detectChanges<T, K>(dto: T, oldEntity: K): Record<string, any>
+    detectChanges<T>(oldEntity: T, newEntity: T, structure: any): Record<string, any>
     {
         const changes = {};
 
-        Object.keys(dto).forEach(key =>
+        Object.keys(structure).forEach(key =>
         {
-            if (dto[ key ] === undefined || oldEntity[ key ] === dto[ key ])
+            const strVal = structure[ key ];
+            const oldVal = oldEntity[ key ];
+            const newVal = newEntity[ key ];
+
+            if (strVal !== 0)
+            {
+                changes[ key ] = this.detectChanges(oldVal, newVal, strVal);
+            }
+            else if (oldVal === newVal)
             {
                 changes[ key ] = null;
             }
-
             else
             {
-                changes[ key ] = { oldValue: oldEntity[ key ], newValue: dto[ key ] };
+                changes[ key ] = { oldVal, newVal };
             }
         });
 

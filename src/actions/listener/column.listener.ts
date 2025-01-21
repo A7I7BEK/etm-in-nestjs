@@ -1,11 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { ProjectColumnUpdateDto } from 'src/project-columns/dto/project-column-update.dto';
 import { ProjectColumn } from 'src/project-columns/entities/project-column.entity';
 import { ProjectColumnPermissions } from 'src/project-columns/enums/project-column-permissions.enum';
 import { ActionsService } from '../actions.service';
 import { Action } from '../entities/action.entity';
-import { BaseDiffDtoEvent } from '../event/base-diff-dto.event';
 import { BaseDiffEvent } from '../event/base-diff.event';
 import { BaseSimpleEvent } from '../event/base-simple.event';
 
@@ -39,9 +37,9 @@ export class ColumnListener
 
 
     @OnEvent([ Action.name, ProjectColumnPermissions.Update ], { async: true })
-    async listenUpdateEvent(data: BaseDiffDtoEvent<ProjectColumn, ProjectColumnUpdateDto>)
+    async listenUpdateEvent(data: BaseDiffEvent<ProjectColumn>)
     {
-        const { oldEntity, dto, activeUser } = data;
+        const { oldEntity, newEntity, activeUser } = data;
 
         const action = new Action();
         action.createdAt = new Date();
@@ -49,10 +47,11 @@ export class ColumnListener
         action.project = oldEntity.project;
         action.employee = await this._service.getEmployee(activeUser);
 
+        const structure = { name: 0, codeName: 0 };
         action.details = {
             id: oldEntity.id,
             name: oldEntity.name,
-            changes: this._service.detectChanges(dto, oldEntity),
+            changes: this._service.detectChanges(oldEntity, newEntity, structure)
         };
 
         await this._service.repository.save(action);
