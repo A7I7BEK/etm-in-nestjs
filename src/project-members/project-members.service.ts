@@ -132,7 +132,9 @@ export class ProjectMembersService
             },
             activeUser,
         );
+        await this.repository.remove(entity);
 
+        entity.id = id;
         const actionData: BaseSimpleEvent<ProjectMember> = {
             entity,
             activeUser,
@@ -142,6 +144,6 @@ export class ProjectMembersService
             actionData
         );
 
-        return this.repository.remove(entity);
+        return entity;
     }
 }
