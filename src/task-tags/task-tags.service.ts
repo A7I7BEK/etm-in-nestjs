@@ -1,5 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Action } from 'src/actions/entities/action.entity';
+import { BaseSimpleEvent } from 'src/actions/event/base-simple.event';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
 import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
@@ -12,8 +15,10 @@ import { TaskTagCreateDto } from './dto/task-tag-create.dto';
 import { TaskTagDeleteDto } from './dto/task-tag-delete.dto';
 import { TaskTagQueryDto } from './dto/task-tag-query.dto';
 import { TaskTag } from './entities/task-tag.entity';
+import { TaskTagPermissions } from './enums/task-tag-permissions.enum';
 import { createEntity } from './utils/create-entity.util';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
+
 
 @Injectable()
 export class TaskTagsService
@@ -23,6 +28,7 @@ export class TaskTagsService
         public readonly repository: Repository<TaskTag>,
         public readonly tasksService: TasksService,
         public readonly projectTagsService: ProjectTagsService,
+        public readonly eventEmitter: EventEmitter2,
     ) { }
 
 
@@ -130,6 +136,12 @@ export class TaskTagsService
                     projectTag: {
                         id: deleteDto.projectTagId,
                     },
+                },
+                relations: {
+                    task: true,
+                    projectTag: {
+                        project: true,
+                    }
                 }
             },
             activeUser,
@@ -141,6 +153,15 @@ export class TaskTagsService
             deleteDto.taskId,
             activeUser,
             'replace',
+        );
+
+        const actionData: BaseSimpleEvent<TaskTag> = {
+            entity,
+            activeUser,
+        };
+        this.eventEmitter.emit(
+            [ Action.name, TaskTagPermissions.Delete ],
+            actionData
         );
 
         return entity;
