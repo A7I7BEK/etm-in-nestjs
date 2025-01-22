@@ -1,22 +1,19 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Action } from 'src/actions/entities/action.entity';
-import { BaseSimpleEvent } from 'src/actions/event/base-simple.event';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
 import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { ProjectTagsService } from 'src/project-tags/project-tags.service';
 import { TasksService } from 'src/tasks/tasks.service';
-import { wsEmitOneTask } from 'src/tasks/utils/ws-emit-one-task.util';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { TaskTagCreateDto } from './dto/task-tag-create.dto';
 import { TaskTagDeleteDto } from './dto/task-tag-delete.dto';
 import { TaskTagQueryDto } from './dto/task-tag-query.dto';
 import { TaskTag } from './entities/task-tag.entity';
-import { TaskTagPermissions } from './enums/task-tag-permissions.enum';
 import { createEntity } from './utils/create-entity.util';
+import { deleteEntity } from './utils/delete-entity.util';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
 
 
@@ -127,43 +124,6 @@ export class TaskTagsService
             activeUser: ActiveUserData,
         )
     {
-        const entity = await this.findOne(
-            {
-                where: {
-                    task: {
-                        id: deleteDto.taskId,
-                    },
-                    projectTag: {
-                        id: deleteDto.projectTagId,
-                    },
-                },
-                relations: {
-                    task: true,
-                    projectTag: {
-                        project: true,
-                    }
-                }
-            },
-            activeUser,
-        );
-        await this.repository.remove(entity);
-
-        wsEmitOneTask(
-            this.tasksService,
-            deleteDto.taskId,
-            activeUser,
-            'replace',
-        );
-
-        const actionData: BaseSimpleEvent<TaskTag> = {
-            entity,
-            activeUser,
-        };
-        this.eventEmitter.emit(
-            [ Action.name, TaskTagPermissions.Delete ],
-            actionData
-        );
-
-        return entity;
+        return deleteEntity(this, deleteDto, activeUser);
     }
 }
