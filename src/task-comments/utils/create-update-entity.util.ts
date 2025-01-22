@@ -34,7 +34,11 @@ export async function createUpdateEntity
     {
         entity.author = await employeesService.findOne(
             {
-                where: { id: activeUser.sub }
+                where: {
+                    user: {
+                        id: activeUser.sub
+                    }
+                }
             },
             activeUser,
         );

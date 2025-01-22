@@ -40,7 +40,11 @@ export class TaskTimerService
         );
         const employeeEntity = await this._employeesService.findOne(
             {
-                where: { id: activeUser.sub }
+                where: {
+                    user: {
+                        id: activeUser.sub
+                    }
+                }
             },
             activeUser,
         );
