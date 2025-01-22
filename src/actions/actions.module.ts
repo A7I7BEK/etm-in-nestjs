@@ -6,6 +6,7 @@ import { ActionsService } from './actions.service';
 import { Action } from './entities/action.entity';
 import { ProjectColumnListener } from './listener/project-column.listener';
 import { ProjectMemberListener } from './listener/project-member.listener';
+import { ProjectTagListener } from './listener/project-tag.listener';
 import { ProjectListener } from './listener/project.listener';
 import { TaskListener } from './listener/task.listener';
 
@@ -22,6 +23,7 @@ import { TaskListener } from './listener/task.listener';
         ProjectListener,
         ProjectColumnListener,
         ProjectMemberListener,
+        ProjectTagListener,
     ],
 })
 export class ActionsModule { }

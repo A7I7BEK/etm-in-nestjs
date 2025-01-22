@@ -1,5 +1,8 @@
 import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Action } from 'src/actions/entities/action.entity';
+import { BaseSimpleEvent } from 'src/actions/event/base-simple.event';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
 import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
@@ -10,6 +13,7 @@ import { ProjectTagCreateDto } from './dto/project-tag-create.dto';
 import { ProjectTagQueryDto } from './dto/project-tag-query.dto';
 import { ProjectTagUpdateDto } from './dto/project-tag-update.dto';
 import { ProjectTag } from './entities/project-tag.entity';
+import { ProjectTagPermissions } from './enums/project-tag-permissions.enum';
 import { createUpdateEntity } from './utils/create-update-entity.util';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
 
@@ -20,7 +24,8 @@ export class ProjectTagsService
         @InjectRepository(ProjectTag)
         public readonly repository: Repository<ProjectTag>,
         @Inject(forwardRef(() => ProjectsService)) // BINGO
-        private readonly _projectsService: ProjectsService,
+        public readonly projectsService: ProjectsService,
+        public readonly eventEmitter: EventEmitter2,
     ) { }
 
 
@@ -30,12 +35,7 @@ export class ProjectTagsService
             activeUser: ActiveUserData,
         )
     {
-        return createUpdateEntity(
-            this._projectsService,
-            this.repository,
-            createDto,
-            activeUser,
-        );
+        return createUpdateEntity(this, createDto, activeUser);
     }
 
 
@@ -121,20 +121,7 @@ export class ProjectTagsService
             activeUser: ActiveUserData,
         )
     {
-        const entity = await this.findOne(
-            {
-                where: { id }
-            },
-            activeUser,
-        );
-
-        return createUpdateEntity(
-            this._projectsService,
-            this.repository,
-            updateDto,
-            activeUser,
-            entity,
-        );
+        return createUpdateEntity(this, updateDto, activeUser, id);
     }
 
 
@@ -146,11 +133,25 @@ export class ProjectTagsService
     {
         const entity = await this.findOne(
             {
-                where: { id }
+                where: { id },
+                relations: {
+                    project: true,
+                }
             },
             activeUser,
         );
+        await this.repository.remove(entity);
 
-        return this.repository.remove(entity);
+        entity.id = id;
+        const actionData: BaseSimpleEvent<ProjectTag> = {
+            entity,
+            activeUser,
+        };
+        this.eventEmitter.emit(
+            [ Action.name, ProjectTagPermissions.Delete ],
+            actionData
+        );
+
+        return entity;
     }
 }
