@@ -1,8 +1,11 @@
 import { ConflictException } from '@nestjs/common';
+import { Action } from 'src/actions/entities/action.entity';
+import { BaseSimpleEvent } from 'src/actions/event/base-simple.event';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { wsEmitOneTask } from 'src/tasks/utils/ws-emit-one-task.util';
 import { TaskMemberCreateDto } from '../dto/task-member-create.dto';
 import { TaskMember } from '../entities/task-member.entity';
+import { TaskMemberPermissions } from '../enums/task-member-permissions.enum';
 import { TaskMembersService } from '../task-members.service';
 
 
@@ -43,11 +46,25 @@ export async function createEntity
     );
     entity.projectMember = await service.projectMembersService.findOne(
         {
-            where: { id: dto.projectMemberId }
+            where: { id: dto.projectMemberId },
+            relations: {
+                project: true,
+                employee: true,
+            },
         },
         activeUser,
     );
     await service.repository.save(entity);
+
+
+    const actionData: BaseSimpleEvent<TaskMember> = {
+        entity,
+        activeUser,
+    };
+    service.eventEmitter.emit(
+        [ Action.name, TaskMemberPermissions.Create ],
+        actionData
+    );
 
 
     wsEmitOneTask(

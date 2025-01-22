@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
@@ -6,13 +7,13 @@ import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { ProjectMembersService } from 'src/project-members/project-members.service';
 import { TasksService } from 'src/tasks/tasks.service';
-import { wsEmitOneTask } from 'src/tasks/utils/ws-emit-one-task.util';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { TaskMemberCreateDto } from './dto/task-member-create.dto';
 import { TaskMemberDeleteDto } from './dto/task-member-delete.dto';
 import { TaskMemberQueryDto } from './dto/task-member-query.dto';
 import { TaskMember } from './entities/task-member.entity';
 import { createEntity } from './utils/create-entity.util';
+import { deleteEntity } from './utils/delete-entity.util';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
 
 @Injectable()
@@ -23,6 +24,7 @@ export class TaskMembersService
         public readonly repository: Repository<TaskMember>,
         public readonly tasksService: TasksService,
         public readonly projectMembersService: ProjectMembersService,
+        public readonly eventEmitter: EventEmitter2,
     ) { }
 
 
@@ -121,28 +123,6 @@ export class TaskMembersService
             activeUser: ActiveUserData,
         )
     {
-        const entity = await this.findOne(
-            {
-                where: {
-                    task: {
-                        id: deleteDto.taskId,
-                    },
-                    projectMember: {
-                        id: deleteDto.projectMemberId,
-                    }
-                }
-            },
-            activeUser,
-        );
-        await this.repository.remove(entity);
-
-        wsEmitOneTask(
-            this.tasksService,
-            deleteDto.taskId,
-            activeUser,
-            'replace',
-        );
-
-        return entity;
+        return deleteEntity(this, deleteDto, activeUser);
     }
 }
