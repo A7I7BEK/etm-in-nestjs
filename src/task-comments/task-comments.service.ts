@@ -1,4 +1,5 @@
 import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
@@ -6,13 +7,13 @@ import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
 import { EmployeesService } from 'src/employees/employees.service';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { TasksService } from 'src/tasks/tasks.service';
-import { wsEmitOneTask } from 'src/tasks/utils/ws-emit-one-task.util';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { TaskCommentCreateDto } from './dto/task-comment-create.dto';
 import { TaskCommentQueryDto } from './dto/task-comment-query.dto';
 import { TaskCommentUpdateDto } from './dto/task-comment-update.dto';
 import { TaskComment } from './entities/task-comment.entity';
 import { createUpdateEntity } from './utils/create-update-entity.util';
+import { deleteEntity } from './utils/delete-entity.util';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
 
 @Injectable()
@@ -22,8 +23,9 @@ export class TaskCommentsService
         @InjectRepository(TaskComment)
         public readonly repository: Repository<TaskComment>,
         @Inject(forwardRef(() => TasksService))
-        private readonly _tasksService: TasksService,
-        private readonly _employeesService: EmployeesService,
+        public readonly tasksService: TasksService,
+        public readonly employeesService: EmployeesService,
+        public readonly eventEmitter: EventEmitter2,
     ) { }
 
 
@@ -33,13 +35,7 @@ export class TaskCommentsService
             activeUser: ActiveUserData,
         )
     {
-        return createUpdateEntity(
-            this._tasksService,
-            this._employeesService,
-            this.repository,
-            createDto,
-            activeUser,
-        );
+        return createUpdateEntity(this, createDto, activeUser);
     }
 
 
@@ -122,58 +118,23 @@ export class TaskCommentsService
     }
 
 
-    async update
+    update
         (
             id: number,
             updateDto: TaskCommentUpdateDto,
             activeUser: ActiveUserData,
         )
     {
-        const entity = await this.findOne(
-            {
-                where: { id },
-                relations: {
-                    task: true,
-                }
-            },
-            activeUser,
-        );
-
-        return createUpdateEntity(
-            this._tasksService,
-            this._employeesService,
-            this.repository,
-            updateDto,
-            activeUser,
-            entity,
-        );
+        return createUpdateEntity(this, updateDto, activeUser, id);
     }
 
 
-    async remove
+    remove
         (
             id: number,
             activeUser: ActiveUserData,
         )
     {
-        const entity = await this.findOne(
-            {
-                where: { id },
-                relations: {
-                    task: true,
-                }
-            },
-            activeUser,
-        );
-        await this.repository.remove(entity);
-
-        wsEmitOneTask(
-            this._tasksService,
-            entity.task.id,
-            activeUser,
-            'replace',
-        );
-
-        return entity;
+        return deleteEntity(this, id, activeUser);
     }
 }
