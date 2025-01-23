@@ -16,36 +16,32 @@ export class TaskMemberListener
 
 
     @OnEvent([ Action.name, TaskMemberPermissions.Create ], { async: true })
-    async listenCreateEvent(data: BaseSimpleEvent<TaskMember>)
+    listenCreateEvent(data: BaseSimpleEvent<TaskMember>)
     {
-        const { entity, activeUser } = data;
-
-        const action = new Action();
-        action.createdAt = new Date();
-        action.activityType = TaskMemberPermissions.Create;
-        action.task = entity.task;
-        action.project = entity.projectMember.project;
-        action.employee = await this._service.getEmployee(activeUser);
-
-        action.details = {
-            id: entity.task.id,
-            name: entity.task.name,
-            member: entity.projectMember.employee,
-        };
+        this.handleAllEvents(data, TaskMemberPermissions.Create);
         // Tom added member "AAA" into task "BBB"
-
-        await this._service.repository.save(action);
     }
 
 
     @OnEvent([ Action.name, TaskMemberPermissions.Delete ], { async: true })
-    async listenDeleteEvent(data: BaseSimpleEvent<TaskMember>)
+    listenDeleteEvent(data: BaseSimpleEvent<TaskMember>)
+    {
+        this.handleAllEvents(data, TaskMemberPermissions.Delete);
+        // Tom removed member "AAA" from task "BBB"
+    }
+
+
+    private async handleAllEvents
+        (
+            data: BaseSimpleEvent<TaskMember>,
+            activityType: TaskMemberPermissions,
+        )
     {
         const { entity, activeUser } = data;
 
         const action = new Action();
         action.createdAt = new Date();
-        action.activityType = TaskMemberPermissions.Delete;
+        action.activityType = activityType;
         action.task = entity.task;
         action.project = entity.projectMember.project;
         action.employee = await this._service.getEmployee(activeUser);
@@ -55,7 +51,6 @@ export class TaskMemberListener
             name: entity.task.name,
             member: entity.projectMember.employee,
         };
-        // Tom removed member "AAA" from task "BBB"
 
         await this._service.repository.save(action);
     }

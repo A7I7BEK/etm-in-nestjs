@@ -16,36 +16,32 @@ export class TaskTagListener
 
 
     @OnEvent([ Action.name, TaskTagPermissions.Create ], { async: true })
-    async listenCreateEvent(data: BaseSimpleEvent<TaskTag>)
+    listenCreateEvent(data: BaseSimpleEvent<TaskTag>)
     {
-        const { entity, activeUser } = data;
-
-        const action = new Action();
-        action.createdAt = new Date();
-        action.activityType = TaskTagPermissions.Create;
-        action.task = entity.task;
-        action.project = entity.task.project;
-        action.employee = await this._service.getEmployee(activeUser);
-
-        action.details = {
-            id: entity.task.id,
-            name: entity.task.name,
-            tag: entity.projectTag,
-        };
+        this.handleAllEvents(data, TaskTagPermissions.Create);
         // Tom added tag "AAA" into task "BBB"
-
-        await this._service.repository.save(action);
     }
 
 
     @OnEvent([ Action.name, TaskTagPermissions.Delete ], { async: true })
-    async listenDeleteEvent(data: BaseSimpleEvent<TaskTag>)
+    listenDeleteEvent(data: BaseSimpleEvent<TaskTag>)
+    {
+        this.handleAllEvents(data, TaskTagPermissions.Delete);
+        // Tom removed tag "AAA" from task "BBB"
+    }
+
+
+    private async handleAllEvents
+        (
+            data: BaseSimpleEvent<TaskTag>,
+            activityType: TaskTagPermissions,
+        )
     {
         const { entity, activeUser } = data;
 
         const action = new Action();
         action.createdAt = new Date();
-        action.activityType = TaskTagPermissions.Delete;
+        action.activityType = activityType;
         action.task = entity.task;
         action.project = entity.task.project;
         action.employee = await this._service.getEmployee(activeUser);
@@ -55,7 +51,6 @@ export class TaskTagListener
             name: entity.task.name,
             tag: entity.projectTag,
         };
-        // Tom removed tag "AAA" from task "BBB"
 
         await this._service.repository.save(action);
     }

@@ -16,7 +16,7 @@ export class TaskCommentListener
 
 
     @OnEvent([ Action.name, TaskCommentPermissions.Create ], { async: true })
-    async listenCreateEvent(data: BaseSimpleEvent<TaskComment>)
+    listenCreateEvent(data: BaseSimpleEvent<TaskComment>)
     {
         this.handleAllEvents(data, TaskCommentPermissions.Create);
         // Tom commented in task "AAA" at "DD-MM-YYYY HH:mm:ss" (updatedAt)
@@ -24,7 +24,7 @@ export class TaskCommentListener
 
 
     @OnEvent([ Action.name, TaskCommentPermissions.Update ], { async: true })
-    async listenUpdateEvent(data: BaseSimpleEvent<TaskComment>)
+    listenUpdateEvent(data: BaseSimpleEvent<TaskComment>)
     {
         this.handleAllEvents(data, TaskCommentPermissions.Update);
         // Tom updated a comment in task "AAA" at "DD-MM-YYYY HH:mm:ss" (updatedAt)
@@ -32,7 +32,7 @@ export class TaskCommentListener
 
 
     @OnEvent([ Action.name, TaskCommentPermissions.Delete ], { async: true })
-    async listenDeleteEvent(data: BaseSimpleEvent<TaskComment>)
+    listenDeleteEvent(data: BaseSimpleEvent<TaskComment>)
     {
         this.handleAllEvents(data, TaskCommentPermissions.Delete);
         // Tom deleted a comment in task "AAA" at "DD-MM-YYYY HH:mm:ss" (updatedAt)
@@ -54,12 +54,12 @@ export class TaskCommentListener
         action.project = entity.task.project;
         action.employee = await this._service.getEmployee(activeUser);
 
-        delete entity.task;
         action.details = {
             id: entity.task.id,
             name: entity.task.name,
             comment: entity,
         };
+        delete entity.task;
 
         await this._service.repository.save(action);
     }
