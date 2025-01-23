@@ -18,7 +18,7 @@ export function loadQueryBuilder
 
     queryBuilder.leftJoinAndSelect(`${action}.employee`, empl);
     queryBuilder.leftJoin(`${empl}.user`, user);
-    queryBuilder.addSelect([
+    queryBuilder.addSelect([ // TODO: Check
         `${user}.id`,
         `${user}.userName`,
         `${user}.email`,
