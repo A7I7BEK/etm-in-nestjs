@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
@@ -12,6 +13,7 @@ import { TaskAttachmentDeleteDto } from './dto/task-attachment-delete.dto';
 import { TaskAttachmentQueryDto } from './dto/task-attachment-query.dto';
 import { TaskAttachment } from './entities/task-attachment.entity';
 import { createEntity } from './utils/create-entity.util';
+import { deleteEntity } from './utils/delete-entity.util';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
 
 @Injectable()
@@ -22,6 +24,7 @@ export class TaskAttachmentsService
         public readonly repository: Repository<TaskAttachment>,
         public readonly tasksService: TasksService,
         public readonly resourceService: ResourceService,
+        public readonly eventEmitter: EventEmitter2,
     ) { }
 
 
@@ -114,25 +117,12 @@ export class TaskAttachmentsService
     }
 
 
-    async remove
+    remove
         (
             deleteDto: TaskAttachmentDeleteDto,
             activeUser: ActiveUserData,
         )
     {
-        const entity = await this.findOne(
-            {
-                where: {
-                    task: {
-                        id: deleteDto.taskId,
-                    },
-                    file: {
-                        id: deleteDto.fileId,
-                    }
-                }
-            },
-            activeUser,
-        );
-        return this.repository.remove(entity);
+        return deleteEntity(this, deleteDto, activeUser);
     }
 }

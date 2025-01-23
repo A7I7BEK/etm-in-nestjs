@@ -1,7 +1,10 @@
 import { ConflictException } from '@nestjs/common';
+import { Action } from 'src/actions/entities/action.entity';
+import { BaseSimpleEvent } from 'src/actions/event/base-simple.event';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { TaskAttachmentCreateDto } from '../dto/task-attachment-create.dto';
 import { TaskAttachment } from '../entities/task-attachment.entity';
+import { TaskAttachmentPermissions } from '../enums/task-attachment-permissions.enum';
 import { TaskAttachmentsService } from '../task-attachments.service';
 
 
@@ -38,7 +41,10 @@ export async function createEntity
 
     entity.task = await service.tasksService.findOne(
         {
-            where: { id: dto.taskId }
+            where: { id: dto.taskId },
+            relations: {
+                project: true,
+            }
         },
         activeUser,
     );
@@ -52,5 +58,18 @@ export async function createEntity
     );
 
 
-    return service.repository.save(entity);
+    await service.repository.save(entity);
+
+
+    const actionData: BaseSimpleEvent<TaskAttachment> = {
+        entity,
+        activeUser,
+    };
+    service.eventEmitter.emit(
+        [ Action.name, TaskAttachmentPermissions.Create ],
+        actionData
+    );
+
+
+    return entity;
 }

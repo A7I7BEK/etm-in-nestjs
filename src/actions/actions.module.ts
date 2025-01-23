@@ -8,6 +8,7 @@ import { ProjectColumnListener } from './listener/project-column.listener';
 import { ProjectMemberListener } from './listener/project-member.listener';
 import { ProjectTagListener } from './listener/project-tag.listener';
 import { ProjectListener } from './listener/project.listener';
+import { TaskAttachmentListener } from './listener/task-attachment.listener';
 import { TaskCommentListener } from './listener/task-comment.listener';
 import { TaskDeadlineListener } from './listener/task-deadline.listener';
 import { TaskMemberListener } from './listener/task-member.listener';
@@ -28,6 +29,7 @@ import { TaskListener } from './listener/task.listener';
         TaskMemberListener,
         TaskCommentListener,
         TaskDeadlineListener,
+        TaskAttachmentListener,
         ProjectListener,
         ProjectTagListener,
         ProjectColumnListener,
