@@ -24,10 +24,9 @@ export class TaskTagListener
         action.createdAt = new Date();
         action.activityType = TaskTagPermissions.Create;
         action.task = entity.task;
-        action.project = entity.projectTag.project;
+        action.project = entity.task.project;
         action.employee = await this._service.getEmployee(activeUser);
 
-        delete entity.projectTag.project;
         action.details = {
             id: entity.task.id,
             name: entity.task.name,
@@ -48,10 +47,9 @@ export class TaskTagListener
         action.createdAt = new Date();
         action.activityType = TaskTagPermissions.Delete;
         action.task = entity.task;
-        action.project = entity.projectTag.project;
+        action.project = entity.task.project;
         action.employee = await this._service.getEmployee(activeUser);
 
-        delete entity.projectTag.project;
         action.details = {
             id: entity.task.id,
             name: entity.task.name,

@@ -26,10 +26,10 @@ export async function deleteEntity
                 },
             },
             relations: {
-                task: true,
-                projectTag: {
+                task: {
                     project: true,
-                }
+                },
+                projectTag: true,
             }
         },
         activeUser,

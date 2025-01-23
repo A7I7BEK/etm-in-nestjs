@@ -40,14 +40,14 @@ export async function createEntity
     const entity = new TaskTag();
     entity.task = await service.tasksService.findOne(
         {
-            where: { id: dto.taskId }
+            where: { id: dto.taskId },
+            relations: { project: true },
         },
         activeUser,
     );
     entity.projectTag = await service.projectTagsService.findOne(
         {
             where: { id: dto.projectTagId },
-            relations: { project: true },
         },
         activeUser,
     );
