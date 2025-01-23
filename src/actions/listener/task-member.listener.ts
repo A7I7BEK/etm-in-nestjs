@@ -30,8 +30,9 @@ export class TaskMemberListener
         action.details = {
             id: entity.task.id,
             name: entity.task.name,
-            employee: entity.projectMember.employee,
+            member: entity.projectMember.employee,
         };
+        // Tom added member "AAA" into task "BBB"
 
         await this._service.repository.save(action);
     }
@@ -52,8 +53,9 @@ export class TaskMemberListener
         action.details = {
             id: entity.task.id,
             name: entity.task.name,
-            employee: entity.projectMember.employee,
+            member: entity.projectMember.employee,
         };
+        // Tom removed member "AAA" from task "BBB"
 
         await this._service.repository.save(action);
     }

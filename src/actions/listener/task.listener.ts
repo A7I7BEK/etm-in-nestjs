@@ -32,6 +32,7 @@ export class TaskListener
             id: entity.id,
             name: entity.name,
         };
+        // Tom created task "AAA"
 
         await this._service.repository.save(action);
     }
@@ -55,6 +56,7 @@ export class TaskListener
             name: oldEntity.name,
             changes: this._service.detectChanges(oldEntity, newEntity, structure)
         };
+        // Tom edited task "AAA". Changes: ...
 
         await this._service.repository.save(action);
     }
@@ -76,6 +78,7 @@ export class TaskListener
             id: entity.id,
             name: entity.name,
         };
+        // Tom deleted task "AAA"
 
         await this._service.repository.save(action);
     }
@@ -101,6 +104,7 @@ export class TaskListener
             id: newEntity.id,
             name: newEntity.name,
         };
+        // Tom created copy of the task "BBB" from "AAA"
 
         await this._service.repository.save(action);
     }
@@ -133,6 +137,7 @@ export class TaskListener
                     name: newEntity.project.name,
                 },
             };
+            // Tom migrated task "AAA" from project "OLD-XXX"
         }
         else if (oldEntity.column.id !== newEntity.column.id)
         {
@@ -149,6 +154,7 @@ export class TaskListener
                     name: newEntity.column.name,
                 },
             };
+            // Tom moved task "AAA" from column "XXX" into "YYY"
         }
         else
         {
@@ -157,6 +163,7 @@ export class TaskListener
                 id: newEntity.id,
                 name: newEntity.name,
             };
+            // Tom reordered task "AAA"
         }
 
 

@@ -31,6 +31,7 @@ export class ProjectListener
             id: entity.id,
             name: entity.name,
         };
+        // Tom created project "AAA"
 
         await this._service.repository.save(action);
     }
@@ -58,6 +59,7 @@ export class ProjectListener
             name: oldEntity.name,
             changes: this._service.detectChanges(oldEntity, newEntity, structure)
         };
+        // Tom edited project "AAA". Changes: ...
 
         await this._service.repository.save(action);
     }

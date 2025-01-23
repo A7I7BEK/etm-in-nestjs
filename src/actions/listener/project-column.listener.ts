@@ -31,6 +31,7 @@ export class ProjectColumnListener
             id: entity.id,
             name: entity.name,
         };
+        // Tom created column "AAA"
 
         await this._service.repository.save(action);
     }
@@ -53,6 +54,7 @@ export class ProjectColumnListener
             name: oldEntity.name,
             changes: this._service.detectChanges(oldEntity, newEntity, structure)
         };
+        // Tom edited column "AAA". Changes: ...
 
         await this._service.repository.save(action);
     }
@@ -73,6 +75,7 @@ export class ProjectColumnListener
             id: entity.id,
             name: entity.name,
         };
+        // Tom deleted column "AAA"
 
         await this._service.repository.save(action);
     }
@@ -94,6 +97,7 @@ export class ProjectColumnListener
             id: newEntity.id,
             name: newEntity.name,
         };
+        // Tom reordered column "AAA"
 
         await this._service.repository.save(action);
     }

@@ -31,6 +31,7 @@ export class ProjectTagListener
             id: entity.id,
             name: entity.name,
         };
+        // Tom created project tag "AAA"
 
         await this._service.repository.save(action);
     }
@@ -53,6 +54,7 @@ export class ProjectTagListener
             name: oldEntity.name,
             changes: this._service.detectChanges(oldEntity, newEntity, structure)
         };
+        // Tom edited project tag "AAA". Changes: ...
 
         await this._service.repository.save(action);
     }
@@ -73,6 +75,7 @@ export class ProjectTagListener
             id: entity.id,
             name: entity.name,
         };
+        // Tom deleted project tag "AAA"
 
         await this._service.repository.save(action);
     }

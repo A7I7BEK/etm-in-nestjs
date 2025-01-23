@@ -33,6 +33,7 @@ export class TaskTagListener
             name: entity.task.name,
             tag: entity.projectTag,
         };
+        // Tom added tag "AAA" into task "BBB"
 
         await this._service.repository.save(action);
     }
@@ -56,6 +57,7 @@ export class TaskTagListener
             name: entity.task.name,
             tag: entity.projectTag,
         };
+        // Tom removed tag "AAA" from task "BBB"
 
         await this._service.repository.save(action);
     }

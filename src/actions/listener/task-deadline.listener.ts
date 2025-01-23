@@ -19,6 +19,7 @@ export class TaskDeadlineListener
     listenCreateEvent(data: BaseDiffEvent<Task>)
     {
         this.handleAllEvents(data, TaskDeadlinePermissions.Create);
+        // Tom set time for the task "AAA". Changes ...
     }
 
 
@@ -26,6 +27,7 @@ export class TaskDeadlineListener
     listenUpdateEvent(data: BaseDiffEvent<Task>)
     {
         this.handleAllEvents(data, TaskDeadlinePermissions.Update);
+        // Tom updated time of the task "AAA". Changes ...
     }
 
 
@@ -33,6 +35,7 @@ export class TaskDeadlineListener
     listenDeleteEvent(data: BaseDiffEvent<Task>)
     {
         this.handleAllEvents(data, TaskDeadlinePermissions.Delete);
+        // Tom deleted time of the task "AAA". Changes ...
     }
 
 
