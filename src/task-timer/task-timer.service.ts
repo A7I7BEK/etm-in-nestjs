@@ -1,12 +1,11 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
 import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
 import { EmployeesService } from 'src/employees/employees.service';
-import { Employee } from 'src/employees/entities/employee.entity';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { Task } from 'src/tasks/entities/task.entity';
 import { TasksService } from 'src/tasks/tasks.service';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { TaskTimerCreateDto } from './dto/task-timer-create.dto';
@@ -14,6 +13,8 @@ import { TaskTimerQueryDto } from './dto/task-timer-query.dto';
 import { TaskTimer } from './entities/task-timer.entity';
 import { TaskTimerStatus } from './enums/task-timer-status.enum';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
+import { startEntity } from './utils/start-entity.util';
+import { stopEntity } from './utils/stop-entity.util';
 
 @Injectable()
 export class TaskTimerService
@@ -21,8 +22,9 @@ export class TaskTimerService
     constructor (
         @InjectRepository(TaskTimer)
         public readonly repository: Repository<TaskTimer>,
-        private readonly _tasksService: TasksService,
-        private readonly _employeesService: EmployeesService,
+        public readonly tasksService: TasksService,
+        public readonly employeesService: EmployeesService,
+        public readonly eventEmitter: EventEmitter2,
     ) { }
 
 
@@ -32,13 +34,16 @@ export class TaskTimerService
             activeUser: ActiveUserData,
         )
     {
-        const taskEntity = await this._tasksService.findOne(
+        const taskEntity = await this.tasksService.findOne(
             {
-                where: { id: createDto.taskId }
+                where: { id: createDto.taskId },
+                relations: {
+                    project: true,
+                }
             },
             activeUser,
         );
-        const employeeEntity = await this._employeesService.findOne(
+        const employeeEntity = await this.employeesService.findOne(
             {
                 where: {
                     user: {
@@ -51,81 +56,12 @@ export class TaskTimerService
 
         if (createDto.entryTypeCode === TaskTimerStatus.START)
         {
-            return this.startTimer(taskEntity, employeeEntity);
+            return startEntity(this, taskEntity, employeeEntity, activeUser);
         }
         else if (createDto.entryTypeCode === TaskTimerStatus.STOP)
         {
-            return this.stopTimer(taskEntity, employeeEntity, activeUser);
+            return stopEntity(this, taskEntity, employeeEntity, activeUser);
         }
-    }
-
-
-    async startTimer
-        (
-            taskEntity: Task,
-            employeeEntity: Employee,
-        )
-    {
-        if (taskEntity.timeEntryType === TaskTimerStatus.START)
-        {
-            throw new ConflictException(`${TaskTimer.name} already started`);
-        }
-        taskEntity.timeEntryType = TaskTimerStatus.START;
-        await this._tasksService.repository.save(taskEntity);
-
-        const entity = new TaskTimer();
-        entity.status = TaskTimerStatus.START;
-        entity.time = new Date();
-        entity.task = taskEntity;
-        entity.employee = employeeEntity;
-
-        return this.repository.save(entity);
-    }
-
-
-    async stopTimer
-        (
-            taskEntity: Task,
-            employeeEntity: Employee,
-            activeUser: ActiveUserData,
-        )
-    {
-        if (taskEntity.timeEntryType === TaskTimerStatus.STOP)
-        {
-            throw new ConflictException(`${TaskTimer.name} already stopped`);
-        }
-
-        const taskTimerEntity = await this.findOne(
-            {
-                where: {
-                    task: {
-                        id: taskEntity.id
-                    },
-                    status: TaskTimerStatus.START
-                },
-                order: {
-                    id: 'DESC'
-                }
-            },
-            activeUser,
-        );
-
-        const currentTime = new Date();
-        const timeSpent = Math.floor(
-            (currentTime.getTime() - new Date(taskTimerEntity.time).getTime()) / 1000,
-        );
-
-        taskEntity.totalTimeSpent += timeSpent;
-        taskEntity.timeEntryType = TaskTimerStatus.STOP;
-        await this._tasksService.repository.save(taskEntity);
-
-        const entity = new TaskTimer();
-        entity.status = TaskTimerStatus.STOP;
-        entity.time = currentTime;
-        entity.task = taskEntity;
-        entity.employee = employeeEntity;
-
-        return this.repository.save(entity);
     }
 
 

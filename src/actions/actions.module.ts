@@ -13,6 +13,7 @@ import { TaskCommentListener } from './listener/task-comment.listener';
 import { TaskDeadlineListener } from './listener/task-deadline.listener';
 import { TaskMemberListener } from './listener/task-member.listener';
 import { TaskTagListener } from './listener/task-tag.listener';
+import { TaskTimerListener } from './listener/task-timer.listener';
 import { TaskListener } from './listener/task.listener';
 
 @Module({
@@ -26,6 +27,7 @@ import { TaskListener } from './listener/task.listener';
         ActionsService,
         TaskListener,
         TaskTagListener,
+        TaskTimerListener,
         TaskMemberListener,
         TaskCommentListener,
         TaskDeadlineListener,
