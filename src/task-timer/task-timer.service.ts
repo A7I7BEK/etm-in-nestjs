@@ -95,7 +95,7 @@ export class TaskTimerService
             throw new ConflictException(`${TaskTimer.name} already stopped`);
         }
 
-        const taskTimerEntityList = await this.findAll(
+        const taskTimerEntity = await this.findOne(
             {
                 where: {
                     task: {
@@ -112,7 +112,7 @@ export class TaskTimerService
 
         const currentTime = new Date();
         const timeSpent = Math.floor(
-            (currentTime.getTime() - new Date(taskTimerEntityList[ 0 ].time).getTime()) / 1000,
+            (currentTime.getTime() - new Date(taskTimerEntity.time).getTime()) / 1000,
         );
 
         taskEntity.totalTimeSpent += timeSpent;
