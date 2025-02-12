@@ -13,7 +13,7 @@ import { Task } from './entities/task.entity';
         origin: (req, callback) =>
         {
             const isDevelopment = appConfig().application.nodeEnv === appConfig().application.nodeEnvDev;
-            callback(null, isDevelopment);
+            callback(null, isDevelopment); // TODO: check if this is correct
         }
     },
 })

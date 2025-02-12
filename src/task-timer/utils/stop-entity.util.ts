@@ -33,7 +33,7 @@ export async function stopEntity
                 status: TaskTimerStatus.START
             },
             order: {
-                id: 'DESC'
+                id: 'DESC' // TODO: Check if this is correct
             }
         },
         activeUser,
