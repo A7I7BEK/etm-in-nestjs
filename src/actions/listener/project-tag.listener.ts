@@ -6,6 +6,7 @@ import { ActionsService } from '../actions.service';
 import { Action } from '../entities/action.entity';
 import { BaseDiffEvent } from '../event/base-diff.event';
 import { BaseSimpleEvent } from '../event/base-simple.event';
+import { detectChanges } from '../utils/detect-changes.util';
 
 
 @Injectable()
@@ -52,7 +53,7 @@ export class ProjectTagListener
         action.details = {
             id: oldEntity.id,
             name: oldEntity.name,
-            changes: this._service.detectChanges(oldEntity, newEntity, structure)
+            changes: detectChanges(oldEntity, newEntity, structure)
         };
         // Tom edited project tag "AAA". Changes: ...
 
