@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CheckListGroupsService } from 'src/check-list-groups/check-list-groups.service';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
@@ -7,14 +8,15 @@ import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
 import { EmployeesService } from 'src/employees/employees.service';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { TasksService } from 'src/tasks/tasks.service';
-import { wsEmitOneTask } from 'src/tasks/utils/ws-emit-one-task.util';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { CheckListItemCreateDto } from './dto/check-list-item-create.dto';
 import { CheckListItemQueryDto } from './dto/check-list-item-query.dto';
 import { CheckListItemUpdateDto } from './dto/check-list-item-update.dto';
 import { CheckListItem } from './entities/check-list-item.entity';
-import { createUpdateEntity } from './utils/create-update-entity.util';
+import { createEntity } from './utils/create-entity.util';
+import { deleteEntity } from './utils/delete-entity.util';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
+import { updateEntity } from './utils/update-entity.util';
 
 
 @Injectable()
@@ -26,6 +28,7 @@ export class CheckListItemsService
         public readonly chGroupsService: CheckListGroupsService,
         public readonly employeesService: EmployeesService,
         public readonly tasksService: TasksService,
+        public readonly eventEmitter: EventEmitter2,
     ) { }
 
 
@@ -35,7 +38,7 @@ export class CheckListItemsService
             activeUser: ActiveUserData,
         )
     {
-        return createUpdateEntity(this, createDto, activeUser);
+        return createEntity(this, createDto, activeUser);
     }
 
 
@@ -125,14 +128,7 @@ export class CheckListItemsService
             activeUser: ActiveUserData,
         )
     {
-        const entity = await this.findOne(
-            {
-                where: { id },
-                relations: { task: true }
-            },
-            activeUser,
-        );
-        return createUpdateEntity(this, updateDto, activeUser, entity);
+        return updateEntity(this, updateDto, id, activeUser);
     }
 
 
@@ -142,22 +138,6 @@ export class CheckListItemsService
             activeUser: ActiveUserData,
         )
     {
-        const entity = await this.findOne(
-            {
-                where: { id },
-                relations: { task: true }
-            },
-            activeUser,
-        );
-        await this.repository.remove(entity);
-
-        wsEmitOneTask(
-            this.tasksService,
-            entity.task.id,
-            activeUser,
-            'replace',
-        );
-
-        return entity;
+        return deleteEntity(this, id, activeUser);
     }
 }

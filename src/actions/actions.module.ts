@@ -5,6 +5,7 @@ import { ActionsController } from './actions.controller';
 import { ActionsService } from './actions.service';
 import { Action } from './entities/action.entity';
 import { CheckListGroupListener } from './listener/check-list-group.listener';
+import { CheckListItemListener } from './listener/check-list-item.listener';
 import { ProjectColumnListener } from './listener/project-column.listener';
 import { ProjectMemberListener } from './listener/project-member.listener';
 import { ProjectTagListener } from './listener/project-tag.listener';
@@ -38,6 +39,7 @@ import { TaskListener } from './listener/task.listener';
         ProjectColumnListener,
         ProjectMemberListener,
         CheckListGroupListener,
+        CheckListItemListener,
     ],
 })
 export class ActionsModule { }

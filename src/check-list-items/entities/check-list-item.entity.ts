@@ -12,8 +12,8 @@ export class CheckListItem
     @Column()
     text: string;
 
-    @Column()
-    checked: boolean = false;
+    @Column({ type: 'boolean', default: false })
+    checked: boolean;
 
     @JoinTable()
     @ManyToMany(type => Employee)
