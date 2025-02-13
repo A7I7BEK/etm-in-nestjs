@@ -29,14 +29,6 @@ export async function getTaskDetails
                         }
                     }
                 },
-                comments: {
-                    author: {
-                        user: true
-                    },
-                    members: {
-                        user: true
-                    }
-                },
                 members: {
                     projectMember: {
                         employee: {
