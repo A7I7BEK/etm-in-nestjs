@@ -1,7 +1,5 @@
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { TaskCommentType } from 'src/task-comments/enums/task-comment-type.enum';
-import { modifyTaskMemberForFront } from 'src/task-members/utils/modify-task-member-for-front.util';
-import { modifyTaskTagForFront } from 'src/task-tags/utils/modify-task-tag-for-front.util';
 import { TaskLevel } from 'src/tasks/enums/task-level.enum';
 import { TaskPriority } from 'src/tasks/enums/task-priority.enum';
 import { TaskStatus } from 'src/tasks/enums/task-status.enum';
@@ -62,9 +60,29 @@ export async function getProjectDetails
     );
 
 
+    const [ actionList, actionCount ] = await service.actionsService.repository.findAndCount({
+        where: {
+            project: {
+                id,
+                organization: {
+                    id: activeUser.orgId
+                }
+            }
+        },
+        relations: {
+            task: true,
+            employee: true,
+        },
+        order: {
+            id: 'DESC'
+        },
+        take: 10,
+    });
+    entity.actions = actionList;
+    entity[ 'actionsCount' ] = actionCount;
+
+
     modifyProjectForFront(entity);
-    entity[ 'actions' ] = [];
-    entity[ 'actionsCount' ] = 123;
 
 
     entity[ 'taskStatusType' ] = Object.keys(TaskStatus).filter(a => Number(a))

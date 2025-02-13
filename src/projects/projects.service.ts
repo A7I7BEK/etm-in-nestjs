@@ -1,6 +1,7 @@
 import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ActionsService } from 'src/actions/actions.service';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
 import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
@@ -39,6 +40,7 @@ export class ProjectsService
         @Inject(forwardRef(() => ProjectTagsService)) // BINGO
         public readonly projectTagsService: ProjectTagsService,
         public readonly resourceService: ResourceService,
+        public readonly actionsService: ActionsService,
         public readonly eventEmitter: EventEmitter2,
     ) { }
 

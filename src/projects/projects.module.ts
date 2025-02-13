@@ -1,5 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ActionsModule } from 'src/actions/actions.module';
 import { EmployeesModule } from 'src/employees/employees.module';
 import { GroupsModule } from 'src/groups/groups.module';
 import { OrganizationsModule } from 'src/organizations/organizations.module';
@@ -21,6 +22,7 @@ import { ProjectsService } from './projects.service';
         forwardRef(() => ProjectMembersModule), // BINGO
         forwardRef(() => ProjectTagsModule), // BINGO
         ResourceModule,
+        ActionsModule,
     ],
     exports: [ ProjectsService ],
     controllers: [ ProjectsController ],
