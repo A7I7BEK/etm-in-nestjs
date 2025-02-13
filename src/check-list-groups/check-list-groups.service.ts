@@ -1,4 +1,5 @@
 import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
@@ -10,8 +11,10 @@ import { CheckListGroupCreateDto } from './dto/check-list-group-create.dto';
 import { CheckListGroupQueryDto } from './dto/check-list-group-query.dto';
 import { CheckListGroupUpdateDto } from './dto/check-list-group-update.dto';
 import { CheckListGroup } from './entities/check-list-group.entity';
-import { createUpdateEntity } from './utils/create-update-entity.util';
+import { createEntity } from './utils/create-entity.util';
+import { deleteEntity } from './utils/delete-entity.util';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
+import { updateEntity } from './utils/update-entity.util';
 
 @Injectable()
 export class CheckListGroupsService
@@ -21,6 +24,7 @@ export class CheckListGroupsService
         public readonly repository: Repository<CheckListGroup>,
         @Inject(forwardRef(() => TasksService))
         public readonly tasksService: TasksService,
+        public readonly eventEmitter: EventEmitter2,
     ) { }
 
 
@@ -30,7 +34,7 @@ export class CheckListGroupsService
             activeUser: ActiveUserData,
         )
     {
-        return createUpdateEntity(this, createDto, activeUser);
+        return createEntity(this, createDto, activeUser);
     }
 
 
@@ -120,13 +124,7 @@ export class CheckListGroupsService
             activeUser: ActiveUserData,
         )
     {
-        const entity = await this.findOne(
-            {
-                where: { id }
-            },
-            activeUser,
-        );
-        return createUpdateEntity(this, updateDto, activeUser, entity);
+        return updateEntity(this, updateDto, id, activeUser);
     }
 
 
@@ -136,12 +134,6 @@ export class CheckListGroupsService
             activeUser: ActiveUserData,
         )
     {
-        const entity = await this.findOne(
-            {
-                where: { id }
-            },
-            activeUser,
-        );
-        return this.repository.remove(entity);
+        return deleteEntity(this, id, activeUser);
     }
 }
