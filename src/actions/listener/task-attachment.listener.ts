@@ -19,7 +19,7 @@ export class TaskAttachmentListener
     listenCreateEvent(data: BaseSimpleEvent<TaskAttachment>)
     {
         this.handleAllEvents(data, TaskAttachmentPermissions.Create);
-        // Tom added file into task "AAA"
+        // Tom added file "AAA" into task "BBB"
     }
 
 
@@ -27,7 +27,7 @@ export class TaskAttachmentListener
     listenDeleteEvent(data: BaseSimpleEvent<TaskAttachment>)
     {
         this.handleAllEvents(data, TaskAttachmentPermissions.Delete);
-        // Tom removed file from task "AAA"
+        // Tom removed file "AAA" from task "BBB"
     }
 
 
@@ -46,11 +46,7 @@ export class TaskAttachmentListener
         action.project = entity.task.project;
         action.employee = await this._service.getEmployee(activeUser);
 
-        action.details = {
-            id: entity.task.id,
-            name: entity.task.name,
-            file: entity.file,
-        };
+        action.details = { file: entity.file };
 
         await this._service.repository.save(action);
     }

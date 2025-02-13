@@ -54,12 +54,8 @@ export class TaskCommentListener
         action.project = entity.task.project;
         action.employee = await this._service.getEmployee(activeUser);
 
-        action.details = {
-            id: entity.task.id,
-            name: entity.task.name,
-            comment: entity,
-        };
         delete entity.task;
+        action.details = { comment: entity };
 
         await this._service.repository.save(action);
     }

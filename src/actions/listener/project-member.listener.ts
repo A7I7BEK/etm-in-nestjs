@@ -27,9 +27,7 @@ export class ProjectMemberListener
         action.project = project;
         action.employee = await this._service.getEmployee(activeUser);
 
-        action.details = {
-            employees,
-        };
+        action.details = { employees };
         // Tom added employees AAA, BBB into the project
 
         await this._service.repository.save(action);
@@ -47,9 +45,7 @@ export class ProjectMemberListener
         action.project = entity.project;
         action.employee = await this._service.getEmployee(activeUser);
 
-        action.details = {
-            employee: entity.employee,
-        };
+        action.details = { employee: entity.employee };
         // Tom removed employee "AAA" from the project
 
         await this._service.repository.save(action);

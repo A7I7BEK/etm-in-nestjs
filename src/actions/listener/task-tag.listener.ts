@@ -46,11 +46,7 @@ export class TaskTagListener
         action.project = entity.task.project;
         action.employee = await this._service.getEmployee(activeUser);
 
-        action.details = {
-            id: entity.task.id,
-            name: entity.task.name,
-            tag: entity.projectTag,
-        };
+        action.details = { tag: entity.projectTag };
 
         await this._service.repository.save(action);
     }

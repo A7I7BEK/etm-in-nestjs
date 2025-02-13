@@ -46,12 +46,8 @@ export class TaskTimerListener
         action.project = entity.task.project;
         action.employee = await this._service.getEmployee(activeUser);
 
-        action.details = {
-            id: entity.task.id,
-            name: entity.task.name,
-            timer: entity,
-        };
         delete entity.task;
+        action.details = { timer: entity };
 
         await this._service.repository.save(action);
     }

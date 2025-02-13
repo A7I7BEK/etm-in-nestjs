@@ -46,11 +46,7 @@ export class TaskMemberListener
         action.project = entity.projectMember.project;
         action.employee = await this._service.getEmployee(activeUser);
 
-        action.details = {
-            id: entity.task.id,
-            name: entity.task.name,
-            member: entity.projectMember.employee,
-        };
+        action.details = { member: entity.projectMember.employee };
 
         await this._service.repository.save(action);
     }

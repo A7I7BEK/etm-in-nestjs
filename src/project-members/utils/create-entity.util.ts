@@ -27,6 +27,7 @@ export async function createEntity(
     );
 
 
+    // TODO: must come employee ids. change it in the frotend
     const employeeIds = dto.userIds.map(x => x.id); // temporary for this project, must be: [1, 2, 3]
     const employeeIdsFiltered =
         employeeIds.filter(id => projectEntity.members.every(a => a.employee.id !== id)); // BINGO

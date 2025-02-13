@@ -28,10 +28,7 @@ export class ProjectListener
         action.project = entity;
         action.employee = await this._service.getEmployee(activeUser);
 
-        action.details = {
-            id: entity.id,
-            name: entity.name,
-        };
+        action.details = {};
         // Tom created project "AAA"
 
         await this._service.repository.save(action);
@@ -46,7 +43,7 @@ export class ProjectListener
         const action = new Action();
         action.createdAt = new Date();
         action.activityType = ProjectPermissions.Update;
-        action.project = oldEntity;
+        action.project = newEntity;
         action.employee = await this._service.getEmployee(activeUser);
 
         const structure = {
@@ -56,8 +53,6 @@ export class ProjectListener
             manager: { id: 0, firstName: 0, lastName: 0 },
         };
         action.details = {
-            id: oldEntity.id,
-            name: oldEntity.name,
             changes: detectChanges(oldEntity, newEntity, structure)
         };
         // Tom edited project "AAA". Changes: ...

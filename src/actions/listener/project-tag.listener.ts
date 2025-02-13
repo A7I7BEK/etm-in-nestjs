@@ -20,21 +20,16 @@ export class ProjectTagListener
     @OnEvent([ Action.name, ProjectTagPermissions.Create ], { async: true })
     async listenCreateEvent(data: BaseSimpleEvent<ProjectTag>)
     {
-        const { entity, activeUser } = data;
-
-        const action = new Action();
-        action.createdAt = new Date();
-        action.activityType = ProjectTagPermissions.Create;
-        action.project = entity.project;
-        action.employee = await this._service.getEmployee(activeUser);
-
-        action.details = {
-            id: entity.id,
-            name: entity.name,
-        };
+        this.handleCreateDelete(data, ProjectTagPermissions.Create);
         // Tom created project tag "AAA"
+    }
 
-        await this._service.repository.save(action);
+
+    @OnEvent([ Action.name, ProjectTagPermissions.Delete ], { async: true })
+    async listenDeleteEvent(data: BaseSimpleEvent<ProjectTag>)
+    {
+        this.handleCreateDelete(data, ProjectTagPermissions.Delete);
+        // Tom deleted project tag "AAA"
     }
 
 
@@ -46,13 +41,13 @@ export class ProjectTagListener
         const action = new Action();
         action.createdAt = new Date();
         action.activityType = ProjectTagPermissions.Update;
-        action.project = oldEntity.project;
+        action.project = newEntity.project;
         action.employee = await this._service.getEmployee(activeUser);
 
+        delete newEntity.project;
         const structure = { name: 0, color: 0 };
         action.details = {
-            id: oldEntity.id,
-            name: oldEntity.name,
+            tag: newEntity,
             changes: detectChanges(oldEntity, newEntity, structure)
         };
         // Tom edited project tag "AAA". Changes: ...
@@ -61,22 +56,22 @@ export class ProjectTagListener
     }
 
 
-    @OnEvent([ Action.name, ProjectTagPermissions.Delete ], { async: true })
-    async listenDeleteEvent(data: BaseSimpleEvent<ProjectTag>)
+    private async handleCreateDelete
+        (
+            data: BaseSimpleEvent<ProjectTag>,
+            activityType: ProjectTagPermissions,
+        )
     {
         const { entity, activeUser } = data;
 
         const action = new Action();
         action.createdAt = new Date();
-        action.activityType = ProjectTagPermissions.Delete;
+        action.activityType = activityType;
         action.project = entity.project;
         action.employee = await this._service.getEmployee(activeUser);
 
-        action.details = {
-            id: entity.id,
-            name: entity.name,
-        };
-        // Tom deleted project tag "AAA"
+        delete entity.project;
+        action.details = { tag: entity };
 
         await this._service.repository.save(action);
     }

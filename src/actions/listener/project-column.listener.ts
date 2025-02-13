@@ -28,10 +28,8 @@ export class ProjectColumnListener
         action.project = entity.project;
         action.employee = await this._service.getEmployee(activeUser);
 
-        action.details = {
-            id: entity.id,
-            name: entity.name,
-        };
+        delete entity.project;
+        action.details = { column: entity };
         // Tom created column "AAA"
 
         await this._service.repository.save(action);
@@ -46,13 +44,13 @@ export class ProjectColumnListener
         const action = new Action();
         action.createdAt = new Date();
         action.activityType = ProjectColumnPermissions.Update;
-        action.project = oldEntity.project;
+        action.project = newEntity.project;
         action.employee = await this._service.getEmployee(activeUser);
 
+        delete newEntity.project;
         const structure = { name: 0, codeName: 0 };
         action.details = {
-            id: oldEntity.id,
-            name: oldEntity.name,
+            column: newEntity,
             changes: detectChanges(oldEntity, newEntity, structure)
         };
         // Tom edited column "AAA". Changes: ...
@@ -72,10 +70,8 @@ export class ProjectColumnListener
         action.project = entity.project;
         action.employee = await this._service.getEmployee(activeUser);
 
-        action.details = {
-            id: entity.id,
-            name: entity.name,
-        };
+        delete entity.project;
+        action.details = { column: entity };
         // Tom deleted column "AAA"
 
         await this._service.repository.save(action);
@@ -93,10 +89,10 @@ export class ProjectColumnListener
         action.project = newEntity.project;
         action.employee = await this._service.getEmployee(activeUser);
 
+        delete newEntity.project;
         action.details = {
             action: 'reorder',
-            id: newEntity.id,
-            name: newEntity.name,
+            column: newEntity,
         };
         // Tom reordered column "AAA"
 

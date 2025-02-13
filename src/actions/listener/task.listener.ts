@@ -29,10 +29,7 @@ export class TaskListener
         action.project = entity.project;
         action.employee = await this._service.getEmployee(activeUser);
 
-        action.details = {
-            id: entity.id,
-            name: entity.name,
-        };
+        action.details = {};
         // Tom created task "AAA"
 
         await this._service.repository.save(action);
@@ -47,14 +44,12 @@ export class TaskListener
         const action = new Action();
         action.createdAt = new Date();
         action.activityType = TaskPermissions.Update;
-        action.task = oldEntity;
-        action.project = oldEntity.project;
+        action.task = newEntity;
+        action.project = newEntity.project;
         action.employee = await this._service.getEmployee(activeUser);
 
         const structure = { name: 0, description: 0, level: 0, priority: 0 };
         action.details = {
-            id: oldEntity.id,
-            name: oldEntity.name,
             changes: detectChanges(oldEntity, newEntity, structure)
         };
         // Tom edited task "AAA". Changes: ...
@@ -71,14 +66,11 @@ export class TaskListener
         const action = new Action();
         action.createdAt = new Date();
         action.activityType = TaskPermissions.Delete;
-        action.task = entity; // TODO: check if relations are working
+        action.task = entity; // TODO: check if relations are working (most probably not)
         action.project = entity.project;
         action.employee = await this._service.getEmployee(activeUser);
 
-        action.details = {
-            id: entity.id,
-            name: entity.name,
-        };
+        action.details = { task: entity };
         // Tom deleted task "AAA"
 
         await this._service.repository.save(action);
@@ -97,15 +89,8 @@ export class TaskListener
         action.project = newEntity.project;
         action.employee = await this._service.getEmployee(activeUser);
 
-        action.details = {
-            originalTask: {
-                id: oldEntity.id,
-                name: oldEntity.name,
-            },
-            id: newEntity.id,
-            name: newEntity.name,
-        };
-        // Tom created copy of the task "BBB" from "AAA"
+        action.details = { originalTask: oldEntity };
+        // Tom created copy of the task "BBB" from "original-AAA"
 
         await this._service.repository.save(action);
     }
@@ -127,43 +112,23 @@ export class TaskListener
         {
             action.details = {
                 action: 'migrate',
-                id: newEntity.id,
-                name: newEntity.name,
-                oldProject: {
-                    id: oldEntity.project.id,
-                    name: oldEntity.project.name,
-                },
-                newProject: {
-                    id: newEntity.project.id,
-                    name: newEntity.project.name,
-                },
+                oldProject: oldEntity.project,
+                newProject: newEntity.project,
             };
-            // Tom migrated task "AAA" from project "OLD-XXX"
+            // Tom migrated task "AAA" from project "old-XXX"
         }
         else if (oldEntity.column.id !== newEntity.column.id)
         {
             action.details = {
                 action: 'move',
-                id: newEntity.id,
-                name: newEntity.name,
-                oldColumn: {
-                    id: oldEntity.column.id,
-                    name: oldEntity.column.name,
-                },
-                newColumn: {
-                    id: newEntity.column.id,
-                    name: newEntity.column.name,
-                },
+                oldColumn: oldEntity.column,
+                newColumn: newEntity.column,
             };
             // Tom moved task "AAA" from column "XXX" into "YYY"
         }
         else
         {
-            action.details = {
-                action: 'reorder',
-                id: newEntity.id,
-                name: newEntity.name,
-            };
+            action.details = { action: 'reorder' };
             // Tom reordered task "AAA"
         }
 

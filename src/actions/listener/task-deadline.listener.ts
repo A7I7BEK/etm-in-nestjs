@@ -51,14 +51,12 @@ export class TaskDeadlineListener
         const action = new Action();
         action.createdAt = new Date();
         action.activityType = activityType;
-        action.task = oldEntity;
-        action.project = oldEntity.project;
+        action.task = newEntity;
+        action.project = newEntity.project;
         action.employee = await this._service.getEmployee(activeUser);
 
         const structure = { startDate: 0, endDate: 0 };
         action.details = {
-            id: oldEntity.id,
-            name: oldEntity.name,
             changes: detectChanges(oldEntity, newEntity, structure)
         };
 
