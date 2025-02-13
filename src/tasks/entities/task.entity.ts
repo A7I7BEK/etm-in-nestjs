@@ -56,8 +56,8 @@ export class Task
     })
     timeEntryType: TaskTimerStatus;
 
-    @Column()
-    totalTimeSpent: number = 0;
+    @Column({ type: 'integer', default: 0 })
+    totalTimeSpent: number;
 
     @ManyToOne(type => ProjectColumn, c => c.tasks)
     column: ProjectColumn;

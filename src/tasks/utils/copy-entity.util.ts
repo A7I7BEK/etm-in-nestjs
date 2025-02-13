@@ -49,6 +49,11 @@ export async function copyEntity
     const entity = new Task();
     Object.assign(entity, taskEntity);
     delete entity.id;
+    delete entity.startDate;
+    delete entity.endDate;
+    delete entity.timeEntryType;
+    delete entity.totalTimeSpent;
+
     entity.name = copyDto.name;
     entity.column = { ...columnEntity };
     delete entity.column.tasks;
