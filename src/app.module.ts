@@ -11,6 +11,7 @@ import { EmployeesModule } from './employees/employees.module';
 import { GroupsModule } from './groups/groups.module';
 import { IamModule } from './iam/iam.module';
 import { MailModule } from './mail/mail.module';
+import { NotificationsModule } from './notifications/notifications.module';
 import { OneTimePasswordModule } from './one-time-password/one-time-password.module';
 import { OrganizationsModule } from './organizations/organizations.module';
 import { Permission } from './permissions/entities/permission.entity';
@@ -78,6 +79,7 @@ import { UsersModule } from './users/users.module';
         CheckListGroupsModule,
         CheckListItemsModule,
         ActionsModule,
+        NotificationsModule,
         ReportsModule,
         OneTimePasswordModule,
     ],

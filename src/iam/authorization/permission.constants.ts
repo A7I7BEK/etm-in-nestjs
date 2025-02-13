@@ -3,6 +3,7 @@ import { CheckListGroupPermissions } from 'src/check-list-groups/enums/check-lis
 import { CheckListItemPermissions } from 'src/check-list-items/enums/check-list-item-permissions.enum';
 import { EmployeePermissions } from 'src/employees/enums/employee-permissions.enum';
 import { GroupPermissions } from 'src/groups/enums/group-permissions.enum';
+import { NotificationPermissions } from 'src/notifications/enums/notification-permissions.enum';
 import { OrganizationPermissions } from 'src/organizations/enums/organization-permissions.enum';
 import { Permission } from 'src/permissions/entities/permission.entity';
 import { PermissionPermissions } from 'src/permissions/enums/permission-permissions.enum';
@@ -43,6 +44,7 @@ export type PermissionType = (
     | CheckListGroupPermissions
     | CheckListItemPermissions
     | ActionPermissions
+    | NotificationPermissions
     | ReportPermissions
 );
 
@@ -69,6 +71,7 @@ export const PERMISSION_VALUES = [
     ...Object.values(CheckListGroupPermissions),
     ...Object.values(CheckListItemPermissions),
     ...Object.values(ActionPermissions),
+    ...Object.values(NotificationPermissions),
     ...Object.values(ReportPermissions),
 ];
 
