@@ -1,14 +1,19 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { OnEvent } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Action } from 'src/actions/entities/action.entity';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
 import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
+import { TaskComment } from 'src/task-comments/entities/task-comment.entity';
+import { TasksService } from 'src/tasks/tasks.service';
 import { FindOneOptions, Repository } from 'typeorm';
 import { NotificationDeleteDto } from './dto/notification-delete.dto';
 import { NotificationQueryDto } from './dto/notification-query.dto';
 import { NotificationUpdateDto } from './dto/notification-update.dto';
 import { Notification } from './entities/notification.entity';
+import { NotificationType } from './enums/notification-type.enum';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
 
 @Injectable()
@@ -17,7 +22,68 @@ export class NotificationsService
     constructor (
         @InjectRepository(Notification)
         public readonly repository: Repository<Notification>,
+        public readonly tasksService: TasksService,
     ) { }
+
+
+    @OnEvent([ Notification.name, NotificationType.Task ], { async: true })
+    async createForTask
+        (
+            action: Action,
+        )
+    {
+        const taskEntity = await this.tasksService.repository.findOne({
+            where: { id: action.task.id },
+            relations: {
+                members: {
+                    projectMember: {
+                        employee: {
+                            user: true
+                        }
+                    }
+                }
+            },
+        });
+
+        if (taskEntity.members.length)
+        {
+            const entityList = taskEntity.members.map(member =>
+            {
+                const entity = new Notification();
+                entity.user = member.projectMember.employee.user;
+                entity.action = action;
+                entity.type = NotificationType.Task;
+
+                return entity;
+            });
+
+            await this.repository.save(entityList);
+        }
+    }
+
+
+    @OnEvent([ Notification.name, NotificationType.Comment ], { async: true })
+    async createForComment
+        (
+            action: Action,
+        )
+    {
+        const comment: TaskComment = action.details?.comment;
+        if (comment?.members?.length)
+        {
+            const entityList = comment.members.map(employee =>
+            {
+                const entity = new Notification();
+                entity.user = employee.user;
+                entity.action = action;
+                entity.type = NotificationType.Comment;
+
+                return entity;
+            });
+
+            await this.repository.save(entityList);
+        }
+    }
 
 
     findAll

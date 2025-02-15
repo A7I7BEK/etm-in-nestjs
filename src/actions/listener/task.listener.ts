@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
+import { Notification } from 'src/notifications/entities/notification.entity';
+import { NotificationType } from 'src/notifications/enums/notification-type.enum';
 import { Task } from 'src/tasks/entities/task.entity';
 import { TaskPermissions } from 'src/tasks/enums/task-permissions.enum';
 import { ActionsService } from '../actions.service';
@@ -55,6 +57,11 @@ export class TaskListener
         // Tom edited task "AAA". Changes: ...
 
         await this._service.repository.save(action);
+
+        this._service.eventEmitter.emit(
+            [ Notification.name, NotificationType.Task ],
+            action
+        );
     }
 
 
@@ -132,7 +139,11 @@ export class TaskListener
             // Tom reordered task "AAA"
         }
 
-
         await this._service.repository.save(action);
+
+        this._service.eventEmitter.emit(
+            [ Notification.name, NotificationType.Task ],
+            action
+        );
     }
 }

@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
+import { Notification } from 'src/notifications/entities/notification.entity';
+import { NotificationType } from 'src/notifications/enums/notification-type.enum';
 import { TaskDeadlinePermissions } from 'src/task-deadline/enums/task-deadline-permissions.enum';
 import { Task } from 'src/tasks/entities/task.entity';
 import { ActionsService } from '../actions.service';
@@ -61,5 +63,10 @@ export class TaskDeadlineListener
         };
 
         await this._service.repository.save(action);
+
+        this._service.eventEmitter.emit(
+            [ Notification.name, NotificationType.Task ],
+            action
+        );
     }
 }

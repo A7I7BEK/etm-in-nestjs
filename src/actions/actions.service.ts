@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
@@ -17,6 +18,7 @@ export class ActionsService
         @InjectRepository(Action)
         public readonly repository: Repository<Action>,
         public readonly employeesService: EmployeesService,
+        public readonly eventEmitter: EventEmitter2,
     ) { }
 
 
