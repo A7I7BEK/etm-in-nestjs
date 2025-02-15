@@ -1,19 +1,14 @@
-import { ForbiddenException, Injectable, MethodNotAllowedException, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
 import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { OrganizationPermissions } from 'src/organizations/enums/organization-permissions.enum';
-import { OrganizationsService } from 'src/organizations/organizations.service';
-import { PermissionPermissions } from 'src/permissions/enums/permission-permissions.enum';
-import { PermissionsService } from 'src/permissions/permissions.service';
-import { And, Equal, FindManyOptions, FindOneOptions, ILike, Not, Repository } from 'typeorm';
-import { NotificationCreateDto } from './dto/notification-create.dto';
+import { FindOneOptions, Repository } from 'typeorm';
+import { NotificationDeleteDto } from './dto/notification-delete.dto';
 import { NotificationQueryDto } from './dto/notification-query.dto';
 import { NotificationUpdateDto } from './dto/notification-update.dto';
 import { Notification } from './entities/notification.entity';
-import { createUpdateEntity } from './utils/create-update-entity.util';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
 
 @Injectable()
@@ -22,47 +17,24 @@ export class NotificationsService
     constructor (
         @InjectRepository(Notification)
         public readonly repository: Repository<Notification>,
-        private readonly _organizationsService: OrganizationsService,
-        private readonly _permissionsService: PermissionsService,
     ) { }
-
-
-    create
-        (
-            createDto: NotificationCreateDto,
-            activeUser: ActiveUserData,
-        )
-    {
-        return createUpdateEntity(
-            this._organizationsService,
-            this._permissionsService,
-            this.repository,
-            createDto,
-            activeUser,
-        );
-    }
 
 
     findAll
         (
-            options: FindManyOptions<Notification>,
             activeUser: ActiveUserData,
         )
     {
-        if (!activeUser.systemAdmin)
-        {
-            const orgOption: FindManyOptions<Notification> = {
-                where: {
+        return this.repository.find({
+            where: {
+                user: {
+                    id: activeUser.sub,
                     organization: {
                         id: activeUser.orgId
                     }
-                }
-            };
-
-            setNestedOptions(options ??= {}, orgOption); // BINGO
-        }
-
-        return this.repository.find(options);
+                },
+            }
+        });
     }
 
 
@@ -95,13 +67,15 @@ export class NotificationsService
         {
             const orgOption: FindOneOptions<Notification> = {
                 where: {
-                    organization: {
-                        id: activeUser.orgId
-                    }
+                    user: {
+                        organization: {
+                            id: activeUser.orgId
+                        }
+                    },
                 }
             };
 
-            setNestedOptions(options ??= {}, orgOption); // BINGO
+            setNestedOptions(options ??= {}, orgOption);
         }
 
         const entity = await this.repository.findOne(options);
@@ -114,85 +88,64 @@ export class NotificationsService
     }
 
 
-    async update
+    async findOneById
         (
             id: number,
-            updateDto: NotificationUpdateDto,
             activeUser: ActiveUserData,
         )
     {
-        const entity = await this.findOne(
+        return this.findOne(
             {
-                where: { id }
+                where: {
+                    id,
+                    user: {
+                        id: activeUser.sub,
+                    },
+                }
             },
             activeUser,
         );
+    }
 
-        if (entity.systemCreated)
+
+    async update
+        (
+            dto: NotificationUpdateDto,
+            activeUser: ActiveUserData,
+        )
+    {
+        if (dto.allNotification)
         {
-            throw new ForbiddenException('System created Role cannot be edited');
-        }
+            const entityList = await this.findAll(activeUser);
 
-        return createUpdateEntity(
-            this._organizationsService,
-            this._permissionsService,
-            this.repository,
-            updateDto,
-            activeUser,
-            entity,
-        );
+            entityList.forEach(entity => entity.seenAt = new Date());
+            return this.repository.save(entityList);
+        }
+        else
+        {
+            const entity = await this.findOneById(dto.notificationId, activeUser);
+
+            entity.seenAt = new Date();
+            return this.repository.save(entity);
+        }
     }
 
 
     async remove
         (
-            id: number,
+            dto: NotificationDeleteDto,
             activeUser: ActiveUserData,
         )
     {
-        const entity = await this.findOne(
-            {
-                where: { id }
-            },
-            activeUser,
-        );
-
-        if (entity.systemCreated)
+        if (dto.allNotification)
         {
-            throw new ForbiddenException('System created Role cannot be deleted');
+            const entityList = await this.findAll(activeUser);
+            return this.repository.remove(entityList);
         }
-
-        return this.repository.remove(entity);
-    }
-
-
-    async updateAdminRoles
-        (
-            activeUser: ActiveUserData,
-        )
-    {
-        if (!activeUser.systemAdmin)
+        else
         {
-            throw new MethodNotAllowedException();
+            const entity = await this.findOneById(dto.notificationId, activeUser);
+            return this.repository.remove(entity);
         }
-
-        const entityList = await this.repository.find({
-            where: { systemCreated: true }
-        });
-
-        const [ organizationWord ] = OrganizationPermissions.Create.split('_');
-        const adminPermissions = await this._permissionsService.repository.findBy({
-            name: Not(ILike(`${organizationWord}%`)),
-            codeName: And(
-                Not(Equal(PermissionPermissions.Create)),
-                Not(Equal(PermissionPermissions.Update)),
-                Not(Equal(PermissionPermissions.Delete)),
-            ),
-        });
-
-        entityList.forEach(item => { item.permissions = adminPermissions; });
-        await this.repository.save(entityList);
-
-        return 1;
     }
 }

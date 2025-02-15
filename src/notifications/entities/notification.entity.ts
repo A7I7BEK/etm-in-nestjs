@@ -1,7 +1,6 @@
-import { Organization } from 'src/organizations/entities/organization.entity';
-import { Permission } from 'src/permissions/entities/permission.entity';
+import { Action } from 'src/actions/entities/action.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Notification
@@ -9,22 +8,12 @@ export class Notification
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
-    roleName: string;
+    @Column({ nullable: true })
+    seenAt: Date;
 
-    @Column()
-    codeName: string;
+    @ManyToOne(type => Action)
+    action: Action;
 
-    @Column()
-    systemCreated: boolean = false;
-
-    @JoinTable()
-    @ManyToMany(type => Permission, { eager: true })
-    permissions: Permission[];
-
-    @ManyToMany(type => User, user => user.roles)
-    users: User[];
-
-    @ManyToOne(type => Organization)
-    organization: Organization;
+    @ManyToOne(type => User)
+    user: User;
 }

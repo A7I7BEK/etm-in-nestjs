@@ -1,7 +1,6 @@
 export enum NotificationPermissions
 {
-    Create = 'ROLE_CREATE',
-    Read = 'ROLE_READ',
-    Update = 'ROLE_UPDATE',
-    Delete = 'ROLE_DELETE',
+    Read = 'NOTIFICATION_READ',
+    Update = 'NOTIFICATION_UPDATE',
+    Delete = 'NOTIFICATION_DELETE',
 }
