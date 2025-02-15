@@ -11,8 +11,8 @@ import { TaskDeadlinePermissions } from './enums/task-deadline-permissions.enum'
 import { TaskDeadlineService } from './task-deadline.service';
 
 
-@ApiTags('taskDeadline')
-@Controller('taskDeadline')
+@ApiTags('task-deadline')
+@Controller('task-deadline')
 export class TaskDeadlineController
 {
     constructor (private readonly _service: TaskDeadlineService) { }

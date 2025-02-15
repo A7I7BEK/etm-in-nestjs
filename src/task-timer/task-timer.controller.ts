@@ -8,8 +8,8 @@ import { TaskTimerQueryDto } from './dto/task-timer-query.dto';
 import { TaskTimerPermissions } from './enums/task-timer-permissions.enum';
 import { TaskTimerService } from './task-timer.service';
 
-@ApiTags('taskTimer')
-@Controller('taskTimer')
+@ApiTags('task-timer')
+@Controller('task-timer')
 export class TaskTimerController
 {
     constructor (private readonly _service: TaskTimerService) { }

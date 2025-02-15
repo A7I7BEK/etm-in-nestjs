@@ -10,8 +10,8 @@ import { CheckListItemUpdateDto } from './dto/check-list-item-update.dto';
 import { CheckListItemPermissions } from './enums/check-list-item-permissions.enum';
 import { modifyCheckListItemForFront } from './utils/modify-check-list-item-for-front.util';
 
-@ApiTags('taskCheckLists')
-@Controller('taskCheckLists')
+@ApiTags('check-list-items')
+@Controller('check-list-items')
 export class CheckListItemsController
 {
     constructor (private readonly _service: CheckListItemsService) { }

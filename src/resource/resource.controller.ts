@@ -14,7 +14,7 @@ export class ResourceController
     constructor (private readonly _service: ResourceService) { }
 
 
-    @Post('upload/file')
+    @Post('upload-one')
     @UseInterceptors(FileInterceptor('file'))
     createOne
         (
@@ -49,7 +49,7 @@ export class ResourceController
     }
 
 
-    @Put('update/:id')
+    @Put(':id')
     update
         (
             @Param('id', ParseIntPipe) id: number,
@@ -61,7 +61,7 @@ export class ResourceController
     }
 
 
-    @Delete('delete/:id')
+    @Delete(':id')
     remove
         (
             @Param('id', ParseIntPipe) id: number,

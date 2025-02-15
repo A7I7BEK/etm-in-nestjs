@@ -10,8 +10,8 @@ import { TaskTagPermissions } from './enums/task-tag-permissions.enum';
 import { TaskTagsService } from './task-tags.service';
 import { modifyTaskTagForFront } from './utils/modify-task-tag-for-front.util';
 
-@ApiTags('taskTags')
-@Controller('taskTags')
+@ApiTags('task-tags')
+@Controller('task-tags')
 export class TaskTagsController
 {
     constructor (private readonly _service: TaskTagsService) { }

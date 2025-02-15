@@ -10,8 +10,8 @@ import { ProjectTagPermissions } from './enums/project-tag-permissions.enum';
 import { ProjectTagsService } from './project-tags.service';
 import { modifyEntityForFront } from './utils/modify-entity-for-front.util';
 
-@ApiTags('projectTags')
-@Controller('projectTags')
+@ApiTags('project-tags')
+@Controller('project-tags')
 export class ProjectTagsController
 {
     constructor (private readonly _service: ProjectTagsService) { }

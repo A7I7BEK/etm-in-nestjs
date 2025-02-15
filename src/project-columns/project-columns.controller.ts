@@ -11,8 +11,8 @@ import { ProjectColumnPermissions } from './enums/project-column-permissions.enu
 import { ProjectColumnsService } from './project-columns.service';
 import { modifyProjectColumnForFront } from './utils/modify-entity-for-front.util';
 
-@ApiTags('projectColumns')
-@Controller('projectColumns')
+@ApiTags('project-columns')
+@Controller('project-columns')
 export class ProjectColumnsController
 {
     constructor (private readonly _service: ProjectColumnsService) { }

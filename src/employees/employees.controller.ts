@@ -97,7 +97,7 @@ export class EmployeesController
     }
 
 
-    @Put('password/change/:id')
+    @Put('change-password/:id')
     @Permission(EmployeePermissions.PasswordChange)
     async passwordChange
         (
@@ -110,7 +110,7 @@ export class EmployeesController
     }
 
 
-    @Put('profile/update/:id')
+    @Put('update-profile/:id') // TODO: may not be needed, as it is already in the update method
     @Permission(EmployeePermissions.ProfileUpdate)
     async profileUpdate
         (

@@ -9,8 +9,8 @@ import { ProjectMemberPermissions } from './enums/project-member-permissions.enu
 import { ProjectMembersService } from './project-members.service';
 import { modifyProjectMemberForFront } from './utils/modify-entity-for-front.util';
 
-@ApiTags('projectMembers')
-@Controller('projectMembers')
+@ApiTags('project-members')
+@Controller('project-members')
 export class ProjectMembersController
 {
     constructor (private readonly _service: ProjectMembersService) { }

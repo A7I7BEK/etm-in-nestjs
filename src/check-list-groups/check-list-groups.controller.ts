@@ -10,8 +10,8 @@ import { CheckListGroupUpdateDto } from './dto/check-list-group-update.dto';
 import { CheckListGroupPermissions } from './enums/check-list-group-permissions.enum';
 import { modifyCheckListGroupForFront } from './utils/modify-check-list-group-for-front.util';
 
-@ApiTags('checkListGroups')
-@Controller('checkListGroups')
+@ApiTags('check-list-groups')
+@Controller('check-list-groups')
 export class CheckListGroupsController
 {
     constructor (private readonly _service: CheckListGroupsService) { }

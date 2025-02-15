@@ -19,6 +19,7 @@ import { ActiveUserData } from '../../interfaces/active-user-data.interface';
 import { LoginDto } from '../dto/login.dto';
 import { RefreshTokenDto } from '../dto/refresh-token.dto';
 import { RegisterConfirmDto } from '../dto/register-confirm.dto';
+import { RegisterResendDto } from '../dto/register-resend.dto';
 import { RegisterDto } from '../dto/register.dto';
 import { InvalidatedRefreshTokenError, RefreshTokenIdsStorage } from './refresh-token-ids.storage';
 
@@ -41,6 +42,7 @@ export class AccessTokenManager
         private readonly refreshTokenIdsStorage: RefreshTokenIdsStorage,
         private readonly oneTimePasswordService: OneTimePasswordService,
     ) { }
+
 
     async register(registerDto: RegisterDto)
     {
@@ -111,10 +113,12 @@ export class AccessTokenManager
         return { id };
     }
 
-    async registerResend(id: string)
+
+    async registerResend(registerResendDto: RegisterResendDto)
     {
-        await this.oneTimePasswordService.resend(id);
+        await this.oneTimePasswordService.resend(registerResendDto.otpId);
     }
+
 
     async registerConfirm(registerConfirmDto: RegisterConfirmDto)
     {
@@ -177,6 +181,7 @@ export class AccessTokenManager
         return this.generateTokens(user.id, user.organization.id, user.roles);
     }
 
+
     async generateTokens(
         userId: number,
         organizationId: number,
@@ -231,6 +236,7 @@ export class AccessTokenManager
         };
     }
 
+
     private signToken<T extends Partial<ActiveUserData>>(secret: string, expiresIn: number, payload?: T)
     {
         return this.jwtService.signAsync(
@@ -243,6 +249,7 @@ export class AccessTokenManager
             }
         );
     }
+
 
     async refreshToken(refreshTokenDto: RefreshTokenDto)
     {

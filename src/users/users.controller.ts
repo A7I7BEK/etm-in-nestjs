@@ -43,7 +43,7 @@ export class UsersController
     }
 
 
-    @Post('attachRole')
+    @Post('attach-role')
     @Permission(UserPermissions.AttachRole)
     async attachRole
         (
@@ -56,7 +56,7 @@ export class UsersController
     }
 
 
-    @Post('change/language')
+    @Post('change-language')
     async changeLanguage
         (
             @Body() changeLanguageDto: UserChangeLanguageDto,

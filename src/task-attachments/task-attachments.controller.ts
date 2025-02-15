@@ -10,8 +10,8 @@ import { TaskAttachmentPermissions } from './enums/task-attachment-permissions.e
 import { TaskAttachmentsService } from './task-attachments.service';
 import { modifyTaskAttachmentForFront } from './utils/modify-task-attachment-for-front.util';
 
-@ApiTags('taskAttachments')
-@Controller('taskAttachments')
+@ApiTags('task-attachments')
+@Controller('task-attachments')
 export class TaskAttachmentsController
 {
     constructor (private readonly _service: TaskAttachmentsService) { }

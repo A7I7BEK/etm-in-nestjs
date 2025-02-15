@@ -9,6 +9,7 @@ import { FindOptionsWhere, Repository } from 'typeorm';
 import { HashingService } from '../../hashing/hashing.service';
 import { ForgotPasswordChangeDto } from '../dto/forgot-password-change.dto';
 import { ForgotPasswordConfirmDto } from '../dto/forgot-password-confirm.dto';
+import { ForgotPasswordResendDto } from '../dto/forgot-password-resend.dto';
 import { ForgotPasswordSendDto } from '../dto/forgot-password-send.dto';
 import { ForgotPassword } from '../entities/forgot-password.entity';
 
@@ -23,6 +24,7 @@ export class ForgotPasswordManager
         private readonly _hashingService: HashingService,
         private readonly _oneTimePasswordService: OneTimePasswordService,
     ) { }
+
 
     async forgotPasswordSend(forgotPasswordSendDto: ForgotPasswordSendDto)
     {
@@ -52,10 +54,12 @@ export class ForgotPasswordManager
         return { id };
     }
 
-    async forgotPasswordResend(id: string)
+
+    async forgotPasswordResend(forgotPasswordResendDto: ForgotPasswordResendDto)
     {
-        await this._oneTimePasswordService.resend(id);
+        await this._oneTimePasswordService.resend(forgotPasswordResendDto.otpId);
     }
+
 
     async forgotPasswordConfirm(forgotPasswordConfirmDto: ForgotPasswordConfirmDto)
     {
@@ -74,6 +78,7 @@ export class ForgotPasswordManager
 
         return { uniqueKey: uniqueId };
     }
+
 
     async forgotPasswordChange(forgotPasswordChangeDto: ForgotPasswordChangeDto)
     {

@@ -10,8 +10,8 @@ import { TaskMemberPermissions } from './enums/task-member-permissions.enum';
 import { TaskMembersService } from './task-members.service';
 import { modifyTaskMemberForFront } from './utils/modify-task-member-for-front.util';
 
-@ApiTags('taskMembers')
-@Controller('taskMembers')
+@ApiTags('task-members')
+@Controller('task-members')
 export class TaskMembersController
 {
     constructor (private readonly _service: TaskMembersService) { }
