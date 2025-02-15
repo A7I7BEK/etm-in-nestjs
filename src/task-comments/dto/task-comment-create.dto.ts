@@ -12,7 +12,7 @@ export class TaskCommentCreateDto
     @IsEnum(TaskCommentType)
     commentType: TaskCommentType;
 
-    @ArrayMinSize(1)
+    @ArrayMinSize(0)
     @ValidateNested({ each: true })
     @Type(() => ObjectIdDto)
     members: ObjectIdDto[];

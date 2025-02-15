@@ -68,18 +68,21 @@ export async function createUpdateEntity
     }
 
 
-    const memberIds = dto.members.map(x => x.id);
-    const memberEntities = await service.employeesService.findAll(
-        {
-            where: { id: In(memberIds) }
-        },
-        activeUser,
-    );
+    if (dto.members.length)
+    {
+        const memberIds = dto.members.map(x => x.id);
+        entity.members = await service.employeesService.findAll(
+            {
+                where: { id: In(memberIds) },
+                relations: { user: true },
+            },
+            activeUser,
+        );
+    }
 
 
     entity.commentText = dto.commentText;
     entity.commentType = dto.commentType;
-    entity.members = memberEntities;
     entity.updatedAt = new Date();
     await service.repository.save(entity);
 
