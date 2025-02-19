@@ -1,13 +1,24 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
+import { EmployeesService } from 'src/employees/employees.service';
+import { HashingService } from 'src/iam/hashing/hashing.service';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
+import { ResourceService } from 'src/resource/resource.service';
 import { RolesService } from 'src/roles/roles.service';
-import { FindManyOptions, FindOneOptions, In, Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { UserAttachRoleDto } from './dto/user-attach-role.dto';
 import { UserChangeLanguageDto } from './dto/user-change-language.dto';
+import { UserChangePasswordDto } from './dto/user-change-password.dto';
+import { UserCheckUniqueValueDto } from './dto/user-check-unique-value.dto';
+import { UserEmployeeUpdateDto } from './dto/user-employee-update.dto';
 import { User } from './entities/user.entity';
-import { Language } from './language/language.enum';
+import { attachRoleUtil } from './utils/attach-role.util';
+import { changeLanguageUtil } from './utils/change-language.util';
+import { changePasswordUtil } from './utils/change-password.util';
+import { checkUniqueValueUtil } from './utils/check-unique-value.util';
+import { deleteEntityUtil } from './utils/delete-entity.util';
+import { updateProfileUtil } from './utils/update-profile.util';
 
 @Injectable()
 export class UsersService
@@ -15,7 +26,11 @@ export class UsersService
     constructor (
         @InjectRepository(User)
         public readonly repository: Repository<User>,
-        private readonly _rolesService: RolesService,
+        @Inject(forwardRef(() => EmployeesService))
+        public readonly employeesService: EmployeesService,
+        public readonly rolesService: RolesService,
+        public readonly resourceService: ResourceService,
+        public readonly hashingService: HashingService,
     ) { }
 
 
@@ -71,78 +86,61 @@ export class UsersService
     }
 
 
-    async remove
+    remove
         (
             id: number,
             activeUser: ActiveUserData,
         )
     {
-        const entity = await this.findOne(
-            {
-                where: { id }
-            },
-            activeUser,
-        );
-
-        if (entity.id === activeUser.sub)
-        {
-            throw new ForbiddenException('Cannot delete yourself');
-        }
-
-        if (entity.marks.registered)
-        {
-            throw new ForbiddenException('Cannot delete ADMIN user');
-        }
-
-        return this.repository.remove(entity);
+        return deleteEntityUtil(this, id, activeUser);
     }
 
 
-    async attachRole
+    attachRole
         (
-            attachRoleDto: UserAttachRoleDto,
+            dto: UserAttachRoleDto,
             activeUser: ActiveUserData,
         )
     {
-        const entity = await this.findOne(
-            {
-                where: { id: attachRoleDto.userId }
-            },
-            activeUser,
-        );
-
-        const roleIds = attachRoleDto.roles.map(x => x.id);
-        const roleEntities = await this._rolesService.findAll(
-            {
-                where: { id: In(roleIds) }
-            },
-            activeUser,
-        );
-        entity.roles = roleEntities;
-
-        return this.repository.save(entity);
+        return attachRoleUtil(this, dto, activeUser);
     }
 
 
-    async changeLanguage
+    changePassword
         (
-            changeLanguageDto: UserChangeLanguageDto,
+            dto: UserChangePasswordDto,
             activeUser: ActiveUserData,
         )
     {
-        const entity = await this.findOne(
-            {
-                where: { id: activeUser.sub }
-            },
-            activeUser,
-        );
+        return changePasswordUtil(this, dto, activeUser);
+    }
 
-        // BINGO
-        const languageName = Object.keys(Language).find(key => Language[ key ] === changeLanguageDto.langCode) as (keyof typeof Language);
 
-        entity.language.code = changeLanguageDto.langCode;
-        entity.language.name = languageName;
+    changeLanguage
+        (
+            dto: UserChangeLanguageDto,
+            activeUser: ActiveUserData,
+        )
+    {
+        return changeLanguageUtil(this, dto, activeUser);
+    }
 
-        return this.repository.save(entity);
+
+    updateProfile
+        (
+            dto: UserEmployeeUpdateDto,
+            activeUser: ActiveUserData,
+        )
+    {
+        return updateProfileUtil(this, dto, activeUser);
+    }
+
+
+    checkUniqueValue
+        (
+            dto: UserCheckUniqueValueDto,
+        )
+    {
+        return checkUniqueValueUtil(this, dto);
     }
 }

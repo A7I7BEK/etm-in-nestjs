@@ -3,10 +3,9 @@ import { ApiTags } from '@nestjs/swagger';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { EmployeeChangePasswordDto } from './dto/employee-change-password.dto';
-import { EmployeeCreateDto } from './dto/employee-create.dto';
 import { EmployeeQueryDto } from './dto/employee-query.dto';
-import { EmployeeUpdateDto } from './dto/employee-update.dto';
+import { EmployeeUserCreateDto } from './dto/employee-user-create.dto';
+import { EmployeeUserUpdateDto } from './dto/employee-user-update.dto';
 import { EmployeesService } from './employees.service';
 import { EmployeePermissions } from './enums/employee-permissions.enum';
 import { modifyEntityForFront } from './utils/modify-entity-for-front.util';
@@ -22,7 +21,7 @@ export class EmployeesController
     @Permission(EmployeePermissions.Create)
     async create
         (
-            @Body() createDto: EmployeeCreateDto,
+            @Body() createDto: EmployeeUserCreateDto,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
@@ -75,7 +74,7 @@ export class EmployeesController
     async update
         (
             @Param('id', ParseIntPipe) id: number,
-            @Body() updateDto: EmployeeUpdateDto,
+            @Body() updateDto: EmployeeUserUpdateDto,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
@@ -93,33 +92,6 @@ export class EmployeesController
         )
     {
         const entity = await this._service.remove(id, activeUser);
-        return modifyEntityForFront(entity);
-    }
-
-
-    @Put('change-password/:id')
-    @Permission(EmployeePermissions.PasswordChange)
-    async passwordChange
-        (
-            @Param('id', ParseIntPipe) id: number,
-            @Body() changePasswordDto: EmployeeChangePasswordDto,
-            @ActiveUser() activeUser: ActiveUserData,
-        )
-    {
-        return this._service.changePassword(id, changePasswordDto, activeUser);
-    }
-
-
-    @Put('update-profile/:id') // TODO: may not be needed, as it is already in the update method
-    @Permission(EmployeePermissions.ProfileUpdate)
-    async profileUpdate
-        (
-            @Param('id', ParseIntPipe) id: number,
-            @Body() updateDto: EmployeeUpdateDto,
-            @ActiveUser() activeUser: ActiveUserData,
-        )
-    {
-        const entity = await this._service.update(id, updateDto, activeUser);
         return modifyEntityForFront(entity);
     }
 }

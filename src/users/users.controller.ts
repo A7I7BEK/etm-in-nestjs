@@ -6,6 +6,8 @@ import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { UserAttachRoleDto } from './dto/user-attach-role.dto';
 import { UserChangeLanguageDto } from './dto/user-change-language.dto';
+import { UserChangePasswordDto } from './dto/user-change-password.dto';
+import { UserEmployeeUpdateDto } from './dto/user-employee-update.dto';
 import { UserPermissions } from './enums/user-permissions.enum';
 import { UsersService } from './users.service';
 import { modifyEntityForFront } from './utils/modify-entity-for-front.util';
@@ -56,7 +58,21 @@ export class UsersController
     }
 
 
+    @Post('change-password')
+    @Permission(UserPermissions.ChangePassword)
+    async passwordChange
+        (
+            @Body() changePasswordDto: UserChangePasswordDto,
+            @ActiveUser() activeUser: ActiveUserData,
+        )
+    {
+        const entity = await this._service.changePassword(changePasswordDto, activeUser);
+        return modifyEntityForFront(entity);
+    }
+
+
     @Post('change-language')
+    @Permission(UserPermissions.ChangeLanguage)
     async changeLanguage
         (
             @Body() changeLanguageDto: UserChangeLanguageDto,
@@ -64,6 +80,19 @@ export class UsersController
         )
     {
         const entity = await this._service.changeLanguage(changeLanguageDto, activeUser);
+        return modifyEntityForFront(entity);
+    }
+
+
+    @Post('update-profile')
+    @Permission(UserPermissions.UpdateProfile)
+    async profileUpdate
+        (
+            @Body() updateDto: UserEmployeeUpdateDto,
+            @ActiveUser() activeUser: ActiveUserData,
+        )
+    {
+        const entity = await this._service.updateProfile(updateDto, activeUser);
         return modifyEntityForFront(entity);
     }
 }

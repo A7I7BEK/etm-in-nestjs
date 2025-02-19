@@ -7,7 +7,7 @@ import { ILanguage } from '../language/language.interface';
 import { UserMark } from '../marks/user-mark.interface';
 
 @Entity()
-export class User
+export class User // ADVICE: in the future, merge with Employee
 {
     @PrimaryGeneratedColumn()
     id: number;

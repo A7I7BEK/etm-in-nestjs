@@ -1,6 +1,4 @@
-import { Type } from 'class-transformer';
-import { ArrayMinSize, IsInt, Min, ValidateNested } from 'class-validator';
-import { ObjectIdDto } from 'src/common/dto/object-id.dto';
+import { IsInt, Min } from 'class-validator';
 
 export class UserAttachRoleDto
 {
@@ -8,8 +6,7 @@ export class UserAttachRoleDto
     @IsInt()
     userId: number;
 
-    @ValidateNested({ each: true })
-    @ArrayMinSize(1)
-    @Type(() => ObjectIdDto)
-    roles: ObjectIdDto[];
+    @Min(1, { each: true }) // BINGO
+    @IsInt({ each: true }) // BINGO
+    roleIds: number[];
 }

@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
@@ -9,13 +9,14 @@ import { OrganizationsService } from 'src/organizations/organizations.service';
 import { ResourceService } from 'src/resource/resource.service';
 import { UsersService } from 'src/users/users.service';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
-import { EmployeeChangePasswordDto } from './dto/employee-change-password.dto';
-import { EmployeeCreateDto } from './dto/employee-create.dto';
 import { EmployeeQueryDto } from './dto/employee-query.dto';
-import { EmployeeUpdateDto } from './dto/employee-update.dto';
+import { EmployeeUserCreateDto } from './dto/employee-user-create.dto';
+import { EmployeeUserUpdateDto } from './dto/employee-user-update.dto';
 import { Employee } from './entities/employee.entity';
-import { createUpdateEntity } from './utils/create-update-entity.util';
+import { createEntityUtil } from './utils/create-entity.util';
+import { deleteEntityUtil } from './utils/delete-entity.util';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
+import { updateEntityUtil } from './utils/update-entity.util';
 
 @Injectable()
 export class EmployeesService
@@ -23,28 +24,21 @@ export class EmployeesService
     constructor (
         @InjectRepository(Employee)
         public readonly repository: Repository<Employee>,
-        private readonly _organizationsService: OrganizationsService,
-        private readonly _resourceService: ResourceService,
-        private readonly _usersService: UsersService,
-        private readonly _hashingService: HashingService,
+        @Inject(forwardRef(() => UsersService))
+        public readonly usersService: UsersService,
+        public readonly organizationsService: OrganizationsService,
+        public readonly resourceService: ResourceService,
+        public readonly hashingService: HashingService,
     ) { }
 
 
     create
         (
-            createDto: EmployeeCreateDto,
+            dto: EmployeeUserCreateDto,
             activeUser: ActiveUserData,
         )
     {
-        return createUpdateEntity(
-            this._organizationsService,
-            this._resourceService,
-            this._usersService,
-            this._hashingService,
-            this.repository,
-            createDto,
-            activeUser,
-        );
+        return createEntityUtil(this, dto, activeUser);
     }
 
 
@@ -126,29 +120,11 @@ export class EmployeesService
     async update
         (
             id: number,
-            updateDto: EmployeeUpdateDto,
+            dto: EmployeeUserUpdateDto,
             activeUser: ActiveUserData,
         )
     {
-        const entity = await this.findOne(
-            {
-                where: { id },
-                relations: { user: true },
-            },
-            activeUser,
-        );
-
-        return createUpdateEntity(
-            this._organizationsService,
-            this._resourceService,
-            this._usersService,
-            this._hashingService,
-            this.repository,
-            updateDto,
-            activeUser,
-            entity.user,
-            entity,
-        );
+        return updateEntityUtil(this, id, dto, activeUser);
     }
 
 
@@ -158,47 +134,6 @@ export class EmployeesService
             activeUser: ActiveUserData,
         )
     {
-        const entity = await this.findOne(
-            {
-                where: { id },
-                relations: { user: true },
-            },
-            activeUser,
-        );
-
-        if (entity.user.id === activeUser.sub)
-        {
-            throw new ForbiddenException('Cannot delete yourself');
-        }
-
-        if (entity.user.marks.registered)
-        {
-            throw new ForbiddenException('Cannot delete ADMIN user');
-        }
-
-        const entityRemoved = await this.repository.remove(entity);
-        await this._usersService.repository.remove(entity.user);
-
-        return entityRemoved;
-    }
-
-
-    async changePassword
-        (
-            id: number,
-            changePasswordDto: EmployeeChangePasswordDto,
-            activeUser: ActiveUserData,
-        )
-    {
-        const entity = await this.findOne(
-            {
-                where: { id },
-                relations: { user: true },
-            },
-            activeUser,
-        );
-
-        entity.user.password = await this._hashingService.hash(changePasswordDto.newPassword);
-        await this._usersService.repository.save(entity.user);
+        return deleteEntityUtil(this, id, activeUser);
     }
 }

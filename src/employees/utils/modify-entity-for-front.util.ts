@@ -8,6 +8,7 @@ export function modifyEntityForFront(entity: Employee) // BINGO
     const { user } = entity;
     const { organization, roles } = user || {};
 
+
     if (user)
     {
         delete entity.user.password;

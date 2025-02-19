@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BcryptService } from 'src/iam/hashing/bcrypt.service';
 import { HashingService } from 'src/iam/hashing/hashing.service';
@@ -12,9 +12,9 @@ import { Employee } from './entities/employee.entity';
 @Module({
     imports: [
         TypeOrmModule.forFeature([ Employee ]),
+        forwardRef(() => UsersModule),
         OrganizationsModule,
         ResourceModule,
-        UsersModule,
     ],
     exports: [ EmployeesService ],
     controllers: [ EmployeesController ],

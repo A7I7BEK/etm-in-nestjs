@@ -24,7 +24,7 @@ export class Employee
     photoUrl: string;
 
     @JoinColumn()
-    @OneToOne(type => User, user => user.employee)
+    @OneToOne(type => User, user => user.employee, { onDelete: 'CASCADE' })
     user: Relation<User>;
 
     @OneToMany(type => ProjectMember, m => m.employee)

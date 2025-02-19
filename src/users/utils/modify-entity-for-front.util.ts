@@ -6,11 +6,15 @@ import { User } from '../entities/user.entity';
 export function modifyEntityForFront(entity: User)
 {
     const { employee, organization } = entity;
+
+
     entity[ 'userId' ] = entity.id;
     entity[ 'systemAdmin' ] = false;
 
+
     delete entity.password;
     delete entity.id;
+
 
     if (employee)
     {
@@ -24,6 +28,7 @@ export function modifyEntityForFront(entity: User)
         });
     }
 
+
     if (organization)
     {
         Object.assign(entity, {
@@ -31,6 +36,7 @@ export function modifyEntityForFront(entity: User)
             organizationName: organization.name,
         });
     }
+
 
     return entity;
 }

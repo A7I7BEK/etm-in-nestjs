@@ -1,7 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsDateString, IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { ObjectIdDto } from 'src/common/dto/object-id.dto';
-import { UserCreateDto } from 'src/users/dto/user-create.dto';
 
 export class EmployeeCreateDto
 {
@@ -26,8 +25,4 @@ export class EmployeeCreateDto
     @ValidateNested() // BINGO
     @Type(() => ObjectIdDto) // BINGO
     resourceFile?: ObjectIdDto; // BINGO
-
-    @ValidateNested()
-    @Type(() => UserCreateDto)
-    user: UserCreateDto;
 }
