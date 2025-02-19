@@ -67,9 +67,9 @@ export class OneTimePasswordService
         return { otpId };
     }
 
-    async resend(id: string)
+    async resend(otpId: string)
     {
-        const otpParent = await this.findOneParent(id);
+        const otpParent = await this.findOneParent(otpId);
 
         const otpCode = this.generateCode();
 
@@ -82,14 +82,14 @@ export class OneTimePasswordService
         await this.decideSendChannel(otpCode, otpParent.user, otpParent.options);
     }
 
-    async confirm(id: string, code: string)
+    async confirm(otpId: string, otpCode: string)
     {
         const otpEntity = await this.otpRepository.findOneBy({
-            parent: { uniqueId: id }, // BINGO
-            code,
+            parent: { uniqueId: otpId }, // BINGO
+            code: otpCode,
         });
 
-        if (!otpEntity || otpEntity.used || Number(otpEntity.expireTime) < Date.now())
+        if (!otpEntity || otpEntity.used || Date.now() > Number(otpEntity.expireTime))
         {
             throw new BadRequestException();
         }
@@ -97,14 +97,14 @@ export class OneTimePasswordService
         otpEntity.used = true;
         await this.otpRepository.save(otpEntity);
 
-        const otpParent = await this.findOneParent(id);
+        const otpParent = await this.findOneParent(otpId);
 
         return otpParent.user;
     }
 
-    async findOneParent(id: string)
+    async findOneParent(otpId: string)
     {
-        const entity = await this.otpParentRepository.findOneBy({ uniqueId: id });
+        const entity = await this.otpParentRepository.findOneBy({ uniqueId: otpId });
 
         if (!entity)
         {
