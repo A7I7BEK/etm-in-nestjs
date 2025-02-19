@@ -1,10 +1,10 @@
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { Brackets, Repository } from 'typeorm';
 import { RoleQueryDto } from '../dto/role-query.dto';
-import { Role } from '../entities/role.entity';
+import { Role } from '../entity/role.entity';
 
 
-export function loadQueryBuilder
+export function loadQueryBuilderPart
     (
         repository: Repository<Role>,
         queryDto: RoleQueryDto,

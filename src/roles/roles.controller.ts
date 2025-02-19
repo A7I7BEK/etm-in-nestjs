@@ -6,9 +6,9 @@ import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { RoleCreateDto } from './dto/role-create.dto';
 import { RoleQueryDto } from './dto/role-query.dto';
 import { RoleUpdateDto } from './dto/role-update.dto';
-import { RolePermissions } from './enums/role-permissions.enum';
+import { RolePermissions } from './enum/role-permissions.enum';
 import { RolesService } from './roles.service';
-import { modifyEntityForFront } from './utils/modify-entity-for-front.util';
+import { modifyEntityForFront } from './util/modify-entity-for-front.util';
 
 @ApiTags('roles')
 @Controller('roles')
@@ -39,7 +39,7 @@ export class RolesController
         )
     {
         const entityWithPagination = await this._service.findAllWithFilters(queryDto, activeUser);
-        entityWithPagination.data = entityWithPagination.data.map(entity => modifyEntityForFront(entity));
+        entityWithPagination.data.forEach(entity => modifyEntityForFront(entity));
 
         return entityWithPagination;
     }
@@ -91,8 +91,7 @@ export class RolesController
     }
 
 
-    @Put('update/admins')
-    @Permission(RolePermissions.Update)
+    @Post('update-admins')
     async updateAdminRoles
         (
             @ActiveUser() activeUser: ActiveUserData,

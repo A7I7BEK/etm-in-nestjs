@@ -10,7 +10,7 @@ import { OrganizationPermissions } from 'src/organizations/enums/organization-pe
 import { OrganizationsService } from 'src/organizations/organizations.service';
 import { PermissionPermissions } from 'src/permissions/enums/permission-permissions.enum';
 import { PermissionsService } from 'src/permissions/permissions.service';
-import { Role } from 'src/roles/entities/role.entity';
+import { Role } from 'src/roles/entity/role.entity';
 import { RolesService } from 'src/roles/roles.service';
 import { User } from 'src/users/entities/user.entity';
 import { USER_MARK_REGISTER_CONFIRMED, USER_MARK_REGISTER_NEW } from 'src/users/marks/user-mark.constants';

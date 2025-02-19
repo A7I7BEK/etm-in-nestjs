@@ -9,7 +9,7 @@ export class CheckListItemCreateDto
     text: string;
 
     @ArrayMinSize(0)
-    @ValidateNested({ each: true })
+    @ValidateNested({ each: true }) // BINGO
     @Type(() => ObjectIdDto)
     members: ObjectIdDto[];
 

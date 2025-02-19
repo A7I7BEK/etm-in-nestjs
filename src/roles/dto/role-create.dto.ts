@@ -1,6 +1,4 @@
-import { Type } from 'class-transformer';
-import { ArrayMinSize, IsInt, IsNotEmpty, IsString, Min, ValidateNested } from 'class-validator';
-import { ObjectIdDto } from 'src/common/dto/object-id.dto';
+import { IsInt, IsNotEmpty, IsString, Min } from 'class-validator';
 
 export class RoleCreateDto
 {
@@ -12,10 +10,9 @@ export class RoleCreateDto
     @IsString()
     codeName: string;
 
-    @ArrayMinSize(1)
-    @ValidateNested({ each: true }) // BINGO
-    @Type(() => ObjectIdDto)
-    permissions: ObjectIdDto[];
+    @Min(1, { each: true })
+    @IsInt({ each: true })
+    permissionIds: number[];
 
     @Min(0)
     @IsInt()

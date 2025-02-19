@@ -1,6 +1,6 @@
 import { Employee } from 'src/employees/entities/employee.entity';
 import { Organization } from 'src/organizations/entities/organization.entity';
-import { Role } from 'src/roles/entities/role.entity';
+import { Role } from 'src/roles/entity/role.entity';
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToOne, PrimaryGeneratedColumn, Relation } from 'typeorm';
 import { LANGUAGE_DEFAULT } from '../language/language.constants';
 import { ILanguage } from '../language/language.interface';

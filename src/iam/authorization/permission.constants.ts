@@ -12,7 +12,7 @@ import { ProjectMemberPermissions } from 'src/project-members/enums/project-memb
 import { ProjectTagPermissions } from 'src/project-tags/enums/project-tag-permissions.enum';
 import { ProjectPermissions } from 'src/projects/enums/project-permissions.enum';
 import { ReportPermissions } from 'src/reports/enums/report-permissions.enum';
-import { RolePermissions } from 'src/roles/enums/role-permissions.enum';
+import { RolePermissions } from 'src/roles/enum/role-permissions.enum';
 import { TaskAttachmentPermissions } from 'src/task-attachments/enums/task-attachment-permissions.enum';
 import { TaskCommentPermissions } from 'src/task-comments/enums/task-comment-permissions.enum';
 import { TaskDeadlinePermissions } from 'src/task-deadline/enums/task-deadline-permissions.enum';

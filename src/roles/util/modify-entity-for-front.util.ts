@@ -1,4 +1,4 @@
-import { Role } from '../entities/role.entity';
+import { Role } from '../entity/role.entity';
 
 /**
  * temporary for this project, must not exist
