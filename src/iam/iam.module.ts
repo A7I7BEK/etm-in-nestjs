@@ -3,12 +3,12 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import appConfig from 'src/common/config/app.config';
-import { Employee } from 'src/employees/entities/employee.entity';
+import { EmployeesModule } from 'src/employees/employees.module';
 import { OneTimePasswordModule } from 'src/one-time-password/one-time-password.module';
-import { Organization } from 'src/organizations/entities/organization.entity';
-import { Permission } from 'src/permissions/entities/permission.entity';
-import { Role } from 'src/roles/entities/role.entity';
-import { User } from 'src/users/entities/user.entity';
+import { OrganizationsModule } from 'src/organizations/organizations.module';
+import { PermissionsModule } from 'src/permissions/permissions.module';
+import { RolesModule } from 'src/roles/roles.module';
+import { UsersModule } from 'src/users/users.module';
 import { AuthenticationController } from './authentication/authentication.controller';
 import { AuthenticationService } from './authentication/authentication.service';
 import { ForgotPassword } from './authentication/entities/forgot-password.entity';
@@ -23,14 +23,7 @@ import { HashingService } from './hashing/hashing.service';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([
-            Organization,
-            User,
-            Employee,
-            Role,
-            Permission,
-            ForgotPassword,
-        ]),
+        TypeOrmModule.forFeature([ ForgotPassword ]),
         JwtModule.registerAsync({
             global: true, // BINGO
             useFactory: async () => ({
@@ -40,6 +33,11 @@ import { HashingService } from './hashing/hashing.service';
                 }
             }),
         }),
+        UsersModule,
+        EmployeesModule,
+        RolesModule,
+        PermissionsModule,
+        OrganizationsModule,
         OneTimePasswordModule,
     ],
     providers: [

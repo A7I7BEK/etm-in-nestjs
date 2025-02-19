@@ -1,18 +1,21 @@
 import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
 import { randomUUID } from 'crypto';
 import appConfig from 'src/common/config/app.config';
+import { EmployeesService } from 'src/employees/employees.service';
 import { Employee } from 'src/employees/entities/employee.entity';
 import { OneTimePasswordService } from 'src/one-time-password/one-time-password.service';
 import { Organization } from 'src/organizations/entities/organization.entity';
 import { OrganizationPermissions } from 'src/organizations/enums/organization-permissions.enum';
-import { Permission } from 'src/permissions/entities/permission.entity';
+import { OrganizationsService } from 'src/organizations/organizations.service';
 import { PermissionPermissions } from 'src/permissions/enums/permission-permissions.enum';
+import { PermissionsService } from 'src/permissions/permissions.service';
 import { Role } from 'src/roles/entities/role.entity';
+import { RolesService } from 'src/roles/roles.service';
 import { User } from 'src/users/entities/user.entity';
 import { USER_MARK_REGISTER_CONFIRMED, USER_MARK_REGISTER_NEW } from 'src/users/marks/user-mark.constants';
-import { And, Equal, ILike, Not, Repository } from 'typeorm';
+import { UsersService } from 'src/users/users.service';
+import { And, Equal, ILike, Not } from 'typeorm';
 import { PermissionType } from '../../authorization/permission.constants';
 import { HashingService } from '../../hashing/hashing.service';
 import { ActiveUserData } from '../../interfaces/active-user-data.interface';
@@ -27,52 +30,37 @@ import { InvalidatedRefreshTokenError, RefreshTokenIdsStorage } from './refresh-
 export class AccessTokenManager
 {
     constructor (
-        @InjectRepository(Organization)
-        private readonly organizationsRepository: Repository<Organization>,
-        @InjectRepository(User)
-        private readonly usersRepository: Repository<User>,
-        @InjectRepository(Employee)
-        private readonly employeesRepository: Repository<Employee>,
-        @InjectRepository(Role)
-        private readonly rolesRepository: Repository<Role>,
-        @InjectRepository(Permission)
-        private readonly permissionsRepository: Repository<Permission>,
-        private readonly hashingService: HashingService,
-        private readonly jwtService: JwtService,
-        private readonly refreshTokenIdsStorage: RefreshTokenIdsStorage,
-        private readonly oneTimePasswordService: OneTimePasswordService,
+        public readonly usersService: UsersService,
+        public readonly employeesService: EmployeesService,
+        public readonly rolesService: RolesService,
+        public readonly permissionsService: PermissionsService,
+        public readonly organizationsService: OrganizationsService,
+        public readonly oneTimePasswordService: OneTimePasswordService,
+        public readonly hashingService: HashingService,
+        public readonly jwtService: JwtService,
+        public readonly refreshTokenIdsStorage: RefreshTokenIdsStorage,
     ) { }
 
 
     async register(registerDto: RegisterDto)
     {
-        const organizationExists = await this.organizationsRepository.existsBy({ name: registerDto.organizationName });
-        if (organizationExists)
+        const orgExists = await this.organizationsService.repository.existsBy({
+            name: Equal(registerDto.organizationName)
+        });
+        if (orgExists)
         {
             throw new ConflictException('Organization already exists');
         }
 
-        const usernameExists = await this.usersRepository.existsBy({ userName: registerDto.userName });
-        if (usernameExists)
-        {
-            throw new ConflictException('Username already exists');
-        }
-
-        const emailExists = await this.usersRepository.existsBy({ email: registerDto.email });
-        if (emailExists)
-        {
-            throw new ConflictException('Email already exists');
-        }
-
-        const phoneNumberExists = await this.usersRepository.existsBy({ phoneNumber: registerDto.phoneNumber });
-        if (phoneNumberExists)
-        {
-            throw new ConflictException('Phone number already exists');
-        }
+        await this.usersService.checkUniqueValue({
+            userName: registerDto.userName,
+            email: registerDto.email,
+            phoneNumber: registerDto.phoneNumber,
+        });
 
 
         const [ organizationWord ] = OrganizationPermissions.Create.split('_');
-        const adminPermissions = await this.permissionsRepository.findBy({
+        const adminPermissions = await this.permissionsService.repository.findBy({
             name: Not(ILike(`${organizationWord}%`)),
             codeName: And(
                 Not(Equal(PermissionPermissions.Create)),
@@ -84,7 +72,7 @@ export class AccessTokenManager
 
         const organizationEntity = new Organization();
         organizationEntity.name = registerDto.organizationName;
-        await this.organizationsRepository.save(organizationEntity);
+        await this.organizationsService.repository.save(organizationEntity);
 
         const roleEntity = new Role();
         roleEntity.roleName = appConfig().default.role.toLowerCase();
@@ -92,25 +80,26 @@ export class AccessTokenManager
         roleEntity.systemCreated = true;
         roleEntity.permissions = adminPermissions;
         roleEntity.organization = organizationEntity;
-        await this.rolesRepository.save(roleEntity);
+        await this.rolesService.repository.save(roleEntity);
 
-        const user = await this.usersRepository.save({
-            userName: registerDto.userName,
-            password: await this.hashingService.hash(registerDto.password),
-            email: registerDto.email,
-            phoneNumber: registerDto.phoneNumber,
-            marks: USER_MARK_REGISTER_NEW,
-            employee: await this.employeesRepository.save({
-                firstName: registerDto.firstName,
-                lastName: registerDto.lastName,
-            }),
-            organization: organizationEntity,
-            roles: [ roleEntity ],
-        });
+        const userEntity = new User();
+        userEntity.userName = registerDto.userName;
+        userEntity.password = await this.hashingService.hash(registerDto.password);
+        userEntity.email = registerDto.email;
+        userEntity.phoneNumber = registerDto.phoneNumber;
+        userEntity.marks = USER_MARK_REGISTER_NEW;
+        userEntity.organization = organizationEntity;
+        userEntity.roles = [ roleEntity ];
+        await this.usersService.repository.save(userEntity);
 
-        const { otpId: id } = await this.oneTimePasswordService.send(user, { email: true, phone: true });
+        const employeeEntity = new Employee();
+        employeeEntity.firstName = registerDto.firstName;
+        employeeEntity.lastName = registerDto.lastName;
+        employeeEntity.user = userEntity;
+        await this.employeesService.repository.save(employeeEntity);
 
-        return { id };
+
+        return this.oneTimePasswordService.send(userEntity, { email: true, phone: true });
     }
 
 
@@ -123,12 +112,12 @@ export class AccessTokenManager
     async registerConfirm(registerConfirmDto: RegisterConfirmDto)
     {
         const user = await this.oneTimePasswordService.confirm(
-            registerConfirmDto.createTryId,
+            registerConfirmDto.otpId,
             registerConfirmDto.otpCode,
         );
 
         user.marks = USER_MARK_REGISTER_CONFIRMED;
-        await this.usersRepository.save(user);
+        await this.usersService.repository.save(user);
 
         return this.login({ userName: user.userName, password: registerConfirmDto.password });
     }
@@ -147,7 +136,7 @@ export class AccessTokenManager
             return this.generateTokens(0, 0, [], true);
         }
 
-        const user = await this.usersRepository.findOne({
+        const user = await this.usersService.repository.findOne({
             where: {
                 userName: loginDto.userName
             },
@@ -268,7 +257,7 @@ export class AccessTokenManager
                     }
                 );
 
-            const user = await this.usersRepository.findOneOrFail({
+            const user = await this.usersService.repository.findOneOrFail({
                 where: {
                     id: sub
                 },

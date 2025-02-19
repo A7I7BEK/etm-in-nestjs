@@ -19,14 +19,14 @@ import { AuthType } from './enums/auth-type.enum';
 export class AuthenticationController
 {
     constructor (
-        private readonly authService: AuthenticationService,
+        private readonly _service: AuthenticationService,
     ) { }
 
 
     @Post('register')
     register(@Body() registerDto: RegisterDto)
     {
-        return this.authService.register(registerDto);
+        return this._service.register(registerDto);
     }
 
 
@@ -34,7 +34,7 @@ export class AuthenticationController
     @HttpCode(HttpStatus.OK)
     registerResend(@Body() registerResendDto: RegisterResendDto)
     {
-        return this.authService.registerResend(registerResendDto);
+        return this._service.registerResend(registerResendDto);
     }
 
 
@@ -42,7 +42,7 @@ export class AuthenticationController
     @HttpCode(HttpStatus.OK)
     registerConfirm(@Body() registerConfirmDto: RegisterConfirmDto)
     {
-        return this.authService.registerConfirm(registerConfirmDto);
+        return this._service.registerConfirm(registerConfirmDto);
     }
 
 
@@ -50,14 +50,14 @@ export class AuthenticationController
     @HttpCode(HttpStatus.OK)
     login(@Body() loginDto: LoginDto)
     {
-        return this.authService.login(loginDto);
+        return this._service.login(loginDto);
     }
 
 
     @Post('refresh-token')
     refreshToken(@Body() refreshTokenDto: RefreshTokenDto)
     {
-        return this.authService.refreshToken(refreshTokenDto);
+        return this._service.refreshToken(refreshTokenDto);
     }
 
 
@@ -65,7 +65,7 @@ export class AuthenticationController
     @HttpCode(HttpStatus.OK)
     forgotPasswordSend(@Body() forgotPasswordSendDto: ForgotPasswordSendDto)
     {
-        return this.authService.forgotPasswordSend(forgotPasswordSendDto);
+        return this._service.forgotPasswordSend(forgotPasswordSendDto);
     }
 
 
@@ -73,7 +73,7 @@ export class AuthenticationController
     @HttpCode(HttpStatus.OK)
     forgotPasswordResend(@Body() forgotPasswordResendDto: ForgotPasswordResendDto)
     {
-        return this.authService.forgotPasswordResend(forgotPasswordResendDto);
+        return this._service.forgotPasswordResend(forgotPasswordResendDto);
     }
 
 
@@ -81,7 +81,7 @@ export class AuthenticationController
     @HttpCode(HttpStatus.OK)
     forgotPasswordConfirm(@Body() forgotPasswordConfirmDto: ForgotPasswordConfirmDto)
     {
-        return this.authService.forgotPasswordConfirm(forgotPasswordConfirmDto);
+        return this._service.forgotPasswordConfirm(forgotPasswordConfirmDto);
     }
 
 
@@ -89,6 +89,6 @@ export class AuthenticationController
     @HttpCode(HttpStatus.OK)
     forgotPasswordChange(@Body() forgotPasswordChangeDto: ForgotPasswordChangeDto)
     {
-        return this.authService.forgotPasswordChange(forgotPasswordChangeDto);
+        return this._service.forgotPasswordChange(forgotPasswordChangeDto);
     }
 }

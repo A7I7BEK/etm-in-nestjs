@@ -15,61 +15,61 @@ import { ForgotPasswordManager } from './managers/forgot-password.manager';
 export class AuthenticationService
 {
     constructor (
-        private readonly accessTokenManager: AccessTokenManager,
-        private readonly forgotPasswordManager: ForgotPasswordManager,
+        private readonly _accessTokenManager: AccessTokenManager,
+        private readonly _forgotPasswordManager: ForgotPasswordManager,
     ) { }
 
 
     register(registerDto: RegisterDto)
     {
-        return this.accessTokenManager.register(registerDto);
+        return this._accessTokenManager.register(registerDto);
     }
 
 
     registerResend(registerResendDto: RegisterResendDto)
     {
-        return this.accessTokenManager.registerResend(registerResendDto);
+        return this._accessTokenManager.registerResend(registerResendDto);
     }
 
 
     registerConfirm(registerConfirmDto: RegisterConfirmDto)
     {
-        return this.accessTokenManager.registerConfirm(registerConfirmDto);
+        return this._accessTokenManager.registerConfirm(registerConfirmDto);
     }
 
 
     login(loginDto: LoginDto)
     {
-        return this.accessTokenManager.login(loginDto);
+        return this._accessTokenManager.login(loginDto);
     }
 
 
     refreshToken(refreshTokenDto: RefreshTokenDto)
     {
-        return this.accessTokenManager.refreshToken(refreshTokenDto);
+        return this._accessTokenManager.refreshToken(refreshTokenDto);
     }
 
 
     forgotPasswordSend(forgotPasswordSendDto: ForgotPasswordSendDto)
     {
-        return this.forgotPasswordManager.forgotPasswordSend(forgotPasswordSendDto);
+        return this._forgotPasswordManager.forgotPasswordSend(forgotPasswordSendDto);
     }
 
 
     forgotPasswordResend(forgotPasswordResendDto: ForgotPasswordResendDto)
     {
-        return this.forgotPasswordManager.forgotPasswordResend(forgotPasswordResendDto);
+        return this._forgotPasswordManager.forgotPasswordResend(forgotPasswordResendDto);
     }
 
 
     forgotPasswordConfirm(forgotPasswordConfirmDto: ForgotPasswordConfirmDto)
     {
-        return this.forgotPasswordManager.forgotPasswordConfirm(forgotPasswordConfirmDto);
+        return this._forgotPasswordManager.forgotPasswordConfirm(forgotPasswordConfirmDto);
     }
 
 
     forgotPasswordChange(forgotPasswordChangeDto: ForgotPasswordChangeDto)
     {
-        return this.forgotPasswordManager.forgotPasswordChange(forgotPasswordChangeDto);
+        return this._forgotPasswordManager.forgotPasswordChange(forgotPasswordChangeDto);
     }
 }

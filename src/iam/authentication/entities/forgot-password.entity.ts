@@ -14,7 +14,7 @@ export class ForgotPassword
     user: User;
 
     @Column()
-    createdAt: string;
+    createdAt: Date;
 
     @Column({ default: false })
     completed: boolean;
