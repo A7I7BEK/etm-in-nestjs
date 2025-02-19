@@ -2,7 +2,7 @@ import { Organization } from 'src/organizations/entities/organization.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class Resource
+export class Resource // Cannot be named File because it's a reserved keyword
 {
     @PrimaryGeneratedColumn()
     id: number;
@@ -30,9 +30,6 @@ export class Resource
 
     @Column()
     updatedAt: Date;
-
-    @Column()
-    now: Date; // temporary for this project, must not exist
 
     @ManyToOne(type => Organization)
     organization: Organization;

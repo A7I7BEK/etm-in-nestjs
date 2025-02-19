@@ -32,7 +32,6 @@ export async function createEntity
     entity.sizeCalculated = calculateFileSize(file.buffer.length);
     entity.createdAt = new Date();
     entity.updatedAt = new Date();
-    entity.now = new Date();
     entity.organization = organizationEntity;
 
 

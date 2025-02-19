@@ -24,7 +24,7 @@ export class ResourceService
     ) { }
 
 
-    uploadFile
+    async uploadFile
         (
             file: Express.Multer.File,
             minDimensionDto: MinDimensionDto,
@@ -52,8 +52,15 @@ export class ResourceService
             activeUser: ActiveUserData,
         )
     {
-        file.buffer = await sharp(file.buffer).resize({ width, height, fit: sharp.fit.outside }).toBuffer();
-        return createEntity(this, file, activeUser);
+        file.buffer = await sharp(file.buffer)
+            .resize({
+                width,
+                height,
+                fit: sharp.fit.outside,
+            })
+            .toBuffer();
+
+        return this.uploadSimple(file, activeUser);
     }
 
 
@@ -144,7 +151,6 @@ export class ResourceService
         );
         entity.name = updateDto.name + path.extname(entity.filename);
         entity.updatedAt = new Date();
-        entity.now = new Date();
 
         return this.repository.save(entity);
     }
