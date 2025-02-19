@@ -4,11 +4,12 @@ import { ProjectQueryDto } from '../dto/project-query.dto';
 import { Project } from '../entities/project.entity';
 
 
-export function loadQueryBuilder(
-    repository: Repository<Project>,
-    queryDto: ProjectQueryDto,
-    activeUser: ActiveUserData,
-)
+export function loadQueryBuilder
+    (
+        repository: Repository<Project>,
+        queryDto: ProjectQueryDto,
+        activeUser: ActiveUserData,
+    )
 {
     const [ project, group, manager, org, tasks, column, members, empl, user ] =
         [ 'project', 'group', 'manager', 'organization', 'tasks', 'column', 'members', 'employee', 'user' ];

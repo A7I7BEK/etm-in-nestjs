@@ -13,11 +13,12 @@ import { ProjectType } from '../enums/project-type.enum';
 import { ProjectsService } from '../projects.service';
 
 
-export async function createEntity(
-    service: ProjectsService,
-    dto: ProjectCreateDto,
-    activeUser: ActiveUserData,
-)
+export async function createEntity
+    (
+        service: ProjectsService,
+        dto: ProjectCreateDto,
+        activeUser: ActiveUserData,
+    )
 {
     const organizationEntity = await service.organizationsService.findOneActiveUser(
         {

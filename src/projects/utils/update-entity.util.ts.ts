@@ -8,12 +8,13 @@ import { ProjectPermissions } from '../enums/project-permissions.enum';
 import { ProjectsService } from '../projects.service';
 
 
-export async function updateEntity(
-    service: ProjectsService,
-    id: number,
-    dto: ProjectUpdateDto,
-    activeUser: ActiveUserData,
-)
+export async function updateEntity
+    (
+        service: ProjectsService,
+        id: number,
+        dto: ProjectUpdateDto,
+        activeUser: ActiveUserData,
+    )
 {
     const entity = await service.findOne(
         {

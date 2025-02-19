@@ -13,13 +13,15 @@ import { ProjectColumnsService } from 'src/project-columns/project-columns.servi
 import { ProjectMembersService } from 'src/project-members/project-members.service';
 import { ProjectTagsService } from 'src/project-tags/project-tags.service';
 import { ResourceService } from 'src/resource/resource.service';
-import { Equal, FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { ProjectBackgroundDto } from './dto/project-background.dto';
 import { ProjectCreateDto } from './dto/project-create.dto';
 import { ProjectQueryDto } from './dto/project-query.dto';
 import { ProjectUpdateDto } from './dto/project-update.dto';
 import { Project } from './entities/project.entity';
+import { changeBackgroundUtil } from './utils/change-background.util';
 import { createEntity } from './utils/create-entity.util';
+import { deleteEntity } from './utils/delete-entity.util';
 import { getProjectDetails } from './utils/get-project-details.util';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
 import { updateEntity } from './utils/update-entity.util.ts';
@@ -143,22 +145,7 @@ export class ProjectsService
             activeUser: ActiveUserData,
         )
     {
-        const entity = await this.findOne(
-            {
-                where: { id },
-                relations: {
-                    columns: true,
-                    members: true,
-                    tags: true,
-                },
-            },
-            activeUser,
-        );
-
-        await this.projectColumnsService.repository.remove(entity.columns);
-        await this.projectMembersService.repository.remove(entity.members);
-        await this.projectTagsService.repository.remove(entity.tags);
-        return this.repository.remove(entity);
+        return deleteEntity(this, id, activeUser);
     }
 
 
@@ -168,21 +155,7 @@ export class ProjectsService
             activeUser: ActiveUserData,
         )
     {
-        const entity = await this.findOne(
-            {
-                where: { id: backgroundDto.projectId }
-            },
-            activeUser,
-        );
-
-        const file = await this.resourceService.repository.findOneBy({ url: Equal(entity.background) });
-        if (file)
-        {
-            await this.resourceService.remove(file.id, activeUser);
-        }
-
-        entity.background = backgroundDto.background;
-        return this.repository.save(entity);
+        return changeBackgroundUtil(this, backgroundDto, activeUser);
     }
 
 
