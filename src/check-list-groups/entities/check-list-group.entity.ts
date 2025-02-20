@@ -11,9 +11,9 @@ export class CheckListGroup
     @Column()
     name: string;
 
-    @OneToMany(type => CheckListItem, c => c.checkListGroup)
+    @OneToMany(type => CheckListItem, a => a.checkListGroup)
     checkList: CheckListItem[];
 
-    @ManyToOne(type => Task, t => t.checkListGroups)
+    @ManyToOne(type => Task, a => a.checkListGroups, { onDelete: 'CASCADE' })
     task: Task;
 }

@@ -13,6 +13,6 @@ export class Organization
     @Column({ unique: true, nullable: true })
     email: string;
 
-    @OneToMany(type => User, user => user.organization)
+    @OneToMany(type => User, a => a.organization)
     users: User[];
 }

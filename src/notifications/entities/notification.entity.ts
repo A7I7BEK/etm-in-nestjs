@@ -18,9 +18,9 @@ export class Notification
     @Column({ nullable: true })
     seenAt: Date;
 
-    @ManyToOne(type => Action)
+    @ManyToOne(type => Action, { onDelete: 'CASCADE' })
     action: Action;
 
-    @ManyToOne(type => User)
+    @ManyToOne(type => User, { onDelete: 'CASCADE' })
     user: User;
 }

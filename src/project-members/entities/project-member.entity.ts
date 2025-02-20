@@ -14,12 +14,12 @@ export class ProjectMember
     @Column()
     lastSeenTime: Date = new Date();
 
-    @ManyToOne(type => Employee, { eager: true })
+    @ManyToOne(type => Employee, { eager: true, onDelete: 'CASCADE' })
     employee: Employee;
 
     @Column()
     isTeamLeader: boolean = false;
 
-    @ManyToOne(type => Project, p => p.members)
+    @ManyToOne(type => Project, a => a.members, { onDelete: 'CASCADE' })
     project: Project;
 }

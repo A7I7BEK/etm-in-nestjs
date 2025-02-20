@@ -8,7 +8,7 @@ export class TaskDeadline
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(type => Task)
+    @ManyToOne(type => Task, { onDelete: 'CASCADE' })
     task: Task;
 
     @Column({

@@ -59,25 +59,25 @@ export class Task
     @Column({ type: 'integer', default: 0 })
     totalTimeSpent: number;
 
-    @ManyToOne(type => ProjectColumn, c => c.tasks)
+    @ManyToOne(type => ProjectColumn, a => a.tasks, { onDelete: 'SET NULL' })
     column: ProjectColumn;
 
-    @ManyToOne(type => Project, p => p.tasks)
+    @ManyToOne(type => Project, a => a.tasks, { onDelete: 'CASCADE' })
     project: Project;
 
-    @OneToMany(type => TaskMember, m => m.task)
+    @OneToMany(type => TaskMember, a => a.task)
     members: TaskMember[];
 
-    @OneToMany(type => TaskTag, t => t.task)
+    @OneToMany(type => TaskTag, a => a.task)
     tags: TaskTag[];
 
-    @OneToMany(type => TaskComment, c => c.task)
+    @OneToMany(type => TaskComment, a => a.task)
     comments: TaskComment[];
 
     @OneToMany(type => TaskAttachment, a => a.task)
     attachments: TaskAttachment[];
 
-    @OneToMany(type => CheckListGroup, c => c.task)
+    @OneToMany(type => CheckListGroup, a => a.task)
     checkListGroups: CheckListGroup[];
 
     @OneToMany(type => Action, a => a.task)

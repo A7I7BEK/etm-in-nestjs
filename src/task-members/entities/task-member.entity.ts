@@ -8,9 +8,9 @@ export class TaskMember
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(type => Task, t => t.members)
+    @ManyToOne(type => Task, a => a.members, { onDelete: 'CASCADE' })
     task: Task;
 
-    @ManyToOne(type => ProjectMember, { eager: true })
+    @ManyToOne(type => ProjectMember, { eager: true, onDelete: 'CASCADE' })
     projectMember: ProjectMember;
 }

@@ -9,7 +9,7 @@ export class TaskComment
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(type => Employee, { eager: true })
+    @ManyToOne(type => Employee, { eager: true, onDelete: 'SET NULL' })
     author: Employee;
 
     @Column()
@@ -31,6 +31,6 @@ export class TaskComment
     @ManyToMany(type => Employee)
     members: Employee[];
 
-    @ManyToOne(type => Task, t => t.comments)
+    @ManyToOne(type => Task, a => a.comments, { onDelete: 'CASCADE' })
     task: Task;
 }

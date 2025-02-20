@@ -1,3 +1,4 @@
+import { Organization } from 'src/organizations/entities/organization.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { OtpSendingOptions } from '../interfaces/otp-sending-options.interface';
@@ -15,9 +16,15 @@ export class OneTimePasswordParent
     @Column('json')
     options: Partial<OtpSendingOptions>; // BINGO
 
-    @ManyToOne(type => User, { eager: true })
+    @ManyToOne(type => User, { eager: true, onDelete: 'SET NULL' })
     user: User;
 
-    @OneToMany(type => OneTimePassword, children => children.parent)
+    @Column('json')
+    userClone: User;
+
+    @OneToMany(type => OneTimePassword, a => a.parent)
     children: OneTimePassword[];
+
+    @ManyToOne(type => Organization, { onDelete: 'CASCADE' })
+    organization: Organization;
 }

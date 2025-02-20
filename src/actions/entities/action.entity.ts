@@ -22,12 +22,12 @@ export class Action
     @Column('json')
     details: Record<string, any>;
 
-    @ManyToOne(type => Employee)
+    @ManyToOne(type => Employee, { onDelete: 'SET NULL' })
     employee: Employee;
 
-    @ManyToOne(type => Project, p => p.actions)
+    @ManyToOne(type => Project, a => a.actions, { onDelete: 'CASCADE' })
     project: Project;
 
-    @ManyToOne(type => Task, t => t.actions)
+    @ManyToOne(type => Task, a => a.actions, { onDelete: 'SET NULL' })
     task: Task;
 }

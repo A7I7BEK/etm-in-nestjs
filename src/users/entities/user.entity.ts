@@ -31,12 +31,12 @@ export class User // ADVICE: in the future, merge with Employee
     language: ILanguage;
 
     @JoinTable()
-    @ManyToMany(type => Role, role => role.users)
+    @ManyToMany(type => Role, a => a.users)
     roles: Role[];
 
-    @ManyToOne(type => Organization, organization => organization.users)
+    @ManyToOne(type => Organization, a => a.users, { onDelete: 'CASCADE' })
     organization: Organization;
 
-    @OneToOne(type => Employee, employee => employee.user)
+    @OneToOne(type => Employee, a => a.user)
     employee: Relation<Employee>;
 }

@@ -31,6 +31,6 @@ export class Resource // Cannot be named File because it's a reserved keyword
     @Column()
     updatedAt: Date;
 
-    @ManyToOne(type => Organization)
+    @ManyToOne(type => Organization, { onDelete: 'CASCADE' })
     organization: Organization;
 }

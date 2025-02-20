@@ -18,9 +18,9 @@ export class TaskTimer
     @Column()
     time: Date;
 
-    @ManyToOne(type => Task)
+    @ManyToOne(type => Task, { onDelete: 'CASCADE' })
     task: Task;
 
-    @ManyToOne(type => Employee)
+    @ManyToOne(type => Employee, { onDelete: 'SET NULL' })
     employee: Employee;
 }

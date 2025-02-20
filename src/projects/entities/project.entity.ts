@@ -31,27 +31,27 @@ export class Project
     })
     projectType: ProjectType;
 
-    @ManyToOne(type => Group)
+    @ManyToOne(type => Group, a => a.projects, { onDelete: 'SET NULL' })
     group: Group;
 
-    @OneToMany(type => ProjectMember, m => m.project)
+    @OneToMany(type => ProjectMember, a => a.project)
     members: ProjectMember[];
 
-    @ManyToOne(type => Employee)
+    @ManyToOne(type => Employee, { onDelete: 'SET NULL' })
     manager: Employee;
 
-    @OneToMany(type => ProjectColumn, c => c.project)
+    @OneToMany(type => ProjectColumn, a => a.project)
     columns: ProjectColumn[];
 
-    @OneToMany(type => Task, ts => ts.project)
+    @OneToMany(type => Task, a => a.project)
     tasks: Task[];
 
-    @OneToMany(type => ProjectTag, t => t.project)
+    @OneToMany(type => ProjectTag, a => a.project)
     tags: ProjectTag[];
 
     @OneToMany(type => Action, a => a.project)
     actions: Action[];
 
-    @ManyToOne(type => Organization)
+    @ManyToOne(type => Organization, { onDelete: 'CASCADE' })
     organization: Organization;
 }

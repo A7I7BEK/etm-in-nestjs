@@ -25,9 +25,9 @@ export class ProjectColumn
     })
     projectType: ProjectType;
 
-    @OneToMany(type => Task, ts => ts.column)
+    @OneToMany(type => Task, a => a.column)
     tasks: Task[];
 
-    @ManyToOne(type => Project, p => p.columns)
+    @ManyToOne(type => Project, a => a.columns, { onDelete: 'CASCADE' })
     project: Project;
 }

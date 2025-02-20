@@ -16,6 +16,6 @@ export class OneTimePassword
     @Column({ default: false })
     used: boolean;
 
-    @ManyToOne(type => OneTimePasswordParent, parent => parent.children)
+    @ManyToOne(type => OneTimePasswordParent, a => a.children, { onDelete: 'CASCADE' })
     parent: OneTimePasswordParent;
 }

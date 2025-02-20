@@ -1,6 +1,7 @@
 import { Employee } from 'src/employees/entities/employee.entity';
 import { Organization } from 'src/organizations/entities/organization.entity';
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Project } from 'src/projects/entities/project.entity';
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Group
@@ -15,9 +16,12 @@ export class Group
     @ManyToMany(type => Employee)
     employees: Employee[];
 
-    @ManyToOne(type => Employee)
+    @ManyToOne(type => Employee, { onDelete: 'SET NULL' })
     leader: Employee;
 
-    @ManyToOne(type => Organization)
+    @OneToMany(type => Project, a => a.group)
+    projects: Project[];
+
+    @ManyToOne(type => Organization, { onDelete: 'CASCADE' })
     organization: Organization;
 }

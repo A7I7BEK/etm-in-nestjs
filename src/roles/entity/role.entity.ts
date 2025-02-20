@@ -22,9 +22,9 @@ export class Role
     @ManyToMany(type => Permission, { eager: true })
     permissions: Permission[];
 
-    @ManyToMany(type => User, user => user.roles)
+    @ManyToMany(type => User, a => a.roles)
     users: User[];
 
-    @ManyToOne(type => Organization)
+    @ManyToOne(type => Organization, { onDelete: 'CASCADE' })
     organization: Organization;
 }

@@ -13,6 +13,6 @@ export class ProjectTag
     @Column()
     color: string;
 
-    @ManyToOne(type => Project, p => p.tags)
+    @ManyToOne(type => Project, a => a.tags, { onDelete: 'CASCADE' })
     project: Project;
 }

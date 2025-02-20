@@ -8,9 +8,9 @@ export class TaskAttachment
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(type => Resource, { eager: true })
+    @ManyToOne(type => Resource, { eager: true, onDelete: 'CASCADE' })
     file: Resource;
 
-    @ManyToOne(type => Task, t => t.attachments)
+    @ManyToOne(type => Task, a => a.attachments, { onDelete: 'CASCADE' })
     task: Task;
 }
