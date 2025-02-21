@@ -59,7 +59,7 @@ export class Task
     @Column({ type: 'integer', default: 0 })
     totalTimeSpent: number;
 
-    @ManyToOne(type => ProjectColumn, a => a.tasks, { onDelete: 'SET NULL' })
+    @ManyToOne(type => ProjectColumn, a => a.tasks, { onDelete: 'CASCADE' })
     column: ProjectColumn;
 
     @ManyToOne(type => Project, a => a.tasks, { onDelete: 'CASCADE' })

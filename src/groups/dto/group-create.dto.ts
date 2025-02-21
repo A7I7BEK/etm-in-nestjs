@@ -1,6 +1,4 @@
-import { Type } from 'class-transformer';
-import { ArrayMinSize, IsInt, IsNotEmpty, IsString, Min, ValidateNested } from 'class-validator';
-import { ObjectIdDto } from 'src/common/dto/object-id.dto';
+import { IsInt, IsNotEmpty, IsString, Min } from 'class-validator';
 
 export class GroupCreateDto
 {
@@ -8,10 +6,9 @@ export class GroupCreateDto
     @IsString()
     name: string;
 
-    @ArrayMinSize(1)
-    @ValidateNested({ each: true })
-    @Type(() => ObjectIdDto)
-    userIds: ObjectIdDto[];
+    @Min(1, { each: true })
+    @IsInt({ each: true })
+    employeeIds: number[];
 
     @Min(1)
     @IsInt()

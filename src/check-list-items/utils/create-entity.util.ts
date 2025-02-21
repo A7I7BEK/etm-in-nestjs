@@ -33,7 +33,7 @@ export async function createEntity
     entity.task = entity.checkListGroup.task;
 
 
-    const memberIds = dto.members.map(x => x.id);
+    const memberIds = dto.members.map(a => a.id);
     entity.members = await service.employeesService.findAll(
         {
             where: { id: In(memberIds) }

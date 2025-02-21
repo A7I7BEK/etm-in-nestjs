@@ -39,7 +39,7 @@ export async function updateEntity
 
     const managerEntity = await service.employeesService.findOne(
         {
-            where: { id: dto.manager.id }
+            where: { id: dto.managerId }
         },
         activeUser,
     );
@@ -47,7 +47,7 @@ export async function updateEntity
 
     const groupEntity = await service.groupsService.findOne(
         {
-            where: { id: dto.group.id },
+            where: { id: dto.groupId },
             relations: {
                 employees: true,
                 leader: true,
@@ -57,7 +57,7 @@ export async function updateEntity
     );
 
 
-    if (groupEntity.employees.every(x => x.id !== managerEntity.id)) // BINGO
+    if (groupEntity.employees.every(a => a.id !== managerEntity.id)) // BINGO
     {
         groupEntity.employees.push(managerEntity);
     }

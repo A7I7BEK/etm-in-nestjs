@@ -1,6 +1,4 @@
-import { Type } from 'class-transformer';
-import { IsEnum, IsInt, IsNotEmpty, IsString, Min, ValidateNested } from 'class-validator';
-import { ObjectIdDto } from 'src/common/dto/object-id.dto';
+import { IsEnum, IsInt, IsNotEmpty, IsString, Min } from 'class-validator';
 import { ProjectType } from '../enums/project-type.enum';
 
 export class ProjectCreateDto
@@ -16,13 +14,13 @@ export class ProjectCreateDto
     @IsEnum(ProjectType)
     projectType: ProjectType;
 
-    @ValidateNested()
-    @Type(() => ObjectIdDto)
-    group: ObjectIdDto;
+    @Min(1)
+    @IsInt()
+    groupId: number;
 
-    @ValidateNested()
-    @Type(() => ObjectIdDto)
-    manager: ObjectIdDto;
+    @Min(1)
+    @IsInt()
+    managerId: number;
 
     @Min(0)
     @IsInt()

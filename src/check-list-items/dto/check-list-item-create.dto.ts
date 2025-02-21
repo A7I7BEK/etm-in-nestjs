@@ -8,7 +8,7 @@ export class CheckListItemCreateDto
     @IsString()
     text: string;
 
-    @ArrayMinSize(0)
+    @ArrayMinSize(0) // BINGO
     @ValidateNested({ each: true }) // BINGO
     @Type(() => ObjectIdDto)
     members: ObjectIdDto[];

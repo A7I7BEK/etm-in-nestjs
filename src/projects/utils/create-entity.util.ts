@@ -30,7 +30,7 @@ export async function createEntity
 
     const managerEntity = await service.employeesService.findOne(
         {
-            where: { id: dto.manager.id }
+            where: { id: dto.managerId }
         },
         activeUser,
     );
@@ -38,14 +38,14 @@ export async function createEntity
 
     const groupEntity = await service.groupsService.findOne(
         {
-            where: { id: dto.group.id },
+            where: { id: dto.groupId },
             relations: { employees: true, leader: true }
         },
         activeUser,
     );
 
 
-    if (!groupEntity.employees.find(x => x.id === managerEntity.id))
+    if (!groupEntity.employees.find(a => a.id === managerEntity.id))
     {
         groupEntity.employees.push(managerEntity);
     }
