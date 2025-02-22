@@ -1,9 +1,9 @@
 export enum ProjectPermissions
 {
-    Create = 'PROJECT_CREATE',
-    Read = 'PROJECT_READ',
-    Update = 'PROJECT_UPDATE',
-    Delete = 'PROJECT_DELETE',
-    ChangeBackground = 'PROJECT_CHANGE_BACKGROUND',
-    ReadDetails = 'PROJECT_READ_DETAILS',
+    CREATE = 'PROJECT_CREATE',
+    READ = 'PROJECT_READ',
+    UPDATE = 'PROJECT_UPDATE',
+    DELETE = 'PROJECT_DELETE',
+    CHANGE_BACKGROUND = 'PROJECT_CHANGE_BACKGROUND',
+    READ_DETAILS = 'PROJECT_READ_DETAILS',
 }

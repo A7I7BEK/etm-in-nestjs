@@ -4,5 +4,6 @@ export enum UserProperties
     USER_NAME = 'userName',
     EMAIL = 'email',
     PHONE_NUMBER = 'phoneNumber',
+    LANGUAGE = 'language',
     ORGANIZATION = 'organization',
 }

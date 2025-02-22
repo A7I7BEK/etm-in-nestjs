@@ -1,6 +1,6 @@
 export enum TaskDeadlinePermissions
 {
-    Create = 'TASK_CREATE_TIME',
-    Update = 'TASK_UPDATE_TIME',
-    Delete = 'TASK_DELETE_TIME',
+    CREATE = 'TASK_CREATE_TIME',
+    UPDATE = 'TASK_UPDATE_TIME',
+    DELETE = 'TASK_DELETE_TIME',
 }

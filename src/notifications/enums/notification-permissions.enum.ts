@@ -1,6 +1,6 @@
 export enum NotificationPermissions
 {
-    Read = 'NOTIFICATION_READ',
-    Update = 'NOTIFICATION_UPDATE',
-    Delete = 'NOTIFICATION_DELETE',
+    READ = 'NOTIFICATION_READ',
+    UPDATE = 'NOTIFICATION_UPDATE',
+    DELETE = 'NOTIFICATION_DELETE',
 }

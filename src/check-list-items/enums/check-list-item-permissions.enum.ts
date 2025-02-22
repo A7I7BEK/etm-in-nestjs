@@ -1,7 +1,7 @@
 export enum CheckListItemPermissions
 {
-    Create = 'TASK_CHECK_CREATE',
-    Read = 'TASK_CHECK_READ',
-    Update = 'TASK_CHECK_UPDATE',
-    Delete = 'TASK_CHECK_DELETE',
+    CREATE = 'CHECKLIST_ITEM_CREATE',
+    READ = 'CHECKLIST_ITEM_READ',
+    UPDATE = 'CHECKLIST_ITEM_UPDATE',
+    DELETE = 'CHECKLIST_ITEM_DELETE',
 }

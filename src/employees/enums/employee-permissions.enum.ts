@@ -1,7 +1,7 @@
 export enum EmployeePermissions
 {
-    Create = 'EMPLOYEE_CREATE',
-    Read = 'EMPLOYEE_READ',
-    Update = 'EMPLOYEE_UPDATE',
-    Delete = 'EMPLOYEE_DELETE',
+    CREATE = 'EMPLOYEE_CREATE',
+    READ = 'EMPLOYEE_READ',
+    UPDATE = 'EMPLOYEE_UPDATE',
+    DELETE = 'EMPLOYEE_DELETE',
 }

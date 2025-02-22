@@ -1,7 +1,7 @@
 export enum AuthType
 {
-    Bearer,
-    None,
+    BEARER,
+    NONE,
 }
 
 export const AUTH_TYPE_KEY = 'AUTH_TYPE_KEY';

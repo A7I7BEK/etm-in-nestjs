@@ -1,5 +1,5 @@
 export enum NotificationType
 {
-    Task = 'TASK',
-    Comment = 'COMMENT',
+    TASK = 'TASK',
+    COMMENT = 'COMMENT',
 }

@@ -2,10 +2,10 @@ export enum ProjectProperties
 {
     ID = 'id',
     NAME = 'name',
-    CODE_NAME = 'codeName',
+    BACKGROUND = 'background',
     PROJECT_TYPE = 'projectType',
     GROUP = 'group',
     MANAGER = 'manager',
-    PERCENT = 'percent',
     ORGANIZATION = 'organization',
+    PERCENT = 'percent', // TODO: implement this property
 }

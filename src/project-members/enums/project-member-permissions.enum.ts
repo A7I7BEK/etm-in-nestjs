@@ -1,6 +1,6 @@
 export enum ProjectMemberPermissions
 {
-    Create = 'PROJECT_MEMBER_CREATE',
-    Read = 'PROJECT_MEMBER_READ',
-    Delete = 'PROJECT_MEMBER_DELETE',
+    CREATE = 'PROJECT_MEMBER_CREATE',
+    READ = 'PROJECT_MEMBER_READ',
+    DELETE = 'PROJECT_MEMBER_DELETE',
 }

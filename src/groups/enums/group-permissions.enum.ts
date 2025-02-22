@@ -1,7 +1,7 @@
 export enum GroupPermissions
 {
-    Create = 'GROUP_CREATE',
-    Read = 'GROUP_READ',
-    Update = 'GROUP_UPDATE',
-    Delete = 'GROUP_DELETE',
+    CREATE = 'GROUP_CREATE',
+    READ = 'GROUP_READ',
+    UPDATE = 'GROUP_UPDATE',
+    DELETE = 'GROUP_DELETE',
 }

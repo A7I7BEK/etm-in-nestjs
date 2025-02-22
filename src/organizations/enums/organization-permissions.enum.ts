@@ -1,7 +1,7 @@
 export enum OrganizationPermissions
 {
-    Create = 'ORGANIZATION_CREATE',
-    Read = 'ORGANIZATION_READ',
-    Update = 'ORGANIZATION_UPDATE',
-    Delete = 'ORGANIZATION_DELETE',
+    CREATE = 'ORGANIZATION_CREATE',
+    READ = 'ORGANIZATION_READ',
+    UPDATE = 'ORGANIZATION_UPDATE',
+    DELETE = 'ORGANIZATION_DELETE',
 }

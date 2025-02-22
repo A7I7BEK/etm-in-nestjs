@@ -1,6 +1,6 @@
 export enum TaskTimerPermissions
 {
-    Start = 'TASK_TIMER_START',
-    Stop = 'TASK_TIMER_STOP',
-    Read = 'TASK_TIMER_READ',
+    START = 'TASK_TIMER_START',
+    STOP = 'TASK_TIMER_STOP',
+    READ = 'TASK_TIMER_READ',
 }

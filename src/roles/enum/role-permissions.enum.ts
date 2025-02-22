@@ -1,7 +1,8 @@
 export enum RolePermissions
 {
-    Create = 'ROLE_CREATE',
-    Read = 'ROLE_READ',
-    Update = 'ROLE_UPDATE',
-    Delete = 'ROLE_DELETE',
+    CREATE = 'ROLE_CREATE',
+    READ = 'ROLE_READ',
+    UPDATE = 'ROLE_UPDATE',
+    DELETE = 'ROLE_DELETE',
+    UPDATE_ADMINS = 'ROLE_UPDATE_ADMINS',
 }

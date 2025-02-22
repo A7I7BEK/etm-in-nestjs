@@ -1,7 +1,7 @@
 export enum ProjectTagPermissions
 {
-    Create = 'PROJECT_TAG_CREATE',
-    Read = 'PROJECT_TAG_READ',
-    Update = 'PROJECT_TAG_UPDATE',
-    Delete = 'PROJECT_TAG_DELETE',
+    CREATE = 'PROJECT_TAG_CREATE',
+    READ = 'PROJECT_TAG_READ',
+    UPDATE = 'PROJECT_TAG_UPDATE',
+    DELETE = 'PROJECT_TAG_DELETE',
 }

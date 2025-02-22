@@ -2,5 +2,5 @@ export enum TaskMemberProperties
 {
     ID = 'id',
     TASK = 'task',
-    EMPLOYEE = 'employee',
+    PROJECT_MEMBER = 'projectMember',
 }
