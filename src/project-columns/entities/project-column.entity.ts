@@ -13,9 +13,6 @@ export class ProjectColumn
     name: string;
 
     @Column()
-    codeName: string;
-
-    @Column()
     ordering: number;
 
     @Column({

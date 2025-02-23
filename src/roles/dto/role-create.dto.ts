@@ -4,11 +4,7 @@ export class RoleCreateDto
 {
     @IsNotEmpty()
     @IsString()
-    roleName: string;
-
-    @IsNotEmpty()
-    @IsString()
-    codeName: string;
+    name: string;
 
     @Min(1, { each: true })
     @IsInt({ each: true })

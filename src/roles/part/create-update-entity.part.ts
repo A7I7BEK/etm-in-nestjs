@@ -48,8 +48,7 @@ export async function createUpdateEntityPart
     });
 
 
-    entity.roleName = dto.roleName;
-    entity.codeName = dto.codeName;
+    entity.name = dto.name;
 
 
     return service.repository.save(entity);

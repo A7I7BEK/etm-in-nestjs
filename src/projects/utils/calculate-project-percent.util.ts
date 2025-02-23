@@ -20,7 +20,7 @@ export function calculateProjectPercent(entity: Project)
 
 
     const totalCount = tasks.length;
-    const checkedCount = tasks.filter(item => item.column.codeName === ProjectColumnTypeKanban.ARCHIVE).length;
+    const checkedCount = tasks.filter(item => item.column.name === ProjectColumnTypeKanban.ARCHIVE).length;
     const percent = Math.floor(checkedCount / totalCount * 100);
 
 

@@ -7,10 +7,6 @@ export class ProjectCreateDto
     @IsString()
     name: string;
 
-    @IsNotEmpty()
-    @IsString()
-    codeName: string;
-
     @IsEnum(ProjectType)
     projectType: ProjectType;
 

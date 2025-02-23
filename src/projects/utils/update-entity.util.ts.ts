@@ -74,7 +74,6 @@ export async function updateEntity
 
 
     entity.name = dto.name;
-    entity.codeName = dto.codeName;
     entity.organization = organizationEntity;
     entity.manager = managerEntity;
     entity.group = groupEntity;
@@ -88,7 +87,7 @@ export async function updateEntity
         activeUser,
     };
     service.eventEmitter.emit(
-        [ Action.name, ProjectPermissions.Update ],
+        [ Action.name, ProjectPermissions.UPDATE ],
         actionData
     );
 

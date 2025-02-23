@@ -67,7 +67,6 @@ export async function createEntity
         {
             const column = new ProjectColumn();
             column.name = item;
-            column.codeName = item;
             column.ordering = index;
             column.projectType = ProjectType.KANBAN;
 
@@ -90,7 +89,6 @@ export async function createEntity
 
     const entity = new Project();
     entity.name = dto.name;
-    entity.codeName = dto.codeName;
     entity.projectType = dto.projectType;
     entity.organization = organizationEntity;
     entity.manager = managerEntity;
@@ -106,7 +104,7 @@ export async function createEntity
         activeUser,
     };
     service.eventEmitter.emit(
-        [ Action.name, ProjectPermissions.Create ],
+        [ Action.name, ProjectPermissions.CREATE ],
         actionData
     );
 

@@ -10,10 +10,7 @@ export class Role
     id: number;
 
     @Column()
-    roleName: string;
-
-    @Column()
-    codeName: string;
+    name: string;
 
     @Column()
     systemCreated: boolean = false;

@@ -16,8 +16,7 @@ export const SYSTEM_ADMIN_DATA = {
     "roles": [
         {
             "id": 0,
-            "roleName": "system admin",
-            "codeName": "SYSTEM_ADMIN",
+            "name": "SYSTEM_ADMIN",
             "permissions": PERMISSION_LIST,
         }
     ],

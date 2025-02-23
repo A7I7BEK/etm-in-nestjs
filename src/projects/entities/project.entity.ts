@@ -18,9 +18,6 @@ export class Project
     @Column()
     name: string;
 
-    @Column()
-    codeName: string;
-
     @Column({ nullable: true })
     background: string;
 

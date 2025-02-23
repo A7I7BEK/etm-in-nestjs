@@ -6,10 +6,6 @@ export class ProjectColumnCreateDto
     @IsString()
     name: string;
 
-    @IsNotEmpty()
-    @IsString()
-    codeName: string;
-
     @Min(1)
     @IsInt()
     projectId: number;
