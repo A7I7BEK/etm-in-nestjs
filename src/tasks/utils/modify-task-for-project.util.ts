@@ -1,4 +1,3 @@
-import { TaskCommentType } from 'src/task-comments/enums/task-comment-type.enum';
 import { modifyTaskMemberForFront } from 'src/task-members/utils/modify-task-member-for-front.util';
 import { modifyTaskTagForFront } from 'src/task-tags/utils/modify-task-tag-for-front.util';
 import { Task } from '../entities/task.entity';
@@ -31,14 +30,9 @@ export function modifyTaskForProject(entity: Task)
 
     if (comments?.length)
     {
-        const commentType = entity.comments[ 0 ].commentType;
         Object.assign(entity, {
             commentCount: entity.comments.length,
-            lastCommentType: {
-                id: commentType,
-                name: TaskCommentType[ commentType ],
-                value: TaskCommentType[ commentType ],
-            },
+            lastCommentType: entity.comments[ 0 ].commentType,
         });
     }
     delete entity.comments;

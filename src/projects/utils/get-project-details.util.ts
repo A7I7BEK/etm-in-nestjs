@@ -85,48 +85,10 @@ export async function getProjectDetails
     modifyProjectForFront(entity);
 
 
-    entity[ 'taskStatusType' ] = Object.keys(TaskStatus).filter(a => Number(a))
-        .map(item =>
-        {
-            return {
-                id: Number(item),
-                name: TaskStatus[ item ],
-                value: TaskStatus[ item ],
-            };
-        });
-
-
-    entity[ 'taskPriorityType' ] = Object.keys(TaskPriority).filter(a => Number(a))
-        .map(item =>
-        {
-            return {
-                id: Number(item),
-                name: TaskPriority[ item ],
-                value: TaskPriority[ item ],
-            };
-        });
-
-
-    entity[ 'taskLevelType' ] = Object.keys(TaskLevel).filter(a => Number(a))
-        .map(item =>
-        {
-            return {
-                id: Number(item),
-                name: TaskLevel[ item ],
-                value: TaskLevel[ item ],
-            };
-        });
-
-
-    entity[ 'taskCommentTypes' ] = Object.keys(TaskCommentType).filter(a => Number(a))
-        .map(item =>
-        {
-            return {
-                id: Number(item),
-                name: TaskCommentType[ item ],
-                value: TaskCommentType[ item ],
-            };
-        });
+    entity[ 'taskStatusTypes' ] = Object.values(TaskStatus).filter(a => typeof a === 'string');
+    entity[ 'taskPriorityTypes' ] = Object.values(TaskPriority);
+    entity[ 'taskLevelTypes' ] = Object.values(TaskLevel);
+    entity[ 'taskCommentTypes' ] = Object.values(TaskCommentType);
 
 
     return entity;

@@ -9,7 +9,6 @@ import { ProjectColumnSelectQueryDto } from './dto/project-column-select-query.d
 import { ProjectColumnUpdateDto } from './dto/project-column-update.dto';
 import { ProjectColumnPermissions } from './enums/project-column-permissions.enum';
 import { ProjectColumnsService } from './project-columns.service';
-import { modifyProjectColumnForFront } from './utils/modify-entity-for-front.util';
 
 @ApiTags('project-columns')
 @Controller('project-columns')
@@ -20,26 +19,25 @@ export class ProjectColumnsController
 
     @Post()
     @Permission(ProjectColumnPermissions.CREATE)
-    async create
+    create
         (
             @Body() createDto: ProjectColumnCreateDto,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.create(createDto, activeUser);
-        return modifyProjectColumnForFront(entity);
+        return this._service.create(createDto, activeUser);
     }
 
 
     @Get('selection')
     @Permission(ProjectColumnPermissions.READ)
-    async findAll
+    findAll
         (
             @Query() queryDto: ProjectColumnSelectQueryDto,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entityList = await this._service.findAll(
+        return this._service.findAll(
             {
                 where: {
                     project: {
@@ -50,65 +48,60 @@ export class ProjectColumnsController
             },
             activeUser,
         );
-        return entityList.map(entity => modifyProjectColumnForFront(entity));
     }
 
 
     @Get(':id')
     @Permission(ProjectColumnPermissions.READ)
-    async findOne
+    findOne
         (
             @Param('id', ParseIntPipe) id: number,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.findOne(
+        return this._service.findOne(
             {
                 where: { id },
                 relations: { project: true }
             },
             activeUser,
         );
-        return modifyProjectColumnForFront(entity);
     }
 
 
     @Put(':id')
     @Permission(ProjectColumnPermissions.UPDATE)
-    async update
+    update
         (
             @Param('id', ParseIntPipe) id: number,
             @Body() updateDto: ProjectColumnUpdateDto,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.update(id, updateDto, activeUser);
-        return modifyProjectColumnForFront(entity);
+        return this._service.update(id, updateDto, activeUser);
     }
 
 
     @Delete(':id')
     @Permission(ProjectColumnPermissions.DELETE)
-    async remove
+    remove
         (
             @Param('id', ParseIntPipe) id: number,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.remove(id, activeUser);
-        return modifyProjectColumnForFront(entity);
+        return this._service.remove(id, activeUser);
     }
 
 
     @Post('move')
     @Permission(ProjectColumnPermissions.MOVE)
-    async move
+    move
         (
             @Body() moveDto: ProjectColumnMoveDto,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.move(moveDto, activeUser);
-        return modifyProjectColumnForFront(entity);
+        return this._service.move(moveDto, activeUser);
     }
 }

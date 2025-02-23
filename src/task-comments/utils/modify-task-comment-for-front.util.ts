@@ -1,5 +1,4 @@
 import { TaskComment } from '../entities/task-comment.entity';
-import { TaskCommentType } from '../enums/task-comment-type.enum';
 
 /**
  * temporary for this project, must not exist
@@ -7,15 +6,6 @@ import { TaskCommentType } from '../enums/task-comment-type.enum';
 export function modifyTaskCommentForFront(entity: TaskComment)
 {
     const { author, members, task } = entity;
-
-
-    Object.assign(entity, {
-        commentType: {
-            id: entity.commentType,
-            name: TaskCommentType[ entity.commentType ],
-            value: TaskCommentType[ entity.commentType ],
-        },
-    });
 
 
     if (author)

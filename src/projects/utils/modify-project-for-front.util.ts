@@ -1,4 +1,3 @@
-import { modifyProjectColumnForFront } from 'src/project-columns/utils/modify-entity-for-front.util';
 import { modifyProjectMemberForFront } from 'src/project-members/utils/modify-entity-for-front.util';
 import { modifyTaskForProject } from 'src/tasks/utils/modify-task-for-project.util';
 import { Project } from '../entities/project.entity';
@@ -9,23 +8,17 @@ import { calculateProjectPercent } from './calculate-project-percent.util';
  */
 export function modifyProjectForFront(entity: Project)
 {
-    const { manager, organization } = entity;
+    Object.assign(entity, {
+        organizationId: entity?.organization?.id,
+        organizationName: entity?.organization?.name,
+    });
 
 
     calculateProjectPercent(entity);
 
 
-    Object.assign(entity, {
-        projectType: {
-            name: entity.projectType,
-            value: entity.projectType,
-        },
-    });
-
-
     entity.columns?.forEach(col =>
     {
-        modifyProjectColumnForFront(col);
         col.tasks?.forEach(task =>
         {
             modifyTaskForProject(task);
@@ -34,23 +27,6 @@ export function modifyProjectForFront(entity: Project)
 
 
     entity.members?.forEach(item => modifyProjectMemberForFront(item));
-
-
-    if (manager)
-    {
-        Object.assign(entity, {
-            managerName: `${manager.firstName} ${manager.lastName} ${manager.middleName}`,
-        });
-    }
-
-
-    if (organization)
-    {
-        Object.assign(entity, {
-            organizationId: organization.id,
-            organizationName: organization.name,
-        });
-    }
 
 
     return entity;

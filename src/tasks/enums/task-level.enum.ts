@@ -1,6 +1,6 @@
 export enum TaskLevel
 {
-    'HIGH_LEVEL' = 1,
-    'NORMAL_LEVEL',
-    'LOW_LEVEL',
+    HIGH_LEVEL = 'HIGH_LEVEL',
+    NORMAL_LEVEL = 'NORMAL_LEVEL',
+    LOW_LEVEL = 'LOW_LEVEL',
 }

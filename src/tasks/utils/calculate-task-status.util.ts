@@ -8,6 +8,11 @@ export function calculateTaskStatus(entity: Task)
     if (!entity.endDate)
     {
         entity[ 'status' ] = TaskStatus[ TaskStatus.BLUE ];
+        /**
+         * BINGO
+         * - default (number) enum contains keys and values at the same time
+         * - So it can be accessed using both a key or value
+         */
     }
     else if (Date.now() > entity.endDate.getTime())
     {
