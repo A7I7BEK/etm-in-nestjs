@@ -78,7 +78,7 @@ export class TaskMembersService
         );
 
         const [ data, total ] = await loadedQueryBuilder.getManyAndCount();
-        const paginationMeta = new PaginationMeta(queryDto.page, queryDto.perPage, total);
+        const paginationMeta = new PaginationMeta(queryDto.page, queryDto.pageSize, total);
 
         return new Pagination<TaskMember>(data, paginationMeta);
     }

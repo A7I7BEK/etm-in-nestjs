@@ -18,7 +18,7 @@ export function loadQueryBuilder
     queryBuilder.leftJoinAndSelect(`${group}.leader`, leader);
     queryBuilder.leftJoinAndSelect(`${group}.organization`, org);
     queryBuilder.skip(queryDto.skip);
-    queryBuilder.take(queryDto.perPage);
+    queryBuilder.take(queryDto.pageSize);
     queryBuilder.orderBy(group + '.' + queryDto.sortBy, queryDto.order);
 
 

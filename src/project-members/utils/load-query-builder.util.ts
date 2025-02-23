@@ -27,7 +27,7 @@ export function loadQueryBuilder(
     queryBuilder.leftJoin(`${pMember}.project`, proj); // BINGO
     queryBuilder.leftJoin(`${proj}.organization`, org); // BINGO
     queryBuilder.skip(queryDto.skip);
-    queryBuilder.take(queryDto.perPage);
+    queryBuilder.take(queryDto.pageSize);
     queryBuilder.orderBy(pMember + '.' + queryDto.sortBy, queryDto.order);
 
 

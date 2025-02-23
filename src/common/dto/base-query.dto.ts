@@ -1,25 +1,24 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
-import { Order, OrderReal } from '../pagination/order.enum';
+import { Order } from '../pagination/order.enum';
 
-// BINGO
+// BINGO: base class for query DTOs
 export abstract class BaseQueryDto<T>
 {
-    // BINGO
     @IsOptional()
     @Min(0) // temporary for this project, must be 1
     @IsInt()
-    @Type(() => Number) // BINGO
+    @Type(() => Number)
     page?: number; // starts from: 0
 
     @IsOptional()
     @Max(100)
     @Min(1)
     @IsInt()
-    @Type(() => Number) // BINGO
-    perPage?: number; // temporary for this project, must be: pageSize
+    @Type(() => Number) // BINGO: transform to number
+    pageSize?: number;
 
-    abstract sortBy?: T; // BINGO
+    abstract sortBy?: T; // BINGO: abstract property for later use
 
     @IsOptional()
     @IsEnum(Order)
@@ -30,15 +29,15 @@ export abstract class BaseQueryDto<T>
     allSearch?: string;
 
 
-    get skip(): number // BINGO
+    get skip(): number // BINGO: calculate skip using getter
     {
-        if (this.page > 0 && this.perPage > 0)
+        if (this.page > 0 && this.pageSize > 0)
         {
             /**
              * temporary for this project, must be
              * return (this.page - 1) * this.perPage;
              */
-            return this.page * this.perPage;
+            return this.page * this.pageSize;
         }
 
         return 0;
@@ -48,9 +47,7 @@ export abstract class BaseQueryDto<T>
     {
         /**
          * temporary for this project
-         * this is adapter that unite frontend
-         * with backend
          */
-        return OrderReal[ this.sortDirection ];
+        return this.sortDirection;
     }
 }

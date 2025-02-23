@@ -22,7 +22,7 @@ export function loadQueryBuilder
     queryBuilder.leftJoin(`${notif}.user`, user);
     queryBuilder.leftJoin(`${user}.organization`, org);
     queryBuilder.skip(queryDto.skip);
-    queryBuilder.take(queryDto.perPage);
+    queryBuilder.take(queryDto.pageSize);
     queryBuilder.orderBy(notif + '.' + queryDto.sortBy, queryDto.order);
 
 

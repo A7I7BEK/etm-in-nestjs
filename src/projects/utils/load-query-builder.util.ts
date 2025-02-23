@@ -25,7 +25,7 @@ export function loadQueryBuilder
     queryBuilder.leftJoinAndSelect(`${members}.employee`, empl);
     queryBuilder.leftJoinAndSelect(`${empl}.user`, user);
     queryBuilder.skip(queryDto.skip);
-    queryBuilder.take(queryDto.perPage);
+    queryBuilder.take(queryDto.pageSize);
     queryBuilder.orderBy(project + '.' + queryDto.sortBy, queryDto.order);
 
 
@@ -63,7 +63,6 @@ export function loadQueryBuilder
             new Brackets((qb) =>
             {
                 qb.orWhere(`${project}.name ILIKE :search`, { search: `%${queryDto.allSearch}%` });
-                qb.orWhere(`${project}.codeName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
                 qb.orWhere(`${group}.name ILIKE :search`, { search: `%${queryDto.allSearch}%` });
                 qb.orWhere(`${manager}.firstName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
                 qb.orWhere(`${manager}.lastName ILIKE :search`, { search: `%${queryDto.allSearch}%` });

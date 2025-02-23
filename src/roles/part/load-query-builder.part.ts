@@ -17,7 +17,7 @@ export function loadQueryBuilderPart
 
     queryBuilder.leftJoinAndSelect(`${role}.organization`, org);
     queryBuilder.skip(queryDto.skip);
-    queryBuilder.take(queryDto.perPage);
+    queryBuilder.take(queryDto.pageSize);
     queryBuilder.orderBy(role + '.' + queryDto.sortBy, queryDto.order);
 
 
@@ -36,8 +36,7 @@ export function loadQueryBuilderPart
         queryBuilder.andWhere(
             new Brackets((qb) =>
             {
-                qb.orWhere(`${role}.codeName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
-                qb.orWhere(`${role}.roleName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
+                qb.orWhere(`${role}.name ILIKE :search`, { search: `%${queryDto.allSearch}%` });
             }),
         );
     }

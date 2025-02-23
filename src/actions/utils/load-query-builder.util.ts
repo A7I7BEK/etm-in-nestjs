@@ -28,7 +28,7 @@ export function loadQueryBuilder
     queryBuilder.leftJoin(`${proj}.organization`, org);
     queryBuilder.leftJoinAndSelect(`${action}.task`, task);
     queryBuilder.skip(queryDto.skip);
-    queryBuilder.take(queryDto.perPage);
+    queryBuilder.take(queryDto.pageSize);
     queryBuilder.orderBy(action + '.' + queryDto.sortBy, queryDto.order);
 
 

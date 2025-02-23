@@ -13,7 +13,7 @@ export function loadQueryBuilder(
 {
     const [ empl, user, org, role, members ] = [ 'employee', 'user', 'organization', 'role', 'members' ];
 
-    // BINGO
+    // BINGO: bypass the type check using <any>
     const sortBy = (<any>Object)
         .values(EmployeeProperties)
         .includes(queryDto.sortBy)
@@ -27,7 +27,7 @@ export function loadQueryBuilder(
     queryBuilder.leftJoinAndSelect(`${user}.roles`, role);
     queryBuilder.leftJoin(`${empl}.members`, members);
     queryBuilder.skip(queryDto.skip);
-    queryBuilder.take(queryDto.perPage);
+    queryBuilder.take(queryDto.pageSize);
     queryBuilder.orderBy(sortBy, queryDto.order);
 
 
@@ -58,7 +58,6 @@ export function loadQueryBuilder(
                 qb.orWhere(`${user}.userName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
                 qb.orWhere(`${user}.email ILIKE :search`, { search: `%${queryDto.allSearch}%` });
                 qb.orWhere(`${role}.roleName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
-                qb.orWhere(`${role}.codeName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
             }),
         );
     }

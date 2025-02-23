@@ -21,7 +21,7 @@ export function loadQueryBuilder
     queryBuilder.leftJoin(`${task}.project`, proj);
     queryBuilder.leftJoin(`${proj}.organization`, org);
     queryBuilder.skip(queryDto.skip);
-    queryBuilder.take(queryDto.perPage);
+    queryBuilder.take(queryDto.pageSize);
     queryBuilder.orderBy(attachment + '.' + queryDto.sortBy, queryDto.order);
 
 

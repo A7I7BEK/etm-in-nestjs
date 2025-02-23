@@ -14,7 +14,7 @@ export function loadQueryBuilder
 
 
     queryBuilder.skip(queryDto.skip);
-    queryBuilder.take(queryDto.perPage);
+    queryBuilder.take(queryDto.pageSize);
     queryBuilder.orderBy(perm + '.' + queryDto.sortBy, queryDto.order);
 
 

@@ -2,7 +2,6 @@ import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { Brackets, Repository } from 'typeorm';
 import { TaskQueryDto } from '../dto/task-query.dto';
 import { Task } from '../entities/task.entity';
-import { TaskPropertiesReal } from '../enums/task-properties.enum';
 
 
 export function loadQueryBuilder
@@ -25,11 +24,8 @@ export function loadQueryBuilder
     queryBuilder.leftJoin(`${pMember}.employee`, empl);
     queryBuilder.leftJoin(`${empl}.user`, user);
     queryBuilder.skip(queryDto.skip);
-    queryBuilder.take(queryDto.perPage);
-    queryBuilder.orderBy(
-        task + '.' + TaskPropertiesReal[ queryDto.sortBy ],
-        queryDto.order
-    );
+    queryBuilder.take(queryDto.pageSize);
+    queryBuilder.orderBy(task + '.' + queryDto.sortBy, queryDto.order);
 
 
     if (queryDto.columnId)
