@@ -17,18 +17,18 @@ export class TaskTimerListener
     ) { }
 
 
-    @OnEvent([ Action.name, TaskTimerPermissions.Start ], { async: true })
+    @OnEvent([ Action.name, TaskTimerPermissions.START ], { async: true })
     listenStartEvent(data: BaseSimpleEvent<TaskTimer>)
     {
-        this.handleAllEvents(data, TaskTimerPermissions.Start);
+        this.handleAllEvents(data, TaskTimerPermissions.START);
         // Tom started timer of task "AAA" at "DD-MM-YYYY HH:mm:ss" (time)
     }
 
 
-    @OnEvent([ Action.name, TaskTimerPermissions.Stop ], { async: true })
+    @OnEvent([ Action.name, TaskTimerPermissions.STOP ], { async: true })
     listenStopEvent(data: BaseSimpleEvent<TaskTimer>)
     {
-        this.handleAllEvents(data, TaskTimerPermissions.Stop);
+        this.handleAllEvents(data, TaskTimerPermissions.STOP);
         // Tom stopped timer of task "AAA" at "DD-MM-YYYY HH:mm:ss" (time)
     }
 
@@ -54,7 +54,7 @@ export class TaskTimerListener
         await this._service.repository.save(action);
 
         this._service.eventEmitter.emit(
-            [ Notification.name, NotificationType.Task ],
+            [ Notification.name, NotificationType.TASK ],
             action
         );
     }

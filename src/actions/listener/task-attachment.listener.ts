@@ -17,18 +17,18 @@ export class TaskAttachmentListener
     ) { }
 
 
-    @OnEvent([ Action.name, TaskAttachmentPermissions.Create ], { async: true })
+    @OnEvent([ Action.name, TaskAttachmentPermissions.CREATE ], { async: true })
     listenCreateEvent(data: BaseSimpleEvent<TaskAttachment>)
     {
-        this.handleAllEvents(data, TaskAttachmentPermissions.Create);
+        this.handleAllEvents(data, TaskAttachmentPermissions.CREATE);
         // Tom added file "AAA" into task "BBB"
     }
 
 
-    @OnEvent([ Action.name, TaskAttachmentPermissions.Delete ], { async: true })
+    @OnEvent([ Action.name, TaskAttachmentPermissions.DELETE ], { async: true })
     listenDeleteEvent(data: BaseSimpleEvent<TaskAttachment>)
     {
-        this.handleAllEvents(data, TaskAttachmentPermissions.Delete);
+        this.handleAllEvents(data, TaskAttachmentPermissions.DELETE);
         // Tom removed file "AAA" from task "BBB"
     }
 
@@ -53,7 +53,7 @@ export class TaskAttachmentListener
         await this._service.repository.save(action);
 
         this._service.eventEmitter.emit(
-            [ Notification.name, NotificationType.Task ],
+            [ Notification.name, NotificationType.TASK ],
             action
         );
     }

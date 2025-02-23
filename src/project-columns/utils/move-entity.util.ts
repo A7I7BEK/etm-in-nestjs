@@ -1,7 +1,7 @@
 import { ForbiddenException } from '@nestjs/common';
 import { Action } from 'src/actions/entities/action.entity';
 import { BaseDiffEvent } from 'src/actions/event/base-diff.event';
-import { reOrderItems } from 'src/common/utils/re-order-items.util';
+import { reorderItems } from 'src/common/utils/reorder-items.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { ProjectType } from 'src/projects/enums/project-type.enum';
 import { ProjectColumnMoveDto } from '../dto/project-column-move.dto';
@@ -52,7 +52,7 @@ export async function moveEntity
     const column = columnList.find(a => a.id === entity.id);
     columnList.splice(columnList.indexOf(column), 1);
     columnList.splice(moveDto.ordering, 0, column);
-    reOrderItems(columnList);
+    reorderItems(columnList);
     await service.repository.save(columnList);
 
 
@@ -67,7 +67,7 @@ export async function moveEntity
         activeUser,
     };
     service.eventEmitter.emit(
-        [ Action.name, ProjectColumnPermissions.Move ],
+        [ Action.name, ProjectColumnPermissions.MOVE ],
         actionData
     );
 
@@ -91,7 +91,7 @@ export async function moveEntity
         const column = columnList.find(a => a.id === entity.id);
         columnList.splice(columnList.indexOf(column), 1);
         columnList.splice(moveDto.ordering, 0, column);
-        reOrderItems(columnList);
+        reorderItems(columnList);
         await service.repository.save(columnList);
 
 
@@ -126,7 +126,7 @@ export async function moveEntity
 
     // old project
     const oldColumnList = entity.project.columns.filter(a => a.id !== entity.id);
-    reOrderItems(oldColumnList);
+    reorderItems(oldColumnList);
     await service.repository.save(oldColumnList);
 
 
@@ -137,7 +137,7 @@ export async function moveEntity
     entity.project = { ...projectEntity };
     delete entity.project.columns;
     projectEntity.columns.splice(moveDto.ordering, 0, entity);
-    reOrderItems(projectEntity.columns);
+    reorderItems(projectEntity.columns);
     await service.repository.save(projectEntity.columns);
 
 

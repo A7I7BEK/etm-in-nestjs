@@ -26,7 +26,7 @@ export class NotificationsService
     ) { }
 
 
-    @OnEvent([ Notification.name, NotificationType.Task ], { async: true })
+    @OnEvent([ Notification.name, NotificationType.TASK ], { async: true })
     async createForTask
         (
             action: Action,
@@ -52,7 +52,7 @@ export class NotificationsService
                 const entity = new Notification();
                 entity.user = member.projectMember.employee.user;
                 entity.action = action;
-                entity.type = NotificationType.Task;
+                entity.type = NotificationType.TASK;
 
                 return entity;
             });
@@ -62,7 +62,7 @@ export class NotificationsService
     }
 
 
-    @OnEvent([ Notification.name, NotificationType.Comment ], { async: true })
+    @OnEvent([ Notification.name, NotificationType.COMMENT ], { async: true })
     async createForComment
         (
             action: Action,
@@ -76,7 +76,7 @@ export class NotificationsService
                 const entity = new Notification();
                 entity.user = employee.user;
                 entity.action = action;
-                entity.type = NotificationType.Comment;
+                entity.type = NotificationType.COMMENT;
 
                 return entity;
             });
@@ -117,7 +117,7 @@ export class NotificationsService
         );
 
         const [ data, total ] = await loadedQueryBuilder.getManyAndCount();
-        const paginationMeta = new PaginationMeta(queryDto.page, queryDto.perPage, total);
+        const paginationMeta = new PaginationMeta(queryDto.page, queryDto.pageSize, total);
 
         return new Pagination<Notification>(data, paginationMeta);
     }

@@ -18,7 +18,7 @@ export class CheckListGroupsController
 
 
     @Post()
-    @Permission(CheckListGroupPermissions.Create)
+    @Permission(CheckListGroupPermissions.CREATE)
     async create
         (
             @Body() createDto: CheckListGroupCreateDto,
@@ -31,7 +31,7 @@ export class CheckListGroupsController
 
 
     @Get()
-    @Permission(CheckListGroupPermissions.Read)
+    @Permission(CheckListGroupPermissions.READ)
     async findAll
         (
             @Query() queryDto: CheckListGroupQueryDto,
@@ -47,7 +47,7 @@ export class CheckListGroupsController
 
 
     @Get(':id')
-    @Permission(CheckListGroupPermissions.Read)
+    @Permission(CheckListGroupPermissions.READ)
     async findOne
         (
             @Param('id', ParseIntPipe) id: number,
@@ -74,7 +74,7 @@ export class CheckListGroupsController
 
 
     @Put(':id')
-    @Permission(CheckListGroupPermissions.Update)
+    @Permission(CheckListGroupPermissions.UPDATE)
     async update
         (
             @Param('id', ParseIntPipe) id: number,
@@ -88,7 +88,7 @@ export class CheckListGroupsController
 
 
     @Delete(':id')
-    @Permission(CheckListGroupPermissions.Delete)
+    @Permission(CheckListGroupPermissions.DELETE)
     async remove
         (
             @Param('id', ParseIntPipe) id: number,

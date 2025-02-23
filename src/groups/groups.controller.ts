@@ -18,7 +18,7 @@ export class GroupsController
 
 
     @Post()
-    @Permission(GroupPermissions.Create)
+    @Permission(GroupPermissions.CREATE)
     async create
         (
             @Body() createDto: GroupCreateDto,
@@ -31,7 +31,7 @@ export class GroupsController
 
 
     @Get()
-    @Permission(GroupPermissions.Read)
+    @Permission(GroupPermissions.READ)
     async findAll
         (
             @Query() queryDto: GroupQueryDto,
@@ -46,7 +46,7 @@ export class GroupsController
 
 
     @Get(':id')
-    @Permission(GroupPermissions.Read)
+    @Permission(GroupPermissions.READ)
     async findOne
         (
             @Param('id', ParseIntPipe) id: number,
@@ -69,7 +69,7 @@ export class GroupsController
 
 
     @Put(':id')
-    @Permission(GroupPermissions.Update)
+    @Permission(GroupPermissions.UPDATE)
     async update
         (
             @Param('id', ParseIntPipe) id: number,
@@ -83,7 +83,7 @@ export class GroupsController
 
 
     @Delete(':id')
-    @Permission(GroupPermissions.Delete)
+    @Permission(GroupPermissions.DELETE)
     async remove
         (
             @Param('id', ParseIntPipe) id: number,

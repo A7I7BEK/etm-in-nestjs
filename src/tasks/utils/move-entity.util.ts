@@ -1,6 +1,6 @@
 import { Action } from 'src/actions/entities/action.entity';
 import { BaseDiffEvent } from 'src/actions/event/base-diff.event';
-import { reOrderItems } from 'src/common/utils/re-order-items.util';
+import { reorderItems } from 'src/common/utils/reorder-items.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { TaskMoveDto } from '../dto/task-move.dto';
 import { Task } from '../entities/task.entity';
@@ -54,7 +54,7 @@ export async function moveEntity
         const task = taskList.find(a => a.id === entity.id);
         taskList.splice(taskList.indexOf(task), 1);
         taskList.splice(moveDto.ordering, 0, task);
-        reOrderItems(taskList);
+        reorderItems(taskList);
         await service.repository.save(taskList);
 
 
@@ -65,7 +65,7 @@ export async function moveEntity
 
         actionData.newEntity = entity;
         service.eventEmitter.emit(
-            [ Action.name, TaskPermissions.Move ],
+            [ Action.name, TaskPermissions.MOVE ],
             actionData
         );
 
@@ -98,7 +98,7 @@ export async function moveEntity
 
     // old column
     const oldTaskList = entity.column.tasks.filter(a => a.id !== entity.id);
-    reOrderItems(oldTaskList);
+    reorderItems(oldTaskList);
     await service.repository.save(oldTaskList);
 
 
@@ -110,13 +110,13 @@ export async function moveEntity
         delete entity.column.tasks;
         delete entity.column.project;
         columnEntity.tasks.splice(moveDto.ordering, 0, entity);
-        reOrderItems(columnEntity.tasks);
+        reorderItems(columnEntity.tasks);
         await service.repository.save(columnEntity.tasks);
 
 
         actionData.newEntity = entity;
         service.eventEmitter.emit(
-            [ Action.name, TaskPermissions.Move ],
+            [ Action.name, TaskPermissions.MOVE ],
             actionData
         );
 
@@ -131,13 +131,13 @@ export async function moveEntity
         delete entity.column.project;
         entity.project = columnEntity.project;
         columnEntity.tasks.splice(moveDto.ordering, 0, entity);
-        reOrderItems(columnEntity.tasks);
+        reorderItems(columnEntity.tasks);
         await service.repository.save(columnEntity.tasks);
 
 
         actionData.newEntity = entity;
         service.eventEmitter.emit(
-            [ Action.name, TaskPermissions.Move ],
+            [ Action.name, TaskPermissions.MOVE ],
             actionData
         );
 

@@ -18,7 +18,7 @@ export class TaskAttachmentsController
 
 
     @Post()
-    @Permission(TaskAttachmentPermissions.Create)
+    @Permission(TaskAttachmentPermissions.CREATE)
     async create
         (
             @Body() createDto: TaskAttachmentCreateDto,
@@ -31,7 +31,7 @@ export class TaskAttachmentsController
 
 
     @Get()
-    @Permission(TaskAttachmentPermissions.Read)
+    @Permission(TaskAttachmentPermissions.READ)
     async findAll
         (
             @Query() queryDto: TaskAttachmentQueryDto,
@@ -46,7 +46,7 @@ export class TaskAttachmentsController
 
 
     @Get(':id')
-    @Permission(TaskAttachmentPermissions.Read)
+    @Permission(TaskAttachmentPermissions.READ)
     async findOne
         (
             @Param('id', ParseIntPipe) id: number,
@@ -68,7 +68,7 @@ export class TaskAttachmentsController
 
 
     @Delete()
-    @Permission(TaskAttachmentPermissions.Delete)
+    @Permission(TaskAttachmentPermissions.DELETE)
     async remove
         (
             @Body() deleteDto: TaskAttachmentDeleteDto,

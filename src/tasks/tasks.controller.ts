@@ -20,7 +20,7 @@ export class TasksController
 
 
     @Post()
-    @Permission(TaskPermissions.Create)
+    @Permission(TaskPermissions.CREATE)
     async create
         (
             @Body() createDto: TaskCreateDto,
@@ -33,7 +33,7 @@ export class TasksController
 
 
     @Get()
-    @Permission(TaskPermissions.Read)
+    @Permission(TaskPermissions.READ)
     async findAll
         (
             @Query() queryDto: TaskQueryDto,
@@ -48,7 +48,7 @@ export class TasksController
 
 
     @Get(':id')
-    @Permission(TaskPermissions.Read)
+    @Permission(TaskPermissions.READ)
     async findOne
         (
             @Param('id', ParseIntPipe) id: number,
@@ -70,7 +70,7 @@ export class TasksController
 
 
     @Put(':id')
-    @Permission(TaskPermissions.Update)
+    @Permission(TaskPermissions.UPDATE)
     async update
         (
             @Param('id', ParseIntPipe) id: number,
@@ -84,7 +84,7 @@ export class TasksController
 
 
     @Delete(':id')
-    @Permission(TaskPermissions.Delete)
+    @Permission(TaskPermissions.DELETE)
     async remove
         (
             @Param('id', ParseIntPipe) id: number,
@@ -97,7 +97,7 @@ export class TasksController
 
 
     @Post('copy')
-    @Permission(TaskPermissions.Copy)
+    @Permission(TaskPermissions.COPY)
     async copy
         (
             @Body() copyDto: TaskCopyDto,
@@ -110,7 +110,7 @@ export class TasksController
 
 
     @Post('move')
-    @Permission(TaskPermissions.Move)
+    @Permission(TaskPermissions.MOVE)
     async move
         (
             @Body() moveDto: TaskMoveDto,
@@ -123,7 +123,7 @@ export class TasksController
 
 
     @Get(':id/details')
-    @Permission(TaskPermissions.Read)
+    @Permission(TaskPermissions.READ_DETAILS)
     async getAllDetails
         (
             @Param('id', ParseIntPipe) id: number,

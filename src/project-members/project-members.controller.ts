@@ -17,7 +17,7 @@ export class ProjectMembersController
 
 
     @Post()
-    @Permission(ProjectMemberPermissions.Create)
+    @Permission(ProjectMemberPermissions.CREATE)
     async create
         (
             @Body() createDto: ProjectMemberCreateDto,
@@ -30,7 +30,7 @@ export class ProjectMembersController
 
 
     @Get()
-    @Permission(ProjectMemberPermissions.Read)
+    @Permission(ProjectMemberPermissions.READ)
     async findAll
         (
             @Query() queryDto: ProjectMemberQueryDto,
@@ -45,7 +45,7 @@ export class ProjectMembersController
 
 
     @Get(':id')
-    @Permission(ProjectMemberPermissions.Read)
+    @Permission(ProjectMemberPermissions.READ)
     async findOne
         (
             @Param('id', ParseIntPipe) id: number,
@@ -69,7 +69,7 @@ export class ProjectMembersController
 
 
     @Delete(':id')
-    @Permission(ProjectMemberPermissions.Delete)
+    @Permission(ProjectMemberPermissions.DELETE)
     async remove
         (
             @Param('id', ParseIntPipe) id: number,

@@ -18,7 +18,7 @@ export class CheckListItemsController
 
 
     @Post()
-    @Permission(CheckListItemPermissions.Create)
+    @Permission(CheckListItemPermissions.CREATE)
     async create
         (
             @Body() createDto: CheckListItemCreateDto,
@@ -31,7 +31,7 @@ export class CheckListItemsController
 
 
     @Get()
-    @Permission(CheckListItemPermissions.Read)
+    @Permission(CheckListItemPermissions.READ)
     async findAll
         (
             @Query() queryDto: CheckListItemQueryDto,
@@ -46,7 +46,7 @@ export class CheckListItemsController
 
 
     @Get(':id')
-    @Permission(CheckListItemPermissions.Read)
+    @Permission(CheckListItemPermissions.READ)
     async findOne
         (
             @Param('id', ParseIntPipe) id: number,
@@ -70,7 +70,7 @@ export class CheckListItemsController
 
 
     @Put(':id')
-    @Permission(CheckListItemPermissions.Update)
+    @Permission(CheckListItemPermissions.UPDATE)
     async update
         (
             @Param('id', ParseIntPipe) id: number,
@@ -84,7 +84,7 @@ export class CheckListItemsController
 
 
     @Delete(':id')
-    @Permission(CheckListItemPermissions.Delete)
+    @Permission(CheckListItemPermissions.DELETE)
     async remove
         (
             @Param('id', ParseIntPipe) id: number,

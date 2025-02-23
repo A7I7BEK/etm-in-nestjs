@@ -41,7 +41,7 @@ export async function startEntity
         activeUser,
     };
     service.eventEmitter.emit(
-        [ Action.name, TaskTimerPermissions.Start ],
+        [ Action.name, TaskTimerPermissions.START ],
         actionData
     );
 

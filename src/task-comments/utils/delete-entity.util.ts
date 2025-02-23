@@ -41,7 +41,7 @@ export async function deleteEntity
         activeUser,
     };
     service.eventEmitter.emit(
-        [ Action.name, TaskCommentPermissions.Delete ],
+        [ Action.name, TaskCommentPermissions.DELETE ],
         actionData
     );
 

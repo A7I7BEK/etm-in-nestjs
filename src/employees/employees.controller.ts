@@ -18,7 +18,7 @@ export class EmployeesController
 
 
     @Post()
-    @Permission(EmployeePermissions.Create)
+    @Permission(EmployeePermissions.CREATE)
     async create
         (
             @Body() createDto: EmployeeUserCreateDto,
@@ -31,7 +31,7 @@ export class EmployeesController
 
 
     @Get()
-    @Permission(EmployeePermissions.Read)
+    @Permission(EmployeePermissions.READ)
     async findAll
         (
             @Query() queryDto: EmployeeQueryDto,
@@ -46,7 +46,7 @@ export class EmployeesController
 
 
     @Get(':id')
-    @Permission(EmployeePermissions.Read)
+    @Permission(EmployeePermissions.READ)
     async findOne
         (
             @Param('id', ParseIntPipe) id: number,
@@ -70,7 +70,7 @@ export class EmployeesController
 
 
     @Put(':id')
-    @Permission(EmployeePermissions.Update)
+    @Permission(EmployeePermissions.UPDATE)
     async update
         (
             @Param('id', ParseIntPipe) id: number,
@@ -84,7 +84,7 @@ export class EmployeesController
 
 
     @Delete(':id')
-    @Permission(EmployeePermissions.Delete)
+    @Permission(EmployeePermissions.DELETE)
     async remove
         (
             @Param('id', ParseIntPipe) id: number,

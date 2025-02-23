@@ -64,7 +64,7 @@ export async function stopEntity
         activeUser,
     };
     service.eventEmitter.emit(
-        [ Action.name, TaskTimerPermissions.Stop ],
+        [ Action.name, TaskTimerPermissions.STOP ],
         actionData
     );
 

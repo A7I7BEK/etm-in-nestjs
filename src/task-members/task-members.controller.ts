@@ -18,7 +18,7 @@ export class TaskMembersController
 
 
     @Post()
-    @Permission(TaskMemberPermissions.Create)
+    @Permission(TaskMemberPermissions.CREATE)
     async create
         (
             @Body() createDto: TaskMemberCreateDto,
@@ -31,7 +31,7 @@ export class TaskMembersController
 
 
     @Get()
-    @Permission(TaskMemberPermissions.Read)
+    @Permission(TaskMemberPermissions.READ)
     async findAll
         (
             @Query() queryDto: TaskMemberQueryDto,
@@ -46,7 +46,7 @@ export class TaskMembersController
 
 
     @Get(':id')
-    @Permission(TaskMemberPermissions.Read)
+    @Permission(TaskMemberPermissions.READ)
     async findOne
         (
             @Param('id', ParseIntPipe) id: number,
@@ -72,7 +72,7 @@ export class TaskMembersController
 
 
     @Delete()
-    @Permission(TaskMemberPermissions.Delete)
+    @Permission(TaskMemberPermissions.DELETE)
     async remove
         (
             @Body() deleteDto: TaskMemberDeleteDto,

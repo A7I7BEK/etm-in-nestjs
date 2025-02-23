@@ -17,14 +17,14 @@ export class ProjectListener
     ) { }
 
 
-    @OnEvent([ Action.name, ProjectPermissions.Create ], { async: true })
+    @OnEvent([ Action.name, ProjectPermissions.CREATE ], { async: true })
     async listenCreateEvent(data: BaseSimpleEvent<Project>)
     {
         const { entity, activeUser } = data;
 
         const action = new Action();
         action.createdAt = new Date();
-        action.activityType = ProjectPermissions.Create;
+        action.activityType = ProjectPermissions.CREATE;
         action.project = entity;
         action.employee = await this._service.getEmployee(activeUser);
 
@@ -35,20 +35,19 @@ export class ProjectListener
     }
 
 
-    @OnEvent([ Action.name, ProjectPermissions.Update ], { async: true })
+    @OnEvent([ Action.name, ProjectPermissions.UPDATE ], { async: true })
     async listenUpdateEvent(data: BaseDiffEvent<Project>)
     {
         const { oldEntity, newEntity, activeUser } = data;
 
         const action = new Action();
         action.createdAt = new Date();
-        action.activityType = ProjectPermissions.Update;
+        action.activityType = ProjectPermissions.UPDATE;
         action.project = newEntity;
         action.employee = await this._service.getEmployee(activeUser);
 
         const structure = {
             name: 0,
-            codeName: 0,
             group: { id: 0, name: 0 },
             manager: { id: 0, firstName: 0, lastName: 0 },
         };

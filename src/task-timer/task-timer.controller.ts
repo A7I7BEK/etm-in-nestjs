@@ -16,7 +16,7 @@ export class TaskTimerController
 
 
     @Post()
-    @Permission(TaskTimerPermissions.Start, TaskTimerPermissions.Stop)
+    @Permission(TaskTimerPermissions.START, TaskTimerPermissions.STOP)
     toggleTimer
         (
             @Body() createDto: TaskTimerCreateDto,
@@ -28,7 +28,7 @@ export class TaskTimerController
 
 
     @Get()
-    @Permission(TaskTimerPermissions.Read)
+    @Permission(TaskTimerPermissions.READ)
     findAll
         (
             @Query() queryDto: TaskTimerQueryDto,
@@ -40,7 +40,7 @@ export class TaskTimerController
 
 
     @Get(':id')
-    @Permission(TaskTimerPermissions.Read)
+    @Permission(TaskTimerPermissions.READ)
     findOne
         (
             @Param('id', ParseIntPipe) id: number,

@@ -1,9 +1,7 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
-import { PermissionCreateDto } from './dto/permission-create.dto';
 import { PermissionQueryDto } from './dto/permission-query.dto';
-import { PermissionUpdateDto } from './dto/permission-update.dto';
 import { PermissionPermissions } from './enums/permission-permissions.enum';
 import { PermissionsService } from './permissions.service';
 
@@ -14,19 +12,8 @@ export class PermissionsController
     constructor (private readonly _service: PermissionsService) { }
 
 
-    @Post()
-    @Permission(PermissionPermissions.Create)
-    create
-        (
-            @Body() createDto: PermissionCreateDto,
-        )
-    {
-        return this._service.create(createDto);
-    }
-
-
     @Get()
-    @Permission(PermissionPermissions.Read)
+    @Permission(PermissionPermissions.READ)
     findAll
         (
             @Query() queryDto: PermissionQueryDto,
@@ -37,35 +24,12 @@ export class PermissionsController
 
 
     @Get(':id')
-    @Permission(PermissionPermissions.Read)
+    @Permission(PermissionPermissions.READ)
     findOne
         (
             @Param('id', ParseIntPipe) id: number,
         )
     {
         return this._service.findOne({ where: { id } });
-    }
-
-
-    @Put(':id')
-    @Permission(PermissionPermissions.Update)
-    update
-        (
-            @Param('id', ParseIntPipe) id: number,
-            @Body() updateDto: PermissionUpdateDto,
-        )
-    {
-        return this._service.update(id, updateDto);
-    }
-
-
-    @Delete(':id')
-    @Permission(PermissionPermissions.Delete)
-    remove
-        (
-            @Param('id', ParseIntPipe) id: number,
-        )
-    {
-        return this._service.remove(id);
     }
 }

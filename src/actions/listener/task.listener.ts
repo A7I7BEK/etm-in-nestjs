@@ -19,14 +19,14 @@ export class TaskListener
     ) { }
 
 
-    @OnEvent([ Action.name, TaskPermissions.Create ], { async: true })
+    @OnEvent([ Action.name, TaskPermissions.CREATE ], { async: true })
     async listenCreateEvent(data: BaseSimpleEvent<Task>)
     {
         const { entity, activeUser } = data;
 
         const action = new Action();
         action.createdAt = new Date();
-        action.activityType = TaskPermissions.Create;
+        action.activityType = TaskPermissions.CREATE;
         action.task = entity;
         action.project = entity.project;
         action.employee = await this._service.getEmployee(activeUser);
@@ -38,14 +38,14 @@ export class TaskListener
     }
 
 
-    @OnEvent([ Action.name, TaskPermissions.Update ], { async: true })
+    @OnEvent([ Action.name, TaskPermissions.UPDATE ], { async: true })
     async listenUpdateEvent(data: BaseDiffEvent<Task>)
     {
         const { oldEntity, newEntity, activeUser } = data;
 
         const action = new Action();
         action.createdAt = new Date();
-        action.activityType = TaskPermissions.Update;
+        action.activityType = TaskPermissions.UPDATE;
         action.task = newEntity;
         action.project = newEntity.project;
         action.employee = await this._service.getEmployee(activeUser);
@@ -59,20 +59,20 @@ export class TaskListener
         await this._service.repository.save(action);
 
         this._service.eventEmitter.emit(
-            [ Notification.name, NotificationType.Task ],
+            [ Notification.name, NotificationType.TASK ],
             action
         );
     }
 
 
-    @OnEvent([ Action.name, TaskPermissions.Delete ], { async: true })
+    @OnEvent([ Action.name, TaskPermissions.DELETE ], { async: true })
     async listenDeleteEvent(data: BaseSimpleEvent<Task>)
     {
         const { entity, activeUser } = data;
 
         const action = new Action();
         action.createdAt = new Date();
-        action.activityType = TaskPermissions.Delete;
+        action.activityType = TaskPermissions.DELETE;
         action.task = entity; // TODO: check if relations are working (most probably not)
         action.project = entity.project;
         action.employee = await this._service.getEmployee(activeUser);
@@ -84,14 +84,14 @@ export class TaskListener
     }
 
 
-    @OnEvent([ Action.name, TaskPermissions.Copy ], { async: true })
+    @OnEvent([ Action.name, TaskPermissions.COPY ], { async: true })
     async listenCopyEvent(data: BaseDiffEvent<Task>)
     {
         const { oldEntity, newEntity, activeUser } = data;
 
         const action = new Action();
         action.createdAt = new Date();
-        action.activityType = TaskPermissions.Copy;
+        action.activityType = TaskPermissions.COPY;
         action.task = newEntity;
         action.project = newEntity.project;
         action.employee = await this._service.getEmployee(activeUser);
@@ -103,14 +103,14 @@ export class TaskListener
     }
 
 
-    @OnEvent([ Action.name, TaskPermissions.Move ], { async: true })
+    @OnEvent([ Action.name, TaskPermissions.MOVE ], { async: true })
     async listenMoveEvent(data: BaseDiffEvent<Task>)
     {
         const { oldEntity, newEntity, activeUser } = data;
 
         const action = new Action();
         action.createdAt = new Date();
-        action.activityType = TaskPermissions.Move;
+        action.activityType = TaskPermissions.MOVE;
         action.task = newEntity;
         action.project = newEntity.project;
         action.employee = await this._service.getEmployee(activeUser);
@@ -142,7 +142,7 @@ export class TaskListener
         await this._service.repository.save(action);
 
         this._service.eventEmitter.emit(
-            [ Notification.name, NotificationType.Task ],
+            [ Notification.name, NotificationType.TASK ],
             action
         );
     }

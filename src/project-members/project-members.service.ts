@@ -79,7 +79,7 @@ export class ProjectMembersService
         );
 
         const [ data, total ] = await loadedQueryBuilder.getManyAndCount();
-        const paginationMeta = new PaginationMeta(queryDto.page, queryDto.perPage, total);
+        const paginationMeta = new PaginationMeta(queryDto.page, queryDto.pageSize, total);
 
         return new Pagination<ProjectMember>(data, paginationMeta);
     }
@@ -140,7 +140,7 @@ export class ProjectMembersService
             activeUser,
         };
         this.eventEmitter.emit(
-            [ Action.name, ProjectMemberPermissions.Delete ],
+            [ Action.name, ProjectMemberPermissions.DELETE ],
             actionData
         );
 

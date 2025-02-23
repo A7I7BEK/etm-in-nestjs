@@ -19,7 +19,7 @@ export class ProjectColumnsController
 
 
     @Post()
-    @Permission(ProjectColumnPermissions.Create)
+    @Permission(ProjectColumnPermissions.CREATE)
     async create
         (
             @Body() createDto: ProjectColumnCreateDto,
@@ -32,7 +32,7 @@ export class ProjectColumnsController
 
 
     @Get('selection')
-    @Permission(ProjectColumnPermissions.Read)
+    @Permission(ProjectColumnPermissions.READ)
     async findAll
         (
             @Query() queryDto: ProjectColumnSelectQueryDto,
@@ -55,7 +55,7 @@ export class ProjectColumnsController
 
 
     @Get(':id')
-    @Permission(ProjectColumnPermissions.Read)
+    @Permission(ProjectColumnPermissions.READ)
     async findOne
         (
             @Param('id', ParseIntPipe) id: number,
@@ -74,7 +74,7 @@ export class ProjectColumnsController
 
 
     @Put(':id')
-    @Permission(ProjectColumnPermissions.Update)
+    @Permission(ProjectColumnPermissions.UPDATE)
     async update
         (
             @Param('id', ParseIntPipe) id: number,
@@ -88,7 +88,7 @@ export class ProjectColumnsController
 
 
     @Delete(':id')
-    @Permission(ProjectColumnPermissions.Delete)
+    @Permission(ProjectColumnPermissions.DELETE)
     async remove
         (
             @Param('id', ParseIntPipe) id: number,
@@ -101,7 +101,7 @@ export class ProjectColumnsController
 
 
     @Post('move')
-    @Permission(ProjectColumnPermissions.Move)
+    @Permission(ProjectColumnPermissions.MOVE)
     async move
         (
             @Body() moveDto: ProjectColumnMoveDto,

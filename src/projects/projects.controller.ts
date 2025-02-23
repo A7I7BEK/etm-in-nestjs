@@ -20,7 +20,7 @@ export class ProjectsController
 
 
     @Post()
-    @Permission(ProjectPermissions.Create)
+    @Permission(ProjectPermissions.CREATE)
     async create
         (
             @Body() createDto: ProjectCreateDto,
@@ -33,7 +33,7 @@ export class ProjectsController
 
 
     @Get()
-    @Permission(ProjectPermissions.Read)
+    @Permission(ProjectPermissions.READ)
     async findAll
         (
             @Query() queryDto: ProjectQueryDto,
@@ -48,7 +48,7 @@ export class ProjectsController
 
 
     @Get('selection')
-    @Permission(ProjectPermissions.Read)
+    @Permission(ProjectPermissions.READ)
     async findAllForSelect
         (
             @Query() queryDto: ProjectSelectQueryDto,
@@ -78,7 +78,7 @@ export class ProjectsController
 
 
     @Get(':id')
-    @Permission(ProjectPermissions.Read)
+    @Permission(ProjectPermissions.READ)
     async findOne
         (
             @Param('id', ParseIntPipe) id: number,
@@ -107,7 +107,7 @@ export class ProjectsController
 
 
     @Put(':id')
-    @Permission(ProjectPermissions.Update)
+    @Permission(ProjectPermissions.UPDATE)
     async update
         (
             @Param('id', ParseIntPipe) id: number,
@@ -121,7 +121,7 @@ export class ProjectsController
 
 
     @Delete(':id')
-    @Permission(ProjectPermissions.Delete)
+    @Permission(ProjectPermissions.DELETE)
     async remove
         (
             @Param('id', ParseIntPipe) id: number,
@@ -134,7 +134,7 @@ export class ProjectsController
 
 
     @Post('background')
-    @Permission(ProjectPermissions.ChangeBackground)
+    @Permission(ProjectPermissions.CHANGE_BACKGROUND)
     async changeBackground
         (
             @Body() backgroundDto: ProjectBackgroundDto,
@@ -147,7 +147,7 @@ export class ProjectsController
 
 
     @Get(':id/details')
-    @Permission(ProjectPermissions.Read)
+    @Permission(ProjectPermissions.READ_DETAILS)
     async getAllDetails
         (
             @Param('id', ParseIntPipe) id: number,

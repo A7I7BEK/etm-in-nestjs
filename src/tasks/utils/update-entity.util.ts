@@ -38,7 +38,7 @@ export async function updateEntity
         activeUser,
     };
     service.eventEmitter.emit(
-        [ Action.name, TaskPermissions.Update ],
+        [ Action.name, TaskPermissions.UPDATE ],
         actionData
     );
 

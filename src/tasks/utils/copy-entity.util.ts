@@ -1,6 +1,6 @@
 import { Action } from 'src/actions/entities/action.entity';
 import { BaseDiffEvent } from 'src/actions/event/base-diff.event';
-import { reOrderItems } from 'src/common/utils/re-order-items.util';
+import { reorderItems } from 'src/common/utils/reorder-items.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { TaskCopyDto } from '../dto/task-copy.dto';
 import { Task } from '../entities/task.entity';
@@ -64,7 +64,7 @@ export async function copyEntity
 
 
     columnEntity.tasks.splice(copyDto.ordering, 0, entity);
-    reOrderItems(columnEntity.tasks);
+    reorderItems(columnEntity.tasks);
     await service.repository.save(columnEntity.tasks);
 
 
@@ -74,7 +74,7 @@ export async function copyEntity
         activeUser,
     };
     service.eventEmitter.emit(
-        [ Action.name, TaskPermissions.Copy ],
+        [ Action.name, TaskPermissions.COPY ],
         actionData
     );
 

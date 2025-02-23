@@ -16,14 +16,14 @@ export class ProjectMemberListener
     ) { }
 
 
-    @OnEvent([ Action.name, ProjectMemberPermissions.Create ], { async: true })
+    @OnEvent([ Action.name, ProjectMemberPermissions.CREATE ], { async: true })
     async listenCreateEvent(data: ProjectMemberCreateEvent)
     {
         const { project, employees, activeUser } = data;
 
         const action = new Action();
         action.createdAt = new Date();
-        action.activityType = ProjectMemberPermissions.Create;
+        action.activityType = ProjectMemberPermissions.CREATE;
         action.project = project;
         action.employee = await this._service.getEmployee(activeUser);
 
@@ -34,14 +34,14 @@ export class ProjectMemberListener
     }
 
 
-    @OnEvent([ Action.name, ProjectMemberPermissions.Delete ], { async: true })
+    @OnEvent([ Action.name, ProjectMemberPermissions.DELETE ], { async: true })
     async listenDeleteEvent(data: BaseSimpleEvent<ProjectMember>)
     {
         const { entity, activeUser } = data;
 
         const action = new Action();
         action.createdAt = new Date();
-        action.activityType = ProjectMemberPermissions.Delete;
+        action.activityType = ProjectMemberPermissions.DELETE;
         action.project = entity.project;
         action.employee = await this._service.getEmployee(activeUser);
 

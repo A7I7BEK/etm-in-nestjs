@@ -13,7 +13,7 @@ import { RegisterResendDto } from './dto/register-resend.dto';
 import { RegisterDto } from './dto/register.dto';
 import { AuthType } from './enums/auth-type.enum';
 
-@Auth(AuthType.None)
+@Auth(AuthType.NONE)
 @ApiTags('auth')
 @Controller('auth')
 export class AuthenticationController

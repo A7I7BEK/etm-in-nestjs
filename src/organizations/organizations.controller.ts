@@ -15,7 +15,7 @@ export class OrganizationsController
 
 
     @Post()
-    @Permission(OrganizationPermissions.Create)
+    @Permission(OrganizationPermissions.CREATE)
     create
         (
             @Body() createDto: OrganizationCreateDto,
@@ -26,7 +26,7 @@ export class OrganizationsController
 
 
     @Get()
-    @Permission(OrganizationPermissions.Read)
+    @Permission(OrganizationPermissions.READ)
     findAll
         (
             @Query() queryDto: OrganizationQueryDto,
@@ -37,7 +37,7 @@ export class OrganizationsController
 
 
     @Get(':id')
-    @Permission(OrganizationPermissions.Read)
+    @Permission(OrganizationPermissions.READ)
     findOne
         (
             @Param('id', ParseIntPipe) id: number,
@@ -48,7 +48,7 @@ export class OrganizationsController
 
 
     @Put(':id')
-    @Permission(OrganizationPermissions.Update)
+    @Permission(OrganizationPermissions.UPDATE)
     update
         (
             @Param('id', ParseIntPipe) id: number,
@@ -60,7 +60,7 @@ export class OrganizationsController
 
 
     @Delete(':id')
-    @Permission(OrganizationPermissions.Delete)
+    @Permission(OrganizationPermissions.DELETE)
     remove
         (
             @Param('id', ParseIntPipe) id: number,

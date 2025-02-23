@@ -20,6 +20,7 @@ export class UsersController
 
 
     @Get('me')
+    @Permission(UserPermissions.GET_ME)
     async getCurrentUser
         (
             @ActiveUser() activeUser: ActiveUserData
@@ -46,7 +47,7 @@ export class UsersController
 
 
     @Post('attach-role')
-    @Permission(UserPermissions.AttachRole)
+    @Permission(UserPermissions.ATTACH_ROLE)
     async attachRole
         (
             @Body() attachRoleDto: UserAttachRoleDto,
@@ -59,7 +60,7 @@ export class UsersController
 
 
     @Post('change-password')
-    @Permission(UserPermissions.ChangePassword)
+    @Permission(UserPermissions.CHANGE_PASSWORD)
     async passwordChange
         (
             @Body() changePasswordDto: UserChangePasswordDto,
@@ -72,7 +73,7 @@ export class UsersController
 
 
     @Post('change-language')
-    @Permission(UserPermissions.ChangeLanguage)
+    @Permission(UserPermissions.CHANGE_LANGUAGE)
     async changeLanguage
         (
             @Body() changeLanguageDto: UserChangeLanguageDto,
@@ -85,7 +86,7 @@ export class UsersController
 
 
     @Post('update-profile')
-    @Permission(UserPermissions.UpdateProfile)
+    @Permission(UserPermissions.UPDATE_PROFILE)
     async profileUpdate
         (
             @Body() updateDto: UserEmployeeUpdateDto,

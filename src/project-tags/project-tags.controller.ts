@@ -18,7 +18,7 @@ export class ProjectTagsController
 
 
     @Post()
-    @Permission(ProjectTagPermissions.Create)
+    @Permission(ProjectTagPermissions.CREATE)
     async create
         (
             @Body() createDto: ProjectTagCreateDto,
@@ -31,7 +31,7 @@ export class ProjectTagsController
 
 
     @Get()
-    @Permission(ProjectTagPermissions.Read)
+    @Permission(ProjectTagPermissions.READ)
     async findAll
         (
             @Query() queryDto: ProjectTagQueryDto,
@@ -46,7 +46,7 @@ export class ProjectTagsController
 
 
     @Get(':id')
-    @Permission(ProjectTagPermissions.Read)
+    @Permission(ProjectTagPermissions.READ)
     async findOne
         (
             @Param('id', ParseIntPipe) id: number,
@@ -65,7 +65,7 @@ export class ProjectTagsController
 
 
     @Put(':id')
-    @Permission(ProjectTagPermissions.Update)
+    @Permission(ProjectTagPermissions.UPDATE)
     async update
         (
             @Param('id', ParseIntPipe) id: number,
@@ -79,7 +79,7 @@ export class ProjectTagsController
 
 
     @Delete(':id')
-    @Permission(ProjectTagPermissions.Delete)
+    @Permission(ProjectTagPermissions.DELETE)
     async remove
         (
             @Param('id', ParseIntPipe) id: number,

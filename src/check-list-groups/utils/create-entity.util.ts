@@ -37,7 +37,7 @@ export async function createEntity
         activeUser,
     };
     service.eventEmitter.emit(
-        [ Action.name, CheckListGroupPermissions.Create ],
+        [ Action.name, CheckListGroupPermissions.CREATE ],
         actionData
     );
 

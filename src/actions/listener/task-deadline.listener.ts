@@ -18,26 +18,26 @@ export class TaskDeadlineListener
     ) { }
 
 
-    @OnEvent([ Action.name, TaskDeadlinePermissions.Create ], { async: true })
+    @OnEvent([ Action.name, TaskDeadlinePermissions.CREATE ], { async: true })
     listenCreateEvent(data: BaseDiffEvent<Task>)
     {
-        this.handleAllEvents(data, TaskDeadlinePermissions.Create);
+        this.handleAllEvents(data, TaskDeadlinePermissions.CREATE);
         // Tom set time for the task "AAA". Changes ...
     }
 
 
-    @OnEvent([ Action.name, TaskDeadlinePermissions.Update ], { async: true })
+    @OnEvent([ Action.name, TaskDeadlinePermissions.UPDATE ], { async: true })
     listenUpdateEvent(data: BaseDiffEvent<Task>)
     {
-        this.handleAllEvents(data, TaskDeadlinePermissions.Update);
+        this.handleAllEvents(data, TaskDeadlinePermissions.UPDATE);
         // Tom updated time of the task "AAA". Changes ...
     }
 
 
-    @OnEvent([ Action.name, TaskDeadlinePermissions.Delete ], { async: true })
+    @OnEvent([ Action.name, TaskDeadlinePermissions.DELETE ], { async: true })
     listenDeleteEvent(data: BaseDiffEvent<Task>)
     {
-        this.handleAllEvents(data, TaskDeadlinePermissions.Delete);
+        this.handleAllEvents(data, TaskDeadlinePermissions.DELETE);
         // Tom deleted time of the task "AAA". Changes ...
     }
 
@@ -65,7 +65,7 @@ export class TaskDeadlineListener
         await this._service.repository.save(action);
 
         this._service.eventEmitter.emit(
-            [ Notification.name, NotificationType.Task ],
+            [ Notification.name, NotificationType.TASK ],
             action
         );
     }

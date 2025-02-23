@@ -1,7 +1,7 @@
 import { ForbiddenException } from '@nestjs/common';
 import { Action } from 'src/actions/entities/action.entity';
 import { BaseSimpleEvent } from 'src/actions/event/base-simple.event';
-import { reOrderItems } from 'src/common/utils/re-order-items.util';
+import { reorderItems } from 'src/common/utils/reorder-items.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { ProjectType } from 'src/projects/enums/project-type.enum';
 import { ProjectColumn } from '../entities/project-column.entity';
@@ -43,7 +43,7 @@ export async function deleteEntity
 
 
     const columnList = entity.project.columns.filter(a => a.id !== entity.id);
-    reOrderItems(columnList);
+    reorderItems(columnList);
     await service.repository.save(columnList);
     await service.repository.remove(entity);
 
@@ -58,7 +58,7 @@ export async function deleteEntity
         activeUser,
     };
     service.eventEmitter.emit(
-        [ Action.name, ProjectColumnPermissions.Delete ],
+        [ Action.name, ProjectColumnPermissions.DELETE ],
         actionData
     );
 

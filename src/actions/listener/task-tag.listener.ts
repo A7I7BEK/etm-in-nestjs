@@ -17,18 +17,18 @@ export class TaskTagListener
     ) { }
 
 
-    @OnEvent([ Action.name, TaskTagPermissions.Create ], { async: true })
+    @OnEvent([ Action.name, TaskTagPermissions.CREATE ], { async: true })
     listenCreateEvent(data: BaseSimpleEvent<TaskTag>)
     {
-        this.handleAllEvents(data, TaskTagPermissions.Create);
+        this.handleAllEvents(data, TaskTagPermissions.CREATE);
         // Tom added tag "AAA" into task "BBB"
     }
 
 
-    @OnEvent([ Action.name, TaskTagPermissions.Delete ], { async: true })
+    @OnEvent([ Action.name, TaskTagPermissions.DELETE ], { async: true })
     listenDeleteEvent(data: BaseSimpleEvent<TaskTag>)
     {
-        this.handleAllEvents(data, TaskTagPermissions.Delete);
+        this.handleAllEvents(data, TaskTagPermissions.DELETE);
         // Tom removed tag "AAA" from task "BBB"
     }
 
@@ -53,7 +53,7 @@ export class TaskTagListener
         await this._service.repository.save(action);
 
         this._service.eventEmitter.emit(
-            [ Notification.name, NotificationType.Task ],
+            [ Notification.name, NotificationType.TASK ],
             action
         );
     }

@@ -1,6 +1,6 @@
 import { Action } from 'src/actions/entities/action.entity';
 import { BaseSimpleEvent } from 'src/actions/event/base-simple.event';
-import { reOrderItems } from 'src/common/utils/re-order-items.util';
+import { reorderItems } from 'src/common/utils/reorder-items.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { TaskCreateDto } from '../dto/task-create.dto';
 import { Task } from '../entities/task.entity';
@@ -49,7 +49,7 @@ export async function createEntity
 
 
     columnEntity.tasks.unshift(entity);
-    reOrderItems(columnEntity.tasks);
+    reorderItems(columnEntity.tasks);
     await service.repository.save(columnEntity.tasks);
 
 
@@ -58,7 +58,7 @@ export async function createEntity
         activeUser,
     };
     service.eventEmitter.emit(
-        [ Action.name, TaskPermissions.Create ],
+        [ Action.name, TaskPermissions.CREATE ],
         actionData
     );
 

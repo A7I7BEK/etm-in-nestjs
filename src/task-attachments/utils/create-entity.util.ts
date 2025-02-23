@@ -66,7 +66,7 @@ export async function createEntity
         activeUser,
     };
     service.eventEmitter.emit(
-        [ Action.name, TaskAttachmentPermissions.Create ],
+        [ Action.name, TaskAttachmentPermissions.CREATE ],
         actionData
     );
 

@@ -17,7 +17,7 @@ export class NotificationsController
 
 
     @Get()
-    @Permission(NotificationPermissions.Read)
+    @Permission(NotificationPermissions.READ)
     async findAll
         (
             @Query() queryDto: NotificationQueryDto,
@@ -34,7 +34,7 @@ export class NotificationsController
 
 
     @Get(':id')
-    @Permission(NotificationPermissions.Read)
+    @Permission(NotificationPermissions.READ)
     async findOne
         (
             @Param('id', ParseIntPipe) id: number,
@@ -52,7 +52,7 @@ export class NotificationsController
 
 
     @Post('seen')
-    @Permission(NotificationPermissions.Update)
+    @Permission(NotificationPermissions.UPDATE)
     async update
         (
             @Body() updateDto: NotificationUpdateDto,
@@ -64,7 +64,7 @@ export class NotificationsController
 
 
     @Delete('clear')
-    @Permission(NotificationPermissions.Delete)
+    @Permission(NotificationPermissions.DELETE)
     async remove
         (
             @Body() deleteDto: NotificationDeleteDto,

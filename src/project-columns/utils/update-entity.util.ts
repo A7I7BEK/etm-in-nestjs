@@ -48,7 +48,7 @@ export async function updateEntity
         activeUser,
     };
     service.eventEmitter.emit(
-        [ Action.name, ProjectColumnPermissions.Update ],
+        [ Action.name, ProjectColumnPermissions.UPDATE ],
         actionData
     );
 

@@ -15,7 +15,7 @@ export class ActionsController
 
 
     @Get()
-    @Permission(ActionPermissions.Read)
+    @Permission(ActionPermissions.READ)
     findAll
         (
             @Query() queryDto: ActionQueryDto,
@@ -27,7 +27,7 @@ export class ActionsController
 
 
     @Get(':id')
-    @Permission(ActionPermissions.Read)
+    @Permission(ActionPermissions.READ)
     findOne
         (
             @Param('id', ParseIntPipe) id: number,

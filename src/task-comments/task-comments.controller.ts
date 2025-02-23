@@ -18,7 +18,7 @@ export class TaskCommentsController
 
 
     @Post()
-    @Permission(TaskCommentPermissions.Create)
+    @Permission(TaskCommentPermissions.CREATE)
     async create
         (
             @Body() createDto: TaskCommentCreateDto,
@@ -31,7 +31,7 @@ export class TaskCommentsController
 
 
     @Get()
-    @Permission(TaskCommentPermissions.Read)
+    @Permission(TaskCommentPermissions.READ)
     async findAll
         (
             @Query() queryDto: TaskCommentQueryDto,
@@ -46,7 +46,7 @@ export class TaskCommentsController
 
 
     @Get(':id')
-    @Permission(TaskCommentPermissions.Read)
+    @Permission(TaskCommentPermissions.READ)
     async findOne
         (
             @Param('id', ParseIntPipe) id: number,
@@ -73,7 +73,7 @@ export class TaskCommentsController
 
 
     @Put(':id')
-    @Permission(TaskCommentPermissions.Update)
+    @Permission(TaskCommentPermissions.UPDATE)
     async update
         (
             @Param('id', ParseIntPipe) id: number,
@@ -87,7 +87,7 @@ export class TaskCommentsController
 
 
     @Delete(':id')
-    @Permission(TaskCommentPermissions.Delete)
+    @Permission(TaskCommentPermissions.DELETE)
     async remove
         (
             @Param('id', ParseIntPipe) id: number,

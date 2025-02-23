@@ -19,7 +19,7 @@ export class TaskDeadlineController
 
 
     @Post()
-    @Permission(TaskDeadlinePermissions.Create)
+    @Permission(TaskDeadlinePermissions.CREATE)
     async create
         (
             @Body() createDto: TaskDeadlineCreateDto,
@@ -32,7 +32,7 @@ export class TaskDeadlineController
 
 
     @Put()
-    @Permission(TaskDeadlinePermissions.Update)
+    @Permission(TaskDeadlinePermissions.UPDATE)
     async update
         (
             @Body() updateDto: TaskDeadlineUpdateDto,
@@ -45,7 +45,7 @@ export class TaskDeadlineController
 
 
     @Delete()
-    @Permission(TaskDeadlinePermissions.Delete)
+    @Permission(TaskDeadlinePermissions.DELETE)
     async remove
         (
             @Body() deleteDto: TaskDeadlineDeleteDto,

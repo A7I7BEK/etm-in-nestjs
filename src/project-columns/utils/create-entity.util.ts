@@ -43,7 +43,6 @@ export async function createEntity
 
     const entity = new ProjectColumn();
     entity.name = dto.name;
-    entity.codeName = dto.codeName;
     entity.ordering = projectEntity.columns.length;
     entity.project = { ...projectEntity };
     delete entity.project.columns;
@@ -55,7 +54,7 @@ export async function createEntity
         activeUser,
     };
     service.eventEmitter.emit(
-        [ Action.name, ProjectColumnPermissions.Create ],
+        [ Action.name, ProjectColumnPermissions.CREATE ],
         actionData
     );
 

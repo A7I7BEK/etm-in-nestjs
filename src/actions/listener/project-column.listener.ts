@@ -17,14 +17,14 @@ export class ProjectColumnListener
     ) { }
 
 
-    @OnEvent([ Action.name, ProjectColumnPermissions.Create ], { async: true })
+    @OnEvent([ Action.name, ProjectColumnPermissions.CREATE ], { async: true })
     async listenCreateEvent(data: BaseSimpleEvent<ProjectColumn>)
     {
         const { entity, activeUser } = data;
 
         const action = new Action();
         action.createdAt = new Date();
-        action.activityType = ProjectColumnPermissions.Create;
+        action.activityType = ProjectColumnPermissions.CREATE;
         action.project = entity.project;
         action.employee = await this._service.getEmployee(activeUser);
 
@@ -36,19 +36,19 @@ export class ProjectColumnListener
     }
 
 
-    @OnEvent([ Action.name, ProjectColumnPermissions.Update ], { async: true })
+    @OnEvent([ Action.name, ProjectColumnPermissions.UPDATE ], { async: true })
     async listenUpdateEvent(data: BaseDiffEvent<ProjectColumn>)
     {
         const { oldEntity, newEntity, activeUser } = data;
 
         const action = new Action();
         action.createdAt = new Date();
-        action.activityType = ProjectColumnPermissions.Update;
+        action.activityType = ProjectColumnPermissions.UPDATE;
         action.project = newEntity.project;
         action.employee = await this._service.getEmployee(activeUser);
 
         delete newEntity.project;
-        const structure = { name: 0, codeName: 0 };
+        const structure = { name: 0 };
         action.details = {
             column: newEntity,
             changes: detectChanges(oldEntity, newEntity, structure)
@@ -59,14 +59,14 @@ export class ProjectColumnListener
     }
 
 
-    @OnEvent([ Action.name, ProjectColumnPermissions.Delete ], { async: true })
+    @OnEvent([ Action.name, ProjectColumnPermissions.DELETE ], { async: true })
     async listenDeleteEvent(data: BaseSimpleEvent<ProjectColumn>)
     {
         const { entity, activeUser } = data;
 
         const action = new Action();
         action.createdAt = new Date();
-        action.activityType = ProjectColumnPermissions.Delete;
+        action.activityType = ProjectColumnPermissions.DELETE;
         action.project = entity.project;
         action.employee = await this._service.getEmployee(activeUser);
 
@@ -78,14 +78,14 @@ export class ProjectColumnListener
     }
 
 
-    @OnEvent([ Action.name, ProjectColumnPermissions.Move ], { async: true })
+    @OnEvent([ Action.name, ProjectColumnPermissions.MOVE ], { async: true })
     async listenMoveEvent(data: BaseDiffEvent<ProjectColumn>)
     {
         const { oldEntity, newEntity, activeUser } = data;
 
         const action = new Action();
         action.createdAt = new Date();
-        action.activityType = ProjectColumnPermissions.Move;
+        action.activityType = ProjectColumnPermissions.MOVE;
         action.project = newEntity.project;
         action.employee = await this._service.getEmployee(activeUser);
 

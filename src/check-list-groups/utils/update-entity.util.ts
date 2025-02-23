@@ -39,7 +39,7 @@ export async function updateEntity
         activeUser,
     };
     service.eventEmitter.emit(
-        [ Action.name, CheckListGroupPermissions.Update ],
+        [ Action.name, CheckListGroupPermissions.UPDATE ],
         actionData
     );
 

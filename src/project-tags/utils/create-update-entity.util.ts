@@ -57,7 +57,7 @@ export async function createUpdateEntity
             activeUser,
         };
         service.eventEmitter.emit(
-            [ Action.name, ProjectTagPermissions.Create ],
+            [ Action.name, ProjectTagPermissions.CREATE ],
             actionData
         );
     }
@@ -69,7 +69,7 @@ export async function createUpdateEntity
             activeUser,
         };
         service.eventEmitter.emit(
-            [ Action.name, ProjectTagPermissions.Update ],
+            [ Action.name, ProjectTagPermissions.UPDATE ],
             actionData
         );
     }

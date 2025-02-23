@@ -17,18 +17,18 @@ export class TaskMemberListener
     ) { }
 
 
-    @OnEvent([ Action.name, TaskMemberPermissions.Create ], { async: true })
+    @OnEvent([ Action.name, TaskMemberPermissions.CREATE ], { async: true })
     listenCreateEvent(data: BaseSimpleEvent<TaskMember>)
     {
-        this.handleAllEvents(data, TaskMemberPermissions.Create);
+        this.handleAllEvents(data, TaskMemberPermissions.CREATE);
         // Tom added member "AAA" into task "BBB"
     }
 
 
-    @OnEvent([ Action.name, TaskMemberPermissions.Delete ], { async: true })
+    @OnEvent([ Action.name, TaskMemberPermissions.DELETE ], { async: true })
     listenDeleteEvent(data: BaseSimpleEvent<TaskMember>)
     {
-        this.handleAllEvents(data, TaskMemberPermissions.Delete);
+        this.handleAllEvents(data, TaskMemberPermissions.DELETE);
         // Tom removed member "AAA" from task "BBB"
     }
 
@@ -53,7 +53,7 @@ export class TaskMemberListener
         await this._service.repository.save(action);
 
         this._service.eventEmitter.emit(
-            [ Notification.name, NotificationType.Task ],
+            [ Notification.name, NotificationType.TASK ],
             action
         );
     }

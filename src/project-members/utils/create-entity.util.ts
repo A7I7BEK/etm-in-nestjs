@@ -57,7 +57,7 @@ export async function createEntity(
         activeUser,
     };
     service.eventEmitter.emit(
-        [ Action.name, ProjectMemberPermissions.Create ],
+        [ Action.name, ProjectMemberPermissions.CREATE ],
         actionData
     );
 

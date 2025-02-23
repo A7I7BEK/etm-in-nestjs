@@ -17,30 +17,30 @@ export class CheckListItemListener
     ) { }
 
 
-    @OnEvent([ Action.name, CheckListItemPermissions.Create ], { async: true })
+    @OnEvent([ Action.name, CheckListItemPermissions.CREATE ], { async: true })
     listenCreateEvent(data: BaseSimpleEvent<CheckListItem>)
     {
-        this.handleCreateDelete(data, CheckListItemPermissions.Create);
+        this.handleCreateDelete(data, CheckListItemPermissions.CREATE);
         // Tom created checklist item "AAA" in task "BBB"
     }
 
 
-    @OnEvent([ Action.name, CheckListItemPermissions.Delete ], { async: true })
+    @OnEvent([ Action.name, CheckListItemPermissions.DELETE ], { async: true })
     listenDeleteEvent(data: BaseSimpleEvent<CheckListItem>)
     {
-        this.handleCreateDelete(data, CheckListItemPermissions.Delete);
+        this.handleCreateDelete(data, CheckListItemPermissions.DELETE);
         // Tom deleted checklist item "AAA" from task "BBB"
     }
 
 
-    @OnEvent([ Action.name, CheckListItemPermissions.Update ], { async: true })
+    @OnEvent([ Action.name, CheckListItemPermissions.UPDATE ], { async: true })
     async listenUpdateEvent(data: BaseDiffEvent<CheckListItem>)
     {
         const { oldEntity, newEntity, activeUser } = data;
 
         const action = new Action();
         action.createdAt = new Date();
-        action.activityType = CheckListItemPermissions.Update;
+        action.activityType = CheckListItemPermissions.UPDATE;
         action.task = newEntity.task;
         action.project = newEntity.task.project;
         action.employee = await this._service.getEmployee(activeUser);

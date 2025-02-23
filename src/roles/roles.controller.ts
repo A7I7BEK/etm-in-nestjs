@@ -18,7 +18,7 @@ export class RolesController
 
 
     @Post()
-    @Permission(RolePermissions.Create)
+    @Permission(RolePermissions.CREATE)
     async create
         (
             @Body() createDto: RoleCreateDto,
@@ -31,7 +31,7 @@ export class RolesController
 
 
     @Get()
-    @Permission(RolePermissions.Read)
+    @Permission(RolePermissions.READ)
     async findAll
         (
             @Query() queryDto: RoleQueryDto,
@@ -46,7 +46,7 @@ export class RolesController
 
 
     @Get(':id')
-    @Permission(RolePermissions.Read)
+    @Permission(RolePermissions.READ)
     async findOne
         (
             @Param('id', ParseIntPipe) id: number,
@@ -65,7 +65,7 @@ export class RolesController
 
 
     @Put(':id')
-    @Permission(RolePermissions.Update)
+    @Permission(RolePermissions.UPDATE)
     async update
         (
             @Param('id', ParseIntPipe) id: number,
@@ -79,7 +79,7 @@ export class RolesController
 
 
     @Delete(':id')
-    @Permission(RolePermissions.Delete)
+    @Permission(RolePermissions.DELETE)
     async remove
         (
             @Param('id', ParseIntPipe) id: number,
@@ -92,6 +92,7 @@ export class RolesController
 
 
     @Post('update-admins')
+    @Permission(RolePermissions.UPDATE_ADMINS)
     async updateAdminRoles
         (
             @ActiveUser() activeUser: ActiveUserData,

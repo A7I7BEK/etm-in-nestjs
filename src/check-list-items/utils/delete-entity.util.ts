@@ -41,7 +41,7 @@ export async function deleteEntity
         activeUser,
     };
     service.eventEmitter.emit(
-        [ Action.name, CheckListItemPermissions.Delete ],
+        [ Action.name, CheckListItemPermissions.DELETE ],
         actionData
     );
 

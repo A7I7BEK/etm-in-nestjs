@@ -34,7 +34,7 @@ export async function createUpdateEntity
             activeUser,
         );
         entity.createdAt = new Date();
-        commentPerm = TaskCommentPermissions.Create;
+        commentPerm = TaskCommentPermissions.CREATE;
     }
     else
     {
@@ -49,7 +49,7 @@ export async function createUpdateEntity
             },
             activeUser,
         );
-        commentPerm = TaskCommentPermissions.Update;
+        commentPerm = TaskCommentPermissions.UPDATE;
     }
 
 

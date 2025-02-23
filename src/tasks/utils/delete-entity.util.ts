@@ -1,6 +1,6 @@
 import { Action } from 'src/actions/entities/action.entity';
 import { BaseSimpleEvent } from 'src/actions/event/base-simple.event';
-import { reOrderItems } from 'src/common/utils/re-order-items.util';
+import { reorderItems } from 'src/common/utils/reorder-items.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { Task } from '../entities/task.entity';
 import { TaskPermissions } from '../enums/task-permissions.enum';
@@ -36,7 +36,7 @@ export async function deleteEntity
 
 
     const taskList = entity.column.tasks.filter(a => a.id !== entity.id);
-    reOrderItems(taskList);
+    reorderItems(taskList);
     await service.repository.save(taskList);
     await service.repository.remove(entity);
 
@@ -51,7 +51,7 @@ export async function deleteEntity
         activeUser,
     };
     service.eventEmitter.emit(
-        [ Action.name, TaskPermissions.Delete ],
+        [ Action.name, TaskPermissions.DELETE ],
         actionData
     );
 

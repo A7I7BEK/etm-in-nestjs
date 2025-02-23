@@ -17,30 +17,30 @@ export class ProjectTagListener
     ) { }
 
 
-    @OnEvent([ Action.name, ProjectTagPermissions.Create ], { async: true })
+    @OnEvent([ Action.name, ProjectTagPermissions.CREATE ], { async: true })
     async listenCreateEvent(data: BaseSimpleEvent<ProjectTag>)
     {
-        this.handleCreateDelete(data, ProjectTagPermissions.Create);
+        this.handleCreateDelete(data, ProjectTagPermissions.CREATE);
         // Tom created project tag "AAA"
     }
 
 
-    @OnEvent([ Action.name, ProjectTagPermissions.Delete ], { async: true })
+    @OnEvent([ Action.name, ProjectTagPermissions.DELETE ], { async: true })
     async listenDeleteEvent(data: BaseSimpleEvent<ProjectTag>)
     {
-        this.handleCreateDelete(data, ProjectTagPermissions.Delete);
+        this.handleCreateDelete(data, ProjectTagPermissions.DELETE);
         // Tom deleted project tag "AAA"
     }
 
 
-    @OnEvent([ Action.name, ProjectTagPermissions.Update ], { async: true })
+    @OnEvent([ Action.name, ProjectTagPermissions.UPDATE ], { async: true })
     async listenUpdateEvent(data: BaseDiffEvent<ProjectTag>)
     {
         const { oldEntity, newEntity, activeUser } = data;
 
         const action = new Action();
         action.createdAt = new Date();
-        action.activityType = ProjectTagPermissions.Update;
+        action.activityType = ProjectTagPermissions.UPDATE;
         action.project = newEntity.project;
         action.employee = await this._service.getEmployee(activeUser);
 

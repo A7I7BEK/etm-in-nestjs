@@ -18,7 +18,7 @@ export class TaskTagsController
 
 
     @Post()
-    @Permission(TaskTagPermissions.Create)
+    @Permission(TaskTagPermissions.CREATE)
     async create
         (
             @Body() createDto: TaskTagCreateDto,
@@ -31,7 +31,7 @@ export class TaskTagsController
 
 
     @Get()
-    @Permission(TaskTagPermissions.Read)
+    @Permission(TaskTagPermissions.READ)
     async findAll
         (
             @Query() queryDto: TaskTagQueryDto,
@@ -46,7 +46,7 @@ export class TaskTagsController
 
 
     @Get(':id')
-    @Permission(TaskTagPermissions.Read)
+    @Permission(TaskTagPermissions.READ)
     async findOne
         (
             @Param('id', ParseIntPipe) id: number,
@@ -68,7 +68,7 @@ export class TaskTagsController
 
 
     @Delete()
-    @Permission(TaskTagPermissions.Delete)
+    @Permission(TaskTagPermissions.DELETE)
     async remove
         (
             @Body() deleteDto: TaskTagDeleteDto,

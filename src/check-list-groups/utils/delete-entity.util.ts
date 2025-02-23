@@ -32,7 +32,7 @@ export async function deleteEntity
         activeUser,
     };
     service.eventEmitter.emit(
-        [ Action.name, CheckListGroupPermissions.Delete ],
+        [ Action.name, CheckListGroupPermissions.DELETE ],
         actionData
     );
 

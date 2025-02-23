@@ -17,26 +17,26 @@ export class TaskCommentListener
     ) { }
 
 
-    @OnEvent([ Action.name, TaskCommentPermissions.Create ], { async: true })
+    @OnEvent([ Action.name, TaskCommentPermissions.CREATE ], { async: true })
     listenCreateEvent(data: BaseSimpleEvent<TaskComment>)
     {
-        this.handleAllEvents(data, TaskCommentPermissions.Create);
+        this.handleAllEvents(data, TaskCommentPermissions.CREATE);
         // Tom commented in task "AAA" at "DD-MM-YYYY HH:mm:ss" (updatedAt)
     }
 
 
-    @OnEvent([ Action.name, TaskCommentPermissions.Update ], { async: true })
+    @OnEvent([ Action.name, TaskCommentPermissions.UPDATE ], { async: true })
     listenUpdateEvent(data: BaseSimpleEvent<TaskComment>)
     {
-        this.handleAllEvents(data, TaskCommentPermissions.Update);
+        this.handleAllEvents(data, TaskCommentPermissions.UPDATE);
         // Tom updated a comment in task "AAA" at "DD-MM-YYYY HH:mm:ss" (updatedAt)
     }
 
 
-    @OnEvent([ Action.name, TaskCommentPermissions.Delete ], { async: true })
+    @OnEvent([ Action.name, TaskCommentPermissions.DELETE ], { async: true })
     listenDeleteEvent(data: BaseSimpleEvent<TaskComment>)
     {
-        this.handleAllEvents(data, TaskCommentPermissions.Delete);
+        this.handleAllEvents(data, TaskCommentPermissions.DELETE);
         // Tom deleted a comment in task "AAA" at "DD-MM-YYYY HH:mm:ss" (updatedAt)
     }
 
@@ -62,7 +62,7 @@ export class TaskCommentListener
         await this._service.repository.save(action);
 
         this._service.eventEmitter.emit(
-            [ Notification.name, NotificationType.Comment ],
+            [ Notification.name, NotificationType.COMMENT ],
             action
         );
     }
