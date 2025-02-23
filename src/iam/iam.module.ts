@@ -25,7 +25,7 @@ import { HashingService } from './hashing/hashing.service';
     imports: [
         TypeOrmModule.forFeature([ ForgotPassword ]),
         JwtModule.registerAsync({
-            global: true, // BINGO
+            global: true, // BINGO: JwtModule is accessible globally now
             useFactory: async () => ({
                 secret: appConfig().jwt.accessTokenSecret,
                 signOptions: {

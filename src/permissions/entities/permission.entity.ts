@@ -7,7 +7,7 @@ export class Permission
     id: number;
 
     @Column()
-    name: string;
+    name: string; // can be used in the future: e.g. 'Create User'
 
     @Column({ unique: true })
     codeName: string;

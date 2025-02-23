@@ -10,12 +10,19 @@ export async function checkUniqueValueUtil
         dto: UserCheckUniqueValueDto,
     )
 {
-    // BINGO
+    /**
+     * BINGO
+     * - There is a bug when retrieving record
+     * using undefined or null values. Typeorm cannot
+     * evaluate these values and simply returns all
+     * records in this case.
+     * - Using 'Equal' operator solves this problem
+     */
     const foundUsers = await service.repository.find({
         where: [
-            { userName: Equal(dto.userName) }, // BINGO
-            { email: Equal(dto.email) }, // BINGO
-            { phoneNumber: Equal(dto.phoneNumber) }, // BINGO
+            { userName: Equal(dto.userName) },
+            { email: Equal(dto.email) },
+            { phoneNumber: Equal(dto.phoneNumber) },
         ]
     });
 

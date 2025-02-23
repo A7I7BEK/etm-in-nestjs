@@ -16,7 +16,7 @@ export function loadQueryBuilder(
 
     queryBuilder.leftJoinAndSelect(`${pMember}.employee`, empl);
     queryBuilder.leftJoinAndSelect(`${empl}.user`, user);
-    queryBuilder.select([ // BINGO
+    queryBuilder.select([ // BINGO: select only needed fields
         `${pMember}`, // All fields from ProjectMember
         `${empl}`, // All fields from Employee
         `${user}.id`,
@@ -24,8 +24,8 @@ export function loadQueryBuilder(
         `${user}.email`,
         `${user}.phoneNumber`,
     ]);
-    queryBuilder.leftJoin(`${pMember}.project`, proj); // BINGO
-    queryBuilder.leftJoin(`${proj}.organization`, org); // BINGO
+    queryBuilder.leftJoin(`${pMember}.project`, proj); // BINGO: join but not select
+    queryBuilder.leftJoin(`${proj}.organization`, org); // BINGO: join but not select
     queryBuilder.skip(queryDto.skip);
     queryBuilder.take(queryDto.pageSize);
     queryBuilder.orderBy(pMember + '.' + queryDto.sortBy, queryDto.order);

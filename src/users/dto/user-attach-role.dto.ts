@@ -6,7 +6,7 @@ export class UserAttachRoleDto
     @IsInt()
     userId: number;
 
-    @Min(1, { each: true }) // BINGO
-    @IsInt({ each: true }) // BINGO
+    @Min(1, { each: true }) // BINGO: simplify getting ids
+    @IsInt({ each: true }) // BINGO: simplify getting ids
     roleIds: number[];
 }

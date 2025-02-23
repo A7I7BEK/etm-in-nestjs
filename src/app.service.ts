@@ -28,7 +28,7 @@ export class AppService implements OnApplicationBootstrap
                 .createQueryBuilder()
                 .insert()
                 .values(PERMISSION_LIST)
-                .orIgnore() // BINGO
+                .orIgnore() // BINGO: ignore if the same value exists in the DB
                 .execute();
         }
         catch (error)

@@ -35,7 +35,7 @@ export async function moveEntity
         },
         activeUser,
     );
-    const oldEntity = structuredClone(entity); // BINGO
+    const oldEntity = structuredClone(entity); // BINGO: best way to deep clone (types are saved)
     delete oldEntity.column.tasks;
 
 

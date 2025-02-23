@@ -1,6 +1,6 @@
 import { UserMark } from './user-mark.interface';
 
-// BINGO
+// BINGO: constants are ready to use
 
 export const USER_MARK_REGISTER_NEW: UserMark = {
     registered: true,

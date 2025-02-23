@@ -45,7 +45,7 @@ export async function createEntity
     );
 
 
-    if (!groupEntity.employees.find(a => a.id === managerEntity.id))
+    if (!groupEntity.employees.find(a => a.id === managerEntity.id)) // BINGO: check if entity doesn't exist (recommended)
     {
         groupEntity.employees.push(managerEntity);
     }

@@ -9,7 +9,7 @@ import { ProjectColumnsService } from './project-columns.service';
 @Module({
     imports: [
         TypeOrmModule.forFeature([ ProjectColumn ]),
-        forwardRef(() => ProjectsModule), // BINGO
+        forwardRef(() => ProjectsModule), // BINGO: Circular dependency problem solved
     ],
     exports: [ ProjectColumnsService ],
     controllers: [ ProjectColumnsController ],

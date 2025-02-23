@@ -28,7 +28,7 @@ export async function createEntity
     entity.name = file.filename;
     entity.filename = file.filename;
     entity.mimetype = file.mimetype;
-    entity.size = file.buffer.length; // BINGO
+    entity.size = file.buffer.length; // BINGO: get file size in bytes
     entity.sizeCalculated = calculateFileSize(file.buffer.length);
     entity.createdAt = new Date();
     entity.updatedAt = new Date();

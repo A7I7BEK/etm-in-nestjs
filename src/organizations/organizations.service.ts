@@ -74,7 +74,7 @@ export class OrganizationsService
     }
 
 
-    async findOneActiveUser // BINGO
+    async findOneActiveUser // BINGO: helps to keep everybody in their own Organization
         (
             options: FindOneOptions<Organization>,
             activeUser: ActiveUserData,

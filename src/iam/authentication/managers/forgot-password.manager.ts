@@ -28,8 +28,8 @@ export class ForgotPasswordManager
     async forgotPasswordSend(forgotPasswordSendDto: ForgotPasswordSendDto)
     {
         const { contactEmailOrPhone: contact } = forgotPasswordSendDto;
-        const options: Partial<OtpSendingOptions> = {}; // BINGO
-        const userFindOptions: FindOptionsWhere<User> = {}; // BINGO
+        const options: Partial<OtpSendingOptions> = {}; // BINGO: special type
+        const userFindOptions: FindOptionsWhere<User> = {}; // BINGO: use in-built typeorm type
 
         if (Number(contact))
         {

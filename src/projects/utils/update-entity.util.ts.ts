@@ -57,7 +57,7 @@ export async function updateEntity
     );
 
 
-    if (groupEntity.employees.every(a => a.id !== managerEntity.id)) // BINGO
+    if (groupEntity.employees.every(a => a.id !== managerEntity.id)) // BINGO: check if entity doesn't exist (nice but not recommended)
     {
         groupEntity.employees.push(managerEntity);
     }

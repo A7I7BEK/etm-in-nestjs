@@ -3,7 +3,7 @@ import { Employee } from '../entities/employee.entity';
 /**
  * temporary for this project, must not exist
  */
-export function modifyEntityForFront(entity: Employee) // BINGO
+export function modifyEntityForFront(entity: Employee) // BINGO: adapt backend for frontend
 {
     const { user } = entity;
     const { organization, roles } = user || {};

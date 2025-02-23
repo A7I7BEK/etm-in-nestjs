@@ -23,7 +23,7 @@ export class ProjectTagsService
     constructor (
         @InjectRepository(ProjectTag)
         public readonly repository: Repository<ProjectTag>,
-        @Inject(forwardRef(() => ProjectsService)) // BINGO
+        @Inject(forwardRef(() => ProjectsService)) // BINGO: Circular dependency problem solved
         public readonly projectsService: ProjectsService,
         public readonly eventEmitter: EventEmitter2,
     ) { }

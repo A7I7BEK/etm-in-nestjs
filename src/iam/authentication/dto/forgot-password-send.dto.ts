@@ -3,6 +3,6 @@ import { EmailOrPhoneConstraint } from 'src/common/custom-class-validator/email-
 
 export class ForgotPasswordSendDto
 {
-    @Validate(EmailOrPhoneConstraint) // BINGO
+    @Validate(EmailOrPhoneConstraint) // BINGO: use custom validator
     contactEmailOrPhone: string;
 }

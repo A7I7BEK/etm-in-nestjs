@@ -35,11 +35,11 @@ export class ProjectsService
         public readonly organizationsService: OrganizationsService,
         public readonly employeesService: EmployeesService,
         public readonly groupsService: GroupsService,
-        @Inject(forwardRef(() => ProjectColumnsService)) // BINGO
+        @Inject(forwardRef(() => ProjectColumnsService)) // BINGO: Circular dependency problem solved
         public readonly projectColumnsService: ProjectColumnsService,
-        @Inject(forwardRef(() => ProjectMembersService)) // BINGO
+        @Inject(forwardRef(() => ProjectMembersService)) // BINGO: Circular dependency problem solved
         public readonly projectMembersService: ProjectMembersService,
-        @Inject(forwardRef(() => ProjectTagsService)) // BINGO
+        @Inject(forwardRef(() => ProjectTagsService)) // BINGO: Circular dependency problem solved
         public readonly projectTagsService: ProjectTagsService,
         public readonly resourceService: ResourceService,
         public readonly actionsService: ActionsService,

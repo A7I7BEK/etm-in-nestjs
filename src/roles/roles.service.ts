@@ -53,7 +53,7 @@ export class RolesService
                 }
             };
 
-            setNestedOptions(options ??= {}, orgOption); // BINGO
+            setNestedOptions(options ??= {}, orgOption); // BINGO: inject default object deep into upcoming object
         }
 
         return this.repository.find(options);
@@ -95,7 +95,7 @@ export class RolesService
                 }
             };
 
-            setNestedOptions(options ??= {}, orgOption); // BINGO
+            setNestedOptions(options ??= {}, orgOption); // BINGO: inject default object deep into upcoming object
         }
 
         const entity = await this.repository.findOne(options);

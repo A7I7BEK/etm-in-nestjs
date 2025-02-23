@@ -8,7 +8,7 @@ import { ProjectTagsService } from './project-tags.service';
 @Module({
     imports: [
         TypeOrmModule.forFeature([ ProjectTag ]),
-        forwardRef(() => ProjectsModule), // BINGO
+        forwardRef(() => ProjectsModule), // BINGO: Circular dependency problem solved
     ],
     exports: [ ProjectTagsService ],
     controllers: [ ProjectTagsController ],

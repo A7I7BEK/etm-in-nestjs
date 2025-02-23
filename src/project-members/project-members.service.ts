@@ -24,7 +24,7 @@ export class ProjectMembersService
     constructor (
         @InjectRepository(ProjectMember)
         public readonly repository: Repository<ProjectMember>,
-        @Inject(forwardRef(() => ProjectsService)) // BINGO
+        @Inject(forwardRef(() => ProjectsService)) // BINGO: Circular dependency problem solved
         public readonly projectsService: ProjectsService,
         public readonly employeesService: EmployeesService,
         public readonly eventEmitter: EventEmitter2,

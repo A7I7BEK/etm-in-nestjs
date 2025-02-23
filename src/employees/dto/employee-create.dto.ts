@@ -22,7 +22,7 @@ export class EmployeeCreateDto
     birthDate?: Date;
 
     @IsOptional()
-    @ValidateNested() // BINGO
-    @Type(() => ObjectIdDto) // BINGO
-    resourceFile?: ObjectIdDto; // BINGO
+    @ValidateNested() // BINGO: validate nested DTO
+    @Type(() => ObjectIdDto) // BINGO: transform nested DTO
+    resourceFile?: ObjectIdDto; // BINGO: nested DTO
 }

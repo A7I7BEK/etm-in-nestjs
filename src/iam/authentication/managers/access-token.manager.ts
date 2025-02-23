@@ -164,7 +164,12 @@ export class AccessTokenManager
         systemAdmin = false,
     )
     {
-        // BINGO
+        /**
+         * BINGO
+         * - Get all unique permission from roles array
+         * - Combine all permission from all roles and
+         * get rid of duplicates (get unique ones)
+         */
         const permissionCodeNames = [
             ...new Set(
                 userRoles

@@ -18,7 +18,7 @@ export async function createUpdateEntityPart
     let entity = new Role();
 
 
-    if (dto.constructor.name === RoleUpdateDto.name) // BINGO
+    if (dto.constructor.name === RoleUpdateDto.name) // BINGO: best way to compare classes
     {
         entity = await service.findOne(
             {
@@ -44,7 +44,7 @@ export async function createUpdateEntityPart
 
 
     entity.permissions = await service.permissionsService.repository.find({
-        where: { id: In(dto.permissionIds) } // BINGO
+        where: { id: In(dto.permissionIds) } // BINGO: find multiple entities using In Operator
     });
 
 

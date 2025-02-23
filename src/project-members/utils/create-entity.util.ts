@@ -28,7 +28,7 @@ export async function createEntity(
 
 
     const employeeIdsFiltered = dto.employeeIds.filter(
-        id => projectEntity.members.every(a => a.employee.id !== id) // BINGO
+        id => projectEntity.members.every(a => a.employee.id !== id)
     );
     const employeeEntities = await service.employeesService.findAll(
         {

@@ -9,7 +9,7 @@ import { ProjectMembersService } from './project-members.service';
 @Module({
     imports: [
         TypeOrmModule.forFeature([ ProjectMember ]),
-        forwardRef(() => ProjectsModule), // BINGO
+        forwardRef(() => ProjectsModule), // BINGO: Circular dependency problem solved
         EmployeesModule,
     ],
     exports: [ ProjectMembersService ],

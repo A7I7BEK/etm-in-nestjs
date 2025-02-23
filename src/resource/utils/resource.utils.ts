@@ -18,7 +18,7 @@ import
 } from './resource.constants';
 
 
-// BINGO
+// BINGO: generate unique file name using dateTime and random numbers
 export function generateFilename(file: Express.Multer.File)
 {
     const dateTimeSuffix = new Date().toISOString().replace(/[-:.Z]/g, '').replace('T', '_');
@@ -63,7 +63,7 @@ export function getDestination(file: Express.Multer.File)
 }
 
 
-// BINGO
+// BINGO: generate file path based on file type
 export function generateFilePath(file: Express.Multer.File)
 {
     const destination = getDestination(file);
@@ -74,13 +74,13 @@ export function generateFilePath(file: Express.Multer.File)
     }
 
     const filename = generateFilename(file);
-    const filePath = path.posix.join(destination, filename); // BINGO
+    const filePath = path.posix.join(destination, filename); // BINGO: use Linux based path, not Windows based
 
     return { filePath, filename };
 }
 
 
-// BINGO
+// BINGO: calculate readable file size
 export function calculateFileSize(size: number)
 {
     const units = [ 'B', 'KB', 'MB', 'GB', 'TB' ];

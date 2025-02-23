@@ -13,7 +13,7 @@ import { wsEmitOneColumn } from './ws-emit-one-column.util';
 
 export async function moveEntity
     (
-        service: ProjectColumnsService, // BINGO
+        service: ProjectColumnsService, // BINGO: Parameter service got from outside
         moveDto: ProjectColumnMoveDto,
         activeUser: ActiveUserData,
     )

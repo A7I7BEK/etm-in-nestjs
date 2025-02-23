@@ -3,7 +3,7 @@ import { IsEnum, IsInt, IsOptional, Min } from 'class-validator';
 import { BaseQueryDto } from 'src/common/dto/base-query.dto';
 import { RoleProperties } from '../enum/role-properties.enum';
 
-// BINGO
+// BINGO: extend and customize abstract class
 export class RoleQueryDto extends BaseQueryDto<RoleProperties>
 {
     @IsOptional()

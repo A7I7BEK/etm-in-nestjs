@@ -1,6 +1,6 @@
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { UserChangeLanguageDto } from '../dto/user-change-language.dto';
-import { Language } from '../language/language.enum';
+import { LanguageKey } from '../language/language.enum';
 import { UsersService } from '../users.service';
 
 
@@ -19,12 +19,15 @@ export async function changeLanguageUtil
     );
 
 
-    // BINGO
-    const languageName = Object.keys(Language).find(key => Language[ key ] === dto.langCode) as (keyof typeof Language);
+    /**
+     * Old Method
+     * BINGO: get key name using value
+     */
+    // const languageName = Object.keys(Language).find(key => Language[ key ] === dto.langCode) as (keyof typeof Language);
 
 
     entity.language.code = dto.langCode;
-    entity.language.name = languageName;
+    entity.language.name = LanguageKey[ dto.langCode ]; // BINGO: get key name using value
 
 
     return service.repository.save(entity);

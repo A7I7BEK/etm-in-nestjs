@@ -25,10 +25,10 @@ export class User // ADVICE: in the future, merge with Employee
     phoneNumber: string;
 
     @Column('json')
-    marks: UserMark; // BINGO
+    marks: UserMark; // BINGO: special type
 
-    @Column({ default: LANGUAGE_DEFAULT, type: 'json' }) // BINGO
-    language: ILanguage;
+    @Column({ type: 'json', default: LANGUAGE_DEFAULT }) // BINGO: set default
+    language: ILanguage; // BINGO: special type
 
     @JoinTable()
     @ManyToMany(type => Role, a => a.users)

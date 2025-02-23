@@ -18,9 +18,9 @@ import { ProjectsService } from './projects.service';
         OrganizationsModule,
         EmployeesModule,
         GroupsModule,
-        forwardRef(() => ProjectColumnsModule), // BINGO
-        forwardRef(() => ProjectMembersModule), // BINGO
-        forwardRef(() => ProjectTagsModule), // BINGO
+        forwardRef(() => ProjectColumnsModule), // BINGO: Circular dependency problem solved
+        forwardRef(() => ProjectMembersModule), // BINGO: Circular dependency problem solved
+        forwardRef(() => ProjectTagsModule), // BINGO: Circular dependency problem solved
         ResourceModule,
         ActionsModule,
     ],

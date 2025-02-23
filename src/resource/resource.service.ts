@@ -64,7 +64,7 @@ export class ResourceService
     }
 
 
-    uploadSimple // BINGO
+    uploadSimple // BINGO: simplified upload function for later use
         (
             file: Express.Multer.File,
             activeUser: ActiveUserData,
@@ -80,7 +80,7 @@ export class ResourceService
             activeUser: ActiveUserData,
         )
     {
-        return Promise.all(files.map(file => this.uploadSimple(file, activeUser))); // BINGO
+        return Promise.all(files.map(file => this.uploadSimple(file, activeUser))); // BINGO: simplified upload function usage
     }
 
 

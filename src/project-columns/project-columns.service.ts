@@ -21,7 +21,7 @@ export class ProjectColumnsService
     constructor (
         @InjectRepository(ProjectColumn)
         public readonly repository: Repository<ProjectColumn>,
-        @Inject(forwardRef(() => ProjectsService)) // BINGO
+        @Inject(forwardRef(() => ProjectsService)) // BINGO: Circular dependency problem solved
         public readonly projectsService: ProjectsService,
         public readonly columnsGateway: ProjectColumnsGateway,
         public readonly eventEmitter: EventEmitter2,
@@ -112,7 +112,7 @@ export class ProjectColumnsService
         )
     {
         return moveEntity(
-            this, // BINGO
+            this, // BINGO: the service can be passed as an Argument
             moveDto,
             activeUser,
         );
