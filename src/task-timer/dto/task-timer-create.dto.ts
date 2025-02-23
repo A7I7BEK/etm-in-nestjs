@@ -8,5 +8,5 @@ export class TaskTimerCreateDto
     taskId: number;
 
     @IsEnum(TaskTimerStatus)
-    entryTypeCode: TaskTimerStatus;
+    timerStatus: TaskTimerStatus;
 }

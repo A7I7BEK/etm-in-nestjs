@@ -18,13 +18,13 @@ export async function startEntity
         activeUser: ActiveUserData,
     )
 {
-    if (taskEntity.timeEntryType === TaskTimerStatus.START)
+    if (taskEntity.timerStatus === TaskTimerStatus.START)
     {
         throw new ConflictException(`${TaskTimer.name} already started`);
     }
 
 
-    taskEntity.timeEntryType = TaskTimerStatus.START;
+    taskEntity.timerStatus = TaskTimerStatus.START;
     await service.tasksService.repository.save(taskEntity);
 
 

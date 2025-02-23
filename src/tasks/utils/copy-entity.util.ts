@@ -51,7 +51,7 @@ export async function copyEntity
     delete entity.id;
     delete entity.startDate;
     delete entity.endDate;
-    delete entity.timeEntryType;
+    delete entity.timerStatus;
     delete entity.totalTimeSpent;
 
     entity.name = copyDto.name;

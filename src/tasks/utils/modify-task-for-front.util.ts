@@ -14,12 +14,6 @@ export function modifyTaskForFront(entity: Task)
     calculateTaskStatus(entity);
 
 
-    Object.assign(entity, {
-        startAt: entity.createdAt,
-        deadLine: entity.endDate,
-    });
-
-
     if (level)
     {
         Object.assign(entity, {

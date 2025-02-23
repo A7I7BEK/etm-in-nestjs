@@ -54,7 +54,7 @@ export class Task
         enum: TaskTimerStatus,
         default: TaskTimerStatus.STOP,
     })
-    timeEntryType: TaskTimerStatus;
+    timerStatus: TaskTimerStatus;
 
     @Column({ type: 'integer', default: 0 })
     totalTimeSpent: number;

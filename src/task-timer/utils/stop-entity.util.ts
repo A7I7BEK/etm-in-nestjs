@@ -18,7 +18,7 @@ export async function stopEntity
         activeUser: ActiveUserData,
     )
 {
-    if (taskEntity.timeEntryType === TaskTimerStatus.STOP)
+    if (taskEntity.timerStatus === TaskTimerStatus.STOP)
     {
         throw new ConflictException(`${TaskTimer.name} already stopped`);
     }
@@ -47,7 +47,7 @@ export async function stopEntity
 
 
     taskEntity.totalTimeSpent += timeSpent;
-    taskEntity.timeEntryType = TaskTimerStatus.STOP;
+    taskEntity.timerStatus = TaskTimerStatus.STOP;
     await service.tasksService.repository.save(taskEntity);
 
 

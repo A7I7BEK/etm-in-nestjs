@@ -54,11 +54,11 @@ export class TaskTimerService
             activeUser,
         );
 
-        if (createDto.entryTypeCode === TaskTimerStatus.START)
+        if (createDto.timerStatus === TaskTimerStatus.START)
         {
             return startEntity(this, taskEntity, employeeEntity, activeUser);
         }
-        else if (createDto.entryTypeCode === TaskTimerStatus.STOP)
+        else if (createDto.timerStatus === TaskTimerStatus.STOP)
         {
             return stopEntity(this, taskEntity, employeeEntity, activeUser);
         }

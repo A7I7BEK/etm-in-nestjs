@@ -29,7 +29,7 @@ export class TaskQueryDto extends BaseQueryDto<TaskProperties>
     @IsOptional()
     @IsDate()
     @Type(() => Date)
-    deadLine?: Date;
+    endDate?: Date;
 
     @IsOptional()
     @IsBoolean()

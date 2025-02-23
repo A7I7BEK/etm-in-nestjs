@@ -13,5 +13,5 @@ export class TaskDeadlineCreateDto
 
     @IsDate()
     @Type(() => Date)
-    deadLine: Date;
+    endDate: Date;
 }

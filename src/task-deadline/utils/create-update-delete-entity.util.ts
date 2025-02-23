@@ -43,7 +43,7 @@ export async function createUpdateDeleteEntity
         {
             taskEntity.startDate = null;
         }
-        if (dto.deadLine)
+        if (dto.endDate)
         {
             taskEntity.endDate = null;
         }
@@ -54,7 +54,7 @@ export async function createUpdateDeleteEntity
     else if (dto instanceof TaskDeadlineUpdateDto)
     {
         taskEntity.startDate = dto.startDate;
-        taskEntity.endDate = dto.deadLine;
+        taskEntity.endDate = dto.endDate;
 
         entity.action = TaskDeadlinePermissions.UPDATE;
         entity.comment = dto.changesComment;
@@ -62,7 +62,7 @@ export async function createUpdateDeleteEntity
     else
     {
         taskEntity.startDate = dto.startDate;
-        taskEntity.endDate = dto.deadLine;
+        taskEntity.endDate = dto.endDate;
 
         entity.action = TaskDeadlinePermissions.CREATE;
         entity.comment = '';

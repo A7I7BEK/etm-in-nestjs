@@ -9,7 +9,7 @@ export enum TaskProperties
     END_DATE = 'endDate',
     LEVEL = 'level',
     PRIORITY = 'priority',
-    TIME_ENTRY_TYPE = 'timeEntryType',
+    TIMER_STATUS = 'timerStatus',
     TOTAL_TIME_SPENT = 'totalTimeSpent',
     COLUMN = 'column',
     PROJECT = 'project',
