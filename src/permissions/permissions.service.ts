@@ -2,10 +2,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
-import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
-import { PermissionCreateDto } from './dto/permission-create.dto';
+import { OrganizationPermissions } from 'src/organizations/enums/organization-permissions.enum';
+import { ReportPermissions } from 'src/reports/enums/report-permissions.enum';
+import { RolePermissions } from 'src/roles/enum/role-permissions.enum';
+import { Equal, FindOneOptions, ILike, Not, Or, Repository } from 'typeorm';
 import { PermissionQueryDto } from './dto/permission-query.dto';
-import { PermissionUpdateDto } from './dto/permission-update.dto';
 import { Permission } from './entities/permission.entity';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
 
@@ -16,27 +17,6 @@ export class PermissionsService
         @InjectRepository(Permission)
         public readonly repository: Repository<Permission>,
     ) { }
-
-
-    create
-        (
-            createDto: PermissionCreateDto,
-        )
-    {
-        const entity = this.repository.create({
-            ...createDto
-        });
-        return this.repository.save(entity);
-    }
-
-
-    findAll
-        (
-            options: FindManyOptions<Permission>,
-        )
-    {
-        return this.repository.find(options);
-    }
 
 
     async findAllWithFilters
@@ -50,7 +30,7 @@ export class PermissionsService
         );
 
         const [ data, total ] = await loadedQueryBuilder.getManyAndCount();
-        const paginationMeta = new PaginationMeta(queryDto.page, queryDto.perPage, total);
+        const paginationMeta = new PaginationMeta(queryDto.page, queryDto.pageSize, total);
 
         return new Pagination<Permission>(data, paginationMeta);
     }
@@ -72,26 +52,17 @@ export class PermissionsService
     }
 
 
-    async update
-        (
-            id: number,
-            updateDto: PermissionUpdateDto,
-        )
+    findAllForAdminRole()
     {
-        const entity = await this.findOne({ where: { id } });
+        const [ organizationWord ] = OrganizationPermissions.CREATE.split('_');
 
-        Object.assign(entity, updateDto);
-
-        return this.repository.save(entity);
-    }
-
-
-    async remove
-        (
-            id: number,
-        )
-    {
-        const entity = await this.findOne({ where: { id } });
-        return this.repository.remove(entity);
+        // BINGO: exclude permissions that are not needed for the admin role
+        return this.repository.findBy({
+            codeName: Not(Or(
+                ILike(`${organizationWord}%`),
+                Equal(RolePermissions.UPDATE_ADMINS.toString()),
+                Equal(ReportPermissions.CHART_TRELLO.toString()),
+            )),
+        });
     }
 }

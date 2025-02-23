@@ -6,16 +6,14 @@ import { EmployeesService } from 'src/employees/employees.service';
 import { Employee } from 'src/employees/entities/employee.entity';
 import { OneTimePasswordService } from 'src/one-time-password/one-time-password.service';
 import { Organization } from 'src/organizations/entities/organization.entity';
-import { OrganizationPermissions } from 'src/organizations/enums/organization-permissions.enum';
 import { OrganizationsService } from 'src/organizations/organizations.service';
-import { PermissionPermissions } from 'src/permissions/enums/permission-permissions.enum';
 import { PermissionsService } from 'src/permissions/permissions.service';
 import { Role } from 'src/roles/entity/role.entity';
 import { RolesService } from 'src/roles/roles.service';
 import { User } from 'src/users/entities/user.entity';
 import { USER_MARK_REGISTER_CONFIRMED, USER_MARK_REGISTER_NEW } from 'src/users/marks/user-mark.constants';
 import { UsersService } from 'src/users/users.service';
-import { And, Equal, ILike, Not } from 'typeorm';
+import { Equal } from 'typeorm';
 import { PermissionType } from '../../authorization/permission.constants';
 import { HashingService } from '../../hashing/hashing.service';
 import { ActiveUserData } from '../../interfaces/active-user-data.interface';
@@ -59,26 +57,14 @@ export class AccessTokenManager
         });
 
 
-        const [ organizationWord ] = OrganizationPermissions.Create.split('_');
-        const adminPermissions = await this.permissionsService.repository.findBy({
-            name: Not(ILike(`${organizationWord}%`)),
-            codeName: And(
-                Not(Equal(PermissionPermissions.Create)),
-                Not(Equal(PermissionPermissions.Update)),
-                Not(Equal(PermissionPermissions.Delete)),
-            ),
-        });
-
-
         const organizationEntity = new Organization();
         organizationEntity.name = registerDto.organizationName;
         await this.organizationsService.repository.save(organizationEntity);
 
         const roleEntity = new Role();
-        roleEntity.roleName = appConfig().default.role.toLowerCase();
-        roleEntity.codeName = appConfig().default.role;
+        roleEntity.name = appConfig().default.role;
         roleEntity.systemCreated = true;
-        roleEntity.permissions = adminPermissions;
+        roleEntity.permissions = await this.permissionsService.findAllForAdminRole();
         roleEntity.organization = organizationEntity;
         await this.rolesService.repository.save(roleEntity);
 
