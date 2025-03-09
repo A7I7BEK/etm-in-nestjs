@@ -20,6 +20,7 @@ import { ProjectColumnsModule } from './project-columns/project-columns.module';
 import { ProjectMembersModule } from './project-members/project-members.module';
 import { ProjectTagsModule } from './project-tags/project-tags.module';
 import { ProjectsModule } from './projects/projects.module';
+import { RedisStorageModule } from './redis-storage/redis-storage.module';
 import { ReportsModule } from './reports/reports.module';
 import { ResourceModule } from './resource/resource.module';
 import { RolesModule } from './roles/roles.module';
@@ -82,6 +83,7 @@ import { UsersModule } from './users/users.module';
         NotificationsModule,
         ReportsModule,
         OneTimePasswordModule,
+        RedisStorageModule,
     ],
     providers: [
         AppService,

@@ -1,41 +1,31 @@
-import { Injectable, OnApplicationBootstrap, OnApplicationShutdown } from '@nestjs/common';
-import { Redis } from 'ioredis';
+import { Injectable } from '@nestjs/common';
 import appConfig from 'src/common/config/app.config';
+import { RedisStorageService } from 'src/redis-storage/redis-storage.service';
 
 export class InvalidatedRefreshTokenError extends Error { }
 
 @Injectable()
-export class RefreshTokenIdsStorage implements OnApplicationBootstrap, OnApplicationShutdown
+export class RefreshTokenIdsStorage
 {
-    private redisClient: Redis;
-
-    onApplicationBootstrap()
-    {
-        /**
-         * TODO: Ideally, we should move this to the dedicated "RedisModule"
-         * instead of initiating the connection here
-         */
-
-        this.redisClient = new Redis({
-            host: appConfig().redis.host,
-            port: appConfig().redis.port,
-        });
-    }
-
-    onApplicationShutdown(signal?: string)
-    {
-        return this.redisClient.quit();
-    }
+    constructor (
+        public readonly redisStorage: RedisStorageService,
+    ) { }
 
 
     async insert(userId: number, tokenId: string): Promise<void>
     {
-        await this.redisClient.set(this.getKey(userId), tokenId);
+        await this.redisStorage.redisClient.set(
+            this.keyName(userId),
+            tokenId,
+            'EX',
+            appConfig().jwt.refreshTokenTtl,
+        );
     }
+
 
     async validate(userId: number, tokenId: string): Promise<void>
     {
-        const storedId = await this.redisClient.get(this.getKey(userId));
+        const storedId = await this.redisStorage.redisClient.get(this.keyName(userId));
 
         if (storedId !== tokenId)
         {
@@ -43,12 +33,14 @@ export class RefreshTokenIdsStorage implements OnApplicationBootstrap, OnApplica
         }
     }
 
+
     async remove(userId: number): Promise<void>
     {
-        await this.redisClient.del(this.getKey(userId));
+        await this.redisStorage.redisClient.del(this.keyName(userId));
     }
 
-    private getKey(userId: number): string
+
+    private keyName(userId: number): string
     {
         return `user-${userId}`;
     }
