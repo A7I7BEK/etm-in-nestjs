@@ -3,7 +3,6 @@ import { modifyTaskForProject } from 'src/tasks/utils/modify-task-for-project.ut
 import { FindOptionsRelations } from 'typeorm';
 import { ProjectColumn } from '../entities/project-column.entity';
 import { ProjectColumnsService } from '../project-columns.service';
-import { modifyProjectColumnForFront } from './modify-entity-for-front.util';
 
 
 export async function wsEmitOneColumn
@@ -44,7 +43,6 @@ export async function wsEmitOneColumn
     );
 
 
-    modifyProjectColumnForFront(entity);
     entity.tasks?.forEach(task =>
     {
         modifyTaskForProject(task);
