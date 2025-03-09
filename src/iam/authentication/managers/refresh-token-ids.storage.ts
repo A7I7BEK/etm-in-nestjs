@@ -8,7 +8,7 @@ export class InvalidatedRefreshTokenError extends Error { }
 export class RefreshTokenIdsStorage
 {
     constructor (
-        public readonly redisStorage: RedisStorageService,
+        private readonly redisStorage: RedisStorageService,
     ) { }
 
 
@@ -42,6 +42,6 @@ export class RefreshTokenIdsStorage
 
     private keyName(userId: number): string
     {
-        return `user-${userId}`;
+        return `REFRESH_TOKEN:user-${userId}`;
     }
 }
