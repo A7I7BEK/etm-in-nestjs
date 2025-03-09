@@ -3,6 +3,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 import { Module } from '@nestjs/common';
 import { join } from 'path';
 import appConfig from 'src/common/config/app.config';
+import { MailThrottleService } from './mail-throttle.service';
 import { MailService } from './mail.service';
 
 @Module({
@@ -40,6 +41,9 @@ import { MailService } from './mail.service';
         }),
     ],
     exports: [ MailService ],
-    providers: [ MailService ],
+    providers: [
+        MailService,
+        MailThrottleService,
+    ],
 })
 export class MailModule { }
