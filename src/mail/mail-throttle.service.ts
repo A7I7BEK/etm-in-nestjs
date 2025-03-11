@@ -6,7 +6,7 @@ import { RedisStorageService } from 'src/redis-storage/redis-storage.service';
 export class MailThrottleService
 {
     constructor (
-        private readonly redisStorage: RedisStorageService,
+        private readonly _redisStorage: RedisStorageService,
     ) { }
 
 
@@ -27,7 +27,7 @@ export class MailThrottleService
 
     async setThrottle(email: string): Promise<void>
     {
-        await this.redisStorage.redisClient.set(
+        await this._redisStorage.redisClient.set(
             this.keyName(email),
             this.generateTime(),
             'EX',
@@ -38,7 +38,7 @@ export class MailThrottleService
 
     async checkThrottle(email: string): Promise<void>
     {
-        const lastEmailSentTime = await this.redisStorage.redisClient.get(this.keyName(email));
+        const lastEmailSentTime = await this._redisStorage.redisClient.get(this.keyName(email));
         const now = Date.now();
 
         if (lastEmailSentTime && now < Number(lastEmailSentTime))
