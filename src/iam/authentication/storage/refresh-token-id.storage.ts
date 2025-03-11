@@ -5,16 +5,22 @@ import { RedisStorageService } from 'src/redis-storage/redis-storage.service';
 export class InvalidatedRefreshTokenError extends Error { }
 
 @Injectable()
-export class RefreshTokenIdsStorage
+export class RefreshTokenIdStorage
 {
     constructor (
-        private readonly redisStorage: RedisStorageService,
+        private readonly _redisStorage: RedisStorageService,
     ) { }
+
+
+    private keyName(userId: number): string
+    {
+        return `REFRESH_TOKEN:user-${userId}`;
+    }
 
 
     async insert(userId: number, tokenId: string): Promise<void>
     {
-        await this.redisStorage.redisClient.set(
+        await this._redisStorage.redisClient.set(
             this.keyName(userId),
             tokenId,
             'EX',
@@ -25,7 +31,7 @@ export class RefreshTokenIdsStorage
 
     async validate(userId: number, tokenId: string): Promise<void>
     {
-        const storedId = await this.redisStorage.redisClient.get(this.keyName(userId));
+        const storedId = await this._redisStorage.redisClient.get(this.keyName(userId));
 
         if (storedId !== tokenId)
         {
@@ -36,12 +42,6 @@ export class RefreshTokenIdsStorage
 
     async remove(userId: number): Promise<void>
     {
-        await this.redisStorage.redisClient.del(this.keyName(userId));
-    }
-
-
-    private keyName(userId: number): string
-    {
-        return `REFRESH_TOKEN:user-${userId}`;
+        await this._redisStorage.redisClient.del(this.keyName(userId));
     }
 }
