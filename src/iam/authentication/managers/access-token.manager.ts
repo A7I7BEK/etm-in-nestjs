@@ -1,9 +1,9 @@
 import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { randomUUID } from 'crypto';
 import appConfig from 'src/common/config/app.config';
 import { EmployeesService } from 'src/employees/employees.service';
 import { Employee } from 'src/employees/entities/employee.entity';
+import { JwtCustomService } from 'src/iam/jwt/jwt-custom.service';
 import { OneTimePasswordService } from 'src/one-time-password/one-time-password.service';
 import { Organization } from 'src/organizations/entities/organization.entity';
 import { OrganizationsService } from 'src/organizations/organizations.service';
@@ -16,13 +16,14 @@ import { UsersService } from 'src/users/users.service';
 import { Equal } from 'typeorm';
 import { PermissionType } from '../../authorization/permission.constants';
 import { HashingService } from '../../hashing/hashing.service';
-import { ActiveUserData } from '../../interfaces/active-user-data.interface';
 import { LoginDto } from '../dto/login.dto';
 import { RefreshTokenDto } from '../dto/refresh-token.dto';
 import { RegisterConfirmDto } from '../dto/register-confirm.dto';
 import { RegisterResendDto } from '../dto/register-resend.dto';
 import { RegisterDto } from '../dto/register.dto';
-import { InvalidatedRefreshTokenError, RefreshTokenIdsStorage } from './refresh-token-ids.storage';
+import { AccessTokenPermissionStorage } from '../storage/access-token-permission.storage';
+import { InvalidatedRefreshTokenError, RefreshTokenIdStorage } from '../storage/refresh-token-id.storage';
+
 
 @Injectable()
 export class AccessTokenManager
@@ -35,8 +36,9 @@ export class AccessTokenManager
         public readonly organizationsService: OrganizationsService,
         public readonly oneTimePasswordService: OneTimePasswordService,
         public readonly hashingService: HashingService,
-        public readonly jwtService: JwtService,
-        public readonly refreshTokenIdsStorage: RefreshTokenIdsStorage,
+        public readonly jwtCustomService: JwtCustomService,
+        public readonly accTokenPermStorage: AccessTokenPermissionStorage,
+        public readonly refTokenIdStorage: RefreshTokenIdStorage,
     ) { }
 
 
@@ -177,6 +179,7 @@ export class AccessTokenManager
                     .map(perm => perm.codeName as PermissionType)
             )
         ];
+        await this.accTokenPermStorage.insert(userId, permissionCodeNames);
 
         /**
          * Old Method
@@ -185,49 +188,26 @@ export class AccessTokenManager
         // const permissionCodeNames = permissions.map(perm => perm.codeName);
 
         const refreshTokenId = randomUUID();
-        await this.refreshTokenIdsStorage.insert(userId, refreshTokenId);
+        await this.refTokenIdStorage.insert(userId, refreshTokenId);
 
-        const [ sessionToken, refreshToken ] = await Promise.all([
-            this.signToken(
-                appConfig().jwt.accessTokenSecret,
-                appConfig().jwt.accessTokenTtl,
-                {
-                    sub: userId,
-                    orgId: organizationId,
-                    systemAdmin,
-                    permissionCodeNames, // TODO: save into Redis
-                }
-            ),
-            this.signToken(
-                appConfig().jwt.refreshTokenSecret,
-                appConfig().jwt.refreshTokenTtl,
-                {
-                    sub: userId,
-                    refreshTokenId,
-                }
-            ),
+        const [ accessToken, refreshToken ] = await Promise.all([
+            this.jwtCustomService.signAccessToken({
+                sub: userId,
+                orgId: organizationId,
+                systemAdmin,
+            }),
+            this.jwtCustomService.signRefreshToken({
+                sub: userId,
+                refreshTokenId,
+            }),
         ]);
 
 
         return {
-            sessionToken,
+            accessToken,
             refreshToken,
             expiresIn: appConfig().jwt.accessTokenTtl,
         };
-    }
-
-
-    private signToken<T extends Partial<ActiveUserData>>(secret: string, expiresIn: number, payload?: T)
-    {
-        return this.jwtService.signAsync(
-            payload,
-            {
-                secret,
-                expiresIn,
-                audience: appConfig().jwt.audience,
-                issuer: appConfig().jwt.issuer,
-            }
-        );
     }
 
 
@@ -235,18 +215,7 @@ export class AccessTokenManager
     {
         try
         {
-            const { sub, refreshTokenId } = await this.jwtService.verifyAsync<
-                Pick<ActiveUserData, 'sub'>
-                & { refreshTokenId: string; }
-            >
-                (
-                    refreshTokenDto.refreshToken,
-                    {
-                        secret: appConfig().jwt.refreshTokenSecret,
-                        audience: appConfig().jwt.audience,
-                        issuer: appConfig().jwt.issuer,
-                    }
-                );
+            const { sub, refreshTokenId } = await this.jwtCustomService.verifyRefreshToken(refreshTokenDto.refreshToken);
 
             const user = await this.usersService.repository.findOneOrFail({
                 where: {
@@ -257,8 +226,8 @@ export class AccessTokenManager
                     organization: true,
                 },
             });
-            await this.refreshTokenIdsStorage.validate(user.id, refreshTokenId);
-            await this.refreshTokenIdsStorage.remove(user.id);
+            await this.refTokenIdStorage.validate(user.id, refreshTokenId);
+            await this.refTokenIdStorage.remove(user.id);
 
             return this.generateTokens(user.id, user.organization.id, user.roles);
         }

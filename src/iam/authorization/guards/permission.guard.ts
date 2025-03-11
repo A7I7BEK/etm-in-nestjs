@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { Observable } from 'rxjs';
+import { AccessTokenPermissionStorage } from 'src/iam/authentication/storage/access-token-permission.storage';
 import { REQUEST_USER_KEY } from 'src/iam/iam.constants';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { PERMISSION_TYPE_KEY, PermissionType } from '../permission.constants';
@@ -9,12 +9,13 @@ import { PERMISSION_TYPE_KEY, PermissionType } from '../permission.constants';
 export class PermissionGuard implements CanActivate
 {
     constructor (
-        private readonly reflector: Reflector,
+        private readonly _reflector: Reflector,
+        private readonly _accTokenPermStorage: AccessTokenPermissionStorage,
     ) { }
 
-    canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean>
+    async canActivate(context: ExecutionContext): Promise<boolean>
     {
-        const contextPermissions = this.reflector.getAllAndOverride<PermissionType[]>(PERMISSION_TYPE_KEY, [
+        const contextPermissions = this._reflector.getAllAndOverride<PermissionType[]>(PERMISSION_TYPE_KEY, [
             context.getHandler(),
             context.getClass(),
         ]);
@@ -31,6 +32,12 @@ export class PermissionGuard implements CanActivate
             return true;
         }
 
-        return contextPermissions.every(permission => user.permissionCodeNames.includes(permission));
+        const permissionCodeNames = await this._accTokenPermStorage.retrieve(user.sub);
+        if (!permissionCodeNames)
+        {
+            return false;
+        }
+
+        return contextPermissions.every(permission => permissionCodeNames.includes(permission));
     }
 }
