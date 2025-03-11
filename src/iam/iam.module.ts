@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
-import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import appConfig from 'src/common/config/app.config';
 import { EmployeesModule } from 'src/employees/employees.module';
 import { OneTimePasswordModule } from 'src/one-time-password/one-time-password.module';
 import { OrganizationsModule } from 'src/organizations/organizations.module';
@@ -16,29 +14,23 @@ import { AccessTokenGuard } from './authentication/guards/access-token.guard';
 import { AuthenticationGuard } from './authentication/guards/authentication.guard';
 import { AccessTokenManager } from './authentication/managers/access-token.manager';
 import { ForgotPasswordManager } from './authentication/managers/forgot-password.manager';
-import { RefreshTokenIdsStorage } from './authentication/managers/refresh-token-ids.storage';
+import { AccessTokenPermissionStorage } from './authentication/storage/access-token-permission.storage';
+import { RefreshTokenIdStorage } from './authentication/storage/refresh-token-id.storage';
 import { PermissionGuard } from './authorization/guards/permission.guard';
 import { BcryptService } from './hashing/bcrypt.service';
 import { HashingService } from './hashing/hashing.service';
+import { JwtCustomModule } from './jwt/jwt-custom.module';
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([ ForgotPassword ]),
-        JwtModule.registerAsync({
-            global: true, // BINGO: JwtModule is accessible globally now
-            useFactory: async () => ({
-                secret: appConfig().jwt.accessTokenSecret,
-                signOptions: {
-                    expiresIn: appConfig().jwt.accessTokenTtl,
-                }
-            }),
-        }),
         UsersModule,
         EmployeesModule,
         RolesModule,
         PermissionsModule,
         OrganizationsModule,
         OneTimePasswordModule,
+        JwtCustomModule,
     ],
     providers: [
         {
@@ -57,7 +49,8 @@ import { HashingService } from './hashing/hashing.service';
         AuthenticationService,
         AccessTokenManager,
         ForgotPasswordManager,
-        RefreshTokenIdsStorage,
+        AccessTokenPermissionStorage,
+        RefreshTokenIdStorage,
     ],
     controllers: [ AuthenticationController ]
 })
