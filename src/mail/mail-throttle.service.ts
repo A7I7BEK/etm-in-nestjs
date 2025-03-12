@@ -19,16 +19,16 @@ export class MailThrottleService
     }
 
 
-    private keyName(email: string): string
+    private keyName(userId: number): string
     {
-        return `EMAIL_THROTTLE:email-${email}`;
+        return `EMAIL_THROTTLE:user-${userId}`;
     }
 
 
-    async setThrottle(email: string): Promise<void>
+    async setThrottle(userId: number): Promise<void>
     {
         await this._redisStorage.redisClient.set(
-            this.keyName(email),
+            this.keyName(userId),
             this.generateTime(),
             'EX',
             this.THROTTLE_TIME,
@@ -36,9 +36,9 @@ export class MailThrottleService
     }
 
 
-    async checkThrottle(email: string): Promise<void>
+    async checkThrottle(userId: number): Promise<void>
     {
-        const lastEmailSentTime = await this._redisStorage.redisClient.get(this.keyName(email));
+        const lastEmailSentTime = await this._redisStorage.redisClient.get(this.keyName(userId));
         const now = Date.now();
 
         if (lastEmailSentTime && now < Number(lastEmailSentTime))
