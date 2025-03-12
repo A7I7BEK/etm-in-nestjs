@@ -1,4 +1,3 @@
-import { PermissionType } from '../authorization/permission.constants';
 
 export interface ActiveUserData
 {
@@ -17,9 +16,4 @@ export interface ActiveUserData
      * The user is system admin
      */
     systemAdmin: boolean;
-
-    /**
-     * The code names of permissions that are extracted from subject's (user) roles
-     */
-    permissionCodeNames: PermissionType[]; // TODO: save into Redis
 }
