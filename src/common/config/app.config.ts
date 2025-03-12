@@ -5,8 +5,10 @@ export default () =>
             nodeEnv: process.env.NODE_ENV,
             nodeEnvProd: process.env.NODE_ENV_PRODUCTION,
             nodeEnvDev: process.env.NODE_ENV_DEVELOPMENT,
-            port: +process.env.APP_PORT,
             name: process.env.APP_NAME,
+            port: +process.env.APP_PORT,
+            url: process.env.APP_URL,
+            urlFront: process.env.APP_URL_FRONTEND,
             prefix: process.env.API_PREFIX,
         },
         default: {

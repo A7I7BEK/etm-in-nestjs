@@ -9,8 +9,10 @@ async function bootstrap()
 {
     const app = await NestFactory.create(AppModule);
 
+
     // CORS enabled
     app.enableCors();
+
 
     // ValidationPipe enabled
     app.useGlobalPipes(new ValidationPipe({
@@ -18,10 +20,12 @@ async function bootstrap()
         transform: true,
     }));
 
+
     // Wrap Response
     app.useGlobalInterceptors(
         new WrapResponseInterceptor(),
     );
+
 
     // Swagger setup
     const config = new DocumentBuilder()
@@ -32,12 +36,13 @@ async function bootstrap()
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup(appConfig().application.prefix, app, document);
 
+
     // App run
-    const port = appConfig().application.port;
-    await app.listen(port);
+    await app.listen(appConfig().application.port);
+
 
     // App log
     const logger = new Logger();
-    logger.log(`App is running: http://localhost:${port}/`);
+    logger.log(`App is running: ${appConfig().application.url}`);
 }
 bootstrap();
