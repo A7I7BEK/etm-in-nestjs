@@ -24,6 +24,7 @@ import { RedisStorageModule } from './redis-storage/redis-storage.module';
 import { ReportsModule } from './reports/reports.module';
 import { ResourceModule } from './resource/resource.module';
 import { RolesModule } from './roles/roles.module';
+import { ShareModule } from './share/share.module';
 import { TaskAttachmentsModule } from './task-attachments/task-attachments.module';
 import { TaskCommentsModule } from './task-comments/task-comments.module';
 import { TaskDeadlineModule } from './task-deadline/task-deadline.module';
@@ -79,6 +80,7 @@ import { UsersModule } from './users/users.module';
         TaskTimerModule,
         CheckListGroupsModule,
         CheckListItemsModule,
+        ShareModule,
         ActionsModule,
         NotificationsModule,
         ReportsModule,

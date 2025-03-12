@@ -1,0 +1,5 @@
+export enum SharePermissions
+{
+    SHARE_TASK_EMAIL = 'SHARE_TASK_EMAIL',
+    SHARE_TASK_TELEGRAM = 'SHARE_TASK_TELEGRAM',
+}
