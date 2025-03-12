@@ -14,18 +14,22 @@ export class MailService
     ) { }
 
 
-    async sendOtpCodeEmail(userId: number, email: string, code: string)
+    async sendConfirmationLink(userId: number, email: string, token: string)
     {
         await this._mailThrottleService.checkThrottle(userId);
+
+        const url = new URL(appConfig().application.urlFront);
+        url.searchParams.append('action', 'confirmEmail');
+        url.searchParams.append('token', token);
 
         try
         {
             await this._mailerService.sendMail({
                 to: email,
-                subject: `${code} is your ${appConfig().application.name} verification code`,
-                template: './confirm-email-simple',
+                subject: `${appConfig().application.name}: confirm your email address`,
+                template: './confirm-email-via-link',
                 context: {
-                    code,
+                    url: url.toString(),
                 },
             });
         }
@@ -38,7 +42,7 @@ export class MailService
     }
 
 
-    async sendOtpCodeUser(sender: Employee, code: string)
+    async sendOtpCode(sender: Employee, code: string)
     {
         await this._mailThrottleService.checkThrottle(sender.user.id);
 
@@ -50,7 +54,7 @@ export class MailService
                     address: sender.user.email,
                 },
                 subject: `${code} is your ${appConfig().application.name} verification code`,
-                template: './confirm-email-user',
+                template: './confirm-email-via-code',
                 context: {
                     firstName: sender.firstName,
                     lastName: sender.lastName,
@@ -76,6 +80,11 @@ export class MailService
             address: employee.user.email,
         }));
 
+        // BINGO: generate URL for sharing task
+        const url = new URL(appConfig().application.urlFront);
+        url.searchParams.append('action', 'taskShare');
+        url.searchParams.append('taskId', task.id.toString());
+
         try
         {
             await this._mailerService.sendMail({
@@ -87,7 +96,7 @@ export class MailService
                     lastName: sender.lastName,
                     taskName: task.name,
                     taskDescription: task.description,
-                    taskUrl: appConfig().application.urlFront + '?taskShare=' + task.id,
+                    taskUrl: url.toString(),
                 },
             });
         }

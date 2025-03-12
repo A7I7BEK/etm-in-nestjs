@@ -3,4 +3,8 @@
 <br>
 <p>Task Name: <b>{{ taskName }}</b></p>
 <p>Task Description: {{ taskDescription }}</p>
-<p>Go to Task: {{ taskUrl }}</p>
+<p>Go to Task:
+    <a href="{{ taskUrl }}" target="_blank">
+        {{ taskUrl }}
+    </a>
+</p>
