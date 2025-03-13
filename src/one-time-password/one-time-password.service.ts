@@ -13,11 +13,12 @@ export class OneTimePasswordService
 {
     constructor (
         @InjectRepository(OneTimePasswordParent)
-        private readonly otpParentRepository: Repository<OneTimePasswordParent>,
+        private readonly _otpParentRepository: Repository<OneTimePasswordParent>,
         @InjectRepository(OneTimePassword)
-        private readonly otpRepository: Repository<OneTimePassword>,
-        private readonly mailService: MailService,
+        private readonly _otpRepository: Repository<OneTimePassword>,
+        private readonly _mailService: MailService,
     ) { }
+
 
     private generateCode()
     {
@@ -25,22 +26,24 @@ export class OneTimePasswordService
         return Math.random().toString().slice(-6);
     }
 
+
     private generateTime()
     {
         // +10 min
         return (Date.now() + 10 * 60 * 1000).toString();
     }
 
+
     /**
      * BINGO
      * - Separate sending logic from main logic
      * - Function knows which option to use
      */
-    private async decideSendChannel(otpCode: string, user: User, options: Partial<OtpSendingOptions>)
+    private async decideSendChannel(user: User, otpCode: string, options: Partial<OtpSendingOptions>)
     {
         if (options.email)
         {
-            await this.mailService.sendOtpCodeUser(user, otpCode);
+            await this._mailService.sendOtpCode(user, otpCode);
         }
 
         if (options.phone)
@@ -60,18 +63,19 @@ export class OneTimePasswordService
         otpParent.options = options;
         otpParent.user = user;
         otpParent.userClone = user;
-        await this.otpParentRepository.save(otpParent);
+        await this._otpParentRepository.save(otpParent);
 
         const otpEntity = new OneTimePassword();
         otpEntity.code = otpCode;
         otpEntity.expireTime = this.generateTime();
         otpEntity.parent = otpParent;
-        await this.otpRepository.save(otpEntity);
+        await this._otpRepository.save(otpEntity);
 
-        await this.decideSendChannel(otpCode, user, options);
+        await this.decideSendChannel(user, otpCode, options);
 
         return { otpId };
     }
+
 
     async resend(otpId: string)
     {
@@ -83,14 +87,15 @@ export class OneTimePasswordService
         otpEntity.code = otpCode;
         otpEntity.expireTime = this.generateTime();
         otpEntity.parent = otpParent;
-        await this.otpRepository.save(otpEntity);
+        await this._otpRepository.save(otpEntity);
 
-        await this.decideSendChannel(otpCode, otpParent.user, otpParent.options);
+        await this.decideSendChannel(otpParent.user, otpCode, otpParent.options);
     }
+
 
     async confirm(otpId: string, otpCode: string)
     {
-        const otpEntity = await this.otpRepository.findOneBy({
+        const otpEntity = await this._otpRepository.findOneBy({
             parent: { uniqueId: otpId }, // BINGO: find children using its parent
             code: otpCode,
         });
@@ -101,16 +106,28 @@ export class OneTimePasswordService
         }
 
         otpEntity.used = true;
-        await this.otpRepository.save(otpEntity);
+        await this._otpRepository.save(otpEntity);
 
         const otpParent = await this.findOneParent(otpId);
 
         return otpParent.user;
     }
 
+
     async findOneParent(otpId: string)
     {
-        const entity = await this.otpParentRepository.findOneBy({ uniqueId: otpId });
+        const entity = await this._otpParentRepository.findOne(
+            {
+                where: {
+                    uniqueId: otpId
+                },
+                relations: {
+                    user: {
+                        employee: true
+                    }
+                },
+            }
+        );
 
         if (!entity)
         {

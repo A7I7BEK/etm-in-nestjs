@@ -3,6 +3,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import appConfig from 'src/common/config/app.config';
 import { Employee } from 'src/employees/entities/employee.entity';
 import { Task } from 'src/tasks/entities/task.entity';
+import { User } from 'src/users/entities/user.entity';
 import { MailThrottleService } from './mail-throttle.service';
 
 @Injectable()
@@ -42,22 +43,22 @@ export class MailService
     }
 
 
-    async sendOtpCode(sender: Employee, code: string)
+    async sendOtpCode(sender: User, code: string)
     {
-        await this._mailThrottleService.checkThrottle(sender.user.id);
+        await this._mailThrottleService.checkThrottle(sender.id);
 
         try
         {
             await this._mailerService.sendMail({
                 to: {
-                    name: `${sender.firstName} ${sender.lastName}`,
-                    address: sender.user.email,
+                    name: `${sender.employee.firstName} ${sender.employee.lastName}`,
+                    address: sender.email,
                 },
                 subject: `${code} is your ${appConfig().application.name} verification code`,
                 template: './confirm-email-via-code',
                 context: {
-                    firstName: sender.firstName,
-                    lastName: sender.lastName,
+                    firstName: sender.employee.firstName,
+                    lastName: sender.employee.lastName,
                     code,
                 },
             });
@@ -67,7 +68,7 @@ export class MailService
             throw new HttpException(error.response, error.responseCode);
         }
 
-        await this._mailThrottleService.setThrottle(sender.user.id);
+        await this._mailThrottleService.setThrottle(sender.id);
     }
 
 

@@ -16,7 +16,7 @@ export class OneTimePasswordParent
     @Column('json')
     options: Partial<OtpSendingOptions>; // BINGO: special type
 
-    @ManyToOne(type => User, { eager: true, onDelete: 'SET NULL' })
+    @ManyToOne(type => User, { onDelete: 'SET NULL' })
     user: User;
 
     @Column('json')
