@@ -1,4 +1,3 @@
-import { Organization } from 'src/organizations/entities/organization.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -19,7 +18,4 @@ export class ForgotPassword
 
     @Column({ default: false })
     completed: boolean;
-
-    @ManyToOne(type => Organization, { onDelete: 'CASCADE' })
-    organization: Organization;
 }
