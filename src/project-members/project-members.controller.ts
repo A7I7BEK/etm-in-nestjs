@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Query } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
@@ -9,6 +9,8 @@ import { ProjectMemberPermissions } from './enums/project-member-permissions.enu
 import { ProjectMembersService } from './project-members.service';
 import { modifyProjectMemberForFront } from './utils/modify-entity-for-front.util';
 
+
+@ApiBearerAuth()
 @ApiTags('project-members')
 @Controller('project-members')
 export class ProjectMembersController

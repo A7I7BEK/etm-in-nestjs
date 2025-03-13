@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
@@ -10,6 +10,8 @@ import { CheckListGroupUpdateDto } from './dto/check-list-group-update.dto';
 import { CheckListGroupPermissions } from './enums/check-list-group-permissions.enum';
 import { modifyCheckListGroupForFront } from './utils/modify-check-list-group-for-front.util';
 
+
+@ApiBearerAuth()
 @ApiTags('check-list-groups')
 @Controller('check-list-groups')
 export class CheckListGroupsController

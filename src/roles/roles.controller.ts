@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
@@ -10,6 +10,8 @@ import { RolePermissions } from './enum/role-permissions.enum';
 import { RolesService } from './roles.service';
 import { modifyEntityForFront } from './util/modify-entity-for-front.util';
 
+
+@ApiBearerAuth()
 @ApiTags('roles')
 @Controller('roles')
 export class RolesController

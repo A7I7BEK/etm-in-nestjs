@@ -1,12 +1,14 @@
 import { Body, Controller, Delete, NotAcceptableException, Param, ParseIntPipe, Post, Put, Query, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { MinDimensionDto } from './dto/min-dimension.dto';
 import { UpdateResourceDto } from './dto/update-resource.dto';
 import { ResourceService } from './resource.service';
 
+
+@ApiBearerAuth()
 @ApiTags('resource')
 @Controller('resource')
 export class ResourceController

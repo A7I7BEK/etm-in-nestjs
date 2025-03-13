@@ -32,6 +32,7 @@ async function bootstrap()
         .setTitle(appConfig().application.name)
         .setDescription('Electron Task Management')
         .setVersion('1.0')
+        .addBearerAuth()
         .build();
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup(appConfig().application.docPrefix, app, document);

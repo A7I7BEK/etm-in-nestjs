@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
@@ -12,6 +12,8 @@ import { TaskPermissions } from './enums/task-permissions.enum';
 import { TasksService } from './tasks.service';
 import { modifyTaskForFront } from './utils/modify-task-for-front.util';
 
+
+@ApiBearerAuth()
 @ApiTags('tasks')
 @Controller('tasks')
 export class TasksController

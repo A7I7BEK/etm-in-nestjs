@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { SYSTEM_ADMIN_DATA } from 'src/common/constants/system-admin-data.constant';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
@@ -12,6 +12,8 @@ import { UserPermissions } from './enums/user-permissions.enum';
 import { UsersService } from './users.service';
 import { modifyEntityForFront } from './utils/modify-entity-for-front.util';
 
+
+@ApiBearerAuth()
 @ApiTags('users')
 @Controller('users')
 export class UsersController

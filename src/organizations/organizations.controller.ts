@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
 import { OrganizationCreateDto } from './dto/organization-create.dto';
 import { OrganizationQueryDto } from './dto/organization-query.dto';
@@ -7,6 +7,8 @@ import { OrganizationUpdateDto } from './dto/organization-update.dto';
 import { OrganizationPermissions } from './enums/organization-permissions.enum';
 import { OrganizationsService } from './organizations.service';
 
+
+@ApiBearerAuth()
 @ApiTags('organizations')
 @Controller('organizations')
 export class OrganizationsController

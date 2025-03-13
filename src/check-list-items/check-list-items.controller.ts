@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
@@ -10,6 +10,8 @@ import { CheckListItemUpdateDto } from './dto/check-list-item-update.dto';
 import { CheckListItemPermissions } from './enums/check-list-item-permissions.enum';
 import { modifyCheckListItemForFront } from './utils/modify-check-list-item-for-front.util';
 
+
+@ApiBearerAuth()
 @ApiTags('check-list-items')
 @Controller('check-list-items')
 export class CheckListItemsController

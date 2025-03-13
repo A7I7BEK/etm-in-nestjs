@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, ParseIntPipe, Post, Query } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
@@ -8,6 +8,8 @@ import { TaskTimerQueryDto } from './dto/task-timer-query.dto';
 import { TaskTimerPermissions } from './enums/task-timer-permissions.enum';
 import { TaskTimerService } from './task-timer.service';
 
+
+@ApiBearerAuth()
 @ApiTags('task-timer')
 @Controller('task-timer')
 export class TaskTimerController

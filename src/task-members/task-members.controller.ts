@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Query } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
@@ -10,6 +10,8 @@ import { TaskMemberPermissions } from './enums/task-member-permissions.enum';
 import { TaskMembersService } from './task-members.service';
 import { modifyTaskMemberForFront } from './utils/modify-task-member-for-front.util';
 
+
+@ApiBearerAuth()
 @ApiTags('task-members')
 @Controller('task-members')
 export class TaskMembersController

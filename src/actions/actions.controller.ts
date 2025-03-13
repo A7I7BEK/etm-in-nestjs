@@ -1,5 +1,5 @@
 import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
@@ -7,6 +7,8 @@ import { ActionsService } from './actions.service';
 import { ActionQueryDto } from './dto/action-query.dto';
 import { ActionPermissions } from './enums/action-permissions.enum';
 
+
+@ApiBearerAuth()
 @ApiTags('actions')
 @Controller('actions')
 export class ActionsController

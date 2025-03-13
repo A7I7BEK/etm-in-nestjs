@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
@@ -10,6 +10,8 @@ import { TaskCommentPermissions } from './enums/task-comment-permissions.enum';
 import { TaskCommentsService } from './task-comments.service';
 import { modifyTaskCommentForFront } from './utils/modify-task-comment-for-front.util';
 
+
+@ApiBearerAuth()
 @ApiTags('task-comments')
 @Controller('task-comments')
 export class TaskCommentsController
