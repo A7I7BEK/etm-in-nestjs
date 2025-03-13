@@ -11,11 +11,8 @@ export class ForgotPassword
     @Column('uuid')
     uniqueId: string;
 
-    @ManyToOne(type => User, { eager: true, onDelete: 'SET NULL' })
+    @ManyToOne(type => User, { eager: true, onDelete: 'CASCADE' })
     user: User;
-
-    @Column('json')
-    userClone: User;
 
     @Column()
     createdAt: Date;

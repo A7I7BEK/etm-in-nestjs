@@ -70,7 +70,6 @@ export class ForgotPasswordManager
         const entity = new ForgotPassword();
         entity.uniqueId = uniqueId;
         entity.user = user;
-        entity.userClone = user;
         entity.createdAt = new Date();
         await this.repository.save(entity);
 

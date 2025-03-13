@@ -62,7 +62,6 @@ export class OneTimePasswordService
         otpParent.uniqueId = otpId;
         otpParent.options = options;
         otpParent.user = user;
-        otpParent.userClone = user;
         await this._otpParentRepository.save(otpParent);
 
         const otpEntity = new OneTimePassword();
