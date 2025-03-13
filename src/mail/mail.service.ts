@@ -81,7 +81,7 @@ export class MailService
         }));
 
         // BINGO: generate URL for sharing task
-        const url = new URL(appConfig().application.urlFront);
+        const url = new URL(appConfig().application.urlFront); // TODO: check if it is correct
         url.searchParams.append('action', 'taskShare');
         url.searchParams.append('taskId', task.id.toString());
 
