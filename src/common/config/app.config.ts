@@ -9,7 +9,7 @@ export default () =>
             port: +process.env.APP_PORT,
             url: process.env.APP_URL,
             urlFront: process.env.APP_URL_FRONTEND,
-            prefix: process.env.API_PREFIX,
+            docPrefix: process.env.APP_DOCUMENT_PREFIX,
         },
         default: {
             lang: process.env.APP_DEFAULT_LANGUAGE,
