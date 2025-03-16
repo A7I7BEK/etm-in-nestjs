@@ -8,7 +8,6 @@ import { GroupQueryDto } from './dto/group-query.dto';
 import { GroupUpdateDto } from './dto/group-update.dto';
 import { GroupPermissions } from './enums/group-permissions.enum';
 import { GroupsService } from './groups.service';
-import { modifyEntityForFront } from './utils/modify-entity-for-front.util';
 
 
 @ApiBearerAuth()
@@ -21,41 +20,37 @@ export class GroupsController
 
     @Post()
     @Permission(GroupPermissions.CREATE)
-    async create
+    create
         (
             @Body() createDto: GroupCreateDto,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.create(createDto, activeUser);
-        return modifyEntityForFront(entity);
+        return this._service.create(createDto, activeUser);
     }
 
 
     @Get()
     @Permission(GroupPermissions.READ)
-    async findAll
+    findAll
         (
             @Query() queryDto: GroupQueryDto,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entityWithPagination = await this._service.findAllWithFilters(queryDto, activeUser);
-        entityWithPagination.data = entityWithPagination.data.map(entity => modifyEntityForFront(entity));
-
-        return entityWithPagination;
+        return this._service.findAllWithFilters(queryDto, activeUser);
     }
 
 
     @Get(':id')
     @Permission(GroupPermissions.READ)
-    async findOne
+    findOne
         (
             @Param('id', ParseIntPipe) id: number,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.findOne(
+        return this._service.findOne(
             {
                 where: { id },
                 relations: {
@@ -66,33 +61,30 @@ export class GroupsController
             },
             activeUser,
         );
-        return modifyEntityForFront(entity);
     }
 
 
     @Put(':id')
     @Permission(GroupPermissions.UPDATE)
-    async update
+    update
         (
             @Param('id', ParseIntPipe) id: number,
             @Body() updateDto: GroupUpdateDto,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.update(id, updateDto, activeUser);
-        return modifyEntityForFront(entity);
+        return this._service.update(id, updateDto, activeUser);
     }
 
 
     @Delete(':id')
     @Permission(GroupPermissions.DELETE)
-    async remove
+    remove
         (
             @Param('id', ParseIntPipe) id: number,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.remove(id, activeUser);
-        return modifyEntityForFront(entity);
+        return this._service.remove(id, activeUser);
     }
 }

@@ -11,8 +11,9 @@ import { GroupCreateDto } from './dto/group-create.dto';
 import { GroupQueryDto } from './dto/group-query.dto';
 import { GroupUpdateDto } from './dto/group-update.dto';
 import { Group } from './entities/group.entity';
-import { createUpdateEntity } from './utils/create-update-entity.util';
-import { loadQueryBuilder } from './utils/load-query-builder.util';
+import { createUpdateEntityPart } from './part/create-update-entity.part';
+import { deleteEntityPart } from './part/delete-entity.part';
+import { loadQueryBuilderPart } from './part/load-query-builder.part';
 
 @Injectable()
 export class GroupsService
@@ -20,8 +21,8 @@ export class GroupsService
     constructor (
         @InjectRepository(Group)
         public readonly repository: Repository<Group>,
-        private readonly _organizationsService: OrganizationsService,
-        private readonly _employeesService: EmployeesService,
+        public readonly organizationsService: OrganizationsService,
+        public readonly employeesService: EmployeesService,
     ) { }
 
 
@@ -31,13 +32,7 @@ export class GroupsService
             activeUser: ActiveUserData,
         )
     {
-        return createUpdateEntity(
-            this._organizationsService,
-            this._employeesService,
-            this.repository,
-            createDto,
-            activeUser,
-        );
+        return createUpdateEntityPart(this, createDto, activeUser);
     }
 
 
@@ -70,7 +65,7 @@ export class GroupsService
             activeUser: ActiveUserData,
         )
     {
-        const loadedQueryBuilder = loadQueryBuilder(
+        const loadedQueryBuilder = loadQueryBuilderPart(
             this.repository,
             queryDto,
             activeUser,
@@ -119,21 +114,7 @@ export class GroupsService
             activeUser: ActiveUserData,
         )
     {
-        const entity = await this.findOne(
-            {
-                where: { id }
-            },
-            activeUser,
-        );
-
-        return createUpdateEntity(
-            this._organizationsService,
-            this._employeesService,
-            this.repository,
-            updateDto,
-            activeUser,
-            entity,
-        );
+        return createUpdateEntityPart(this, updateDto, activeUser, id);
     }
 
 
@@ -143,13 +124,6 @@ export class GroupsService
             activeUser: ActiveUserData,
         )
     {
-        const entity = await this.findOne(
-            {
-                where: { id }
-            },
-            activeUser,
-        );
-
-        return this.repository.remove(entity);
+        return deleteEntityPart(this, id, activeUser);
     }
 }

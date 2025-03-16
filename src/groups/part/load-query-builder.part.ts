@@ -4,7 +4,7 @@ import { GroupQueryDto } from '../dto/group-query.dto';
 import { Group } from '../entities/group.entity';
 
 
-export function loadQueryBuilder
+export function loadQueryBuilderPart
     (
         repository: Repository<Group>,
         queryDto: GroupQueryDto,
