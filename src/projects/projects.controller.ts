@@ -92,13 +92,18 @@ export class ProjectsController
                 where: { id },
                 relations: {
                     group: true,
+                    manager: true,
+                    columns: true,
+                    tags: true,
                     members: {
                         employee: {
                             user: true
                         },
                     },
-                    manager: true,
                     organization: true,
+                    tasks: {
+                        column: true,
+                    }
                 }
 
             },
