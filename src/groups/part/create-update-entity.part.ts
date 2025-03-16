@@ -1,3 +1,4 @@
+import { NotAcceptableException } from '@nestjs/common';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { In } from 'typeorm';
 import { GroupCreateDto } from '../dto/group-create.dto';
@@ -14,6 +15,12 @@ export async function createUpdateEntityPart
         id = 0,
     )
 {
+    if (!dto.employeeIds.includes(dto.leaderId))
+    {
+        throw new NotAcceptableException('Leader must be an employee of the group');
+    }
+
+
     let entity = new Group();
 
 
