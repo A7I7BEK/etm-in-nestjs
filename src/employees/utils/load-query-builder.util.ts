@@ -57,7 +57,7 @@ export function loadQueryBuilder(
                 qb.orWhere(`${empl}.middleName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
                 qb.orWhere(`${user}.userName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
                 qb.orWhere(`${user}.email ILIKE :search`, { search: `%${queryDto.allSearch}%` });
-                qb.orWhere(`${role}.roleName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
+                qb.orWhere(`${role}.name ILIKE :search`, { search: `%${queryDto.allSearch}%` });
             }),
         );
     }
