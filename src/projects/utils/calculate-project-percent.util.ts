@@ -7,7 +7,7 @@ export function calculateProjectPercent(entity: Project)
 {
     const { tasks } = entity;
 
-    // TODO: check if it is working
+
     if (entity.projectType !== ProjectType.KANBAN || !tasks)
     {
         return entity;
@@ -20,8 +20,8 @@ export function calculateProjectPercent(entity: Project)
 
 
     const totalCount = tasks.length;
-    const checkedCount = tasks.filter(item => item.column.name === ProjectColumnTypeKanban.ARCHIVE).length;
-    const percent = Math.floor(checkedCount / totalCount * 100);
+    const closedCount = tasks.filter(item => item.column.name === ProjectColumnTypeKanban.ARCHIVE).length;
+    const percent = Math.floor(closedCount / totalCount * 100);
 
 
     Object.assign(entity, { percent });
