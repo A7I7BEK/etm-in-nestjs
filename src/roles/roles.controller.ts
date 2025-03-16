@@ -8,7 +8,6 @@ import { RoleQueryDto } from './dto/role-query.dto';
 import { RoleUpdateDto } from './dto/role-update.dto';
 import { RolePermissions } from './enum/role-permissions.enum';
 import { RolesService } from './roles.service';
-import { modifyEntityForFront } from './util/modify-entity-for-front.util';
 
 
 @ApiBearerAuth()
@@ -21,81 +20,74 @@ export class RolesController
 
     @Post()
     @Permission(RolePermissions.CREATE)
-    async create
+    create
         (
             @Body() createDto: RoleCreateDto,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.create(createDto, activeUser);
-        return modifyEntityForFront(entity);
+        return this._service.create(createDto, activeUser);
     }
 
 
     @Get()
     @Permission(RolePermissions.READ)
-    async findAll
+    findAll
         (
             @Query() queryDto: RoleQueryDto,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entityWithPagination = await this._service.findAllWithFilters(queryDto, activeUser);
-        entityWithPagination.data.forEach(entity => modifyEntityForFront(entity));
-
-        return entityWithPagination;
+        return this._service.findAllWithFilters(queryDto, activeUser);
     }
 
 
     @Get(':id')
     @Permission(RolePermissions.READ)
-    async findOne
+    findOne
         (
             @Param('id', ParseIntPipe) id: number,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.findOne(
+        return this._service.findOne(
             {
                 where: { id },
                 relations: { organization: true }
             },
             activeUser,
         );
-        return modifyEntityForFront(entity);
     }
 
 
     @Put(':id')
     @Permission(RolePermissions.UPDATE)
-    async update
+    update
         (
             @Param('id', ParseIntPipe) id: number,
             @Body() updateDto: RoleUpdateDto,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.update(id, updateDto, activeUser);
-        return modifyEntityForFront(entity);
+        return this._service.update(id, updateDto, activeUser);
     }
 
 
     @Delete(':id')
     @Permission(RolePermissions.DELETE)
-    async remove
+    remove
         (
             @Param('id', ParseIntPipe) id: number,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.remove(id, activeUser);
-        return modifyEntityForFront(entity);
+        return this._service.remove(id, activeUser);
     }
 
 
     @Post('update-admins')
     @Permission(RolePermissions.UPDATE_ADMINS)
-    async updateAdminRoles
+    updateAdminRoles
         (
             @ActiveUser() activeUser: ActiveUserData,
         )
