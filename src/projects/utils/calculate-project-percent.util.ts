@@ -6,6 +6,7 @@ import { ProjectType } from '../enums/project-type.enum';
 export function calculateProjectPercent(entity: Project)
 {
     const { tasks } = entity;
+    delete entity.tasks;
 
 
     if (entity.projectType !== ProjectType.KANBAN || !tasks)
@@ -25,7 +26,6 @@ export function calculateProjectPercent(entity: Project)
 
 
     Object.assign(entity, { percent });
-    delete entity.tasks;
 
 
     return entity;
