@@ -15,12 +15,10 @@ export function loadQueryBuilder(
 
 
     queryBuilder.leftJoinAndSelect(`${pMember}.employee`, empl);
-    queryBuilder.leftJoinAndSelect(`${empl}.user`, user);
-    queryBuilder.select([ // BINGO: select only needed fields
-        `${pMember}`, // All fields from ProjectMember
-        `${empl}`, // All fields from Employee
+    queryBuilder.leftJoin(`${empl}.user`, user);
+    queryBuilder.addSelect([ // BINGO: select only needed fields
         `${user}.id`,
-        `${user}.userName`, // Only specific fields from User
+        `${user}.userName`,
         `${user}.email`,
         `${user}.phoneNumber`,
     ]);
