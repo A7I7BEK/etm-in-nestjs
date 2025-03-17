@@ -33,7 +33,7 @@ export async function stopEntity
                 status: TaskTimerStatus.START
             },
             order: {
-                id: 'DESC' // TODO: Check if this is correct
+                id: 'DESC'
             }
         },
         activeUser,
@@ -42,7 +42,7 @@ export async function stopEntity
 
     const currentTime = new Date();
     const timeSpent = Math.floor(
-        (currentTime.getTime() - new Date(taskTimerEntity.time).getTime()) / 1000,
+        (currentTime.getTime() - taskTimerEntity.time.getTime()) / 1000,
     );
 
 
