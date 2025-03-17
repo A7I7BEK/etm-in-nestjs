@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { Employee } from 'src/employees/entities/employee.entity';
 import { Organization } from 'src/organizations/entities/organization.entity';
 import { Role } from 'src/roles/entity/role.entity';
@@ -16,6 +17,7 @@ export class User // ADVICE: in the future, merge with Employee
     userName: string;
 
     @Column()
+    @Exclude()
     password: string;
 
     @Column({ unique: true })

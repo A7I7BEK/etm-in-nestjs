@@ -1,5 +1,5 @@
-import { Logger, ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
+import { ClassSerializerInterceptor, Logger, ValidationPipe } from '@nestjs/common';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import appConfig from './common/config/app.config';
@@ -24,6 +24,7 @@ async function bootstrap()
     // Wrap Response
     app.useGlobalInterceptors(
         new WrapResponseInterceptor(),
+        new ClassSerializerInterceptor(app.get(Reflector))
     );
 
 
