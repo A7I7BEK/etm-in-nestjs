@@ -73,7 +73,6 @@ export class TaskListener
         const action = new Action();
         action.createdAt = new Date();
         action.activityType = TaskPermissions.DELETE;
-        action.task = entity; // TODO: check if relations are working (most probably not)
         action.project = entity.project;
         action.employee = await this._service.getEmployee(activeUser);
 
