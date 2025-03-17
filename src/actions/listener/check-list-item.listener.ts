@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { CheckListItem } from 'src/check-list-items/entities/check-list-item.entity';
 import { CheckListItemPermissions } from 'src/check-list-items/enums/check-list-item-permissions.enum';
+import { Notification } from 'src/notifications/entities/notification.entity';
+import { NotificationType } from 'src/notifications/enums/notification-type.enum';
 import { ActionsService } from '../actions.service';
 import { Action } from '../entities/action.entity';
 import { BaseDiffEvent } from '../event/base-diff.event';
@@ -18,18 +20,49 @@ export class CheckListItemListener
 
 
     @OnEvent([ Action.name, CheckListItemPermissions.CREATE ], { async: true })
-    listenCreateEvent(data: BaseSimpleEvent<CheckListItem>)
+    async listenCreateEvent(data: BaseSimpleEvent<CheckListItem>)
     {
-        this.handleCreateDelete(data, CheckListItemPermissions.CREATE);
+        const { entity, activeUser } = data;
+
+        const action = new Action();
+        action.createdAt = new Date();
+        action.activityType = CheckListItemPermissions.CREATE;
+        action.task = entity.task;
+        action.project = entity.task.project;
+        action.employee = await this._service.getEmployee(activeUser);
+
+        delete entity.task;
+        delete entity.checkListGroup;
+        action.details = { checkListItem: entity };
         // Tom created checklist item "AAA" in task "BBB"
+
+        await this._service.repository.save(action);
+
+        this._service.eventEmitter.emit(
+            [ Notification.name, NotificationType.CHECK_LIST_ITEM ],
+            action
+        );
     }
 
 
     @OnEvent([ Action.name, CheckListItemPermissions.DELETE ], { async: true })
-    listenDeleteEvent(data: BaseSimpleEvent<CheckListItem>)
+    async listenDeleteEvent(data: BaseSimpleEvent<CheckListItem>)
     {
-        this.handleCreateDelete(data, CheckListItemPermissions.DELETE);
+        const { entity, activeUser } = data;
+
+        const action = new Action();
+        action.createdAt = new Date();
+        action.activityType = CheckListItemPermissions.DELETE;
+        action.task = entity.task;
+        action.project = entity.task.project;
+        action.employee = await this._service.getEmployee(activeUser);
+
+        delete entity.task;
+        delete entity.checkListGroup;
+        action.details = { checkListItem: entity };
         // Tom deleted checklist item "AAA" from task "BBB"
+
+        await this._service.repository.save(action);
     }
 
 
@@ -52,29 +85,6 @@ export class CheckListItemListener
             changes: detectChanges(oldEntity, newEntity, structure)
         };
         // Tom edited checklist item "AAA" in task "BBB". Changes: ...
-
-        await this._service.repository.save(action);
-    }
-
-
-    private async handleCreateDelete
-        (
-            data: BaseSimpleEvent<CheckListItem>,
-            activityType: CheckListItemPermissions,
-        )
-    {
-        const { entity, activeUser } = data;
-
-        const action = new Action();
-        action.createdAt = new Date();
-        action.activityType = activityType;
-        action.task = entity.task;
-        action.project = entity.task.project;
-        action.employee = await this._service.getEmployee(activeUser);
-
-        delete entity.task;
-        delete entity.checkListGroup;
-        action.details = { checkListItem: entity };
 
         await this._service.repository.save(action);
     }

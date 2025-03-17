@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Action } from 'src/actions/entities/action.entity';
+import { CheckListItem } from 'src/check-list-items/entities/check-list-item.entity';
 import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
 import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
@@ -77,6 +78,30 @@ export class NotificationsService
                 entity.user = employee.user;
                 entity.action = action;
                 entity.type = NotificationType.COMMENT;
+
+                return entity;
+            });
+
+            await this.repository.save(entityList);
+        }
+    }
+
+
+    @OnEvent([ Notification.name, NotificationType.CHECK_LIST_ITEM ], { async: true })
+    async createForCheckListItem
+        (
+            action: Action,
+        )
+    {
+        const checkListItem: CheckListItem = action.details?.checkListItem;
+        if (checkListItem?.members?.length)
+        {
+            const entityList = checkListItem.members.map(employee =>
+            {
+                const entity = new Notification();
+                entity.user = employee.user;
+                entity.action = action;
+                entity.type = NotificationType.CHECK_LIST_ITEM;
 
                 return entity;
             });

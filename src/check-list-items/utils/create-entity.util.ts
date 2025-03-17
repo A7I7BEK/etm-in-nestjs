@@ -36,7 +36,8 @@ export async function createEntity
     const memberIds = dto.members.map(a => a.id);
     entity.members = await service.employeesService.findAll(
         {
-            where: { id: In(memberIds) }
+            where: { id: In(memberIds) },
+            relations: { user: true },
         },
         activeUser,
     );
