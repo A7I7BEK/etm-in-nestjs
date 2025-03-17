@@ -17,7 +17,7 @@ export function calculateCheckListGroupPercent(entity: CheckListGroup)
     else
     {
         Object.assign(entity, { percent: 0 });
-    } // TODO: check if this is correct
+    }
 
 
     return entity;
