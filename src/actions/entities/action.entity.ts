@@ -28,6 +28,6 @@ export class Action
     @ManyToOne(type => Project, a => a.actions, { onDelete: 'CASCADE' })
     project: Project;
 
-    @ManyToOne(type => Task, a => a.actions, { onDelete: 'SET NULL' })
+    @ManyToOne(type => Task, a => a.actions, { onDelete: 'CASCADE' })
     task: Task;
 }
