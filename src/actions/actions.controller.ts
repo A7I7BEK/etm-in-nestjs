@@ -48,7 +48,13 @@ export class ActionsController
                 },
                 select: {
                     employee: {
-                        user: { // TODO: Check
+                        id: true,
+                        firstName: true,
+                        lastName: true,
+                        middleName: true,
+                        birthDate: true,
+                        photoUrl: true,
+                        user: {
                             id: true,
                             userName: true,
                             email: true,
