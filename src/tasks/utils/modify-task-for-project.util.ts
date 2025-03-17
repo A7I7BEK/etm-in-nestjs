@@ -14,7 +14,6 @@ export function modifyTaskForProject(entity: Task)
     modifyTaskForFront(entity);
 
 
-    // TODO: Check if this is correct
     if (checkListGroups?.length && checkListGroups.some(a => a.checkList))
     {
         const allChecklist = entity.checkListGroups.flatMap(item => item.checkList);
