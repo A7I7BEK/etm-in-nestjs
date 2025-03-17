@@ -33,7 +33,7 @@ export async function createEntity
 
 
     const actionData: BaseSimpleEvent<CheckListGroup> = {
-        entity,
+        entity: structuredClone(entity),
         activeUser,
     };
     service.eventEmitter.emit(

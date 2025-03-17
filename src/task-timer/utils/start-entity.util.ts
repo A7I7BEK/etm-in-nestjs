@@ -37,7 +37,7 @@ export async function startEntity
 
 
     const actionData: BaseSimpleEvent<TaskTimer> = {
-        entity,
+        entity: structuredClone(entity),
         activeUser,
     };
     service.eventEmitter.emit(

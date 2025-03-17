@@ -144,7 +144,7 @@ export class ProjectTagsService
 
         entity.id = id;
         const actionData: BaseSimpleEvent<ProjectTag> = {
-            entity,
+            entity: structuredClone(entity),
             activeUser,
         };
         this.eventEmitter.emit(

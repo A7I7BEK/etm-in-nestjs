@@ -53,7 +53,7 @@ export async function createUpdateEntity
     if (dto instanceof ProjectTagCreateDto)
     {
         const actionData: BaseSimpleEvent<ProjectTag> = {
-            entity,
+            entity: structuredClone(entity),
             activeUser,
         };
         service.eventEmitter.emit(
@@ -65,7 +65,7 @@ export async function createUpdateEntity
     {
         const actionData: BaseDiffEvent<ProjectTag> = {
             oldEntity,
-            newEntity: entity,
+            newEntity: structuredClone(entity),
             activeUser,
         };
         service.eventEmitter.emit(

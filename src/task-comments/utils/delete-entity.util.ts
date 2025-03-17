@@ -37,7 +37,7 @@ export async function deleteEntity
 
 
     const actionData: BaseSimpleEvent<TaskComment> = {
-        entity,
+        entity: structuredClone(entity),
         activeUser,
     };
     service.eventEmitter.emit(

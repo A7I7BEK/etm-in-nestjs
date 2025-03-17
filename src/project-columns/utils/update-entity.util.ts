@@ -44,7 +44,7 @@ export async function updateEntity
 
     const actionData: BaseDiffEvent<ProjectColumn> = {
         oldEntity,
-        newEntity: entity,
+        newEntity: structuredClone(entity),
         activeUser,
     };
     service.eventEmitter.emit(

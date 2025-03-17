@@ -54,7 +54,7 @@ export async function createEntity
 
 
     const actionData: BaseSimpleEvent<Task> = {
-        entity,
+        entity: structuredClone(entity),
         activeUser,
     };
     service.eventEmitter.emit(

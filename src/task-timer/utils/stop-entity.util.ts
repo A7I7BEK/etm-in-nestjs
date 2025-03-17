@@ -60,7 +60,7 @@ export async function stopEntity
 
 
     const actionData: BaseSimpleEvent<TaskTimer> = {
-        entity,
+        entity: structuredClone(entity),
         activeUser,
     };
     service.eventEmitter.emit(

@@ -45,7 +45,7 @@ export async function updateEntity
 
     const actionData: BaseDiffEvent<CheckListItem> = {
         oldEntity,
-        newEntity: entity,
+        newEntity: structuredClone(entity),
         activeUser,
     };
     service.eventEmitter.emit(

@@ -96,7 +96,7 @@ export async function createUpdateEntity
 
 
     const actionData: BaseSimpleEvent<TaskComment> = {
-        entity,
+        entity: structuredClone(entity),
         activeUser,
     };
     service.eventEmitter.emit(

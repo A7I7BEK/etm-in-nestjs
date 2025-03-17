@@ -136,7 +136,7 @@ export class ProjectMembersService
 
         entity.id = id;
         const actionData: BaseSimpleEvent<ProjectMember> = {
-            entity,
+            entity: structuredClone(entity),
             activeUser,
         };
         this.eventEmitter.emit(

@@ -73,7 +73,7 @@ export async function createUpdateDeleteEntity
 
     const actionData: BaseDiffEvent<Task> = {
         oldEntity: oldTaskEntity,
-        newEntity: taskEntity,
+        newEntity: structuredClone(taskEntity),
         activeUser,
     };
     service.eventEmitter.emit(

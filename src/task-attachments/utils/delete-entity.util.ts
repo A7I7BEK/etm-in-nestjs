@@ -39,9 +39,8 @@ export async function deleteEntity
     await service.resourceService.remove(entity.file.id, activeUser);
 
 
-
     const actionData: BaseSimpleEvent<TaskAttachment> = {
-        entity,
+        entity: structuredClone(entity),
         activeUser,
     };
     service.eventEmitter.emit(

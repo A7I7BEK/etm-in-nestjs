@@ -46,7 +46,7 @@ export async function deleteEntity
 
 
     const actionData: BaseSimpleEvent<TaskTag> = {
-        entity,
+        entity: structuredClone(entity),
         activeUser,
     };
     service.eventEmitter.emit(

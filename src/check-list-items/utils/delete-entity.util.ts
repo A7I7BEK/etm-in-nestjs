@@ -37,7 +37,7 @@ export async function deleteEntity
 
 
     const actionData: BaseSimpleEvent<CheckListItem> = {
-        entity,
+        entity: structuredClone(entity),
         activeUser,
     };
     service.eventEmitter.emit(
