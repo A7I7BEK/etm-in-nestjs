@@ -23,8 +23,8 @@ async function bootstrap()
 
     // Wrap Response
     app.useGlobalInterceptors(
+        new ClassSerializerInterceptor(app.get(Reflector)),
         new WrapResponseInterceptor(),
-        new ClassSerializerInterceptor(app.get(Reflector))
     );
 
 
