@@ -46,7 +46,15 @@ export class NotificationsController
         return this._service.findOne(
             {
                 where: { id },
-                relations: { action: true }
+                relations: {
+                    action: {
+                        employee: {
+                            user: true,
+                        },
+                        task: true,
+                        project: true,
+                    },
+                }
             },
             activeUser,
         );
