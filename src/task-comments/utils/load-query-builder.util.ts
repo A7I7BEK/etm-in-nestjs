@@ -11,15 +11,15 @@ export function loadQueryBuilder
         activeUser: ActiveUserData,
     )
 {
-    const [ comment, auth, authUser, members, memUser, task, proj, org ] =
-        [ 'taskComment', 'author', 'authUser', 'members', 'memUser', 'task', 'project', 'organization' ];
+    const [ comment, auth, authUser, employees, memUser, task, proj, org ] =
+        [ 'taskComment', 'author', 'authUser', 'employees', 'memUser', 'task', 'project', 'organization' ];
     const queryBuilder = repository.createQueryBuilder(comment);
 
 
     queryBuilder.leftJoinAndSelect(`${comment}.author`, auth);
     queryBuilder.leftJoinAndSelect(`${auth}.user`, authUser);
-    queryBuilder.leftJoinAndSelect(`${comment}.members`, members);
-    queryBuilder.leftJoinAndSelect(`${members}.user`, memUser);
+    queryBuilder.leftJoinAndSelect(`${comment}.employees`, employees);
+    queryBuilder.leftJoinAndSelect(`${employees}.user`, memUser);
     queryBuilder.leftJoinAndSelect(`${comment}.task`, task);
     queryBuilder.leftJoin(`${task}.project`, proj);
     queryBuilder.leftJoin(`${proj}.organization`, org);
@@ -49,9 +49,9 @@ export function loadQueryBuilder
             new Brackets((qb) =>
             {
                 qb.orWhere(`${comment}.commentText ILIKE :search`, { search: `%${queryDto.allSearch}%` });
-                qb.orWhere(`${members}.firstName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
-                qb.orWhere(`${members}.lastName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
-                qb.orWhere(`${members}.middleName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
+                qb.orWhere(`${employees}.firstName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
+                qb.orWhere(`${employees}.lastName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
+                qb.orWhere(`${employees}.middleName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
                 qb.orWhere(`${memUser}.userName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
             }),
         );
