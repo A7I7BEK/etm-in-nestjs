@@ -59,7 +59,7 @@ export class CheckListGroupsController
                 relations: {
                     checkList: {
                         checkListGroup: true,
-                        members: {
+                        employees: {
                             user: true
                         }
                     },

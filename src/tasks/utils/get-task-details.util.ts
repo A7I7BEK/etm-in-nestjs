@@ -19,7 +19,7 @@ export async function getTaskDetails
                 checkListGroups: {
                     checkList: {
                         checkListGroup: true,
-                        members: {
+                        employees: {
                             user: true
                         }
                     }

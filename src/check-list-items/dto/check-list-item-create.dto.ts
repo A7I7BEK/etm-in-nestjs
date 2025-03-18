@@ -11,7 +11,7 @@ export class CheckListItemCreateDto
     @ArrayMinSize(0) // BINGO: check array for existing number of elements
     @ValidateNested({ each: true }) // BINGO: check nested object in the array
     @Type(() => ObjectIdDto)
-    members: ObjectIdDto[];
+    employeeIds: ObjectIdDto[];
 
     @Min(1)
     @IsInt()

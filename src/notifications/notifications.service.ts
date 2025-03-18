@@ -94,9 +94,9 @@ export class NotificationsService
         )
     {
         const checkListItem: CheckListItem = action.details?.checkListItem;
-        if (checkListItem?.members?.length)
+        if (checkListItem?.employees?.length)
         {
-            const entityList = checkListItem.members.map(employee =>
+            const entityList = checkListItem.employees.map(employee =>
             {
                 const entity = new Notification();
                 entity.user = employee.user;

@@ -54,7 +54,7 @@ export class CheckListItemsController
             {
                 where: { id },
                 relations: {
-                    members: {
+                    employees: {
                         user: true
                     },
                     checkListGroup: true

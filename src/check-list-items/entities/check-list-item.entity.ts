@@ -17,7 +17,7 @@ export class CheckListItem
 
     @JoinTable()
     @ManyToMany(type => Employee)
-    members: Employee[];
+    employees: Employee[];
 
     @ManyToOne(type => CheckListGroup, a => a.checkList, { onDelete: 'CASCADE' }) // BINGO: delete the record when parent is deleted
     checkListGroup: CheckListGroup;
