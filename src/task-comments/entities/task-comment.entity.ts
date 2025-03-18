@@ -29,7 +29,7 @@ export class TaskComment
 
     @JoinTable()
     @ManyToMany(type => Employee)
-    members: Employee[];
+    employees: Employee[];
 
     @ManyToOne(type => Task, a => a.comments, { onDelete: 'CASCADE' })
     task: Task;

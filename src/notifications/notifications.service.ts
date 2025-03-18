@@ -70,9 +70,9 @@ export class NotificationsService
         )
     {
         const comment: TaskComment = action.details?.comment;
-        if (comment?.members?.length)
+        if (comment?.employees?.length)
         {
-            const entityList = comment.members.map(employee =>
+            const entityList = comment.employees.map(employee =>
             {
                 const entity = new Notification();
                 entity.user = employee.user;

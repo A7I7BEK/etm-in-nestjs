@@ -83,7 +83,7 @@ export async function getTaskDetails
             author: {
                 user: true
             },
-            members: {
+            employees: {
                 user: true
             }
         },

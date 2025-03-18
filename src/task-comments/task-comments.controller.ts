@@ -57,7 +57,7 @@ export class TaskCommentsController
                     author: {
                         user: true,
                     },
-                    members: {
+                    employees: {
                         user: true,
                     },
                     task: true,

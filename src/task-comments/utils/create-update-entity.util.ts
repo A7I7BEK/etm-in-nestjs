@@ -68,12 +68,11 @@ export async function createUpdateEntity
     }
 
 
-    if (dto.members.length)
+    if (dto.employeeIds.length)
     {
-        const memberIds = dto.members.map(a => a.id);
-        entity.members = await service.employeesService.findAll(
+        entity.employees = await service.employeesService.findAll(
             {
-                where: { id: In(memberIds) },
+                where: { id: In(dto.employeeIds) },
                 relations: { user: true },
             },
             activeUser,
