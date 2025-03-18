@@ -31,6 +31,8 @@ export class CheckListItemListener
         action.project = entity.task.project;
         action.employee = await this._service.getEmployee(activeUser);
 
+        const { employees } = entity;
+        delete entity.employees;
         delete entity.task;
         delete entity.checkListGroup;
         action.details = { checkListItem: entity };
@@ -40,7 +42,8 @@ export class CheckListItemListener
 
         this._service.eventEmitter.emit(
             [ Notification.name, NotificationType.CHECK_LIST_ITEM ],
-            action
+            employees,
+            action,
         );
     }
 

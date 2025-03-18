@@ -2,8 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Action } from 'src/actions/entities/action.entity';
-import { CheckListItem } from 'src/check-list-items/entities/check-list-item.entity';
-import { TaskComment } from 'src/task-comments/entities/task-comment.entity';
+import { Employee } from 'src/employees/entities/employee.entity';
 import { TasksService } from 'src/tasks/tasks.service';
 import { Repository } from 'typeorm';
 import { Notification } from './entities/notification.entity';
@@ -26,6 +25,8 @@ export class NotificationsListener
             action: Action,
         )
     {
+        // Tom updated your task "AAA"
+
         const taskEntity = await this.tasksService.repository.findOne({
             where: { id: action.task.id },
             relations: {
@@ -59,14 +60,15 @@ export class NotificationsListener
     @OnEvent([ Notification.name, NotificationType.COMMENT ], { async: true })
     async createForComment
         (
+            employees: Employee[],
             action: Action,
         )
     {
-        const comment: TaskComment = action.details?.comment;
+        // Tom mentioned you in comment in task "AAA"
 
-        if (comment?.employees?.length)
+        if (employees?.length)
         {
-            const entityList = comment.employees.map(employee =>
+            const entityList = employees.map(employee =>
             {
                 const entity = new Notification();
                 entity.user = employee.user;
@@ -84,14 +86,15 @@ export class NotificationsListener
     @OnEvent([ Notification.name, NotificationType.CHECK_LIST_ITEM ], { async: true })
     async createForCheckListItem
         (
+            employees: Employee[],
             action: Action,
         )
     {
-        const checkListItem: CheckListItem = action.details?.checkListItem;
+        // Tom mentioned you in checklist item "AAA" in task "BBB"
 
-        if (checkListItem?.employees?.length)
+        if (employees?.length)
         {
-            const entityList = checkListItem.employees.map(employee =>
+            const entityList = employees.map(employee =>
             {
                 const entity = new Notification();
                 entity.user = employee.user;

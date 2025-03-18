@@ -56,14 +56,18 @@ export class TaskCommentListener
         action.project = entity.task.project;
         action.employee = await this._service.getEmployee(activeUser);
 
+        const { employees } = entity;
         delete entity.task;
+        delete entity.author;
+        delete entity.employees;
         action.details = { comment: entity };
 
         await this._service.repository.save(action);
 
         this._service.eventEmitter.emit(
             [ Notification.name, NotificationType.COMMENT ],
-            action
+            employees,
+            action,
         );
     }
 }

@@ -53,19 +53,16 @@ export async function createUpdateEntity
     }
 
 
-    if (!activeUser.systemAdmin)
-    {
-        entity.author = await service.employeesService.findOne(
-            {
-                where: {
-                    user: {
-                        id: activeUser.sub
-                    }
+    entity.author = await service.employeesService.findOne(
+        {
+            where: {
+                user: {
+                    id: activeUser.sub
                 }
-            },
-            activeUser,
-        );
-    }
+            }
+        },
+        activeUser,
+    );
 
 
     if (dto.employeeIds.length)

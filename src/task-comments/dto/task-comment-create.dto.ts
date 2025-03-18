@@ -10,7 +10,7 @@ export class TaskCommentCreateDto
     @IsEnum(TaskCommentType)
     commentType: TaskCommentType;
 
-    @Min(1, { each: true })
+    @Min(0, { each: true })
     @IsInt({ each: true })
     employeeIds: number[];
 
