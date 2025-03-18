@@ -1,5 +1,5 @@
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { modifyTaskForProject } from 'src/tasks/utils/modify-task-for-project.util';
+import { modifyTaskForBoard } from 'src/tasks/utils/modify-task-for-board.util';
 import { FindOptionsRelations } from 'typeorm';
 import { ProjectColumn } from '../entities/project-column.entity';
 import { ProjectColumnsService } from '../project-columns.service';
@@ -45,7 +45,7 @@ export async function wsEmitOneColumn
 
     entity.tasks?.forEach(task =>
     {
-        modifyTaskForProject(task);
+        modifyTaskForBoard(task);
     });
 
 

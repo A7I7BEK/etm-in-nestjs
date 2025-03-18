@@ -10,7 +10,7 @@ import { TaskQueryDto } from './dto/task-query.dto';
 import { TaskUpdateDto } from './dto/task-update.dto';
 import { TaskPermissions } from './enums/task-permissions.enum';
 import { TasksService } from './tasks.service';
-import { modifyTaskForFront } from './utils/modify-task-for-front.util';
+import { calculateTaskStatus } from './utils/calculate-task-status.util';
 
 
 @ApiBearerAuth()
@@ -29,8 +29,7 @@ export class TasksController
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.create(createDto, activeUser);
-        return modifyTaskForFront(entity);
+        return this._service.create(createDto, activeUser);
     }
 
 
@@ -43,8 +42,7 @@ export class TasksController
         )
     {
         const entityWithPagination = await this._service.findAllWithFilters(queryDto, activeUser);
-        entityWithPagination.data = entityWithPagination.data.map(entity => modifyTaskForFront(entity));
-
+        entityWithPagination.data.forEach(entity => calculateTaskStatus(entity));
         return entityWithPagination;
     }
 
@@ -67,7 +65,7 @@ export class TasksController
             },
             activeUser,
         );
-        return modifyTaskForFront(entity);
+        return calculateTaskStatus(entity);
     }
 
 
@@ -80,8 +78,7 @@ export class TasksController
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.update(id, updateDto, activeUser);
-        return modifyTaskForFront(entity);
+        return this._service.update(id, updateDto, activeUser);
     }
 
 
@@ -93,8 +90,7 @@ export class TasksController
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.remove(id, activeUser);
-        return modifyTaskForFront(entity);
+        return this._service.remove(id, activeUser);
     }
 
 
@@ -106,8 +102,7 @@ export class TasksController
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.copy(copyDto, activeUser);
-        return modifyTaskForFront(entity);
+        return this._service.copy(copyDto, activeUser);
     }
 
 
@@ -119,8 +114,7 @@ export class TasksController
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.move(moveDto, activeUser);
-        return modifyTaskForFront(entity);
+        return this._service.move(moveDto, activeUser);
     }
 
 

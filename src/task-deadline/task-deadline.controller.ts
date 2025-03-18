@@ -3,7 +3,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { modifyTaskForFront } from 'src/tasks/utils/modify-task-for-front.util';
+import { calculateTaskStatus } from 'src/tasks/utils/calculate-task-status.util';
 import { TaskDeadlineCreateDto } from './dto/task-deadline-create.dto';
 import { TaskDeadlineDeleteDto } from './dto/task-deadline-delete.dto';
 import { TaskDeadlineUpdateDto } from './dto/task-deadline-update.dto';
@@ -28,7 +28,7 @@ export class TaskDeadlineController
         )
     {
         const entity = await this._service.create(createDto, activeUser);
-        return modifyTaskForFront(entity);
+        return calculateTaskStatus(entity);
     }
 
 
@@ -41,7 +41,7 @@ export class TaskDeadlineController
         )
     {
         const entity = await this._service.update(updateDto, activeUser);
-        return modifyTaskForFront(entity);
+        return calculateTaskStatus(entity);
     }
 
 
@@ -54,6 +54,6 @@ export class TaskDeadlineController
         )
     {
         const entity = await this._service.remove(deleteDto, activeUser);
-        return modifyTaskForFront(entity);
+        return calculateTaskStatus(entity);
     }
 }

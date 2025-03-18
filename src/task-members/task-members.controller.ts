@@ -8,7 +8,6 @@ import { TaskMemberDeleteDto } from './dto/task-member-delete.dto';
 import { TaskMemberQueryDto } from './dto/task-member-query.dto';
 import { TaskMemberPermissions } from './enums/task-member-permissions.enum';
 import { TaskMembersService } from './task-members.service';
-import { modifyTaskMemberForFront } from './utils/modify-task-member-for-front.util';
 
 
 @ApiBearerAuth()
@@ -27,8 +26,7 @@ export class TaskMembersController
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.create(createDto, activeUser);
-        return modifyTaskMemberForFront(entity);
+        return this._service.create(createDto, activeUser);
     }
 
 
@@ -40,10 +38,7 @@ export class TaskMembersController
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entityWithPagination = await this._service.findAllWithFilters(queryDto, activeUser);
-        entityWithPagination.data = entityWithPagination.data.map(entity => modifyTaskMemberForFront(entity));
-
-        return entityWithPagination;
+        return this._service.findAllWithFilters(queryDto, activeUser);
     }
 
 
@@ -55,7 +50,7 @@ export class TaskMembersController
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.findOne(
+        return this._service.findOne(
             {
                 where: { id },
                 relations: {
@@ -69,7 +64,6 @@ export class TaskMembersController
             },
             activeUser,
         );
-        return modifyTaskMemberForFront(entity);
     }
 
 
@@ -81,7 +75,6 @@ export class TaskMembersController
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.remove(deleteDto, activeUser);
-        return modifyTaskMemberForFront(entity);
+        return this._service.remove(deleteDto, activeUser);
     }
 }

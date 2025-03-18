@@ -8,7 +8,6 @@ import { CheckListItemCreateDto } from './dto/check-list-item-create.dto';
 import { CheckListItemQueryDto } from './dto/check-list-item-query.dto';
 import { CheckListItemUpdateDto } from './dto/check-list-item-update.dto';
 import { CheckListItemPermissions } from './enums/check-list-item-permissions.enum';
-import { modifyCheckListItemForFront } from './utils/modify-check-list-item-for-front.util';
 
 
 @ApiBearerAuth()
@@ -27,8 +26,7 @@ export class CheckListItemsController
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.create(createDto, activeUser);
-        return modifyCheckListItemForFront(entity);
+        return this._service.create(createDto, activeUser);
     }
 
 
@@ -40,10 +38,7 @@ export class CheckListItemsController
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entityWithPagination = await this._service.findAllWithFilters(queryDto, activeUser);
-        entityWithPagination.data = entityWithPagination.data.map(entity => modifyCheckListItemForFront(entity));
-
-        return entityWithPagination;
+        return this._service.findAllWithFilters(queryDto, activeUser);
     }
 
 
@@ -55,7 +50,7 @@ export class CheckListItemsController
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.findOne(
+        return this._service.findOne(
             {
                 where: { id },
                 relations: {
@@ -67,7 +62,6 @@ export class CheckListItemsController
             },
             activeUser,
         );
-        return modifyCheckListItemForFront(entity);
     }
 
 
@@ -80,8 +74,7 @@ export class CheckListItemsController
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.update(id, updateDto, activeUser);
-        return modifyCheckListItemForFront(entity);
+        return this._service.update(id, updateDto, activeUser);
     }
 
 
@@ -93,7 +86,6 @@ export class CheckListItemsController
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.remove(id, activeUser);
-        return modifyCheckListItemForFront(entity);
+        return this._service.remove(id, activeUser);
     }
 }

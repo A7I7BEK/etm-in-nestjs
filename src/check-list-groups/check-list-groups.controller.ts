@@ -8,7 +8,7 @@ import { CheckListGroupCreateDto } from './dto/check-list-group-create.dto';
 import { CheckListGroupQueryDto } from './dto/check-list-group-query.dto';
 import { CheckListGroupUpdateDto } from './dto/check-list-group-update.dto';
 import { CheckListGroupPermissions } from './enums/check-list-group-permissions.enum';
-import { modifyCheckListGroupForFront } from './utils/modify-check-list-group-for-front.util';
+import { calculateCheckListGroupPercent } from './utils/calculate-check-list-group-percent.util';
 
 
 @ApiBearerAuth()
@@ -27,8 +27,7 @@ export class CheckListGroupsController
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.create(createDto, activeUser);
-        return modifyCheckListGroupForFront(entity);
+        return this._service.create(createDto, activeUser);
     }
 
 
@@ -41,9 +40,7 @@ export class CheckListGroupsController
         )
     {
         const entityWithPagination = await this._service.findAllWithFilters(queryDto, activeUser);
-        entityWithPagination.data =
-            entityWithPagination.data.map(entity => modifyCheckListGroupForFront(entity));
-
+        entityWithPagination.data.forEach(entity => calculateCheckListGroupPercent(entity));
         return entityWithPagination;
     }
 
@@ -71,7 +68,7 @@ export class CheckListGroupsController
             },
             activeUser,
         );
-        return modifyCheckListGroupForFront(entity);
+        return calculateCheckListGroupPercent(entity);
     }
 
 
@@ -84,8 +81,7 @@ export class CheckListGroupsController
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.update(id, updateDto, activeUser);
-        return modifyCheckListGroupForFront(entity);
+        return this._service.update(id, updateDto, activeUser);
     }
 
 
@@ -97,7 +93,6 @@ export class CheckListGroupsController
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.remove(id, activeUser);
-        return modifyCheckListGroupForFront(entity);
+        return this._service.remove(id, activeUser);
     }
 }

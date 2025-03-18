@@ -1,6 +1,6 @@
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { TasksService } from '../tasks.service';
-import { modifyTaskForProject } from './modify-task-for-project.util';
+import { modifyTaskForBoard } from './modify-task-for-board.util';
 
 
 export async function wsEmitOneTask
@@ -42,7 +42,7 @@ export async function wsEmitOneTask
     );
 
 
-    modifyTaskForProject(entity);
+    modifyTaskForBoard(entity);
 
 
     if (action === 'insert')

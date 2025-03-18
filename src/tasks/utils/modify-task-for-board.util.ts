@@ -1,17 +1,11 @@
-import { modifyTaskMemberForFront } from 'src/task-members/utils/modify-task-member-for-front.util';
-import { modifyTaskTagForFront } from 'src/task-tags/utils/modify-task-tag-for-front.util';
 import { Task } from '../entities/task.entity';
-import { modifyTaskForFront } from './modify-task-for-front.util';
 
 /**
  * temporary for this project, must not exist
  */
-export function modifyTaskForProject(entity: Task)
+export function modifyTaskForBoard(entity: Task)
 {
     const { checkListGroups, comments } = entity;
-
-
-    modifyTaskForFront(entity);
 
 
     if (checkListGroups?.length && checkListGroups.some(a => a.checkList))
@@ -35,10 +29,6 @@ export function modifyTaskForProject(entity: Task)
         });
     }
     delete entity.comments;
-
-
-    entity.members?.forEach(item => modifyTaskMemberForFront(item));
-    entity.tags?.forEach(item => modifyTaskTagForFront(item));
 
 
     return entity;

@@ -3,8 +3,8 @@ import { TaskCommentType } from 'src/task-comments/enums/task-comment-type.enum'
 import { TaskLevel } from 'src/tasks/enums/task-level.enum';
 import { TaskPriority } from 'src/tasks/enums/task-priority.enum';
 import { TaskStatus } from 'src/tasks/enums/task-status.enum';
+import { modifyTaskForBoard } from 'src/tasks/utils/modify-task-for-board.util';
 import { ProjectsService } from '../projects.service';
-import { modifyProjectForFront } from './modify-project-for-front.util';
 
 
 export async function getProjectDetails
@@ -82,7 +82,10 @@ export async function getProjectDetails
     entity[ 'actionsCount' ] = actionCount;
 
 
-    modifyProjectForFront(entity);
+    entity.columns.forEach(column =>
+    {
+        column.tasks.forEach(task => modifyTaskForBoard(task));
+    });
 
 
     entity[ 'taskStatusTypes' ] = Object.values(TaskStatus).filter(a => typeof a === 'string');

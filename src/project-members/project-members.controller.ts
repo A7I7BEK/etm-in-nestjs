@@ -7,7 +7,6 @@ import { ProjectMemberCreateDto } from './dto/project-member-create.dto';
 import { ProjectMemberQueryDto } from './dto/project-member-query.dto';
 import { ProjectMemberPermissions } from './enums/project-member-permissions.enum';
 import { ProjectMembersService } from './project-members.service';
-import { modifyProjectMemberForFront } from './utils/modify-entity-for-front.util';
 
 
 @ApiBearerAuth()
@@ -26,8 +25,7 @@ export class ProjectMembersController
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entityList = await this._service.create(createDto, activeUser);
-        return entityList.map(entity => modifyProjectMemberForFront(entity));
+        return this._service.create(createDto, activeUser);
     }
 
 
@@ -39,10 +37,7 @@ export class ProjectMembersController
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entityWithPagination = await this._service.findAllWithFilters(queryDto, activeUser);
-        entityWithPagination.data = entityWithPagination.data.map(entity => modifyProjectMemberForFront(entity));
-
-        return entityWithPagination;
+        return this._service.findAllWithFilters(queryDto, activeUser);
     }
 
 
@@ -54,7 +49,7 @@ export class ProjectMembersController
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.findOne(
+        return this._service.findOne(
             {
                 where: { id },
                 relations: {
@@ -66,7 +61,6 @@ export class ProjectMembersController
             },
             activeUser,
         );
-        return modifyProjectMemberForFront(entity);
     }
 
 
@@ -78,7 +72,6 @@ export class ProjectMembersController
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.remove(id, activeUser);
-        return modifyProjectMemberForFront(entity);
+        return this._service.remove(id, activeUser);
     }
 }

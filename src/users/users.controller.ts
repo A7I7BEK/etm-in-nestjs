@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { plainToInstance } from 'class-transformer';
 import { SYSTEM_ADMIN_DATA } from 'src/common/constants/system-admin-data.constant';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
@@ -8,9 +9,9 @@ import { UserAttachRoleDto } from './dto/user-attach-role.dto';
 import { UserChangeLanguageDto } from './dto/user-change-language.dto';
 import { UserChangePasswordDto } from './dto/user-change-password.dto';
 import { UserEmployeeUpdateDto } from './dto/user-employee-update.dto';
+import { User } from './entities/user.entity';
 import { UserPermissions } from './enums/user-permissions.enum';
 import { UsersService } from './users.service';
-import { modifyEntityForFront } from './utils/modify-entity-for-front.util';
 
 
 @ApiBearerAuth()
@@ -30,7 +31,11 @@ export class UsersController
     {
         if (activeUser.systemAdmin)
         {
-            return SYSTEM_ADMIN_DATA;
+            /**
+             * BINGO: type cast SYSTEM_ADMIN_DATA to User
+             * - Now, swagger will show the correct response type
+             */
+            return plainToInstance(User, SYSTEM_ADMIN_DATA);
         }
 
         const entity = await this._service.findOne(
@@ -44,58 +49,57 @@ export class UsersController
             },
             activeUser,
         );
-        return modifyEntityForFront(entity);
+
+        entity[ 'systemAdmin' ] = false;
+
+        return entity;
     }
 
 
     @Post('attach-role')
     @Permission(UserPermissions.ATTACH_ROLE)
-    async attachRole
+    attachRole
         (
             @Body() attachRoleDto: UserAttachRoleDto,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.attachRole(attachRoleDto, activeUser);
-        return modifyEntityForFront(entity);
+        return this._service.attachRole(attachRoleDto, activeUser);
     }
 
 
     @Post('change-password')
     @Permission(UserPermissions.CHANGE_PASSWORD)
-    async passwordChange
+    passwordChange
         (
             @Body() changePasswordDto: UserChangePasswordDto,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.changePassword(changePasswordDto, activeUser);
-        return modifyEntityForFront(entity);
+        return this._service.changePassword(changePasswordDto, activeUser);
     }
 
 
     @Post('change-language')
     @Permission(UserPermissions.CHANGE_LANGUAGE)
-    async changeLanguage
+    changeLanguage
         (
             @Body() changeLanguageDto: UserChangeLanguageDto,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.changeLanguage(changeLanguageDto, activeUser);
-        return modifyEntityForFront(entity);
+        return this._service.changeLanguage(changeLanguageDto, activeUser);
     }
 
 
     @Post('update-profile')
     @Permission(UserPermissions.UPDATE_PROFILE)
-    async profileUpdate
+    profileUpdate
         (
             @Body() updateDto: UserEmployeeUpdateDto,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.updateProfile(updateDto, activeUser);
-        return modifyEntityForFront(entity);
+        return this._service.updateProfile(updateDto, activeUser);
     }
 }

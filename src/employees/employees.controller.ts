@@ -8,7 +8,6 @@ import { EmployeeUserCreateDto } from './dto/employee-user-create.dto';
 import { EmployeeUserUpdateDto } from './dto/employee-user-update.dto';
 import { EmployeesService } from './employees.service';
 import { EmployeePermissions } from './enums/employee-permissions.enum';
-import { modifyEntityForFront } from './utils/modify-entity-for-front.util';
 
 
 @ApiBearerAuth()
@@ -27,8 +26,7 @@ export class EmployeesController
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.create(createDto, activeUser);
-        return modifyEntityForFront(entity);
+        return this._service.create(createDto, activeUser);
     }
 
 
@@ -40,10 +38,7 @@ export class EmployeesController
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entityWithPagination = await this._service.findAllWithFilters(queryDto, activeUser);
-        entityWithPagination.data = entityWithPagination.data.map(entity => modifyEntityForFront(entity));
-
-        return entityWithPagination;
+        return this._service.findAllWithFilters(queryDto, activeUser);
     }
 
 
@@ -55,7 +50,7 @@ export class EmployeesController
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.findOne(
+        return this._service.findOne(
             {
                 where: { id },
                 relations: {
@@ -67,7 +62,6 @@ export class EmployeesController
             },
             activeUser,
         );
-        return modifyEntityForFront(entity);
     }
 
 
@@ -80,8 +74,7 @@ export class EmployeesController
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.update(id, updateDto, activeUser);
-        return modifyEntityForFront(entity);
+        return this._service.update(id, updateDto, activeUser);
     }
 
 
@@ -93,7 +86,6 @@ export class EmployeesController
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        const entity = await this._service.remove(id, activeUser);
-        return modifyEntityForFront(entity);
+        return this._service.remove(id, activeUser);
     }
 }
