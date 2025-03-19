@@ -9,6 +9,7 @@ import { NotificationDeleteDto } from './dto/notification-delete.dto';
 import { NotificationQueryDto } from './dto/notification-query.dto';
 import { NotificationUpdateDto } from './dto/notification-update.dto';
 import { Notification } from './entities/notification.entity';
+import { NotificationsGateway } from './notifications.gateway';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
 
 
@@ -18,6 +19,7 @@ export class NotificationsService
     constructor (
         @InjectRepository(Notification)
         public readonly repository: Repository<Notification>,
+        public readonly notifGateway: NotificationsGateway,
     ) { }
 
 
@@ -118,16 +120,20 @@ export class NotificationsService
         if (dto.allNotification)
         {
             const entityList = await this.findAll(activeUser);
-
             entityList.forEach(entity => entity.seenAt = new Date());
-            return this.repository.save(entityList);
+            await this.repository.save(entityList);
+            this.notifGateway.emitReplaceAll(entityList, activeUser.sub);
+
+            return entityList;
         }
         else
         {
             const entity = await this.findOneById(dto.notificationId, activeUser);
-
             entity.seenAt = new Date();
-            return this.repository.save(entity);
+            await this.repository.save(entity);
+            this.notifGateway.emitReplaceOne(entity, activeUser.sub);
+
+            return entity;
         }
     }
 
@@ -141,12 +147,20 @@ export class NotificationsService
         if (dto.allNotification)
         {
             const entityList = await this.findAll(activeUser);
-            return this.repository.remove(entityList);
+            const entityListClone = structuredClone(entityList);
+            await this.repository.remove(entityList);
+            this.notifGateway.emitDeleteAll(entityListClone, activeUser.sub);
+
+            return entityList;
         }
         else
         {
             const entity = await this.findOneById(dto.notificationId, activeUser);
-            return this.repository.remove(entity);
+            const entityClone = structuredClone(entity);
+            await this.repository.remove(entity);
+            this.notifGateway.emitDeleteOne(entityClone, activeUser.sub);
+
+            return entity;
         }
     }
 }

@@ -7,6 +7,7 @@ import { TasksService } from 'src/tasks/tasks.service';
 import { Repository } from 'typeorm';
 import { Notification } from './entities/notification.entity';
 import { NotificationType } from './enums/notification-type.enum';
+import { NotificationsGateway } from './notifications.gateway';
 
 
 @Injectable()
@@ -16,6 +17,7 @@ export class NotificationsListener
         @InjectRepository(Notification)
         public readonly repository: Repository<Notification>,
         public readonly tasksService: TasksService,
+        public readonly notifGateway: NotificationsGateway,
     ) { }
 
 
@@ -53,6 +55,8 @@ export class NotificationsListener
             });
 
             await this.repository.save(entityList);
+
+            this.emitEntityList(entityList);
         }
     }
 
@@ -79,6 +83,8 @@ export class NotificationsListener
             });
 
             await this.repository.save(entityList);
+
+            this.emitEntityList(entityList);
         }
     }
 
@@ -105,6 +111,17 @@ export class NotificationsListener
             });
 
             await this.repository.save(entityList);
+
+            this.emitEntityList(entityList);
         }
+    }
+
+
+    private emitEntityList(entityList: Notification[])
+    {
+        entityList.forEach(entity =>
+        {
+            this.notifGateway.emitInsert(entity, entity.user.id);
+        });
     }
 }
