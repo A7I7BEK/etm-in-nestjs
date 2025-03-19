@@ -42,7 +42,7 @@ export class NotificationsGateway extends BaseGateway
         this.server.to(this.roomPrefix + roomId).emit('notification-delete-one', payload);
     }
 
-    emitDeleteAll(payload: Notification, roomId: string | number)
+    emitDeleteAll(payload: Notification[], roomId: string | number)
     {
         this.server.to(this.roomPrefix + roomId).emit('notification-delete-all', payload);
     }
@@ -52,7 +52,7 @@ export class NotificationsGateway extends BaseGateway
         this.server.to(this.roomPrefix + roomId).emit('notification-replace-one', payload);
     }
 
-    emitReplaceAll(payload: Notification, roomId: string | number)
+    emitReplaceAll(payload: Notification[], roomId: string | number)
     {
         this.server.to(this.roomPrefix + roomId).emit('notification-replace-all', payload);
     }
