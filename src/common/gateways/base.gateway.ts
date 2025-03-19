@@ -1,8 +1,7 @@
 import { Logger } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
+import { JwtCustomService } from 'src/iam/jwt/jwt-custom.service';
 
 
 export abstract class BaseGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
@@ -12,7 +11,7 @@ export abstract class BaseGateway implements OnGatewayInit, OnGatewayConnection,
 
     constructor (
         private readonly logger: Logger,
-        private readonly jwtService: JwtService,
+        private readonly jwtService: JwtCustomService,
     ) { }
 
 
@@ -33,7 +32,7 @@ export abstract class BaseGateway implements OnGatewayInit, OnGatewayConnection,
 
             try
             {
-                const payload: ActiveUserData = await this.jwtService.verifyAsync(token);
+                const payload = await this.jwtService.verifyAccessToken(token);
                 socket.data.user = payload;
 
                 next();

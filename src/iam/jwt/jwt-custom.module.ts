@@ -1,7 +1,9 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtCustomService } from './jwt-custom.service';
 
+
+@Global() // BINGO: the Whole module is accessible globally now
 @Module({
     imports: [
         JwtModule.register({

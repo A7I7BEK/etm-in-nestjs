@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 import appConfig from 'src/common/config/app.config';
 import { BaseGateway } from 'src/common/gateways/base.gateway';
+import { JwtCustomService } from 'src/iam/jwt/jwt-custom.service';
 import { ProjectColumn } from './entities/project-column.entity';
 
 
@@ -26,7 +26,7 @@ export class ProjectColumnsGateway extends BaseGateway
     roomPrefix = 'project-';
 
 
-    constructor (jwtService: JwtService)
+    constructor (jwtService: JwtCustomService)
     {
         super(new Logger(ProjectColumnsGateway.name), jwtService);
     }
