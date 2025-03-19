@@ -8,7 +8,7 @@ import { Notification } from './entities/notification.entity';
 
 
 @WebSocketGateway({
-    path: '/ws-notification',
+    path: '/ws-notifications',
     cors: {
         origin: (req, callback) =>
         {
@@ -34,26 +34,26 @@ export class NotificationsGateway extends BaseGateway
 
     emitInsert(payload: Notification, roomId: string | number)
     {
-        this.server.to(this.roomPrefix + roomId).emit('notification-insert', payload);
+        this.server.to(this.roomPrefix + roomId).emit('notif-insert', payload);
     }
 
     emitDeleteOne(payload: Notification, roomId: string | number)
     {
-        this.server.to(this.roomPrefix + roomId).emit('notification-delete-one', payload);
+        this.server.to(this.roomPrefix + roomId).emit('notif-delete-one', payload);
     }
 
     emitDeleteAll(payload: Notification[], roomId: string | number)
     {
-        this.server.to(this.roomPrefix + roomId).emit('notification-delete-all', payload);
+        this.server.to(this.roomPrefix + roomId).emit('notif-delete-all', payload);
     }
 
     emitReplaceOne(payload: Notification, roomId: string | number)
     {
-        this.server.to(this.roomPrefix + roomId).emit('notification-replace-one', payload);
+        this.server.to(this.roomPrefix + roomId).emit('notif-replace-one', payload);
     }
 
     emitReplaceAll(payload: Notification[], roomId: string | number)
     {
-        this.server.to(this.roomPrefix + roomId).emit('notification-replace-all', payload);
+        this.server.to(this.roomPrefix + roomId).emit('notif-replace-all', payload);
     }
 }
