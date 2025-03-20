@@ -7,6 +7,7 @@ import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
 import { EmployeesService } from 'src/employees/employees.service';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { ActionsGateway } from './actions.gateway';
 import { ACTION_NOTIFICATION_MAPPER } from './constants/action-notification-mapper.constant';
 import { ActionQueryDto } from './dto/action-query.dto';
 import { Action } from './entities/action.entity';
@@ -19,6 +20,7 @@ export class ActionsService
         @InjectRepository(Action)
         public readonly repository: Repository<Action>,
         public readonly employeesService: EmployeesService,
+        public readonly actionsGateway: ActionsGateway,
         public readonly eventEmitter: EventEmitter2,
     ) { }
 
@@ -116,6 +118,8 @@ export class ActionsService
     async saveAction(action: Action, data?: any)
     {
         await this.repository.save(action);
+
+        this.actionsGateway.emitInsert(action, action.project.id);
 
         this.eventEmitter.emit(
             [
