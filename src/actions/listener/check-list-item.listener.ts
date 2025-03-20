@@ -2,8 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { CheckListItem } from 'src/check-list-items/entities/check-list-item.entity';
 import { CheckListItemPermissions } from 'src/check-list-items/enums/check-list-item-permissions.enum';
-import { Notification } from 'src/notifications/entities/notification.entity';
-import { NotificationType } from 'src/notifications/enums/notification-type.enum';
 import { ActionsService } from '../actions.service';
 import { Action } from '../entities/action.entity';
 import { BaseDiffEvent } from '../event/base-diff.event';
@@ -38,13 +36,7 @@ export class CheckListItemListener
         action.details = { checkListItem: entity };
         // Tom created checklist item "AAA" in task "BBB"
 
-        await this._service.repository.save(action);
-
-        this._service.eventEmitter.emit(
-            [ Notification.name, NotificationType.CHECK_LIST_ITEM ],
-            employees,
-            action,
-        );
+        this._service.saveAction(action, employees);
     }
 
 
@@ -65,7 +57,7 @@ export class CheckListItemListener
         action.details = { checkListItem: entity };
         // Tom deleted checklist item "AAA" from task "BBB"
 
-        await this._service.repository.save(action);
+        this._service.saveAction(action);
     }
 
 
@@ -89,6 +81,6 @@ export class CheckListItemListener
         };
         // Tom edited checklist item "AAA" in task "BBB". Changes: ...
 
-        await this._service.repository.save(action);
+        this._service.saveAction(action);
     }
 }

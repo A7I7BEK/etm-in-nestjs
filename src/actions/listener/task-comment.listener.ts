@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { Notification } from 'src/notifications/entities/notification.entity';
-import { NotificationType } from 'src/notifications/enums/notification-type.enum';
 import { TaskComment } from 'src/task-comments/entities/task-comment.entity';
 import { TaskCommentPermissions } from 'src/task-comments/enums/task-comment-permissions.enum';
 import { ActionsService } from '../actions.service';
@@ -62,12 +60,6 @@ export class TaskCommentListener
         delete entity.employees;
         action.details = { comment: entity };
 
-        await this._service.repository.save(action);
-
-        this._service.eventEmitter.emit(
-            [ Notification.name, NotificationType.COMMENT ],
-            employees,
-            action,
-        );
+        this._service.saveAction(action, employees);
     }
 }

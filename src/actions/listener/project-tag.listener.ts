@@ -52,7 +52,7 @@ export class ProjectTagListener
         };
         // Tom edited project tag "AAA". Changes: ...
 
-        await this._service.repository.save(action);
+        this._service.saveAction(action);
     }
 
 
@@ -73,6 +73,6 @@ export class ProjectTagListener
         delete entity.project;
         action.details = { tag: entity };
 
-        await this._service.repository.save(action);
+        this._service.saveAction(action);
     }
 }

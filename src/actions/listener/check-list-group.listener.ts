@@ -53,7 +53,7 @@ export class CheckListGroupListener
         };
         // Tom edited checklist group "AAA" in task "BBB". Changes: ...
 
-        await this._service.repository.save(action);
+        this._service.saveAction(action);
     }
 
 
@@ -75,6 +75,6 @@ export class CheckListGroupListener
         delete entity.task;
         action.details = { checkListGroup: entity };
 
-        await this._service.repository.save(action);
+        this._service.saveAction(action);
     }
 }

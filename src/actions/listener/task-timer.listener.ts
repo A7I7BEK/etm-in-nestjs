@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { Notification } from 'src/notifications/entities/notification.entity';
-import { NotificationType } from 'src/notifications/enums/notification-type.enum';
 import { TaskTimer } from 'src/task-timer/entities/task-timer.entity';
 import { TaskTimerPermissions } from 'src/task-timer/enums/task-timer-permissions.enum';
 import { ActionsService } from '../actions.service';
@@ -52,11 +50,6 @@ export class TaskTimerListener
         delete entity.employee;
         action.details = { timer: entity };
 
-        await this._service.repository.save(action);
-
-        this._service.eventEmitter.emit(
-            [ Notification.name, NotificationType.TASK ],
-            action
-        );
+        this._service.saveAction(action);
     }
 }

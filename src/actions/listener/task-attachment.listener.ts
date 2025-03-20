@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { Notification } from 'src/notifications/entities/notification.entity';
-import { NotificationType } from 'src/notifications/enums/notification-type.enum';
 import { TaskAttachment } from 'src/task-attachments/entities/task-attachment.entity';
 import { TaskAttachmentPermissions } from 'src/task-attachments/enums/task-attachment-permissions.enum';
 import { ActionsService } from '../actions.service';
@@ -50,11 +48,6 @@ export class TaskAttachmentListener
 
         action.details = { file: entity.file };
 
-        await this._service.repository.save(action);
-
-        this._service.eventEmitter.emit(
-            [ Notification.name, NotificationType.TASK ],
-            action
-        );
+        this._service.saveAction(action);
     }
 }

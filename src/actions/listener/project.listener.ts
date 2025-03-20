@@ -31,7 +31,7 @@ export class ProjectListener
         action.details = {};
         // Tom created project "AAA"
 
-        await this._service.repository.save(action);
+        this._service.saveAction(action);
     }
 
 
@@ -56,6 +56,6 @@ export class ProjectListener
         };
         // Tom edited project "AAA". Changes: ...
 
-        await this._service.repository.save(action);
+        this._service.saveAction(action);
     }
 }

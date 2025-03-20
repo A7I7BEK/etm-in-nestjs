@@ -30,7 +30,7 @@ export class ProjectMemberListener
         action.details = { employees };
         // Tom added employees AAA, BBB into the project
 
-        await this._service.repository.save(action);
+        this._service.saveAction(action);
     }
 
 
@@ -48,6 +48,6 @@ export class ProjectMemberListener
         action.details = { employee: entity.employee };
         // Tom removed employee "AAA" from the project
 
-        await this._service.repository.save(action);
+        this._service.saveAction(action);
     }
 }

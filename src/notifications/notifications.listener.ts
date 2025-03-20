@@ -64,8 +64,8 @@ export class NotificationsListener
     @OnEvent([ Notification.name, NotificationType.COMMENT ], { async: true })
     async createForComment
         (
-            employees: Employee[],
             action: Action,
+            employees: Employee[],
         )
     {
         // Tom mentioned you in comment in task "AAA"
@@ -92,8 +92,8 @@ export class NotificationsListener
     @OnEvent([ Notification.name, NotificationType.CHECK_LIST_ITEM ], { async: true })
     async createForCheckListItem
         (
-            employees: Employee[],
             action: Action,
+            employees: Employee[],
         )
     {
         // Tom mentioned you in checklist item "AAA" in task "BBB"
