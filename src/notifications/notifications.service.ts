@@ -9,7 +9,7 @@ import { NotificationDeleteDto } from './dto/notification-delete.dto';
 import { NotificationQueryDto } from './dto/notification-query.dto';
 import { NotificationUpdateDto } from './dto/notification-update.dto';
 import { Notification } from './entities/notification.entity';
-import { NotificationsGateway } from './notifications.gateway';
+import { NotificationsGateway } from './gateways/notifications.gateway';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
 
 

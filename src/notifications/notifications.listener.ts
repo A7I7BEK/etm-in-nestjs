@@ -7,7 +7,7 @@ import { TasksService } from 'src/tasks/tasks.service';
 import { Repository } from 'typeorm';
 import { Notification } from './entities/notification.entity';
 import { NotificationType } from './enums/notification-type.enum';
-import { NotificationsGateway } from './notifications.gateway';
+import { NotificationsGateway } from './gateways/notifications.gateway';
 
 
 @Injectable()
