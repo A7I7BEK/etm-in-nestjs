@@ -15,7 +15,7 @@ import { TaskMoveDto } from './dto/task-move.dto';
 import { TaskQueryDto } from './dto/task-query.dto';
 import { TaskUpdateDto } from './dto/task-update.dto';
 import { Task } from './entities/task.entity';
-import { TasksGateway } from './tasks.gateway';
+import { TasksGateway } from './gateways/tasks.gateway';
 import { copyEntity } from './utils/copy-entity.util';
 import { createEntity } from './utils/create-entity.util';
 import { deleteEntity } from './utils/delete-entity.util';

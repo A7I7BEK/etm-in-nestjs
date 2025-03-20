@@ -5,7 +5,7 @@ import { ProjectColumnsModule } from 'src/project-columns/project-columns.module
 import { TaskCommentsModule } from 'src/task-comments/task-comments.module';
 import { Task } from './entities/task.entity';
 import { TasksController } from './tasks.controller';
-import { TasksGateway } from './tasks.gateway';
+import { TasksGateway } from './gateways/tasks.gateway';
 import { TasksService } from './tasks.service';
 
 @Module({

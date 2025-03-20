@@ -2,9 +2,12 @@ import { Controller, Get } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Notification } from 'src/notifications/entities/notification.entity';
 import { WS_NOTIFICATION_EMIT, WS_NOTIFICATION_PATH } from 'src/notifications/gateways/notification-gateway.constant';
+import { Task } from 'src/tasks/entities/task.entity';
+import { WS_TASK_EMIT, WS_TASK_PATH } from 'src/tasks/gateways/task-gateway.constant';
 
 
 const NotificationEmitHTML = Object.values(WS_NOTIFICATION_EMIT).map(val => `<li><h3>${val}</h3></li>`).join('');
+const TaskEmitHTML = Object.values(WS_TASK_EMIT).map(val => `<li><h3>${val}</h3></li>`).join('');
 
 
 /**
@@ -23,5 +26,15 @@ export class WebSocketDocsController
     getNotification()
     {
         return new Notification;
+    }
+
+
+    @Get(WS_TASK_PATH)
+    @ApiOperation({
+        description: `Available events: <ol>${TaskEmitHTML}</ol>`,
+    })
+    getTask()
+    {
+        return new Task;
     }
 }
