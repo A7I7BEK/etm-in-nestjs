@@ -8,6 +8,7 @@ import { AppService } from './app.service';
 import { CheckListGroupsModule } from './check-list-groups/check-list-groups.module';
 import { CheckListItemsModule } from './check-list-items/check-list-items.module';
 import appConfig from './common/config/app.config';
+import { WebSocketDocsController } from './common/gateways/web-socket-docs.controller';
 import { EmployeesModule } from './employees/employees.module';
 import { GroupsModule } from './groups/groups.module';
 import { IamModule } from './iam/iam.module';
@@ -101,5 +102,6 @@ dotenvExpand.expand(dotenv.config());
     providers: [
         AppService,
     ],
+    controllers: [ WebSocketDocsController ],
 })
 export class AppModule { }
