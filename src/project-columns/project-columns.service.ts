@@ -9,7 +9,7 @@ import { ProjectColumnCreateDto } from './dto/project-column-create.dto';
 import { ProjectColumnMoveDto } from './dto/project-column-move.dto';
 import { ProjectColumnUpdateDto } from './dto/project-column-update.dto';
 import { ProjectColumn } from './entities/project-column.entity';
-import { ProjectColumnsGateway } from './project-columns.gateway';
+import { ProjectColumnsGateway } from './gateways/project-columns.gateway';
 import { createEntity } from './utils/create-entity.util';
 import { deleteEntity } from './utils/delete-entity.util';
 import { moveEntity } from './utils/move-entity.util';

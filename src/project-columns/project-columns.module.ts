@@ -2,8 +2,8 @@ import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProjectsModule } from 'src/projects/projects.module';
 import { ProjectColumn } from './entities/project-column.entity';
+import { ProjectColumnsGateway } from './gateways/project-columns.gateway';
 import { ProjectColumnsController } from './project-columns.controller';
-import { ProjectColumnsGateway } from './project-columns.gateway';
 import { ProjectColumnsService } from './project-columns.service';
 
 @Module({
