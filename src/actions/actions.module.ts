@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EmployeesModule } from 'src/employees/employees.module';
 import { ActionsController } from './actions.controller';
+import { ActionsGateway } from './actions.gateway';
 import { ActionsService } from './actions.service';
 import { Action } from './entities/action.entity';
 import { CheckListGroupListener } from './listener/check-list-group.listener';
@@ -27,6 +28,7 @@ import { TaskListener } from './listener/task.listener';
     controllers: [ ActionsController ],
     providers: [
         ActionsService,
+        ActionsGateway,
         TaskListener,
         TaskTagListener,
         TaskTimerListener,
