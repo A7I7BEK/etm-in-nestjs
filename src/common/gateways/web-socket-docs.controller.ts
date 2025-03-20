@@ -1,5 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Action } from 'src/actions/entities/action.entity';
+import { WS_ACTION_EMIT, WS_ACTION_PATH } from 'src/actions/gateways/action-gateway.constant';
 import { Notification } from 'src/notifications/entities/notification.entity';
 import { WS_NOTIFICATION_EMIT, WS_NOTIFICATION_PATH } from 'src/notifications/gateways/notification-gateway.constant';
 import { ProjectColumn } from 'src/project-columns/entities/project-column.entity';
@@ -11,6 +13,7 @@ import { WS_TASK_EMIT, WS_TASK_PATH } from 'src/tasks/gateways/task-gateway.cons
 const NotificationEmitHTML = Object.values(WS_NOTIFICATION_EMIT).map(val => `<li><h3>${val}</h3></li>`).join('');
 const TaskEmitHTML = Object.values(WS_TASK_EMIT).map(val => `<li><h3>${val}</h3></li>`).join('');
 const ColumnEmitHTML = Object.values(WS_COLUMN_EMIT).map(val => `<li><h3>${val}</h3></li>`).join('');
+const ActionEmitHTML = Object.values(WS_ACTION_EMIT).map(val => `<li><h3>${val}</h3></li>`).join('');
 
 
 /**
@@ -49,5 +52,15 @@ export class WebSocketDocsController
     getColumn()
     {
         return new ProjectColumn;
+    }
+
+
+    @Get(WS_ACTION_PATH)
+    @ApiOperation({
+        description: `Available events: <ol>${ActionEmitHTML}</ol>`,
+    })
+    getAction()
+    {
+        return new Action;
     }
 }

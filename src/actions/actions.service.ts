@@ -6,11 +6,12 @@ import { Pagination } from 'src/common/pagination/pagination.class';
 import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
 import { EmployeesService } from 'src/employees/employees.service';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
+import { Notification } from 'src/notifications/entities/notification.entity';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
-import { ActionsGateway } from './actions.gateway';
 import { ACTION_NOTIFICATION_MAPPER } from './constants/action-notification-mapper.constant';
 import { ActionQueryDto } from './dto/action-query.dto';
 import { Action } from './entities/action.entity';
+import { ActionsGateway } from './gateways/actions.gateway';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
 
 @Injectable()
