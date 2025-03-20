@@ -10,10 +10,10 @@ import { Task } from 'src/tasks/entities/task.entity';
 import { WS_TASK_EMIT, WS_TASK_PATH } from 'src/tasks/gateways/task-gateway.constant';
 
 
-const NotificationEmitHTML = Object.values(WS_NOTIFICATION_EMIT).map(val => `<li><h3>${val}</h3></li>`).join('');
 const TaskEmitHTML = Object.values(WS_TASK_EMIT).map(val => `<li><h3>${val}</h3></li>`).join('');
 const ColumnEmitHTML = Object.values(WS_COLUMN_EMIT).map(val => `<li><h3>${val}</h3></li>`).join('');
 const ActionEmitHTML = Object.values(WS_ACTION_EMIT).map(val => `<li><h3>${val}</h3></li>`).join('');
+const NotificationEmitHTML = Object.values(WS_NOTIFICATION_EMIT).map(val => `<li><h3>${val}</h3></li>`).join('');
 
 
 /**
@@ -25,16 +25,6 @@ const ActionEmitHTML = Object.values(WS_ACTION_EMIT).map(val => `<li><h3>${val}<
 @Controller()
 export class WebSocketDocsController
 {
-    @Get(WS_NOTIFICATION_PATH)
-    @ApiOperation({
-        description: `Available events: <ol>${NotificationEmitHTML}</ol>`,
-    })
-    getNotification()
-    {
-        return new Notification;
-    }
-
-
     @Get(WS_TASK_PATH)
     @ApiOperation({
         description: `Available events: <ol>${TaskEmitHTML}</ol>`,
@@ -62,5 +52,15 @@ export class WebSocketDocsController
     getAction()
     {
         return new Action;
+    }
+
+
+    @Get(WS_NOTIFICATION_PATH)
+    @ApiOperation({
+        description: `Available events: <ol>${NotificationEmitHTML}</ol>`,
+    })
+    getNotification()
+    {
+        return new Notification;
     }
 }
