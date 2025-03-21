@@ -26,6 +26,9 @@ export class User // ADVICE: in the future, merge with Employee
     @Column({ unique: true })
     phoneNumber: string;
 
+    @Column({ nullable: true })
+    lastActiveAt: Date;
+
     @Column('json')
     marks: UserMark; // BINGO: special type
 

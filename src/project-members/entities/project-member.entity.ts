@@ -9,16 +9,10 @@ export class ProjectMember
     id: number;
 
     @Column()
-    isOnline: boolean = false;
-
-    @Column()
-    lastSeenTime: Date = new Date();
+    isTeamLeader: boolean = false;
 
     @ManyToOne(type => Employee, { eager: true, onDelete: 'CASCADE' })
     employee: Employee;
-
-    @Column()
-    isTeamLeader: boolean = false;
 
     @ManyToOne(type => Project, a => a.members, { onDelete: 'CASCADE' })
     project: Project;
