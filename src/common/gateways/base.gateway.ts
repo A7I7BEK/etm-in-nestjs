@@ -21,8 +21,8 @@ export abstract class BaseGateway implements OnGatewayInit, OnGatewayConnection,
 
         server.use(async (socket, next) =>
         {
-            const token = socket.handshake.headers.token as string; // for Postman
-            // const token = socket.handshake.auth.token as string; // for Frontend
+            // const token = socket.handshake.headers.token as string; // for Postman
+            const token = socket.handshake.auth.token as string; // for Frontend
             const roomId = socket.handshake.query.roomId as string;
 
             if (!token || !roomId)
@@ -51,12 +51,14 @@ export abstract class BaseGateway implements OnGatewayInit, OnGatewayConnection,
         client.join(roomName);
         client.data.room = roomName;
 
-        this.logger.log(`Connected: { user: id-${client.data.user?.sub} } && { room: ${client.data.room} }`);
+        const { user } = client.data;
+        this.logger.log(`Connected: { user: id-${user.sub} } && { room: ${roomName} }`);
     }
 
 
     handleDisconnect(client: Socket)
     {
-        this.logger.log(`Disconnected: { user: id-${client.data.user?.sub} } && { room: ${client.data.room} }`);
+        const { user, room } = client.data;
+        this.logger.log(`Disconnected: { user: id-${user.sub} } && { room: ${room} }`);
     }
 }
