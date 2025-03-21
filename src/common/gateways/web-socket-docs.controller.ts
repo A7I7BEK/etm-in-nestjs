@@ -8,12 +8,15 @@ import { ProjectColumn } from 'src/project-columns/entities/project-column.entit
 import { WS_COLUMN_EMIT, WS_COLUMN_PATH } from 'src/project-columns/gateways/project-column-gateway.constant';
 import { Task } from 'src/tasks/entities/task.entity';
 import { WS_TASK_EMIT, WS_TASK_PATH } from 'src/tasks/gateways/task-gateway.constant';
+import { User } from 'src/users/entities/user.entity';
+import { WS_ACTIVE_USER_EMIT, WS_ACTIVE_USER_PATH } from 'src/users/gateways/active-user-gateway.constant';
 
 
 const TaskEmitHTML = Object.values(WS_TASK_EMIT).map(val => `<li><h3>${val}</h3></li>`).join('');
 const ColumnEmitHTML = Object.values(WS_COLUMN_EMIT).map(val => `<li><h3>${val}</h3></li>`).join('');
 const ActionEmitHTML = Object.values(WS_ACTION_EMIT).map(val => `<li><h3>${val}</h3></li>`).join('');
 const NotificationEmitHTML = Object.values(WS_NOTIFICATION_EMIT).map(val => `<li><h3>${val}</h3></li>`).join('');
+const ActiveUserEmitHTML = Object.values(WS_ACTIVE_USER_EMIT).map(val => `<li><h3>${val}</h3></li>`).join('');
 
 
 /**
@@ -62,5 +65,15 @@ export class WebSocketDocsController
     getNotification()
     {
         return new Notification;
+    }
+
+
+    @Get(WS_ACTIVE_USER_PATH)
+    @ApiOperation({
+        description: `Available events: <ol>${ActiveUserEmitHTML}</ol>`,
+    })
+    getActiveUser()
+    {
+        return [ new User ];
     }
 }
