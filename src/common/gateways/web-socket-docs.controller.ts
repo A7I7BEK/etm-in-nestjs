@@ -1,5 +1,5 @@
-import { Controller, Get } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { applyDecorators, Controller, Get } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Action } from 'src/actions/entities/action.entity';
 import { WS_ACTION_EMIT, WS_ACTION_PATH } from 'src/actions/gateways/action-gateway.constant';
 import { Notification } from 'src/notifications/entities/notification.entity';
@@ -24,6 +24,7 @@ const ActiveUserEmitHTML = Object.values(WS_ACTIVE_USER_EMIT).map(val => `<li><h
  * - This controller shows events from all WebSockets (aka Gateways)
  * - HTML is used to show the events in a list
  */
+@ApiBearerAuth()
 @ApiTags('WebSocket Documentation')
 @Controller()
 export class WebSocketDocsController
@@ -32,6 +33,8 @@ export class WebSocketDocsController
     @ApiOperation({
         description: `Available events: <ol>${TaskEmitHTML}</ol>`,
     })
+    @ApplyTokenDecorator()
+    @ApplyRoomIdDecorator()
     getTask()
     {
         return new Task;
@@ -42,6 +45,8 @@ export class WebSocketDocsController
     @ApiOperation({
         description: `Available events: <ol>${ColumnEmitHTML}</ol>`,
     })
+    @ApplyTokenDecorator()
+    @ApplyRoomIdDecorator()
     getColumn()
     {
         return new ProjectColumn;
@@ -52,6 +57,8 @@ export class WebSocketDocsController
     @ApiOperation({
         description: `Available events: <ol>${ActionEmitHTML}</ol>`,
     })
+    @ApplyTokenDecorator()
+    @ApplyRoomIdDecorator()
     getAction()
     {
         return new Action;
@@ -62,6 +69,7 @@ export class WebSocketDocsController
     @ApiOperation({
         description: `Available events: <ol>${NotificationEmitHTML}</ol>`,
     })
+    @ApplyTokenDecorator()
     getNotification()
     {
         return new Notification;
@@ -72,8 +80,41 @@ export class WebSocketDocsController
     @ApiOperation({
         description: `Available events: <ol>${ActiveUserEmitHTML}</ol>`,
     })
+    @ApplyTokenDecorator()
     getActiveUser()
     {
-        return [ new User ];
+        return new User;
     }
+}
+
+
+function ApplyRoomIdDecorator()
+{
+    return applyDecorators(
+        ApiQuery({
+            name: 'roomId',
+            type: 'integer',
+            example: 10,
+            description: 'roomId === projectId',
+            required: true,
+        })
+    );
+}
+
+
+function ApplyTokenDecorator()
+{
+    return applyDecorators(
+        ApiQuery({
+            name: 'token',
+            type: 'string',
+            example: 'token',
+            required: true,
+            description: `Send <b>access token</b> using auth object in socket.io client.
+            <br><br>
+            Example: <code>socket = io('http://localhost:3000',
+            { auth: { token: 'access token' } })</code>
+            <br><br>`,
+        })
+    );
 }
