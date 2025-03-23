@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { AccessTokenData } from 'src/iam/jwt/interfaces/access-token-data.interface';
 import { JwtCustomService } from 'src/iam/jwt/jwt-custom.service';
 
 
@@ -51,14 +52,14 @@ export abstract class BaseGateway implements OnGatewayInit, OnGatewayConnection,
         client.join(roomName);
         client.data.room = roomName;
 
-        const { user } = client.data;
+        const user: AccessTokenData = client.data.user;
         this.logger.log(`Connected: { user: id-${user.sub} } && { room: ${roomName} }`);
     }
 
 
     handleDisconnect(client: Socket)
     {
-        const { user, room } = client.data;
+        const { user, room }: { user: AccessTokenData, room: string; } = client.data;
         this.logger.log(`Disconnected: { user: id-${user.sub} } && { room: ${room} }`);
     }
 }
