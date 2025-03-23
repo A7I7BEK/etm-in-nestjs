@@ -84,24 +84,4 @@ export class NotificationsGateway implements OnGatewayInit, OnGatewayConnection,
     {
         this.server.to(this.roomPrefix + roomId).emit(WS_NOTIFICATION_EMIT.INSERT, payload);
     }
-
-    emitDeleteOne(payload: Notification, roomId: string | number)
-    {
-        this.server.to(this.roomPrefix + roomId).emit(WS_NOTIFICATION_EMIT.DELETE_ONE, payload);
-    }
-
-    emitDeleteAll(payload: Notification[], roomId: string | number)
-    {
-        this.server.to(this.roomPrefix + roomId).emit(WS_NOTIFICATION_EMIT.DELETE_ALL, payload);
-    }
-
-    emitReplaceOne(payload: Notification, roomId: string | number)
-    {
-        this.server.to(this.roomPrefix + roomId).emit(WS_NOTIFICATION_EMIT.REPLACE_ONE, payload);
-    }
-
-    emitReplaceAll(payload: Notification[], roomId: string | number)
-    {
-        this.server.to(this.roomPrefix + roomId).emit(WS_NOTIFICATION_EMIT.REPLACE_ALL, payload);
-    }
 }

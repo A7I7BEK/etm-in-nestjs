@@ -121,19 +121,13 @@ export class NotificationsService
         {
             const entityList = await this.findAll(activeUser);
             entityList.forEach(entity => entity.seenAt = new Date());
-            await this.repository.save(entityList);
-            this.notifGateway.emitReplaceAll(entityList, activeUser.sub);
-
-            return entityList;
+            return this.repository.save(entityList);
         }
         else
         {
             const entity = await this.findOneById(dto.notificationId, activeUser);
             entity.seenAt = new Date();
-            await this.repository.save(entity);
-            this.notifGateway.emitReplaceOne(entity, activeUser.sub);
-
-            return entity;
+            return this.repository.save(entity);
         }
     }
 
@@ -147,20 +141,12 @@ export class NotificationsService
         if (dto.allNotification)
         {
             const entityList = await this.findAll(activeUser);
-            const entityListClone = structuredClone(entityList);
-            await this.repository.remove(entityList);
-            this.notifGateway.emitDeleteAll(entityListClone, activeUser.sub);
-
-            return entityList;
+            return this.repository.remove(entityList);
         }
         else
         {
             const entity = await this.findOneById(dto.notificationId, activeUser);
-            const entityClone = structuredClone(entity);
-            await this.repository.remove(entity);
-            this.notifGateway.emitDeleteOne(entityClone, activeUser.sub);
-
-            return entity;
+            return this.repository.remove(entity);
         }
     }
 }
