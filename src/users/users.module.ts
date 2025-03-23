@@ -6,6 +6,7 @@ import { HashingService } from 'src/iam/hashing/hashing.service';
 import { ResourceModule } from 'src/resource/resource.module';
 import { RolesModule } from 'src/roles/roles.module';
 import { User } from './entities/user.entity';
+import { ActiveUsersGateway } from './gateways/active-user.gateway';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 
@@ -24,6 +25,7 @@ import { UsersService } from './users.service';
             useClass: BcryptService,
         },
         UsersService,
+        ActiveUsersGateway,
     ],
 })
 export class UsersModule { }

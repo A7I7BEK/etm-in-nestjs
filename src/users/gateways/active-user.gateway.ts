@@ -33,14 +33,6 @@ export class ActiveUsersGateway implements OnGatewayInit, OnGatewayConnection, O
     ) { }
 
 
-    private emitActiveUser(payload: any, roomId: string | number)
-    {
-        this.server
-            .to(this.roomPrefix + roomId)
-            .emit(WS_ACTIVE_USER_EMIT.JOIN, payload);
-    }
-
-
     afterInit(server: Server)
     {
         this.logger.log(`Server Initialized in: "${server._opts.path}"`);
@@ -77,12 +69,7 @@ export class ActiveUsersGateway implements OnGatewayInit, OnGatewayConnection, O
         client.join(roomName);
         client.data.room = roomName;
 
-        const aaaaaaaaaaa = await this._service.repository.update(user.sub, {
-            isOnline: true,
-            lastOnlineAt: new Date(),
-        });
-        console.log('aaaaaaaaaaa', aaaaaaaaaaa);
-        this.emitActiveUser(aaaaaaaaaaa, user.orgId);
+        await this.emitActiveUser(true, user);
 
         this.logger.log(`Connected: { user: id-${user.sub} } && { room: ${roomName} }`);
     }
@@ -92,13 +79,22 @@ export class ActiveUsersGateway implements OnGatewayInit, OnGatewayConnection, O
     {
         const { user, room }: { user: AccessTokenData, room: string; } = client.data;
 
-        const bbbbbbbbb = await this._service.repository.update(user.sub, {
-            isOnline: false,
-            lastOnlineAt: new Date(),
-        });
-        console.log('bbbbbbbbb', bbbbbbbbb);
-        this.emitActiveUser(bbbbbbbbb, user.orgId);
+        await this.emitActiveUser(false, user);
 
         this.logger.log(`Disconnected: { user: id-${user.sub} } && { room: ${room} }`);
+    }
+
+
+    private async emitActiveUser(isOnline: boolean, user: AccessTokenData)
+    {
+        const aaaaaaaaaaa = await this._service.repository.update(user.sub, {
+            isOnline,
+            lastOnlineAt: new Date(),
+        });
+        console.log('aaaaaaaaaaa', aaaaaaaaaaa);
+
+        this.server
+            .to(this.roomPrefix + user.orgId)
+            .emit(WS_ACTIVE_USER_EMIT.JOIN, aaaaaaaaaaa);
     }
 }
