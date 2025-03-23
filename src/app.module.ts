@@ -16,7 +16,6 @@ import { MailModule } from './mail/mail.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { OneTimePasswordModule } from './one-time-password/one-time-password.module';
 import { OrganizationsModule } from './organizations/organizations.module';
-import { Permission } from './permissions/entities/permission.entity';
 import { PermissionsModule } from './permissions/permissions.module';
 import { ProjectColumnsModule } from './project-columns/project-columns.module';
 import { ProjectMembersModule } from './project-members/project-members.module';
@@ -67,9 +66,6 @@ dotenvExpand.expand(dotenv.config());
                 };
             },
         }),
-        TypeOrmModule.forFeature([
-            Permission,
-        ]),
         IamModule,
         UsersModule,
         OrganizationsModule,

@@ -1,39 +1,42 @@
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { PERMISSION_LIST } from './iam/authorization/permission.constants';
-import { Permission } from './permissions/entities/permission.entity';
+import { PermissionsService } from './permissions/permissions.service';
+import { UsersService } from './users/users.service';
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap
 {
     constructor (
-        @InjectRepository(Permission)
-        private readonly _permissionsRepository: Repository<Permission>,
+        private readonly _usersService: UsersService,
+        private readonly _permissionsService: PermissionsService,
     ) { }
+
 
     async onApplicationBootstrap()
     {
         await this.insertPermissions();
+        await this.markUsersOffline();
     }
+
 
     async insertPermissions()
     {
-        try
-        {
-            // await this.permissionsRepository.delete({}); // if deleted, roles crash
-            // await this.permissionsRepository.upsert(PERMISSION_LIST, [ "codeName" ]); // the same as below 👇
+        // await this.permissionsRepository.delete({}); // if deleted, roles crash
+        // await this.permissionsRepository.upsert(PERMISSION_LIST, [ "codeName" ]); // the same as below 👇
 
-            await this._permissionsRepository
-                .createQueryBuilder()
-                .insert()
-                .values(PERMISSION_LIST)
-                .orIgnore() // BINGO: ignore if the same value exists in the DB
-                .execute();
-        }
-        catch (error)
-        {
-            console.log('PERMISSION_CREATION --->', error);
-        }
+        await this._permissionsService.repository
+            .createQueryBuilder()
+            .insert()
+            .values(PERMISSION_LIST)
+            .orIgnore() // BINGO: ignore if the same value exists in the DB
+            .execute();
+    }
+
+
+    async markUsersOffline()
+    {
+        await this._usersService.repository.update({}, {
+            isOnline: false
+        });
     }
 }
