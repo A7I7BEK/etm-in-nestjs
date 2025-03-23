@@ -23,7 +23,6 @@ export class ProjectColumnsGateway extends BaseGateway
 {
     @WebSocketServer()
     server: Server;
-
     roomPrefix = 'project-';
 
 

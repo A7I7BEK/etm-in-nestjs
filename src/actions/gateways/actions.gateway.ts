@@ -23,7 +23,6 @@ export class ActionsGateway extends BaseGateway
 {
     @WebSocketServer()
     server: Server;
-
     roomPrefix = 'project-';
 
 

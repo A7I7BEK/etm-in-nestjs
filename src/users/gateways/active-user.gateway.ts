@@ -22,9 +22,9 @@ import { WS_ACTIVE_USER_EMIT, WS_ACTIVE_USER_PATH } from './active-user-gateway.
 export class ActiveUsersGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
     @WebSocketServer()
-    private readonly server: Server;
-    private readonly roomPrefix = 'organization-';
-    private readonly logger = new Logger(ActiveUsersGateway.name);
+    server: Server;
+    roomPrefix = 'organization-';
+    logger = new Logger(ActiveUsersGateway.name);
 
 
     constructor (

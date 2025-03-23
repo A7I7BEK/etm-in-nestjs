@@ -23,7 +23,6 @@ export class TasksGateway extends BaseGateway
 {
     @WebSocketServer()
     server: Server;
-
     roomPrefix = 'project-';
 
 
