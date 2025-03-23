@@ -4,6 +4,8 @@ import { Server, Socket } from 'socket.io';
 import appConfig from 'src/common/config/app.config';
 import { AccessTokenData } from 'src/iam/jwt/interfaces/access-token-data.interface';
 import { JwtCustomService } from 'src/iam/jwt/jwt-custom.service';
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { User } from '../entities/user.entity';
 import { UsersService } from '../users.service';
 import { WS_ACTIVE_USER_EMIT, WS_ACTIVE_USER_PATH } from './active-user-gateway.constant';
 
@@ -87,14 +89,15 @@ export class ActiveUsersGateway implements OnGatewayInit, OnGatewayConnection, O
 
     private async emitActiveUser(isOnline: boolean, user: AccessTokenData)
     {
-        const aaaaaaaaaaa = await this._service.repository.update(user.sub, {
+        const partialEntity: QueryDeepPartialEntity<User> = {
             isOnline,
             lastOnlineAt: new Date(),
-        });
-        console.log('aaaaaaaaaaa', aaaaaaaaaaa);
+        };
+
+        await this._service.repository.update(user.sub, partialEntity);
 
         this.server
             .to(this.roomPrefix + user.orgId)
-            .emit(WS_ACTIVE_USER_EMIT.JOIN, aaaaaaaaaaa);
+            .emit(WS_ACTIVE_USER_EMIT.JOIN, { ...partialEntity, userId: user.sub });
     }
 }
