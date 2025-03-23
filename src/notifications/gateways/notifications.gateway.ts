@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
-import { Server } from 'socket.io';
+import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { Server, Socket } from 'socket.io';
 import appConfig from 'src/common/config/app.config';
-import { BaseGateway } from 'src/common/gateways/base.gateway';
+import { AccessTokenData } from 'src/iam/jwt/interfaces/access-token-data.interface';
 import { JwtCustomService } from 'src/iam/jwt/jwt-custom.service';
 import { Notification } from '../entities/notification.entity';
 import { WS_NOTIFICATION_EMIT, WS_NOTIFICATION_PATH } from './notification-gateway.constant';
@@ -19,17 +19,64 @@ import { WS_NOTIFICATION_EMIT, WS_NOTIFICATION_PATH } from './notification-gatew
     },
 })
 @Injectable()
-export class NotificationsGateway extends BaseGateway
+export class NotificationsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
     @WebSocketServer()
     server: Server;
-
     roomPrefix = 'user-';
+    logger = new Logger(NotificationsGateway.name);
 
 
-    constructor (jwtService: JwtCustomService)
+    constructor (
+        private readonly _jwtService: JwtCustomService,
+    ) { }
+
+
+    afterInit(server: Server)
     {
-        super(new Logger(NotificationsGateway.name), jwtService);
+        this.logger.log(`Server Initialized in: "${server._opts.path}"`);
+
+        server.use(async (socket, next) =>
+        {
+            // const token = socket.handshake.headers.token as string; // for Postman
+            const token = socket.handshake.auth.token as string; // for Frontend
+
+            if (!token)
+            {
+                return next(new Error('"token" is required'));
+            }
+
+            try
+            {
+                const payload = await this._jwtService.verifyAccessToken(token);
+                socket.data.user = payload;
+
+                next();
+            }
+            catch (error)
+            {
+                next(new Error('Authentication error'));
+            }
+        });
+    }
+
+
+    async handleConnection(client: Socket)
+    {
+        const user: AccessTokenData = client.data.user;
+
+        const roomName = this.roomPrefix + user.sub;
+        client.join(roomName);
+        client.data.room = roomName;
+
+        this.logger.log(`Connected: { user: id-${user.sub} } && { room: ${roomName} }`);
+    }
+
+
+    handleDisconnect(client: Socket)
+    {
+        const { user, room }: { user: AccessTokenData, room: string; } = client.data;
+        this.logger.log(`Disconnected: { user: id-${user.sub} } && { room: ${room} }`);
     }
 
 
