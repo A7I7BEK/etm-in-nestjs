@@ -6,10 +6,10 @@ import { Order } from '../pagination/order.enum';
 export abstract class BaseQueryDto<T>
 {
     @IsOptional()
-    @Min(0) // temporary for this project, must be 1
+    @Min(1)
     @IsInt()
     @Type(() => Number)
-    page?: number; // starts from: 0
+    page?: number;
 
     @IsOptional()
     @Max(100)
@@ -33,11 +33,7 @@ export abstract class BaseQueryDto<T>
     {
         if (this.page > 0 && this.pageSize > 0)
         {
-            /**
-             * temporary for this project, must be
-             * return (this.page - 1) * this.perPage;
-             */
-            return this.page * this.pageSize;
+            return (this.page - 1) * this.pageSize;
         }
 
         return 0;
