@@ -9,10 +9,12 @@ import { OrganizationsService } from 'src/organizations/organizations.service';
 import { ResourceService } from 'src/resource/resource.service';
 import { UsersService } from 'src/users/users.service';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { EmployeeChangePasswordDto } from './dto/employee-change-password.dto';
 import { EmployeeQueryDto } from './dto/employee-query.dto';
 import { EmployeeUserCreateDto } from './dto/employee-user-create.dto';
 import { EmployeeUserUpdateDto } from './dto/employee-user-update.dto';
 import { Employee } from './entities/employee.entity';
+import { changePasswordUtil } from './utils/change-password.util';
 import { createEntityUtil } from './utils/create-entity.util';
 import { deleteEntityUtil } from './utils/delete-entity.util';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
@@ -117,7 +119,7 @@ export class EmployeesService
     }
 
 
-    async update
+    update
         (
             id: number,
             dto: EmployeeUserUpdateDto,
@@ -128,12 +130,22 @@ export class EmployeesService
     }
 
 
-    async remove
+    remove
         (
             id: number,
             activeUser: ActiveUserData,
         )
     {
         return deleteEntityUtil(this, id, activeUser);
+    }
+
+
+    changePassword
+        (
+            dto: EmployeeChangePasswordDto,
+            activeUser: ActiveUserData,
+        )
+    {
+        return changePasswordUtil(this, dto, activeUser);
     }
 }

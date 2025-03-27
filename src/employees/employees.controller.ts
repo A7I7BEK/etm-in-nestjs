@@ -3,6 +3,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
+import { EmployeeChangePasswordDto } from './dto/employee-change-password.dto';
 import { EmployeeQueryDto } from './dto/employee-query.dto';
 import { EmployeeUserCreateDto } from './dto/employee-user-create.dto';
 import { EmployeeUserUpdateDto } from './dto/employee-user-update.dto';
@@ -87,5 +88,17 @@ export class EmployeesController
         )
     {
         return this._service.remove(id, activeUser);
+    }
+
+
+    @Post('change-password')
+    @Permission(EmployeePermissions.CHANGE_PASSWORD)
+    passwordChange
+        (
+            @Body() dto: EmployeeChangePasswordDto,
+            @ActiveUser() activeUser: ActiveUserData,
+        )
+    {
+        return this._service.changePassword(dto, activeUser);
     }
 }
