@@ -7,7 +7,7 @@ export class Resource // Cannot be named File because it's a reserved keyword
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({ unique: true })
     url: string;
 
     @Column()
@@ -31,6 +31,6 @@ export class Resource // Cannot be named File because it's a reserved keyword
     @Column()
     updatedAt: Date;
 
-    @ManyToOne(type => Organization, { onDelete: 'CASCADE' })
+    @ManyToOne(type => Organization, { onDelete: 'SET NULL' })
     organization: Organization;
 }

@@ -3,6 +3,8 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
+import { DeleteResourceByIdDto } from './dto/delete-resource-by-id.dto';
+import { DeleteResourceByUrlDto } from './dto/delete-resource-by-url.dto';
 import { MinDimensionDto } from './dto/min-dimension.dto';
 import { UpdateResourceDto } from './dto/update-resource.dto';
 import { ResourceService } from './resource.service';
@@ -63,13 +65,24 @@ export class ResourceController
     }
 
 
-    @Delete(':id')
-    remove
+    @Delete('id')
+    removeById
         (
-            @Param('id', ParseIntPipe) id: number,
+            @Body() dto: DeleteResourceByIdDto,
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        return this._service.remove(id, activeUser);
+        return this._service.removeById(dto.id, activeUser);
+    }
+
+
+    @Delete('url')
+    removeByUrl
+        (
+            @Body() dto: DeleteResourceByUrlDto,
+            @ActiveUser() activeUser: ActiveUserData,
+        )
+    {
+        return this._service.removeByUrl(dto.url, activeUser);
     }
 }

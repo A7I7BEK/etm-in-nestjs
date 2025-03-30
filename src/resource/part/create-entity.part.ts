@@ -3,10 +3,10 @@ import * as fs from 'fs';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { Resource } from '../entities/resource.entity';
 import { ResourceService } from '../resource.service';
-import { calculateFileSize, generateFilePath } from './resource.utils';
+import { calculateFileSize, generateFilePath } from '../utils/resource.utils';
 
 
-export async function createEntity
+export async function createEntityPart
     (
         service: ResourceService,
         file: Express.Multer.File,
@@ -19,14 +19,12 @@ export async function createEntity
 
 
     const { filePath, filename } = generateFilePath(file);
-    file.path = filePath;
-    file.filename = filename;
 
 
     const entity = new Resource();
-    entity.url = file.path;
-    entity.name = file.filename;
-    entity.filename = file.filename;
+    entity.url = filePath;
+    entity.name = filename;
+    entity.filename = filename;
     entity.mimetype = file.mimetype;
     entity.size = file.buffer.length; // BINGO: get file size in bytes
     entity.sizeCalculated = calculateFileSize(file.buffer.length);
@@ -37,7 +35,7 @@ export async function createEntity
 
     try
     {
-        await fs.promises.writeFile(file.path, file.buffer);
+        await fs.promises.writeFile(filePath, file.buffer);
 
         return service.repository.save(entity);
     }

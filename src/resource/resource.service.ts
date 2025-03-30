@@ -1,8 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import * as fs from 'fs';
-import * as path from 'path';
-import * as sharp from 'sharp';
 import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { OrganizationsService } from 'src/organizations/organizations.service';
@@ -10,7 +7,13 @@ import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { MinDimensionDto } from './dto/min-dimension.dto';
 import { UpdateResourceDto } from './dto/update-resource.dto';
 import { Resource } from './entities/resource.entity';
-import { createEntity } from './utils/create-entity.util';
+import { createEntityPart } from './part/create-entity.part';
+import { deleteEntityByIdPart } from './part/delete-entity-by-id.part';
+import { deleteEntityByUrlSilentPart } from './part/delete-entity-by-url-silent.part';
+import { deleteEntityByUrlPart } from './part/delete-entity-by-url.part';
+import { deleteEntitySelfPart } from './part/delete-entity-self.part';
+import { resizeImagePart } from './part/resize-image.part';
+import { updateEntityPart } from './part/update-entity.part';
 import { MIME_TYPE_IMAGES } from './utils/resource.constants';
 
 
@@ -35,32 +38,13 @@ export class ResourceService
 
         if (MIME_TYPE_IMAGES.includes(file.mimetype) && width && height)
         {
-            return this.uploadResizedImage(file, width, height, activeUser);
+            const resizedImage = await resizeImagePart(file, width, height);
+            return this.uploadSimple(resizedImage, activeUser);
         }
         else
         {
             return this.uploadSimple(file, activeUser);
         }
-    }
-
-
-    async uploadResizedImage
-        (
-            file: Express.Multer.File,
-            width: number,
-            height: number,
-            activeUser: ActiveUserData,
-        )
-    {
-        file.buffer = await sharp(file.buffer)
-            .resize({
-                width,
-                height,
-                fit: sharp.fit.outside,
-            })
-            .toBuffer();
-
-        return this.uploadSimple(file, activeUser);
     }
 
 
@@ -70,7 +54,7 @@ export class ResourceService
             activeUser: ActiveUserData,
         )
     {
-        return createEntity(this, file, activeUser);
+        return createEntityPart(this, file, activeUser);
     }
 
 
@@ -136,48 +120,52 @@ export class ResourceService
     }
 
 
-    async update
+    update
         (
             id: number,
-            updateDto: UpdateResourceDto,
+            dto: UpdateResourceDto,
             activeUser: ActiveUserData,
         )
     {
-        const entity = await this.findOne(
-            {
-                where: { id }
-            },
-            activeUser,
-        );
-        entity.name = updateDto.name + path.extname(entity.filename);
-        entity.updatedAt = new Date();
-
-        return this.repository.save(entity);
+        return updateEntityPart(this, id, dto, activeUser);
     }
 
 
-    async remove
+    removeById
         (
             id: number,
             activeUser: ActiveUserData,
         )
     {
-        const entity = await this.findOne(
-            {
-                where: { id }
-            },
-            activeUser,
-        );
+        return deleteEntityByIdPart(this, id, activeUser);
+    }
 
-        try
-        {
-            await fs.promises.rm(entity.url);
-        }
-        catch (error)
-        {
-            console.log(`Failed to remove file with id: ${entity.id}`, error);
-        }
 
-        return this.repository.remove(entity);
+    removeByUrl
+        (
+            url: string,
+            activeUser: ActiveUserData,
+        )
+    {
+        return deleteEntityByUrlPart(this, url, activeUser);
+    }
+
+
+    removeByUrlSilent
+        (
+            url: string,
+            activeUser: ActiveUserData,
+        )
+    {
+        return deleteEntityByUrlSilentPart(this, url, activeUser);
+    }
+
+
+    removeSelf
+        (
+            entity: Resource,
+        )
+    {
+        return deleteEntitySelfPart(this, entity);
     }
 }
