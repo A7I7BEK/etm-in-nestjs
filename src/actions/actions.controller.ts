@@ -46,22 +46,6 @@ export class ActionsController
                     task: true,
                     project: true,
                 },
-                select: {
-                    employee: {
-                        id: true,
-                        firstName: true,
-                        lastName: true,
-                        middleName: true,
-                        birthDate: true,
-                        photoUrl: true,
-                        user: {
-                            id: true,
-                            userName: true,
-                            email: true,
-                            phoneNumber: true,
-                        }
-                    }
-                }
             },
             activeUser,
         );
