@@ -32,14 +32,10 @@ export async function createEntityUtil
     );
 
 
-    if (dto.resourceFile?.id)
+    if (dto.photoFileId)
     {
-        employeeEntity.photoUrl = (await service.resourceService.findOne(
-            {
-                where: { id: dto.resourceFile.id }
-            },
-            activeUser,
-        )).url;
+        employeeEntity.photoFile = await service.resourceService
+            .savePermanent(dto.photoFileId, activeUser);
     }
 
 

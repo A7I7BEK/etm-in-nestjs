@@ -5,6 +5,7 @@ import { HashingService } from 'src/iam/hashing/hashing.service';
 import { OrganizationsModule } from 'src/organizations/organizations.module';
 import { ResourceModule } from 'src/resource/resource.module';
 import { UsersModule } from 'src/users/users.module';
+import { EmployeesTypeormSubscriber } from './employees-typeorm.subscriber';
 import { EmployeesController } from './employees.controller';
 import { EmployeesService } from './employees.service';
 import { Employee } from './entities/employee.entity';
@@ -24,6 +25,7 @@ import { Employee } from './entities/employee.entity';
             useClass: BcryptService,
         },
         EmployeesService,
+        EmployeesTypeormSubscriber,
     ],
 })
 export class EmployeesModule { }

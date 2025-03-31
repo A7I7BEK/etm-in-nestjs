@@ -1,6 +1,4 @@
-import { Type } from 'class-transformer';
-import { IsDateString, IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
-import { ObjectIdDto } from 'src/common/dto/object-id.dto';
+import { IsDateString, IsInt, IsNotEmpty, IsOptional, IsString, Min } from 'class-validator';
 
 export class EmployeeCreateDto
 {
@@ -22,7 +20,7 @@ export class EmployeeCreateDto
     birthDate?: Date;
 
     @IsOptional()
-    @ValidateNested() // BINGO: validate nested DTO
-    @Type(() => ObjectIdDto) // BINGO: transform nested DTO
-    resourceFile?: ObjectIdDto; // BINGO: nested DTO
+    @Min(1)
+    @IsInt()
+    photoFileId?: number;
 }

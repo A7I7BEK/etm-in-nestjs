@@ -1,6 +1,5 @@
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { UserCheckUniqueValueDto } from 'src/users/dto/user-check-unique-value.dto';
-import { Equal } from 'typeorm';
 import { EmployeeUserUpdateDto } from '../dto/employee-user-update.dto';
 import { EmployeesService } from '../employees.service';
 
@@ -41,25 +40,16 @@ export async function updateEntityUtil
     );
 
 
-    if (dto.resourceFile?.id)
+    if (dto.photoFileId)
     {
-        const oldPhoto = entity.photoUrl;
+        const photoFileOld = entity.photoFile;
 
+        entity.photoFile = await service.resourceService
+            .savePermanent(dto.photoFileId, activeUser);
 
-        entity.photoUrl = (await service.resourceService.findOne(
-            {
-                where: { id: dto.resourceFile.id }
-            },
-            activeUser,
-        )).url;
-
-
-        const file = await service.resourceService.repository.findOneBy({
-            url: Equal(oldPhoto)
-        });
-        if (file)
+        if (photoFileOld && photoFileOld?.id !== dto.photoFileId)
         {
-            await service.resourceService.remove(file.id, activeUser);
+            await service.resourceService.removeSelf(photoFileOld);
         }
     }
 

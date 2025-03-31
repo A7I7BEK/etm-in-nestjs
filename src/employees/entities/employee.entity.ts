@@ -1,6 +1,7 @@
 import { ProjectMember } from 'src/project-members/entities/project-member.entity';
+import { Resource } from 'src/resource/entities/resource.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, Relation } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, Relation } from 'typeorm';
 
 @Entity()
 export class Employee
@@ -20,8 +21,8 @@ export class Employee
     @Column({ nullable: true })
     birthDate: Date;
 
-    @Column({ nullable: true })
-    photoUrl: string;
+    @ManyToOne(type => Resource, { eager: true, onDelete: 'SET NULL' })
+    photoFile: Resource;
 
     @JoinColumn()
     @OneToOne(type => User, a => a.employee, { onDelete: 'CASCADE' })
