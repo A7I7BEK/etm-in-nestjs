@@ -8,7 +8,6 @@ import { ProjectColumnsModule } from 'src/project-columns/project-columns.module
 import { ProjectMembersModule } from 'src/project-members/project-members.module';
 import { ProjectTagsModule } from 'src/project-tags/project-tags.module';
 import { ResourceModule } from 'src/resource/resource.module';
-import { ProjectEntitySubscriber } from './entities/project-entity.subscriber';
 import { Project } from './entities/project.entity';
 import { ProjectsController } from './projects.controller';
 import { ProjectsService } from './projects.service';
@@ -29,7 +28,6 @@ import { ProjectsService } from './projects.service';
     controllers: [ ProjectsController ],
     providers: [
         ProjectsService,
-        ProjectEntitySubscriber,
     ],
 })
 export class ProjectsModule { }

@@ -7,7 +7,6 @@ import { ResourceModule } from 'src/resource/resource.module';
 import { UsersModule } from 'src/users/users.module';
 import { EmployeesController } from './employees.controller';
 import { EmployeesService } from './employees.service';
-import { EmployeeEntitySubscriber } from './entities/employee-entity.subscriber';
 import { Employee } from './entities/employee.entity';
 
 @Module({
@@ -25,7 +24,6 @@ import { Employee } from './entities/employee.entity';
             useClass: BcryptService,
         },
         EmployeesService,
-        EmployeeEntitySubscriber,
     ],
 })
 export class EmployeesModule { }

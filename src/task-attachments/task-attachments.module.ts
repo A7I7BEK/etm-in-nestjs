@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ResourceModule } from 'src/resource/resource.module';
 import { TasksModule } from 'src/tasks/tasks.module';
-import { TaskAttachmentEntitySubscriber } from './entities/task-attachment-entity.Subscriber';
 import { TaskAttachment } from './entities/task-attachment.entity';
 import { TaskAttachmentsController } from './task-attachments.controller';
 import { TaskAttachmentsService } from './task-attachments.service';
@@ -17,7 +16,6 @@ import { TaskAttachmentsService } from './task-attachments.service';
     controllers: [ TaskAttachmentsController ],
     providers: [
         TaskAttachmentsService,
-        TaskAttachmentEntitySubscriber,
     ],
 })
 export class TaskAttachmentsModule { }
