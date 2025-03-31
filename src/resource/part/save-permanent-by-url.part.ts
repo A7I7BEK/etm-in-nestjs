@@ -1,18 +1,21 @@
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
+import { Equal } from 'typeorm';
 import { ResourceStatus } from '../enums/resource-status.enum';
 import { ResourceService } from '../resource.service';
 
 
-export async function savePermanentPart
+export async function savePermanentByUrlPart
     (
         service: ResourceService,
-        id: number,
+        url: string,
         activeUser: ActiveUserData,
     )
 {
     const entity = await service.findOne(
         {
-            where: { id }
+            where: {
+                url: Equal(url)
+            }
         },
         activeUser,
     );
