@@ -9,9 +9,9 @@ export class CheckListItemCreateDto
     text: string;
 
     @ArrayMinSize(0) // BINGO: check array for existing number of elements
-    @ValidateNested({ each: true }) // BINGO: check nested object in the array
-    @Type(() => ObjectIdDto)
-    employeeIds: ObjectIdDto[];
+    @ValidateNested({ each: true }) // BINGO: check each nested object in the array
+    @Type(() => ObjectIdDto) // BINGO: transform nested DTO
+    employeeIds: ObjectIdDto[]; // BINGO: nested DTO
 
     @Min(1)
     @IsInt()
