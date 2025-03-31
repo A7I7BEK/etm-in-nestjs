@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as dotenv from 'dotenv';
 import * as dotenvExpand from 'dotenv-expand';
@@ -49,6 +50,7 @@ dotenvExpand.expand(dotenv.config());
     imports: [
         // ConfigModule.forRoot(),
         EventEmitterModule.forRoot(),
+        ScheduleModule.forRoot(),
         TypeOrmModule.forRootAsync({
             useFactory: async () =>
             {
