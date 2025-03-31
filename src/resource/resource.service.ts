@@ -13,6 +13,7 @@ import { deleteEntityByUrlSilentPart } from './part/delete-entity-by-url-silent.
 import { deleteEntityByUrlPart } from './part/delete-entity-by-url.part';
 import { deleteEntitySelfPart } from './part/delete-entity-self.part';
 import { resizeImagePart } from './part/resize-image.part';
+import { savePermanentPart } from './part/save-permanent.part';
 import { updateEntityPart } from './part/update-entity.part';
 import { MIME_TYPE_IMAGES } from './utils/resource.constants';
 
@@ -117,6 +118,16 @@ export class ResourceService
         }
 
         return entity;
+    }
+
+
+    savePermanent
+        (
+            id: number,
+            activeUser: ActiveUserData,
+        )
+    {
+        return savePermanentPart(this, id, activeUser);
     }
 
 
