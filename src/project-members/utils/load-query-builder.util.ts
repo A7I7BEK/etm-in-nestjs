@@ -10,11 +10,13 @@ export function loadQueryBuilder(
     activeUser: ActiveUserData,
 )
 {
-    const [ pMember, empl, user, proj, org ] = [ 'projectMember', 'employee', 'user', 'project', 'organization' ];
+    const [ pMember, empl, photo, user, proj, org ] =
+        [ 'projectMember', 'employee', 'photo', 'user', 'project', 'organization' ];
     const queryBuilder = repository.createQueryBuilder(pMember);
 
 
     queryBuilder.leftJoinAndSelect(`${pMember}.employee`, empl);
+    queryBuilder.leftJoinAndSelect(`${empl}.photoFile`, photo);
     queryBuilder.leftJoin(`${empl}.user`, user);
     queryBuilder.addSelect([ // BINGO: select only needed fields
         `${user}.id`,

@@ -11,11 +11,16 @@ export function loadQueryBuilderPart
         activeUser: ActiveUserData,
     )
 {
-    const [ group, empl, leader, org, ] = [ 'group', 'employee', 'leader', 'organization' ];
+    const [ group, empls, ePhoto, eUser, leader, lPhoto, lUser, org, ] =
+        [ 'group', 'employees', 'ePhoto', 'eUser', 'leader', 'lPhoto', 'lUser', 'organization' ];
     const queryBuilder = repository.createQueryBuilder(group);
 
-    queryBuilder.leftJoinAndSelect(`${group}.employees`, empl);
+    queryBuilder.leftJoinAndSelect(`${group}.employees`, empls);
+    queryBuilder.leftJoinAndSelect(`${empls}.photoFile`, ePhoto);
+    queryBuilder.leftJoinAndSelect(`${empls}.user`, eUser);
     queryBuilder.leftJoinAndSelect(`${group}.leader`, leader);
+    queryBuilder.leftJoinAndSelect(`${leader}.photoFile`, lPhoto);
+    queryBuilder.leftJoinAndSelect(`${leader}.user`, lUser);
     queryBuilder.leftJoinAndSelect(`${group}.organization`, org);
     queryBuilder.skip(queryDto.skip);
     queryBuilder.take(queryDto.pageSize);

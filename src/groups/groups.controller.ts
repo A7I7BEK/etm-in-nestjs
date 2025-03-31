@@ -54,8 +54,12 @@ export class GroupsController
             {
                 where: { id },
                 relations: {
-                    employees: true,
-                    leader: true,
+                    employees: {
+                        user: true,
+                    },
+                    leader: {
+                        user: true,
+                    },
                     organization: true,
                 }
             },

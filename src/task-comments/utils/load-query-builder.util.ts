@@ -11,15 +11,17 @@ export function loadQueryBuilder
         activeUser: ActiveUserData,
     )
 {
-    const [ comment, auth, authUser, employees, memUser, task, proj, org ] =
-        [ 'taskComment', 'author', 'authUser', 'employees', 'memUser', 'task', 'project', 'organization' ];
+    const [ comment, auth, aPhoto, aUser, employees, ePhoto, eUser, task, proj, org ] =
+        [ 'taskComment', 'author', 'aPhoto', 'aUser', 'employees', 'ePhoto', 'eUser', 'task', 'project', 'organization' ];
     const queryBuilder = repository.createQueryBuilder(comment);
 
 
     queryBuilder.leftJoinAndSelect(`${comment}.author`, auth);
-    queryBuilder.leftJoinAndSelect(`${auth}.user`, authUser);
+    queryBuilder.leftJoinAndSelect(`${auth}.photoFile`, aPhoto);
+    queryBuilder.leftJoinAndSelect(`${auth}.user`, aUser);
     queryBuilder.leftJoinAndSelect(`${comment}.employees`, employees);
-    queryBuilder.leftJoinAndSelect(`${employees}.user`, memUser);
+    queryBuilder.leftJoinAndSelect(`${employees}.photoFile`, ePhoto);
+    queryBuilder.leftJoinAndSelect(`${employees}.user`, eUser);
     queryBuilder.leftJoinAndSelect(`${comment}.task`, task);
     queryBuilder.leftJoin(`${task}.project`, proj);
     queryBuilder.leftJoin(`${proj}.organization`, org);
@@ -52,7 +54,7 @@ export function loadQueryBuilder
                 qb.orWhere(`${employees}.firstName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
                 qb.orWhere(`${employees}.lastName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
                 qb.orWhere(`${employees}.middleName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
-                qb.orWhere(`${memUser}.userName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
+                qb.orWhere(`${eUser}.userName ILIKE :search`, { search: `%${queryDto.allSearch}%` });
             }),
         );
     }

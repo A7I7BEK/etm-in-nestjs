@@ -11,13 +11,14 @@ export function loadQueryBuilder
         activeUser: ActiveUserData,
     )
 {
-    const [ project, group, manager, org, tasks, tColumn ] =
-        [ 'project', 'group', 'manager', 'organization', 'tasks', 'column' ];
+    const [ project, group, manager, mPhoto, org, tasks, tColumn ] =
+        [ 'project', 'group', 'manager', 'mPhoto', 'organization', 'tasks', 'column' ];
     const queryBuilder = repository.createQueryBuilder(project);
 
 
     queryBuilder.leftJoinAndSelect(`${project}.group`, group);
     queryBuilder.leftJoinAndSelect(`${project}.manager`, manager);
+    queryBuilder.leftJoinAndSelect(`${manager}.photoFile`, mPhoto);
     queryBuilder.leftJoinAndSelect(`${project}.organization`, org);
     queryBuilder.leftJoinAndSelect(`${project}.tasks`, tasks);
     queryBuilder.leftJoinAndSelect(`${tasks}.column`, tColumn);

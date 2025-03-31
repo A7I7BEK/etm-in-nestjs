@@ -11,8 +11,8 @@ export function loadQueryBuilder(
     activeUser: ActiveUserData,
 )
 {
-    // TODO: photoFile is not added, check if it is working without it
-    const [ empl, user, org, role, members ] = [ 'employee', 'user', 'organization', 'role', 'members' ];
+    const [ empl, photo, user, org, role, members ] =
+        [ 'employee', 'photo', 'user', 'organization', 'role', 'members' ];
 
 
     // BINGO: bypass the type check using <any>
@@ -24,6 +24,7 @@ export function loadQueryBuilder(
 
 
     const queryBuilder = repository.createQueryBuilder(empl);
+    queryBuilder.leftJoinAndSelect(`${empl}.photoFile`, photo);
     queryBuilder.leftJoinAndSelect(`${empl}.user`, user);
     queryBuilder.leftJoinAndSelect(`${user}.organization`, org);
     queryBuilder.leftJoinAndSelect(`${user}.roles`, role);
