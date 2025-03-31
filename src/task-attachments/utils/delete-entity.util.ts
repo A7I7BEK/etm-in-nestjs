@@ -36,7 +36,6 @@ export async function deleteEntity
 
 
     await service.repository.remove(entity);
-    await service.resourceService.remove(entity.file.id, activeUser);
 
 
     const actionData: BaseSimpleEvent<TaskAttachment> = {

@@ -35,7 +35,7 @@ export async function createEntityUtil
     if (dto.photoFileId)
     {
         employeeEntity.photoFile = await service.resourceService
-            .savePermanent(dto.photoFileId, activeUser);
+            .savePermanentById(dto.photoFileId, activeUser);
     }
 
 

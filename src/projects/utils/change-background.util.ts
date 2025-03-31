@@ -1,5 +1,4 @@
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { Equal } from 'typeorm';
 import { ProjectBackgroundDto } from '../dto/project-background.dto';
 import { ProjectsService } from '../projects.service';
 
@@ -19,20 +18,25 @@ export async function changeBackgroundUtil
     );
 
 
-    const oldBackground = entity.background;
+    if (dto.background.charAt(0) !== '#')
+    {
+        await service.resourceService
+            .savePermanentByUrl(dto.background, activeUser);
+    }
+
+
+    if (
+        entity.background
+        && entity.background.charAt(0) !== '#'
+        && entity.background !== dto.background
+    )
+    {
+        await service.resourceService.removeByUrl(entity.background, activeUser);
+    }
 
 
     entity.background = dto.background;
     await service.repository.save(entity);
-
-
-    const file = await service.resourceService.repository.findOneBy({
-        url: Equal(oldBackground)
-    });
-    if (file)
-    {
-        await service.resourceService.remove(file.id, activeUser);
-    }
 
 
     return entity;

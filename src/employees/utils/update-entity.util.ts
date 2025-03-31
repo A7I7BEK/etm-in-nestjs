@@ -45,9 +45,9 @@ export async function updateEntityUtil
         const photoFileOld = entity.photoFile;
 
         entity.photoFile = await service.resourceService
-            .savePermanent(dto.photoFileId, activeUser);
+            .savePermanentById(dto.photoFileId, activeUser);
 
-        if (photoFileOld && photoFileOld?.id !== dto.photoFileId)
+        if (photoFileOld && photoFileOld.id !== dto.photoFileId)
         {
             await service.resourceService.removeSelf(photoFileOld);
         }
