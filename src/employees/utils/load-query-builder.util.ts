@@ -11,7 +11,9 @@ export function loadQueryBuilder(
     activeUser: ActiveUserData,
 )
 {
+    // TODO: photoFile is not added, check if it is working without it
     const [ empl, user, org, role, members ] = [ 'employee', 'user', 'organization', 'role', 'members' ];
+
 
     // BINGO: bypass the type check using <any>
     const sortBy = (<any>Object)

@@ -176,10 +176,9 @@ export class ResourceService
     removeByUrlSilent
         (
             url: string,
-            activeUser: ActiveUserData,
         )
     {
-        return deleteEntityByUrlSilentPart(this, url, activeUser);
+        return deleteEntityByUrlSilentPart(this, url);
     }
 
 

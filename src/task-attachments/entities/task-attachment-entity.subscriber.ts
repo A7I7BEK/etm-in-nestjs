@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { ResourceService } from 'src/resource/resource.service';
 import { EntitySubscriberInterface, EventSubscriber, RemoveEvent } from 'typeorm';
-import { Employee } from './entities/employee.entity';
+import { TaskAttachment } from './task-attachment.entity';
 
 
 @EventSubscriber()
 @Injectable()
-export class EmployeesTypeormSubscriber implements EntitySubscriberInterface<Employee>
+export class TaskAttachmentEntitySubscriber implements EntitySubscriberInterface<TaskAttachment>
 {
     constructor (
         public readonly resourceService: ResourceService,
@@ -15,19 +15,19 @@ export class EmployeesTypeormSubscriber implements EntitySubscriberInterface<Emp
 
     listenTo()
     {
-        return Employee;
+        return TaskAttachment;
     }
 
 
-    async beforeRemove(event: RemoveEvent<Employee>)
+    async beforeRemove(event: RemoveEvent<TaskAttachment>)
     {
         const { entity } = event;
 
-        console.log('EmployeesTypeormSubscriber', entity);
+        console.log('TaskAttachmentEntitySubscriber', entity);
 
-        if (entity && entity.photoFile)
+        if (entity && entity.file)
         {
-            await this.resourceService.removeSelf(entity.photoFile);
+            await this.resourceService.removeSelf(entity.file);
         }
     }
 }

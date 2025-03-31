@@ -1,8 +1,5 @@
 import * as fs from 'fs';
-import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
-import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { Equal, FindOneOptions } from 'typeorm';
-import { Resource } from '../entities/resource.entity';
+import { Equal } from 'typeorm';
 import { ResourceService } from '../resource.service';
 
 
@@ -10,31 +7,13 @@ export async function deleteEntityByUrlSilentPart
     (
         service: ResourceService,
         url: string,
-        activeUser: ActiveUserData,
     )
 {
-    let options: FindOneOptions<Resource> = {
+    const entity = await service.repository.findOne({
         where: {
             url: Equal(url)
         }
-    };
-
-
-    if (!activeUser.systemAdmin)
-    {
-        const orgOption: FindOneOptions<Resource> = {
-            where: {
-                organization: {
-                    id: activeUser.orgId
-                }
-            }
-        };
-
-        setNestedOptions(options ??= {}, orgOption);
-    }
-
-
-    const entity = await service.repository.findOne(options);
+    });
 
 
     if (entity)
@@ -50,5 +29,10 @@ export async function deleteEntityByUrlSilentPart
 
 
         return service.repository.remove(entity);
+    }
+    else
+    {
+        console.log(`File not found with url: ${url}`);
+        return null;
     }
 }
