@@ -59,7 +59,7 @@ export async function createEntityUtil
     await service.repository.save(employeeEntity);
 
 
-    if (employeeEntity.photoFile)
+    if (dto.photoFileId)
     {
         await service.resourceTrackerService.setAll(employeeEntity);
     }

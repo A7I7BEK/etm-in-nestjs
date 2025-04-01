@@ -19,8 +19,7 @@ export class EmployeeCreateDto
     @IsDateString()
     birthDate?: Date;
 
-    @IsOptional()
-    @Min(1)
+    @Min(0)
     @IsInt()
-    photoFileId?: number;
+    photoFileId: number;
 }

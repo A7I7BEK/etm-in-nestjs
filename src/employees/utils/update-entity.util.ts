@@ -42,19 +42,23 @@ export async function updateEntityUtil
 
     if (dto.photoFileId)
     {
-        const photoFileOld = entity.photoFile;
-
-        entity.photoFile = await service.resourceService.findOne(
+        const resourceEntity = await service.resourceService.findOne(
             {
                 where: { id: dto.photoFileId }
             },
             activeUser,
         );
 
-        if (photoFileOld && photoFileOld.id !== dto.photoFileId)
+        if (entity.photoFile && entity.photoFile.id !== dto.photoFileId)
         {
-            await service.resourceService.removeSelf(photoFileOld);
+            await service.resourceService.removeSelf(entity.photoFile);
         }
+
+        entity.photoFile = resourceEntity;
+    }
+    else if (entity.photoFile) // dto.photoFileId === 0 && entity.photoFile exists
+    {
+        await service.resourceService.removeSelf(entity.photoFile);
     }
 
 
@@ -71,7 +75,7 @@ export async function updateEntityUtil
     await service.repository.save(entity);
 
 
-    if (entity.photoFile)
+    if (dto.photoFileId)
     {
         await service.resourceTrackerService.setAll(entity);
     }

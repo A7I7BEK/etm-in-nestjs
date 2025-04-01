@@ -47,6 +47,10 @@ export async function updateProfileUtil
             await service.resourceService.removeSelf(photoFileOld);
         }
     }
+    else if (entity.employee.photoFile)
+    {
+        await service.resourceService.removeSelf(entity.employee.photoFile);
+    }
 
 
     entity.employee.firstName = dto.employee.firstName;
@@ -62,7 +66,7 @@ export async function updateProfileUtil
     await service.repository.save(entity);
 
 
-    if (entity.employee.photoFile)
+    if (dto.employee.photoFileId)
     {
         await service.resourceTrackerService.setAll(entity.employee);
     }
