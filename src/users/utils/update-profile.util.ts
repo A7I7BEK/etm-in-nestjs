@@ -35,8 +35,12 @@ export async function updateProfileUtil
     {
         const photoFileOld = entity.employee.photoFile;
 
-        entity.employee.photoFile = await service.resourceService
-            .savePermanentById(dto.employee.photoFileId, activeUser);
+        entity.employee.photoFile = await service.resourceService.findOne(
+            {
+                where: { id: dto.employee.photoFileId }
+            },
+            activeUser,
+        );
 
         if (photoFileOld && photoFileOld.id !== dto.employee.photoFileId)
         {
@@ -55,5 +59,14 @@ export async function updateProfileUtil
     entity.userName = dto.userName;
     entity.email = dto.email;
     entity.phoneNumber = dto.phoneNumber;
-    return service.repository.save(entity);
+    await service.repository.save(entity);
+
+
+    if (entity.employee.photoFile)
+    {
+        await service.resourceTrackerService.setAll(entity.employee);
+    }
+
+
+    return entity;
 }
