@@ -34,8 +34,12 @@ export async function createEntityUtil
 
     if (dto.photoFileId)
     {
-        employeeEntity.photoFile = await service.resourceService
-            .savePermanentById(dto.photoFileId, activeUser);
+        employeeEntity.photoFile = await service.resourceService.findOne(
+            {
+                where: { id: dto.photoFileId }
+            },
+            activeUser,
+        );
     }
 
 
@@ -52,5 +56,14 @@ export async function createEntityUtil
     employeeEntity.middleName = dto.middleName;
     employeeEntity.birthDate = dto.birthDate;
     employeeEntity.user = userEntity;
-    return service.repository.save(employeeEntity);
+    await service.repository.save(employeeEntity);
+
+
+    if (employeeEntity.photoFile)
+    {
+        await service.resourceTrackerService.setAll(employeeEntity);
+    }
+
+
+    return employeeEntity;
 }

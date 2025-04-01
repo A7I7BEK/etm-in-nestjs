@@ -31,5 +31,5 @@ export async function deleteEntityByUrlPart
     }
 
 
-    return service.repository.remove(entity);
+    return service.resRepo.remove(entity);
 }

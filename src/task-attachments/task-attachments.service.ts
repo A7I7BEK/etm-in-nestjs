@@ -5,6 +5,7 @@ import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
 import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
+import { ResourceTrackerService } from 'src/resource/resource-tracker.service';
 import { ResourceService } from 'src/resource/resource.service';
 import { TasksService } from 'src/tasks/tasks.service';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
@@ -24,6 +25,7 @@ export class TaskAttachmentsService
         public readonly repository: Repository<TaskAttachment>,
         public readonly tasksService: TasksService,
         public readonly resourceService: ResourceService,
+        public readonly resourceTrackerService: ResourceTrackerService,
         public readonly eventEmitter: EventEmitter2,
     ) { }
 

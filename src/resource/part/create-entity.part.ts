@@ -1,6 +1,7 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import * as fs from 'fs';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
+import { ResourceTracker } from '../entities/resource-tracker.entity';
 import { Resource } from '../entities/resource.entity';
 import { ResourceService } from '../resource.service';
 import { calculateFileSize, generateFilePath } from '../utils/resource.utils';
@@ -36,8 +37,15 @@ export async function createEntityPart
     try
     {
         await fs.promises.writeFile(filePath, file.buffer);
+        await service.resRepo.save(entity);
 
-        return service.repository.save(entity);
+
+        const tracker = new ResourceTracker();
+        tracker.resource = entity;
+        await service.trackerRepo.save(tracker);
+
+
+        return entity;
     }
     catch (error)
     {

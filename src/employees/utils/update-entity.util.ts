@@ -44,8 +44,12 @@ export async function updateEntityUtil
     {
         const photoFileOld = entity.photoFile;
 
-        entity.photoFile = await service.resourceService
-            .savePermanentById(dto.photoFileId, activeUser);
+        entity.photoFile = await service.resourceService.findOne(
+            {
+                where: { id: dto.photoFileId }
+            },
+            activeUser,
+        );
 
         if (photoFileOld && photoFileOld.id !== dto.photoFileId)
         {
@@ -64,5 +68,14 @@ export async function updateEntityUtil
     entity.lastName = dto.lastName;
     entity.middleName = dto.middleName;
     entity.birthDate = dto.birthDate;
-    return service.repository.save(entity);
+    await service.repository.save(entity);
+
+
+    if (entity.photoFile)
+    {
+        await service.resourceTrackerService.setAll(entity);
+    }
+
+
+    return entity;
 }

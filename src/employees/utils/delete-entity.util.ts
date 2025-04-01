@@ -21,5 +21,11 @@ export async function deleteEntityUtil
     await service.usersService.remove(entity.user.id, activeUser);
 
 
+    if (entity.photoFile)
+    {
+        await service.resourceService.removeSelf(entity.photoFile);
+    }
+
+
     return entity;
 }

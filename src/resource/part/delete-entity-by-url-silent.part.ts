@@ -9,7 +9,7 @@ export async function deleteEntityByUrlSilentPart
         url: string,
     )
 {
-    const entity = await service.repository.findOne({
+    const entity = await service.resRepo.findOne({
         where: {
             url: Equal(url)
         }
@@ -28,7 +28,7 @@ export async function deleteEntityByUrlSilentPart
         }
 
 
-        return service.repository.remove(entity);
+        return service.resRepo.remove(entity);
     }
     else
     {

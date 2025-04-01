@@ -12,6 +12,7 @@ import { OrganizationsService } from 'src/organizations/organizations.service';
 import { ProjectColumnsService } from 'src/project-columns/project-columns.service';
 import { ProjectMembersService } from 'src/project-members/project-members.service';
 import { ProjectTagsService } from 'src/project-tags/project-tags.service';
+import { ResourceTrackerService } from 'src/resource/resource-tracker.service';
 import { ResourceService } from 'src/resource/resource.service';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { ProjectBackgroundDto } from './dto/project-background.dto';
@@ -25,6 +26,7 @@ import { deleteEntity } from './utils/delete-entity.util';
 import { getProjectDetails } from './utils/get-project-details.util';
 import { loadQueryBuilder } from './utils/load-query-builder.util';
 import { updateEntity } from './utils/update-entity.util.ts';
+
 
 @Injectable()
 export class ProjectsService
@@ -42,6 +44,7 @@ export class ProjectsService
         @Inject(forwardRef(() => ProjectTagsService)) // BINGO: Circular dependency problem solved
         public readonly projectTagsService: ProjectTagsService,
         public readonly resourceService: ResourceService,
+        public readonly resourceTrackerService: ResourceTrackerService,
         public readonly actionsService: ActionsService,
         public readonly eventEmitter: EventEmitter2,
     ) { }

@@ -20,8 +20,13 @@ export async function changeBackgroundUtil
 
     if (dto.background.charAt(0) !== '#')
     {
-        await service.resourceService
-            .savePermanentByUrl(dto.background, activeUser);
+        // Just check
+        await service.resourceService.findOne(
+            {
+                where: { url: dto.background }
+            },
+            activeUser,
+        );
     }
 
 
@@ -37,6 +42,12 @@ export async function changeBackgroundUtil
 
     entity.background = dto.background;
     await service.repository.save(entity);
+
+
+    if (entity.background.charAt(0) !== '#')
+    {
+        await service.resourceTrackerService.setAll(entity);
+    }
 
 
     return entity;

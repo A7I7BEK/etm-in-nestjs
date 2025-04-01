@@ -19,5 +19,5 @@ export async function deleteEntitySelfPart
     }
 
 
-    return service.repository.remove(entity);
+    return service.resRepo.remove(entity);
 }

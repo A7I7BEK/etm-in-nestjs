@@ -28,5 +28,5 @@ export async function deleteEntityByIdPart
     }
 
 
-    return service.repository.remove(entity);
+    return service.resRepo.remove(entity);
 }

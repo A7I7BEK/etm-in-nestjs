@@ -6,6 +6,7 @@ import { setNestedOptions } from 'src/common/utils/set-nested-options.util';
 import { HashingService } from 'src/iam/hashing/hashing.service';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { OrganizationsService } from 'src/organizations/organizations.service';
+import { ResourceTrackerService } from 'src/resource/resource-tracker.service';
 import { ResourceService } from 'src/resource/resource.service';
 import { UsersService } from 'src/users/users.service';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
@@ -30,6 +31,7 @@ export class EmployeesService
         public readonly usersService: UsersService,
         public readonly organizationsService: OrganizationsService,
         public readonly resourceService: ResourceService,
+        public readonly resourceTrackerService: ResourceTrackerService,
         public readonly hashingService: HashingService,
     ) { }
 

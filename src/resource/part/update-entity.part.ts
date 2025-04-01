@@ -24,5 +24,5 @@ export async function updateEntityPart
     entity.updatedAt = new Date();
 
 
-    return service.repository.save(entity);
+    return service.resRepo.save(entity);
 }
