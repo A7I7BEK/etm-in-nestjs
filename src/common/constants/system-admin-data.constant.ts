@@ -2,6 +2,8 @@ import { PERMISSION_LIST } from 'src/iam/authorization/permission.constants';
 
 
 export const SYSTEM_ADMIN_DATA = {
+    "systemAdmin": true,
+    "id": 0,
     "userName": "system_admin",
     "email": "system@system.system",
     "phoneNumber": "900000000",
@@ -13,6 +15,14 @@ export const SYSTEM_ADMIN_DATA = {
         "code": "en",
         "name": "English"
     },
+    "employee": {
+        "id": 0,
+        "firstName": "System",
+        "lastName": "Admin",
+        "middleName": "",
+        "birthDate": null,
+        "photoFile": null,
+    },
     "roles": [
         {
             "id": 0,
@@ -20,14 +30,9 @@ export const SYSTEM_ADMIN_DATA = {
             "permissions": PERMISSION_LIST,
         }
     ],
-    "userId": 0,
-    "systemAdmin": true,
-    "id": 0,
-    "firstName": "System",
-    "lastName": "Admin",
-    "middleName": null,
-    "birthDate": null,
-    "photoUrl": null,
-    "organizationId": 0,
-    "organizationName": "System Org"
+    "organization": {
+        "id": 0,
+        "name": "System Org",
+        "email": "system@system.system"
+    },
 };
