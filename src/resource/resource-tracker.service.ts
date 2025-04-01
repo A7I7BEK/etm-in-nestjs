@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Employee } from 'src/employees/entities/employee.entity';
 import { Project } from 'src/projects/entities/project.entity';
 import { TaskAttachment } from 'src/task-attachments/entities/task-attachment.entity';
-import { Equal, Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { ResourceTracker } from './entities/resource-tracker.entity';
 import { ResourceService } from './resource.service';
 
@@ -29,9 +29,9 @@ export class ResourceTrackerService
 
         const tempFiles = await this.repository.find({
             where: {
-                employee: Equal(null),
-                taskAttachment: Equal(null),
-                project: Equal(null),
+                employee: IsNull(), // BINGO: generic null doesn't work, use this instead
+                taskAttachment: IsNull(),
+                project: IsNull(),
             }
         });
         tempFiles.forEach(tracker => this.resourceService.removeSelf(tracker.resource));
