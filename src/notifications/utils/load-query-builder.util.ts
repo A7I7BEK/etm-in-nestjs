@@ -19,7 +19,7 @@ export function loadQueryBuilder
     queryBuilder.leftJoinAndSelect(`${notif}.action`, action);
     queryBuilder.leftJoinAndSelect(`${action}.employee`, aEmployee);
     queryBuilder.leftJoin(`${aEmployee}.user`, aUser);
-    queryBuilder.addSelect([
+    queryBuilder.addSelect([ // BINGO: select only needed fields
         `${aUser}.id`,
         `${aUser}.userName`,
         `${aUser}.email`,
@@ -28,7 +28,7 @@ export function loadQueryBuilder
     queryBuilder.leftJoinAndSelect(`${action}.project`, aProject);
     queryBuilder.leftJoinAndSelect(`${action}.task`, aTask);
     queryBuilder.leftJoin(`${notif}.user`, user);
-    queryBuilder.leftJoin(`${user}.organization`, org);
+    queryBuilder.leftJoin(`${user}.organization`, org); // BINGO: join but not select
     queryBuilder.skip(queryDto.skip);
     queryBuilder.take(queryDto.pageSize);
     queryBuilder.orderBy(notif + '.' + queryDto.sortBy, queryDto.order);
