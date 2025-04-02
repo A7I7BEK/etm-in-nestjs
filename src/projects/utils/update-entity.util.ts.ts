@@ -39,7 +39,10 @@ export async function updateEntity
 
     const managerEntity = await service.employeesService.findOne(
         {
-            where: { id: dto.managerId }
+            where: { id: dto.managerId },
+            relations: {
+                user: true,
+            },
         },
         activeUser,
     );
@@ -49,9 +52,11 @@ export async function updateEntity
         {
             where: { id: dto.groupId },
             relations: {
-                employees: true,
+                employees: {
+                    user: true,
+                },
                 leader: true,
-            }
+            },
         },
         activeUser,
     );
