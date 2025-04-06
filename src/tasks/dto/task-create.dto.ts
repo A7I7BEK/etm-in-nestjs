@@ -6,6 +6,10 @@ export class TaskCreateDto
     @IsString()
     name: string;
 
+    @Min(0)
+    @IsInt()
+    organizationId: number;
+
     @Min(1)
     @IsInt()
     projectId: number;

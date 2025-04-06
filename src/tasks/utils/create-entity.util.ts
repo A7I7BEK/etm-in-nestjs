@@ -22,6 +22,9 @@ export async function createEntity
                 id: dto.columnId,
                 project: {
                     id: dto.projectId,
+                    organization: {
+                        id: dto.organizationId,
+                    },
                 }
             },
             relations: {
