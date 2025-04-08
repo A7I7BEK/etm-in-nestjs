@@ -17,7 +17,7 @@ export class ShareController
 
 
     @Post('task/email')
-    @Permission(SharePermissions.SHARE_TASK_EMAIL)
+    @Permission(SharePermissions.EMAIL)
     async shareTaskEmail
         (
             @Body() dto: ShareTaskDto,
@@ -29,7 +29,7 @@ export class ShareController
 
 
     @Post('task/telegram')
-    @Permission(SharePermissions.SHARE_TASK_TELEGRAM)
+    @Permission(SharePermissions.TELEGRAM)
     async shareTaskTelegram
         (
             @Body() dto: ShareTaskDto,
