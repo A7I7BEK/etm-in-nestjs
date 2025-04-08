@@ -29,7 +29,7 @@ export class ProjectListener
         action.employee = await this._service.getEmployee(activeUser);
 
         action.details = {};
-        // Tom created project "AAA"
+        // Tom created this project
 
         this._service.saveAction(action);
     }
@@ -54,7 +54,25 @@ export class ProjectListener
         action.details = {
             changes: detectChanges(oldEntity, newEntity, structure)
         };
-        // Tom edited project "AAA". Changes: ...
+        // Tom edited the project. Changes: ...
+
+        this._service.saveAction(action);
+    }
+
+
+    @OnEvent([ Action.name, ProjectPermissions.CHANGE_BACKGROUND ], { async: true })
+    async listenBackgroundEvent(data: BaseSimpleEvent<Project>)
+    {
+        const { entity, activeUser } = data;
+
+        const action = new Action();
+        action.createdAt = new Date();
+        action.activityType = ProjectPermissions.CHANGE_BACKGROUND;
+        action.project = entity;
+        action.employee = await this._service.getEmployee(activeUser);
+
+        action.details = {};
+        // Tom changed the project background
 
         this._service.saveAction(action);
     }

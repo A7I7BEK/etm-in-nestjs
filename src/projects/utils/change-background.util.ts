@@ -1,5 +1,9 @@
+import { Action } from 'src/actions/entities/action.entity';
+import { BaseSimpleEvent } from 'src/actions/event/base-simple.event';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { ProjectBackgroundDto } from '../dto/project-background.dto';
+import { Project } from '../entities/project.entity';
+import { ProjectPermissions } from '../enums/project-permissions.enum';
 import { ProjectsService } from '../projects.service';
 
 
@@ -48,6 +52,16 @@ export async function changeBackgroundUtil
     {
         await service.resourceTrackerService.setAll(entity);
     }
+
+
+    const actionData: BaseSimpleEvent<Project> = {
+        entity: structuredClone(entity),
+        activeUser,
+    };
+    service.eventEmitter.emit(
+        [ Action.name, ProjectPermissions.CHANGE_BACKGROUND ],
+        actionData
+    );
 
 
     return entity;
