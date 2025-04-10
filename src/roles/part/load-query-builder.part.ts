@@ -11,10 +11,12 @@ export function loadQueryBuilderPart
         activeUser: ActiveUserData,
     )
 {
-    const [ role, org ] = [ 'role', 'organization' ];
+    const [ role, perms, org ] =
+        [ 'role', 'permissions', 'organization' ];
     const queryBuilder = repository.createQueryBuilder(role);
 
 
+    queryBuilder.leftJoinAndSelect(`${role}.permissions`, perms);
     queryBuilder.leftJoinAndSelect(`${role}.organization`, org);
     queryBuilder.skip(queryDto.skip);
     queryBuilder.take(queryDto.pageSize);

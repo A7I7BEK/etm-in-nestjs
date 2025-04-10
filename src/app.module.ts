@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import * as dotenv from 'dotenv';
-import * as dotenvExpand from 'dotenv-expand';
 import { ActionsModule } from './actions/actions.module';
 import { AppService } from './app.service';
 import { CheckListGroupsModule } from './check-list-groups/check-list-groups.module';
@@ -40,15 +39,17 @@ import { UsersModule } from './users/users.module';
 /**
  * BINGO: now environment variables in .env file
  * can reference themselves making compound variables
- * - There is no need for ConfigModule.forRoot() in imports
+ * - Alternative: dotenvExpand.expand(dotenv.config());
  * - Use this or ConfigModule.forRoot()
  */
-dotenvExpand.expand(dotenv.config());
 
 
 @Module({
     imports: [
-        // ConfigModule.forRoot(),
+        ConfigModule.forRoot({
+            isGlobal: true,
+            expandVariables: true,
+        }),
         EventEmitterModule.forRoot(),
         ScheduleModule.forRoot(),
         TypeOrmModule.forRootAsync({
