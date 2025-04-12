@@ -59,6 +59,7 @@ export async function updateEntityUtil
     else if (entity.photoFile) // dto.photoFileId === 0 && entity.photoFile exists
     {
         await service.resourceService.removeSelf(entity.photoFile);
+        delete entity.photoFile;
     }
 
 
