@@ -66,7 +66,7 @@ export class AccessTokenManager
         const roleEntity = new Role();
         roleEntity.name = appConfig().default.role;
         roleEntity.systemCreated = true;
-        roleEntity.permissions = await this.permissionsService.findAllForAdminRole();
+        roleEntity.permissions = await this.permissionsService.repository.find();
         roleEntity.organization = organizationEntity;
         await this.rolesService.repository.save(roleEntity);
 

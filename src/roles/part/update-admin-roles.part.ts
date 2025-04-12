@@ -11,7 +11,7 @@ export async function updateAdminRolesPart
     });
 
 
-    const adminPermissions = await service.permissionsService.findAllForAdminRole();
+    const adminPermissions = await service.permissionsService.repository.find();
     entityList.forEach(item => { item.permissions = adminPermissions; });
 
 

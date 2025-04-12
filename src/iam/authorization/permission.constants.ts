@@ -53,7 +53,6 @@ export type PermissionType = (
 export const PERMISSION_TYPE_KEY = 'PERMISSION_TYPE_KEY';
 
 export const PERMISSION_VALUES = [
-    ...Object.values(OrganizationPermissions),
     ...Object.values(PermissionPermissions),
     ...Object.values(RolePermissions),
     ...Object.values(UserPermissions),
