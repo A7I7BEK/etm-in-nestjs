@@ -1,17 +1,27 @@
 import { ClassSerializerInterceptor, Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory, Reflector } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as path from 'path';
 import { AppModule } from './app.module';
 import appConfig from './common/config/app.config';
 import { WrapResponseInterceptor } from './common/interceptors/wrap-response.interceptor';
+import { DESTINATION_BASE } from './resource/utils/resource.constants';
+
 
 async function bootstrap()
 {
-    const app = await NestFactory.create(AppModule);
+    const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
 
     // CORS enabled
     app.enableCors();
+
+
+    // Serve static files from the 'uploads' directory
+    app.useStaticAssets(path.posix.join(process.cwd(), DESTINATION_BASE), {
+        prefix: '/' + DESTINATION_BASE, // This adds a URL prefix for accessing files
+    });
 
 
     // ValidationPipe enabled
