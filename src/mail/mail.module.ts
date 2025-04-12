@@ -1,7 +1,7 @@
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { Module } from '@nestjs/common';
-import { join } from 'path';
+import * as path from 'path';
 import appConfig from 'src/common/config/app.config';
 import { MailThrottleService } from './mail-throttle.service';
 import { MailService } from './mail.service';
@@ -30,7 +30,7 @@ import { MailService } from './mail.service';
                         },
                     },
                     template: {
-                        dir: join(__dirname, 'templates'),
+                        dir: path.posix.join(__dirname, 'templates'),
                         adapter: new HandlebarsAdapter(),
                         options: {
                             strict: true,
