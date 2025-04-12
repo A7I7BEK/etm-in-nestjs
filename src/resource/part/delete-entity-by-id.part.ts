@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { ResourceService } from '../resource.service';
+import { generateFullPath } from '../utils/resource.utils';
 
 
 export async function deleteEntityByIdPart
@@ -20,7 +21,7 @@ export async function deleteEntityByIdPart
 
     try
     {
-        await fs.promises.rm(entity.url);
+        await fs.promises.rm(generateFullPath(entity.url));
     }
     catch (error)
     {

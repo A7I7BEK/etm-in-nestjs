@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import { Resource } from '../entities/resource.entity';
 import { ResourceService } from '../resource.service';
+import { generateFullPath } from '../utils/resource.utils';
 
 
 export async function deleteEntitySelfPart
@@ -11,7 +12,7 @@ export async function deleteEntitySelfPart
 {
     try
     {
-        await fs.promises.rm(entity.url);
+        await fs.promises.rm(generateFullPath(entity.url));
     }
     catch (error)
     {

@@ -1,11 +1,12 @@
 
 /**
- * WARNING: don't add slash before the base path
- * like that '/uploads'
- * It will be saved in the root folder of the system not the project
- * In windows: it will be the Disk (D:) if your project is in it
+ * WARNING!
+ * - Don't add slash before the base path (like that '/uploads')
+ * if you want to save the file in the project folder
+ * - It will be saved in the root folder of the system
+ * - In windows: it will be the Disk (D:) if your project is in it
  */
-export const DESTINATION_BASE = 'uploads';
+export const DESTINATION_BASE = '/uploads';
 
 export const DESTINATION_IMAGE = DESTINATION_BASE + '/image';
 export const DESTINATION_AUDIO = DESTINATION_BASE + '/audio';

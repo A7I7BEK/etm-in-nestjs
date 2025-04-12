@@ -1,4 +1,3 @@
-import * as fs from 'fs';
 import * as path from 'path';
 import
 {
@@ -67,16 +66,17 @@ export function getDestination(file: Express.Multer.File)
 export function generateFilePath(file: Express.Multer.File)
 {
     const destination = getDestination(file);
-
-    if (!fs.existsSync(destination))
-    {
-        fs.mkdirSync(destination, { recursive: true });
-    }
-
     const filename = generateFilename(file);
     const filePath = path.posix.join(destination, filename); // BINGO: use Linux based path, not Windows based
 
     return { filePath, filename };
+}
+
+
+// BINGO: generate posix style full path
+export function generateFullPath(filePath: string)
+{
+    return path.posix.join(path.posix.resolve('.'), filePath);
 }
 
 

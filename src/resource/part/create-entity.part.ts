@@ -1,10 +1,11 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import * as fs from 'fs';
+import * as path from 'path';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { ResourceTracker } from '../entities/resource-tracker.entity';
 import { Resource } from '../entities/resource.entity';
 import { ResourceService } from '../resource.service';
-import { calculateFileSize, generateFilePath } from '../utils/resource.utils';
+import { calculateFileSize, generateFilePath, generateFullPath } from '../utils/resource.utils';
 
 
 export async function createEntityPart
@@ -36,7 +37,18 @@ export async function createEntityPart
 
     try
     {
-        await fs.promises.writeFile(filePath, file.buffer);
+        const fullPath = generateFullPath(filePath);
+
+        await fs.promises.mkdir(
+            path.posix.dirname(fullPath),
+            { recursive: true },
+        );
+
+        await fs.promises.writeFile(
+            fullPath,
+            file.buffer,
+        );
+
         await service.resRepo.save(entity);
 
 
@@ -49,6 +61,8 @@ export async function createEntityPart
     }
     catch (error)
     {
+        console.log('Failed to save file: ', error);
+
         throw new InternalServerErrorException('Failed to save file');
     }
 }

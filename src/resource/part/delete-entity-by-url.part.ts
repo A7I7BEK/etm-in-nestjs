@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { Equal } from 'typeorm';
 import { ResourceService } from '../resource.service';
+import { generateFullPath } from '../utils/resource.utils';
 
 
 export async function deleteEntityByUrlPart
@@ -23,7 +24,7 @@ export async function deleteEntityByUrlPart
 
     try
     {
-        await fs.promises.rm(entity.url);
+        await fs.promises.rm(generateFullPath(entity.url));
     }
     catch (error)
     {
