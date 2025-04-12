@@ -1,6 +1,7 @@
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { PERMISSION_LIST } from './iam/authorization/permission.constants';
 import { PermissionsService } from './permissions/permissions.service';
+import { RolesService } from './roles/roles.service';
 import { UsersService } from './users/users.service';
 
 @Injectable()
@@ -8,6 +9,7 @@ export class AppService implements OnApplicationBootstrap
 {
     constructor (
         private readonly _usersService: UsersService,
+        private readonly _rolesService: RolesService,
         private readonly _permissionsService: PermissionsService,
     ) { }
 
@@ -15,6 +17,7 @@ export class AppService implements OnApplicationBootstrap
     async onApplicationBootstrap()
     {
         await this.insertPermissions();
+        await this.updateAdminRoles();
         await this.markUsersOffline();
     }
 
@@ -30,6 +33,12 @@ export class AppService implements OnApplicationBootstrap
             .values(PERMISSION_LIST)
             .orIgnore() // BINGO: ignore if the same value exists in the DB
             .execute();
+    }
+
+
+    async updateAdminRoles()
+    {
+        await this._rolesService.updateAdminRoles();
     }
 
 

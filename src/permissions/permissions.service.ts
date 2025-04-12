@@ -4,7 +4,6 @@ import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
 import { Pagination } from 'src/common/pagination/pagination.class';
 import { OrganizationPermissions } from 'src/organizations/enums/organization-permissions.enum';
 import { ReportPermissions } from 'src/reports/enums/report-permissions.enum';
-import { RolePermissions } from 'src/roles/enum/role-permissions.enum';
 import { Equal, FindOneOptions, ILike, Not, Or, Repository } from 'typeorm';
 import { PermissionQueryDto } from './dto/permission-query.dto';
 import { Permission } from './entities/permission.entity';
@@ -60,7 +59,6 @@ export class PermissionsService
         return this.repository.findBy({
             codeName: Not(Or(
                 ILike(`${organizationWord}%`),
-                Equal(RolePermissions.UPDATE_ADMINS.toString()),
                 Equal(ReportPermissions.CHART_TRELLO.toString()),
             )),
         });

@@ -16,6 +16,7 @@ import { deleteEntityPart } from './part/delete-entity.part';
 import { loadQueryBuilderPart } from './part/load-query-builder.part';
 import { updateAdminRolesPart } from './part/update-admin-roles.part';
 
+
 @Injectable()
 export class RolesService
 {
@@ -129,11 +130,8 @@ export class RolesService
     }
 
 
-    async updateAdminRoles
-        (
-            activeUser: ActiveUserData,
-        )
+    async updateAdminRoles()
     {
-        return updateAdminRolesPart(this, activeUser);
+        return updateAdminRolesPart(this);
     }
 }

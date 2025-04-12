@@ -83,15 +83,4 @@ export class RolesController
     {
         return this._service.remove(id, activeUser);
     }
-
-
-    @Post('update-admins')
-    @Permission(RolePermissions.UPDATE_ADMINS)
-    updateAdminRoles
-        (
-            @ActiveUser() activeUser: ActiveUserData,
-        )
-    {
-        return this._service.updateAdminRoles(activeUser);
-    }
 }
