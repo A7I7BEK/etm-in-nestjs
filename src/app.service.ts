@@ -1,6 +1,7 @@
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { PERMISSION_LIST } from './iam/authorization/permission.constants';
 import { PermissionsService } from './permissions/permissions.service';
+import { ResourceTrackerService } from './resource/resource-tracker.service';
 import { RolesService } from './roles/roles.service';
 import { UsersService } from './users/users.service';
 
@@ -11,6 +12,7 @@ export class AppService implements OnApplicationBootstrap
         private readonly _usersService: UsersService,
         private readonly _rolesService: RolesService,
         private readonly _permissionsService: PermissionsService,
+        private readonly _resourceTrackerService: ResourceTrackerService,
     ) { }
 
 
@@ -19,6 +21,7 @@ export class AppService implements OnApplicationBootstrap
         await this.insertPermissions();
         await this.updateAdminRoles();
         await this.markUsersOffline();
+        await this.cleanTemporaryFiles();
     }
 
 
@@ -47,5 +50,11 @@ export class AppService implements OnApplicationBootstrap
         await this._usersService.repository.update({}, {
             isOnline: false
         });
+    }
+
+
+    async cleanTemporaryFiles()
+    {
+        await this._resourceTrackerService.cleanTemporaryFiles();
     }
 }
