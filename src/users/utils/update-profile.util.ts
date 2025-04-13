@@ -50,6 +50,7 @@ export async function updateProfileUtil
     else if (entity.employee.photoFile)
     {
         await service.resourceService.removeSelf(entity.employee.photoFile);
+        delete entity.employee.photoFile;
     }
 
 
