@@ -48,7 +48,9 @@ export async function getProjectDetails
             },
             order: {
                 columns: {
+                    ordering: 'ASC',
                     tasks: {
+                        ordering: 'ASC',
                         comments: {
                             id: 'DESC'
                         },
