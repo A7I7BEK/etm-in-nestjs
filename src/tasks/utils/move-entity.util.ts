@@ -39,9 +39,11 @@ export async function moveEntity
     delete oldEntity.column.tasks;
 
 
-    let actionData: BaseDiffEvent<Task>;
-    actionData.oldEntity = oldEntity;
-    actionData.activeUser = activeUser;
+    const actionData: BaseDiffEvent<Task> = {
+        oldEntity,
+        newEntity: entity, // later updated along the way
+        activeUser,
+    };
 
 
     if (
@@ -63,7 +65,6 @@ export async function moveEntity
         service.tasksGateway.emitReorder(entity, entity.project.id);
 
 
-        actionData.newEntity = entity;
         service.eventEmitter.emit(
             [ Action.name, TaskPermissions.MOVE ],
             actionData
@@ -114,7 +115,6 @@ export async function moveEntity
         await service.repository.save(columnEntity.tasks);
 
 
-        actionData.newEntity = entity;
         service.eventEmitter.emit(
             [ Action.name, TaskPermissions.MOVE ],
             actionData
@@ -135,7 +135,6 @@ export async function moveEntity
         await service.repository.save(columnEntity.tasks);
 
 
-        actionData.newEntity = entity;
         service.eventEmitter.emit(
             [ Action.name, TaskPermissions.MOVE ],
             actionData
