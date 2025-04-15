@@ -46,7 +46,10 @@ export class ProjectColumnsController
                         id: queryDto.projectId
                     }
                 },
-                relations: { project: true }
+                relations: { project: true },
+                order: {
+                    ordering: 'ASC'
+                }
             },
             activeUser,
         );
