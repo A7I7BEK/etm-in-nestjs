@@ -56,10 +56,10 @@ export async function createEntity
         },
         activeUser,
     );
-    await service.resourceTrackerService.setAll(entity);
 
 
     await service.repository.save(entity);
+    await service.resourceTrackerService.setAll(entity);
 
 
     const actionData: BaseSimpleEvent<TaskAttachment> = {
