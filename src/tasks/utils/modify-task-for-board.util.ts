@@ -1,4 +1,5 @@
 import { Task } from '../entities/task.entity';
+import { calculateTaskStatus } from './calculate-task-status.util';
 
 /**
  * temporary for this project, must not exist
@@ -29,6 +30,9 @@ export function modifyTaskForBoard(entity: Task)
         });
     }
     delete entity.comments;
+
+
+    calculateTaskStatus(entity);
 
 
     return entity;
