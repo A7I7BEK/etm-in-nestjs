@@ -72,8 +72,11 @@ export async function getProjectDetails
             }
         },
         relations: {
+            employee: {
+                user: true,
+            },
             task: true,
-            employee: true,
+            project: true,
         },
         order: {
             id: 'DESC'
