@@ -1,3 +1,4 @@
+import { calculateCheckListGroupPercent } from 'src/check-list-groups/utils/calculate-check-list-group-percent.util';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { TasksService } from '../tasks.service';
 import { calculateTaskStatus } from './calculate-task-status.util';
@@ -18,7 +19,6 @@ export async function getTaskDetails
                 column: true,
                 checkListGroups: {
                     checkList: {
-                        checkListGroup: true,
                         employees: {
                             user: true
                         }
@@ -38,10 +38,19 @@ export async function getTaskDetails
                     projectTag: true
                 },
             },
+            order: {
+                checkListGroups: {
+                    id: 'ASC',
+                    checkList: {
+                        id: 'ASC',
+                    }
+                },
+            },
         },
         activeUser,
     );
     calculateTaskStatus(entity);
+    entity.checkListGroups.forEach(group => calculateCheckListGroupPercent(group));
 
 
     const [ actionList, actionCount ] = await service.actionsService.repository.findAndCount({
@@ -56,8 +65,11 @@ export async function getTaskDetails
             },
         },
         relations: {
+            employee: {
+                user: true,
+            },
             task: true,
-            employee: true,
+            project: true,
         },
         order: {
             id: 'DESC'
