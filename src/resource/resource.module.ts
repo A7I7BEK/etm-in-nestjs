@@ -1,37 +1,36 @@
-import { Module, UnsupportedMediaTypeException } from '@nestjs/common';
-import { MulterModule } from '@nestjs/platform-express';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import appConfig from 'src/common/config/app.config';
 import { OrganizationsModule } from 'src/organizations/organizations.module';
 import { ResourceTracker } from './entities/resource-tracker.entity';
 import { Resource } from './entities/resource.entity';
 import { ResourceTrackerService } from './resource-tracker.service';
 import { ResourceController } from './resource.controller';
 import { ResourceService } from './resource.service';
-import { ALLOWED_MIME_TYPES } from './utils/resource.constants';
 
 
 @Module({
     imports: [
-        MulterModule.registerAsync({
-            useFactory: async () => ({
-                fileFilter: (req, file, callback) =>
-                {
-                    if (ALLOWED_MIME_TYPES.includes(file.mimetype))
-                    {
-                        callback(null, true);
-                    }
-                    else
-                    {
-                        callback(new UnsupportedMediaTypeException(), false);
-                    }
-                },
-                limits: {
-                    fileSize: appConfig().file.maxSize,
-                    files: appConfig().file.maxCount,
-                }
-            }),
-        }),
+        // INFO: good setup but didn't work in frontend
+        //
+        // MulterModule.registerAsync({
+        //     useFactory: async () => ({
+        //         fileFilter: (req, file, callback) =>
+        //         {
+        //             if (ALLOWED_MIME_TYPES.includes(file.mimetype))
+        //             {
+        //                 callback(null, true);
+        //             }
+        //             else
+        //             {
+        //                 callback(new UnsupportedMediaTypeException(), false);
+        //             }
+        //         },
+        //         limits: {
+        //             fileSize: appConfig().file.maxSize,
+        //             files: appConfig().file.maxCount,
+        //         }
+        //     }),
+        // }),
         TypeOrmModule.forFeature([
             Resource,
             ResourceTracker,

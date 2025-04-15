@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, NotAcceptableException, Param, ParseIntPipe, Post, Put, Query, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Param, ParseIntPipe, Post, Put, Query, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
@@ -8,6 +8,7 @@ import { DeleteResourceByUrlDto } from './dto/delete-resource-by-url.dto';
 import { MinDimensionDto } from './dto/min-dimension.dto';
 import { UpdateResourceDto } from './dto/update-resource.dto';
 import { ResourceService } from './resource.service';
+import { validateUploadedFile, validateUploadedFiles } from './utils/resource.utils';
 
 
 @ApiBearerAuth()
@@ -27,10 +28,7 @@ export class ResourceController
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        if (!file)
-        {
-            throw new NotAcceptableException();
-        }
+        validateUploadedFile(file);
 
         return this._service.uploadFile(file, minDimensionDto, activeUser);
     }
@@ -44,10 +42,7 @@ export class ResourceController
             @ActiveUser() activeUser: ActiveUserData,
         )
     {
-        if (!files || files.length === 0)
-        {
-            throw new NotAcceptableException();
-        }
+        validateUploadedFiles(files);
 
         return this._service.uploadMultipleFiles(files, activeUser);
     }

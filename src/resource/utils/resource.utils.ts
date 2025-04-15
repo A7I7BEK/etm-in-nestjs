@@ -1,6 +1,15 @@
-import * as path from 'path';
 import
 {
+    BadRequestException,
+    NotAcceptableException,
+    PayloadTooLargeException,
+    UnsupportedMediaTypeException
+} from '@nestjs/common';
+import * as path from 'path';
+import appConfig from 'src/common/config/app.config';
+import
+{
+    ALLOWED_MIME_TYPES,
     DESTINATION_ARCHIVE,
     DESTINATION_AUDIO,
     DESTINATION_BASE,
@@ -102,4 +111,39 @@ export function calculateFileSizeAlternative(size: number)
     const i = size >= 1 ? Math.floor(Math.log(size) / Math.log(1024)) : 0;
 
     return `${(size / Math.pow(1024, i)).toFixed(2)} ${units[ i ]}`;
+}
+
+
+export function validateUploadedFile(file: Express.Multer.File)
+{
+    if (!file)
+    {
+        throw new BadRequestException('No file uploaded');
+    }
+
+    if (!ALLOWED_MIME_TYPES.includes(file.mimetype))
+    {
+        throw new UnsupportedMediaTypeException();
+    }
+
+    if (file.size > appConfig().file.maxSize)
+    {
+        throw new PayloadTooLargeException();
+    }
+}
+
+
+export function validateUploadedFiles(files: Express.Multer.File[])
+{
+    if (!files || files.length === 0)
+    {
+        throw new BadRequestException('No file uploaded');
+    }
+
+    if (files.length > appConfig().file.maxCount)
+    {
+        throw new NotAcceptableException('Too many files');
+    }
+
+    files.forEach(file => validateUploadedFile(file));
 }
