@@ -11,13 +11,12 @@ export function loadQueryBuilder
         activeUser: ActiveUserData,
     )
 {
-    const [ chGroup, checkList, chListGroup, employees, user, task, proj, org ] =
-        [ 'chGroup', 'checkList', 'checkListGroup', 'employees', 'user', 'task', 'project', 'organization' ];
+    const [ chGroup, checkList, employees, user, task, proj, org ] =
+        [ 'chGroup', 'checkList', 'employees', 'user', 'task', 'project', 'organization' ];
     const queryBuilder = repository.createQueryBuilder(chGroup);
 
 
     queryBuilder.leftJoinAndSelect(`${chGroup}.checkList`, checkList);
-    queryBuilder.leftJoinAndSelect(`${checkList}.checkListGroup`, chListGroup);
     queryBuilder.leftJoinAndSelect(`${checkList}.employees`, employees);
     queryBuilder.leftJoinAndSelect(`${employees}.user`, user);
     queryBuilder.leftJoinAndSelect(`${chGroup}.task`, task);

@@ -58,13 +58,17 @@ export class CheckListGroupsController
                 where: { id },
                 relations: {
                     checkList: {
-                        checkListGroup: true,
                         employees: {
                             user: true
                         }
                     },
                     task: true,
-                }
+                },
+                order: {
+                    checkList: {
+                        id: 'ASC',
+                    }
+                },
             },
             activeUser,
         );
