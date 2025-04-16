@@ -2,6 +2,7 @@ import { Action } from 'src/actions/entities/action.entity';
 import { BaseDiffEvent } from 'src/actions/event/base-diff.event';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { Task } from 'src/tasks/entities/task.entity';
+import { wsEmitOneTask } from 'src/tasks/utils/ws-emit-one-task.util';
 import { TaskDeadlineCreateDto } from '../dto/task-deadline-create.dto';
 import { TaskDeadlineDeleteDto } from '../dto/task-deadline-delete.dto';
 import { TaskDeadlineUpdateDto } from '../dto/task-deadline-update.dto';
@@ -69,6 +70,9 @@ export async function createUpdateDeleteEntity
     }
     await service.tasksService.repository.save(taskEntity);
     await service.repository.save(entity);
+
+
+    wsEmitOneTask(service.tasksService, taskEntity.id, activeUser, 'replace');
 
 
     const actionData: BaseDiffEvent<Task> = {
