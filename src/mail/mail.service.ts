@@ -4,7 +4,10 @@ import appConfig from 'src/common/config/app.config';
 import { Employee } from 'src/employees/entities/employee.entity';
 import { Task } from 'src/tasks/entities/task.entity';
 import { User } from 'src/users/entities/user.entity';
+import { MAIL_ACTION_TYPE } from './constants/mail-action-type.constant';
+import { MAIL_QUERY_TYPE } from './constants/mail-query-type.constant';
 import { MailThrottleService } from './mail-throttle.service';
+
 
 @Injectable()
 export class MailService
@@ -20,8 +23,8 @@ export class MailService
         await this._mailThrottleService.checkThrottle(userId);
 
         const url = new URL(appConfig().application.urlFront);
-        url.searchParams.append('action', 'confirmEmail');
-        url.searchParams.append('token', token);
+        url.searchParams.append(MAIL_QUERY_TYPE.ACTION, MAIL_ACTION_TYPE.CONFIRM_EMAIL);
+        url.searchParams.append(MAIL_QUERY_TYPE.TOKEN, token);
 
         try
         {
@@ -83,8 +86,8 @@ export class MailService
 
         // BINGO: generate URL for sharing task
         const url = new URL(appConfig().application.urlFront);
-        url.searchParams.append('action', 'taskShare');
-        url.searchParams.append('taskId', task.id.toString());
+        url.searchParams.append(MAIL_QUERY_TYPE.ACTION, MAIL_ACTION_TYPE.SHARE_TASK);
+        url.searchParams.append(MAIL_QUERY_TYPE.TASK_ID, task.id.toString());
 
         try
         {
