@@ -22,7 +22,10 @@ export async function changeBackgroundUtil
     );
 
 
-    if (dto.background.charAt(0) !== '#')
+    if (
+        dto.background
+        && dto.background.charAt(0) !== '#'
+    )
     {
         // Just check
         await service.resourceService.findOne(
@@ -48,7 +51,10 @@ export async function changeBackgroundUtil
     await service.repository.save(entity);
 
 
-    if (entity.background.charAt(0) !== '#')
+    if (
+        entity.background
+        && entity.background.charAt(0) !== '#'
+    )
     {
         await service.resourceTrackerService.setAll(entity);
     }

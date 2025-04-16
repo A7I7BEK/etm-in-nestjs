@@ -1,10 +1,11 @@
-import { IsInt, IsNotEmpty, IsString, Min } from 'class-validator';
+import { IsInt, IsNotEmpty, IsOptional, IsString, Min } from 'class-validator';
 
 export class ProjectBackgroundDto
 {
+    @IsOptional()
     @IsNotEmpty()
     @IsString()
-    background: string;
+    background?: string;
 
     @Min(1)
     @IsInt()
