@@ -1,3 +1,4 @@
+import { ForbiddenException } from '@nestjs/common';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { In } from 'typeorm';
 import { UserAttachRoleDto } from '../dto/user-attach-role.dto';
@@ -17,6 +18,12 @@ export async function attachRoleUtil
         },
         activeUser,
     );
+
+
+    if (entity.marks.registered)
+    {
+        throw new ForbiddenException('Role of ADMIN user cannot be changed');
+    }
 
 
     entity.roles = await service.rolesService.findAll(
