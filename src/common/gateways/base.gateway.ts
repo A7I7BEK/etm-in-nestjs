@@ -52,14 +52,14 @@ export abstract class BaseGateway implements OnGatewayInit, OnGatewayConnection,
         client.join(roomName);
         client.data.room = roomName;
 
-        const user: AccessTokenData = client.data.user;
-        this.logger.log(`Connected: { user: id-${user.sub} } && { room: ${roomName} }`);
+        // const user: AccessTokenData = client.data.user;
+        // this.logger.log(`Connected: { user: id-${user.sub} } && { room: ${roomName} }`);
     }
 
 
     handleDisconnect(client: Socket)
     {
-        const { user, room }: { user: AccessTokenData, room: string; } = client.data;
-        this.logger.log(`Disconnected: { user: id-${user.sub} } && { room: ${room} }`);
+        // const { user, room }: { user: AccessTokenData, room: string; } = client.data;
+        // this.logger.log(`Disconnected: { user: id-${user.sub} } && { room: ${room} }`);
     }
 }

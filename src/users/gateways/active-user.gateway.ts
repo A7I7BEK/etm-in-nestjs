@@ -73,7 +73,7 @@ export class ActiveUsersGateway implements OnGatewayInit, OnGatewayConnection, O
 
         await this.emitActiveUser(true, user);
 
-        this.logger.log(`Connected: { user: id-${user.sub} } && { room: ${roomName} }`);
+        // this.logger.log(`Connected: { user: id-${user.sub} } && { room: ${roomName} }`);
     }
 
 
@@ -83,7 +83,7 @@ export class ActiveUsersGateway implements OnGatewayInit, OnGatewayConnection, O
 
         await this.emitActiveUser(false, user);
 
-        this.logger.log(`Disconnected: { user: id-${user.sub} } && { room: ${room} }`);
+        // this.logger.log(`Disconnected: { user: id-${user.sub} } && { room: ${room} }`);
     }
 
 
