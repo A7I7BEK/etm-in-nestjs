@@ -13,6 +13,8 @@ export class RedisStorageService implements OnApplicationBootstrap, OnApplicatio
         this.redisClient = new Redis({
             host: appConfig().redis.host,
             port: appConfig().redis.port,
+            username: appConfig().redis.username,
+            password: appConfig().redis.password,
         });
     }
 
