@@ -53,7 +53,6 @@ export class ForgotPasswordManager
             throw new NotFoundException(`${User.name} not found`);
         }
 
-        console.log('forgotPasswordSend', user, options);
 
         return this.oneTimePasswordService.send(user, options);
     }
