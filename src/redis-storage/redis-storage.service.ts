@@ -11,6 +11,7 @@ export class RedisStorageService implements OnApplicationBootstrap, OnApplicatio
     onApplicationBootstrap()
     {
         this.redisClient = new Redis({
+            family: 0, // Dual stack lookup (use IPv4 or IPv6)
             host: appConfig().redis.host,
             port: appConfig().redis.port,
             username: appConfig().redis.username,
