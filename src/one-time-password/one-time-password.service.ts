@@ -43,6 +43,7 @@ export class OneTimePasswordService
     {
         if (options.email)
         {
+            console.log('decideSendChannel', user, otpCode, options);
             await this._mailService.sendOtpCode(user, otpCode);
         }
 
@@ -69,6 +70,8 @@ export class OneTimePasswordService
         otpEntity.expireTime = this.generateTime();
         otpEntity.parent = otpParent;
         await this._otpRepository.save(otpEntity);
+
+        console.log('OneTimePasswordService.send', otpEntity, otpParent, options);
 
         await this.decideSendChannel(user, otpCode, options);
 

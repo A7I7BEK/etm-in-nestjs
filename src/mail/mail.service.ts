@@ -48,10 +48,12 @@ export class MailService
 
     async sendOtpCode(sender: User, code: string)
     {
+        console.log('sendOtpCode-1', sender, code);
         await this._mailThrottleService.checkThrottle(sender.id);
 
         try
         {
+            console.log('sendOtpCode-2', sender, code);
             await this._mailerService.sendMail({
                 to: {
                     name: `${sender.employee.firstName} ${sender.employee.lastName}`,
