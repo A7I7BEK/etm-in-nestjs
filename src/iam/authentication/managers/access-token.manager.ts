@@ -87,6 +87,7 @@ export class AccessTokenManager
         await this.employeesService.repository.save(employeeEntity);
 
 
+        delete employeeEntity.user;
         userEntity.employee = employeeEntity;
         return this.oneTimePasswordService.send(userEntity, { email: true, phone: true });
     }

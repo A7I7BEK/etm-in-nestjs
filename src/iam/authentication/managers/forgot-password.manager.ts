@@ -42,7 +42,12 @@ export class ForgotPasswordManager
             userFindOptions.email = contact;
         }
 
-        const user = await this.usersService.repository.findOneBy(userFindOptions);
+        const user = await this.usersService.repository.findOne({
+            where: userFindOptions,
+            relations: {
+                employee: true,
+            },
+        });
         if (!user)
         {
             throw new NotFoundException(`${User.name} not found`);
