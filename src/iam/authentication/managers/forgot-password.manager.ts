@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 import { OtpSendingOptions } from 'src/one-time-password/interfaces/otp-sending-options.interface';
 import { OneTimePasswordService } from 'src/one-time-password/one-time-password.service';
 import { User } from 'src/users/entities/user.entity';
