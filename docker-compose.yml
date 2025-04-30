@@ -1,15 +1,62 @@
-version: "3"
+version: "3.8"
 
 services:
+  # ─── PostgreSQL Database Service ───────────────────────────────────────────────────────
   db:
-    image: postgres
-    restart: always
+    image: postgres:14-alpine
+    restart: unless-stopped
     ports:
-      - "${DATABASE_PORT}:5432"
+      - "${DATABASE_PORT:-5432}:5432"
     environment:
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USERNAME}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USERNAME} -d ${DATABASE_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+
+  # ─── Redis Cache Service ───────────────────────────────────────────────────────────────
   redis:
-    image: redis
-    restart: always
+    image: redis:7-alpine
+    restart: unless-stopped
     ports:
-      - "${REDIS_PORT}:6379"
+      - "${REDIS_PORT:-6379}:6379"
+    command: >
+      --user ${REDIS_USERNAME}
+      --requirepass ${REDIS_PASSWORD}
+    environment:
+      REDIS_USERNAME: ${REDIS_USERNAME}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+    networks:
+      - backend
+    healthcheck:
+      test: [
+        "CMD", "redis-cli",
+        "-u", "redis://${REDIS_USERNAME}:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}",
+        "ping"
+      ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
+# ─── Named volumes for data persistence ──────────────────────────────────────────────────
+volumes:
+  postgres_data:
+  redis_data:
+
+
+# ─── Custom networks for container communication ─────────────────────────────────────────
+networks:
+  backend:
+    driver: bridge
