@@ -70,10 +70,12 @@ export class MailService
         }
         catch (error)
         {
+            console.log('sendOtpCode-3', error);
             throw new HttpException(error.response, error.responseCode);
         }
 
         await this._mailThrottleService.setThrottle(sender.id);
+        console.log('sendOtpCode-4');
     }
 
 
