@@ -14,7 +14,7 @@ import { WS_COLUMN_EMIT, WS_COLUMN_PATH } from './project-column-gateway.constan
         origin: (req, callback) =>
         {
             const isDevelopment = appConfig().application.nodeEnv === appConfig().application.nodeEnvDev;
-            callback(null, isDevelopment);
+            callback(null, true); // `true` is temporary, must be `isDevelopment`
         }
     },
 })

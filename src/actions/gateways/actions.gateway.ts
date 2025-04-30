@@ -14,7 +14,7 @@ import { WS_ACTION_EMIT, WS_ACTION_PATH } from './action-gateway.constant';
         origin: (req, callback) =>
         {
             const isDevelopment = appConfig().application.nodeEnv === appConfig().application.nodeEnvDev;
-            callback(null, isDevelopment);
+            callback(null, true); // `true` is temporary, must be `isDevelopment`
         }
     },
 })

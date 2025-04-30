@@ -14,7 +14,7 @@ import { WS_TASK_EMIT, WS_TASK_PATH } from './task-gateway.constant';
         origin: (req, callback) =>
         {
             const isDevelopment = appConfig().application.nodeEnv === appConfig().application.nodeEnvDev;
-            callback(null, isDevelopment);
+            callback(null, true); // `true` is temporary, must be `isDevelopment`
         }
     },
 })

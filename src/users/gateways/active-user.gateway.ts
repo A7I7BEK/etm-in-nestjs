@@ -16,7 +16,7 @@ import { WS_ACTIVE_USER_EMIT, WS_ACTIVE_USER_PATH } from './active-user-gateway.
         origin: (req, callback) =>
         {
             const isDevelopment = appConfig().application.nodeEnv === appConfig().application.nodeEnvDev;
-            callback(null, isDevelopment);
+            callback(null, true); // `true` is temporary, must be `isDevelopment`
         }
     },
 })

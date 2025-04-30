@@ -14,7 +14,7 @@ import { WS_NOTIFICATION_EMIT, WS_NOTIFICATION_PATH } from './notification-gatew
         origin: (req, callback) =>
         {
             const isDevelopment = appConfig().application.nodeEnv === appConfig().application.nodeEnvDev;
-            callback(null, isDevelopment);
+            callback(null, true); // `true` is temporary, must be `isDevelopment`
         }
     },
 })
