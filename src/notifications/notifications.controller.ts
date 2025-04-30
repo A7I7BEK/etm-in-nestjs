@@ -1,5 +1,7 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { PaginationMeta } from 'src/common/pagination/pagination-meta.class';
+import { Pagination } from 'src/common/pagination/pagination.class';
 import { Permission } from 'src/iam/authorization/decorators/permission.decorator';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
@@ -28,7 +30,8 @@ export class NotificationsController
     {
         if (activeUser.systemAdmin)
         {
-            return [];
+            const paginationMeta = new PaginationMeta(queryDto.page, queryDto.pageSize, 0);
+            return new Pagination<Notification>([], paginationMeta);
         }
 
         return this._service.findAllWithFilters(queryDto, activeUser);
