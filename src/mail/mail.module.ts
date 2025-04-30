@@ -11,13 +11,11 @@ import { MailService } from './mail.service';
         MailerModule.forRootAsync({
             useFactory: async () =>
             {
-                const isProduction = appConfig().application.nodeEnv === appConfig().application.nodeEnvProd;
-
                 return {
                     transport: {
                         host: appConfig().mail.host,
                         port: appConfig().mail.port,
-                        secure: isProduction,
+                        secure: false, // true for 465, false for 587 ports
                         auth: {
                             user: appConfig().mail.user,
                             pass: appConfig().mail.password,
