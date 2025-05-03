@@ -11,13 +11,14 @@ export function loadQueryBuilder
         activeUser: ActiveUserData,
     )
 {
-    const [ mem, pMember, empl, user, task, proj, org ] =
-        [ 'taskMember', 'projectMember', 'employee', 'user', 'task', 'project', 'organization' ];
+    const [ mem, pMember, empl, photo, user, task, proj, org ] =
+        [ 'taskMember', 'projectMember', 'employee', 'photo', 'user', 'task', 'project', 'organization' ];
     const queryBuilder = repository.createQueryBuilder(mem);
 
 
     queryBuilder.leftJoinAndSelect(`${mem}.projectMember`, pMember);
     queryBuilder.leftJoinAndSelect(`${pMember}.employee`, empl);
+    queryBuilder.leftJoinAndSelect(`${empl}.photoFile`, photo);
     queryBuilder.leftJoinAndSelect(`${empl}.user`, user);
     queryBuilder.leftJoinAndSelect(`${mem}.task`, task);
     queryBuilder.leftJoin(`${task}.project`, proj);
