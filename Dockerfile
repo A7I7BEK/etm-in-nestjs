@@ -21,7 +21,7 @@ RUN npm prune --production
 
 # Create a non-root user
 RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nestjs -u 1001
+    adduser -S nestjs -u 1001 -s /bin/sh
 
 # Create uploads directory and set permissions
 RUN mkdir -p /app/uploads && \
@@ -39,7 +39,7 @@ EXPOSE 3001
 
 # Create a startup script to ensure permissions
 USER root
-RUN echo -e '#!/bin/sh\nchown -R nestjs:nodejs /app/uploads 2>/dev/null || true\nchmod -R 775 /app/uploads 2>/dev/null || true\nsu nestjs -c "cd /app && npm run start:prod"' > /usr/local/bin/start.sh && \
+RUN echo -e '#!/bin/sh\nchown -R nestjs:nodejs /app/uploads 2>/dev/null || true\nchmod -R 775 /app/uploads 2>/dev/null || true\nexec su -s /bin/sh nestjs -c "cd /app && npm run start:prod"' > /usr/local/bin/start.sh && \
     chmod +x /usr/local/bin/start.sh
 
 # Define the command to run the application
