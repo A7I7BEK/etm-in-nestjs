@@ -26,7 +26,7 @@ RUN addgroup -g 1001 -S nodejs && \
 # Create uploads directory and set permissions
 RUN mkdir -p /app/uploads && \
     chown -R nestjs:nodejs /app/uploads && \
-    chmod -R 755 /app/uploads
+    chmod -R 775 /app/uploads
 
 # Change ownership of the app directory to the nestjs user
 RUN chown -R nestjs:nodejs /app
@@ -37,5 +37,10 @@ USER nestjs
 # Expose the port the app runs on
 EXPOSE 3001
 
+# Create a startup script to ensure permissions
+USER root
+RUN echo '#!/bin/sh\nchown -R nestjs:nodejs /app/uploads\nchmod -R 775 /app/uploads\nsu nestjs -c "npm run start:prod"' > /start.sh && \
+    chmod +x /start.sh
+
 # Define the command to run the application
-CMD ["npm", "run", "start:prod"]
+CMD ["/start.sh"]
