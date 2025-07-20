@@ -19,13 +19,14 @@ RUN npm run build
 # Remove dev dependencies to reduce image size
 RUN npm prune --production
 
-# Create uploads directory and set permissions
-RUN mkdir -p /app/uploads && \
-    chmod -R 777 /app/uploads
-
 # Create a non-root user
 RUN addgroup -g 1001 -S nodejs && \
     adduser -S nestjs -u 1001
+
+# Create uploads directory and set permissions
+RUN mkdir -p /app/uploads && \
+    chown -R nestjs:nodejs /app/uploads && \
+    chmod -R 755 /app/uploads
 
 # Change ownership of the app directory to the nestjs user
 RUN chown -R nestjs:nodejs /app
