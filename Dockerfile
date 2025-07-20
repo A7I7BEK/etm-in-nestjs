@@ -39,8 +39,8 @@ EXPOSE 3001
 
 # Create a startup script to ensure permissions
 USER root
-RUN echo '#!/bin/sh\nchown -R nestjs:nodejs /app/uploads\nchmod -R 775 /app/uploads\nsu nestjs -c "npm run start:prod"' > /start.sh && \
-    chmod +x /start.sh
+RUN echo -e '#!/bin/sh\nchown -R nestjs:nodejs /app/uploads 2>/dev/null || true\nchmod -R 775 /app/uploads 2>/dev/null || true\nsu nestjs -c "cd /app && npm run start:prod"' > /usr/local/bin/start.sh && \
+    chmod +x /usr/local/bin/start.sh
 
 # Define the command to run the application
-CMD ["/start.sh"]
+CMD ["/usr/local/bin/start.sh"]
